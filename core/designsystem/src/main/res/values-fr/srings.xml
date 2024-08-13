@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back_button">Retour</string>
+    <string name="loading">Chargement…</string>
+    <string name="title_loading">Configuration des données</string>
+    <string name="desc_loading">Nous préparons vos données, cela ne prendra que quelques instants.</string>
+</resources>

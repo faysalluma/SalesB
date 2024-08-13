@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">SalesB</string>
+    <string name="no_internet_connexion">No internet connexion</string>
+</resources>
