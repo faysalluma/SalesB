@@ -5,51 +5,52 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.groupec.salesb.core.domain.GetParameterUseCase
 import com.groupec.salesb.core.domain.GetUserStoreUseCase
-import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.UserStore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getParameterUseCase: GetParameterUseCase,
     private val getUserStoreUseCase: GetUserStoreUseCase
 ) : ViewModel() {
 
-    private val _parameterUiState = MutableStateFlow<ParameterUiState>(ParameterUiState.Loading)
-    val parameterUiState: StateFlow<ParameterUiState> = _parameterUiState
-
-    private val _userUiState = MutableStateFlow<UserUiState>(UserUiState.Loading)
-    val userUiState: StateFlow<UserUiState> = _userUiState
+    private val _configUiState = MutableStateFlow<ConfigUiState>(ConfigUiState.Loading)
+    val configUiState: StateFlow<ConfigUiState> = _configUiState
 
     init {
-        getParameters()
-        getUserStore()
-    }
-    fun getParameters() {
         viewModelScope.launch {
-           val parameter = getParameterUseCase().firstOrNull() ?: Parameter()
-            _parameterUiState.value = ParameterUiState.Success(parameter)
-        }
-    }
-
-    fun getUserStore() {
-        viewModelScope.launch {
-            val userStore = getUserStoreUseCase().firstOrNull() ?: UserStore()
-            _userUiState.value = UserUiState.Success(userStore)
+                getParameterUseCase().flatMapLatest { parameter ->
+                    if (parameter.raisonsociale.isEmpty()) {
+                        // Mettre à jour _userUiState
+                        _configUiState.value = ConfigUiState.Configuration
+                    } else {
+                        // Récupérer userStore avant de continuer
+                        val userStore = getUserStoreUseCase().firstOrNull() ?: UserStore()
+                        // Mettre à jour _userUiState
+                        _configUiState.value = ConfigUiState.Success(userStore)
+                    }
+                    _configUiState
+                }.collect { userState ->
+                    if (userState is ConfigUiState.Success) {
+                        if (userState.userStore.id.isEmpty()) {
+                            _configUiState.value = ConfigUiState.Login
+                        }
+                    }
+                }
         }
     }
 }
-sealed class ParameterUiState {
-    data object Loading : ParameterUiState()
-    data class Success(val paremeter: Parameter) : ParameterUiState()
-}
-
-sealed class UserUiState {
-    data object Loading : UserUiState()
-    data class Success(val userStore: UserStore) : UserUiState()
+sealed class ConfigUiState {
+    data object Loading : ConfigUiState()
+    data object Configuration : ConfigUiState()
+    data object Login : ConfigUiState()
+    data class Success(val userStore: UserStore) : ConfigUiState()
 }
