@@ -10,6 +10,7 @@ import com.groupec.salesb.core.model.data.UserStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,19 +32,15 @@ class HomeViewModel @Inject constructor(
     }
     fun getParameters() {
         viewModelScope.launch {
-           getParameterUseCase()
-                .collect { result ->
-                    _parameterUiState.value = ParameterUiState.Success(result)
-                }
+           val parameter = getParameterUseCase().firstOrNull() ?: Parameter()
+            _parameterUiState.value = ParameterUiState.Success(parameter)
         }
     }
 
     fun getUserStore() {
         viewModelScope.launch {
-            getUserStoreUseCase()
-                .collect { result ->
-                    _userUiState.value = UserUiState.Success(result)
-                }
+            val userStore = getUserStoreUseCase().firstOrNull() ?: UserStore()
+            _userUiState.value = UserUiState.Success(userStore)
         }
     }
 }
