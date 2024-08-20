@@ -6,33 +6,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.groupec.feature.configuration.navigation.CONFIGURATION_ROUTE
 import com.groupec.salesb.R
 import com.groupec.salesb.core.designsystem.SampleTopAppBar
 import com.groupec.salesb.navigation.AppNavHost
-import com.groupec.feature.login.navigation.LOGIN_ROUTE
-import com.groupec.salesb.core.Mode
-import com.groupec.salesb.core.designsystem.component.ErrorScreen
+import com.groupec.salesb.navigation.NavigationItem
 
 
 @Composable
 fun MainScreen(
-    connectionState: Boolean, 
+    connectionState: Boolean,
     navController: NavHostController = rememberNavController()
 ) {
     var appBarTitle = stringResource(id = R.string.app_name)
-    var onNavigationClick : (() -> Unit) ? = null
-    var dropDownItemsMenu: List<Pair<String, () -> Unit>>  = emptyList()
+    var onNavigationClick: (() -> Unit)? = null
+    var dropDownItemsMenu: List<Pair<String, () -> Unit>> = emptyList()
 
     val currentDestination = remember {
         mutableStateOf(navController.currentDestination?.route)
@@ -40,14 +34,27 @@ fun MainScreen(
 
     LaunchedEffect(navController) {
         navController.addOnDestinationChangedListener { _, destination, arguments ->
-            currentDestination.value = destination.route?.substringBeforeLast("/")?.substringBeforeLast("?")
+            currentDestination.value =
+                destination.route?.substringBeforeLast("/")?.substringBeforeLast("?")
         }
     }
 
     when (currentDestination.value) {
-        LOGIN_ROUTE -> {
+        NavigationItem.Home.route -> {
             dropDownItemsMenu = getDropdownItemsWithActions(navController)
         }
+
+        /*  NavigationItem.Detail.route -> {
+              // Get arguments and show it in TopBar
+              val order = navController.previousBackStackEntry?.savedStateHandle?.get<Order>("order")
+              appBarTitle = "Order ${order?.id}"
+
+              // Definie onNavigationClick method
+              onNavigationClick = {
+                  navController.popBackStack()
+              }
+          }*/
+
         else -> {
             // Handle unexpected destinations (optional)
         }
@@ -55,7 +62,12 @@ fun MainScreen(
 
     Scaffold(
         topBar = {
-            if (currentDestination.value !in listOf(CONFIGURATION_ROUTE, LOGIN_ROUTE)) {
+            if (currentDestination.value !in listOf(
+                    NavigationItem.Loading.route,
+                    NavigationItem.Configuration.route,
+                    NavigationItem.Login.route
+                )
+            ) {
                 SampleTopAppBar(
                     appBarTitle,
                     onNavigationClick,

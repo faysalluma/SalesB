@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.designsystem.R
 
 @Composable
-fun LoadingScreen() {
+fun AppLoadingScreen() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -29,7 +29,7 @@ fun LoadingScreen() {
 }
 
 @Composable
-fun LoadingScreenWithInformation() {
+fun AppLoadingScreenWithInformation() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -51,5 +51,5 @@ fun LoadingScreenWithInformation() {
 @Preview
 @Composable
 fun LoadingScreenPreview(){
-    LoadingScreenWithInformation()
+    AppLoadingScreenWithInformation()
 }

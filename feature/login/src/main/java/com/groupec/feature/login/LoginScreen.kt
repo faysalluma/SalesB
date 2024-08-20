@@ -17,23 +17,10 @@ import com.groupec.salesb.core.ui.ComposableLifecycle
 
 
 @Composable
-internal fun LoginRoute(
+fun LoginScreen(
     navigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
-) {
-    // val orderState by viewModel.orderUiState.collectAsStateWithLifecycle()
-    HomeScreen(
-        navigateToHome = navigateToHome,
-        modifier = modifier
-    )
-}
-
-
-@Composable
-internal fun HomeScreen(
-    navigateToHome: () -> Unit,
-    modifier: Modifier = Modifier
 
 ) {
     ComposableLifecycle(
