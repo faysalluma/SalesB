@@ -1,6 +1,5 @@
 package com.groupec.salesb.core.designsystem.component
 
-/*
 import android.app.Activity
 import android.os.Handler
 import androidx.compose.foundation.background
@@ -25,12 +24,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.groupec.salesb.core.designsystem.component.SampleButton
+import com.groupec.salesb.core.designsystem.theme.Primary
+import com.groupec.salesb.core.designsystem.theme.Red
+import com.groupec.salesb.core.designsystem.utils.Constants
 
 @Composable
-fun AlertInfoDialog(
+fun AppAlertInfoDialog(
     title: String?,
     icon: Painter?,
+    tintIcon: Color?,
     message: String,
     textButton: String,
     closing: Activity?
@@ -43,21 +45,21 @@ fun AlertInfoDialog(
                 // Dismiss the dialog when the user clicks outside the dialog or on the back
                 // button. If you want to disable that functionality, simply use an empty
                 // onDismissRequest.
-                openDialog.value = false
+                // openDialog.value = false
             },
             icon = {
                 icon?.let {
                     Icon(
                         it,
                         contentDescription = null,
-                        tint = Red,
+                        tint = tintIcon ?: Primary,
                         modifier = Modifier.size(70.dp)
                     )
                 }
             },
             title = {
                 title?.let {
-                    Text(it)
+                    Text(it, color = Primary)
                 }
             },
             text = {
@@ -68,7 +70,7 @@ fun AlertInfoDialog(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    SampleButton(onClick = {
+                    DefaultButton(onClick = {
                         openDialog.value = false
                         closing?.finish()
                     }, text = textButton)
@@ -90,7 +92,7 @@ fun AlertInfoDialog(
         }, Constants.DELAY_DIALOG_DISMISS)
     }
 }
-
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PayDialogConfig(setShowDialog: (Boolean) -> Unit, onSend :  (Long, Long?, Boolean, String?) -> Unit) {
@@ -340,5 +342,4 @@ fun RefundDialog(lastTransactionId : String, lastTransactionVisility : Boolean,
             }
         }
     }
-}
-*/
+}*/

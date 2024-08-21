@@ -1,4 +1,4 @@
-package com.groupec.retrofitcleanarchictecturesampleapp.remote.utils
+package com.groupec.salesb.core
 
 import android.content.Context
 import android.net.ConnectivityManager
