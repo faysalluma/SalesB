@@ -30,10 +30,11 @@ fun LoginScreen(
     Row(
         modifier = modifier.fillMaxSize()
     ) {
-        SalesBImage()
+        SalesBImage(Modifier.weight(0.5f))
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .weight(0.5f)
                 .background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
