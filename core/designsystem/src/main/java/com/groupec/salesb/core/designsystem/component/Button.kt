@@ -1,6 +1,7 @@
 package com.groupec.salesb.core.designsystem.component
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -46,11 +47,15 @@ fun NextButton(onClick: ()->Unit, text : String) {
 }
 
 @Composable
-fun DefaultButton(onClick: ()->Unit, text : String) {
+fun DefaultButton(onClick: ()->Unit, text : String, enabled : Boolean = true) {
     MaterialTheme {
         Button(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(5.dp),
+            enabled = enabled,
             onClick = { onClick() },
             colors = ButtonDefaults.buttonColors(containerColor = Primary, contentColor = Color.White),
+            contentPadding = PaddingValues(vertical = 16.dp)
         ) {
             Text(text = text)
         }
@@ -64,7 +69,6 @@ fun ButtonsPreview(){
         NextButton(onClick = { /*TODO*/ }, text = "Next")
         DefaultButton(onClick = { /*TODO*/ }, text = "Validate")
     }
-
 }
 
 

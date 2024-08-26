@@ -4,4 +4,10 @@
     <string name="loading">Chargement…</string>
     <string name="title_loading">Configuration des données</string>
     <string name="desc_loading">Nous préparons vos données, cela ne prendra que quelques instants.</string>
+    <string name="enter_your_email">Entrer votre email</string>
+    <string name="label_password">Mot de passe</string>
+    <string name="enter_your_password">Entrer votre mot de passe</string>
+    <string name="btn_login">Se connecter</string>
+    <string name="forgot_password">Mot de passe oublié ?</string>
+    <string name="invalid_email">Email invalide</string>
 </resources>
