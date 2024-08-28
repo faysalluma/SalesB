@@ -59,11 +59,12 @@ fun AppTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     singleLine : Boolean = true,
-    fieldColor : Color ? = null
+    fieldColor : Color ? = null,
+    isError: Boolean = false,
     ) {
     val focusManager = LocalFocusManager.current
     var isPasswordVisible by remember { mutableStateOf(false) }
-    var isError by remember { mutableStateOf(false) } // State to track error
+    var textValue by remember { mutableStateOf("") }
 
     val passwordTrailingIcon = @Composable {
         IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
@@ -79,10 +80,36 @@ fun AppTextField(
         }
     }
 
+    val supportingText : @Composable (() -> Unit)? = if (isError) {
+        @Composable {
+            if (fieldType == FieldType.Email && textValue.isNotEmpty() && !isValidEmail(textValue)) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.invalid_email),
+                    color = MaterialTheme.colorScheme.error
+                )
+            } else {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.required_field),
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        }
+    } else {
+        null
+    }
+
+    // Validate email if the field type is Email
+    val onValueChange = { newValue: String ->
+        textValue = newValue // Get value from text field
+        onChange(newValue)
+    }
+
 
     TextField(
         value = value,
-        onValueChange = onChange,
+        onValueChange = onValueChange,
         modifier = modifier,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon ?: if (fieldType == FieldType.Password) {
@@ -124,7 +151,9 @@ fun AppTextField(
             if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
         } else {
             VisualTransformation.None
-        }
+        },
+        isError = isError,
+        supportingText = supportingText,
     )
 }
 

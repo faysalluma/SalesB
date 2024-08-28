@@ -10,4 +10,5 @@
     <string name="btn_login">Se connecter</string>
     <string name="forgot_password">Mot de passe oublié ?</string>
     <string name="invalid_email">Email invalide</string>
+    <string name="required_field">Ce champ est obligatoire.</string>
 </resources>
