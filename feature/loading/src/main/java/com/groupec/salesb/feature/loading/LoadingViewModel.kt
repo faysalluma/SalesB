@@ -36,7 +36,7 @@ class LoadingViewModel @Inject constructor(
                 // Récupérer userStore avant de continuer
                 val userStore = getUserStoreUseCase().firstOrNull() ?: UserStore()
                 if (userStore.id.isEmpty()) {
-                    _configUiState.value = ConfigUiState.Login
+                    _configUiState.value = ConfigUiState.Login(parameter.raisonsociale)
                 } else {
                     _configUiState.value = ConfigUiState.Home
                 }
@@ -47,6 +47,6 @@ class LoadingViewModel @Inject constructor(
 sealed class ConfigUiState {
     data object Loading : ConfigUiState()
     data object Configuration : ConfigUiState()
-    data object Login : ConfigUiState()
+    data class Login(val raisonSociale: String) : ConfigUiState()
     data object Home : ConfigUiState()
 }

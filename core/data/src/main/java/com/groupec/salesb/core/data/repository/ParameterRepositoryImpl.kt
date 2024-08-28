@@ -16,13 +16,13 @@ import javax.inject.Singleton
 @Singleton
 class ParameterRepositoryImpl @Inject constructor(private val apiService: ApiService, private val dataStoreManager: DataStoreManager) :
     ParameterRepository {
-    override fun saveParameters(): Flow<Result<Boolean>> = flow {
+    override fun saveParameters(): Flow<Result<String>> = flow {
         try {
             val response = apiService.getParameter()
             if (response.isSuccessful) {
                 response.body()?.parameter?.toParameter()?.let {
                     dataStoreManager.setParameterConfig(it)
-                    emit(Result.Success(true))
+                    emit(Result.Success(it.raisonsociale))
                 }
             } else {
                 emit(Result.Error(HttpException(response)))

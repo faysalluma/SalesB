@@ -1,6 +1,7 @@
 package com.groupec.feature.login
 
 import android.content.Context
+import android.util.Patterns
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,13 +33,16 @@ import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DefaultButton
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.SalesBImage
+import com.groupec.salesb.core.designsystem.component.TitleHeader
 import com.groupec.salesb.core.designsystem.icon.AppIcons.Person
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.ui.ComposableLifecycle
+import com.groupec.salesb.core.ui.LoginForm
 
 
 @Composable
 fun LoginScreen(
+    raisonSociale: String,
     navigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
@@ -52,85 +56,26 @@ fun LoginScreen(
         modifier = modifier.fillMaxSize()
     ) {
         SalesBImage(Modifier.weight(1f))
-        LoginForm(Modifier.weight(1f))
-    }
-}
-
-@Composable
-internal fun LoginForm(modifier: Modifier = Modifier) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier.fillMaxSize(),
-    ){
-        var credentials by remember { mutableStateOf(Credentials()) }
-
-        Column(
-            modifier = Modifier.padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(26.dp)
-        ) {
-            AppTextField(
-                value = credentials.email,
-                leadingIcon = {
-                    Icon(
-                        Person,
-                        contentDescription = null,
-                        tint = Primary
+        Column(Modifier.weight(1f)) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = modifier.fillMaxSize(),
+            ){
+                Column(modifier = Modifier.padding(24.dp),) {
+                    TitleHeader(
+                        title = stringResource(id = R.string.title_login, raisonSociale),
+                        detail = stringResource(id = R.string.detail_login)
                     )
-                },
-                onChange = { data -> credentials = credentials.copy(email = data) },
-                label = stringResource(id = R.string.label_email),
-                placeholder = stringResource(id = R.string.enter_your_email) ,
-                fieldType = FieldType.Email,
-                modifier = Modifier.fillMaxWidth()
-            )
-            AppTextField(
-                value = credentials.password,
-                leadingIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.key),
-                        contentDescription = null,
-                        tint = Primary
-                    )
-                },
-                onChange = { data -> credentials = credentials.copy(password = data) },
-                label = stringResource(id = R.string.label_password),
-                placeholder = stringResource(id = R.string.enter_your_password) ,
-                fieldType = FieldType.Password,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Column (modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                DefaultButton(
-                    onClick = { /*TODO*/ },
-                    text = stringResource(id = R.string.btn_login),
-                    enabled = credentials.isNotEmpty()
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                TextButton(onClick = { /*TODO*/ }) {
-                    Text(text = stringResource(id = R.string.forgot_password))
+
+                    Spacer(modifier = Modifier.padding(vertical = 22.dp))
+
+                    LoginForm(onSubmitForm = {
+
+                    })
                 }
             }
         }
-    }
-}
 
-fun checkCredentials(credentials: Credentials, context: Context): Boolean {
-    if (credentials.isNotEmpty()) {
-        return true
-    } else {
-        Toast.makeText(context, "Wrong Credentials", Toast.LENGTH_SHORT).show()
-        return false
-    }
-}
-
-
-data class Credentials(
-    var email: String = "",
-    var password: String = "",
-    var remember: Boolean = false
-) {
-    fun isNotEmpty(): Boolean {
-        return email.isNotEmpty() && password.isNotEmpty()
     }
 }
 

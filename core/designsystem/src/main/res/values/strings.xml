@@ -12,4 +12,6 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="invalid_email">Invalid email address</string>
     <string name="required_field">This field is required.</string>
+    <string name="title_login">WELCOME %s!</string>
+    <string name="detail_login">This application lets you manage your sales and inventory, please login to your account.</string>
 </resources>

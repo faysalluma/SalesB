@@ -39,6 +39,6 @@ class ConfigurationViewModel @Inject constructor(private val saveParameterUseCas
 
 sealed class ParameterUiState {
     data object Loading : ParameterUiState()
-    data class Success(val result: Boolean) : ParameterUiState()
+    data class Success(val raisonSociale: String) : ParameterUiState()
     data class Error(val message: String) : ParameterUiState()
 }

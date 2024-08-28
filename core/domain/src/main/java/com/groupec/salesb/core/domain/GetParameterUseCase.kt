@@ -1,6 +1,5 @@
 package com.groupec.salesb.core.domain
 
-import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.data.repository.ParameterRepository
 import com.groupec.salesb.core.model.data.Parameter
 import kotlinx.coroutines.flow.Flow

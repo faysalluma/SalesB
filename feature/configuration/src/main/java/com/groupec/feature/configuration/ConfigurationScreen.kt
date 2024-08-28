@@ -14,7 +14,7 @@ import com.groupec.salesb.core.designsystem.component.ErrorScreen
 
 @Composable
 fun ConfigurationScreen(
-    navigateToLogin: () -> Unit,
+    navigateToLogin: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ConfigurationViewModel = hiltViewModel(),
 ) {
@@ -27,7 +27,7 @@ fun ConfigurationScreen(
             is ParameterUiState.Loading -> AppLoadingScreenWithInformation()
             is ParameterUiState.Success -> {
                 LaunchedEffect(Unit) {
-                    navigateToLogin()
+                    navigateToLogin((parameterState as ParameterUiState.Success).raisonSociale)
                 }
             }
             is ParameterUiState.Error -> ErrorScreen((parameterState as ParameterUiState.Error).message)

@@ -13,7 +13,7 @@ import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 @Composable
 fun LoadingScreen(
     navigateToConfiguration: () -> Unit,
-    navigateToLogin: () -> Unit,
+    navigateToLogin: (String) -> Unit,
     navigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoadingViewModel = hiltViewModel(),
@@ -29,7 +29,7 @@ fun LoadingScreen(
             }
             is ConfigUiState.Login -> {
                 LaunchedEffect(Unit) {
-                    navigateToLogin()
+                    navigateToLogin((userStoreState as ConfigUiState.Login).raisonSociale)
                 }
             }
             is ConfigUiState.Home -> {

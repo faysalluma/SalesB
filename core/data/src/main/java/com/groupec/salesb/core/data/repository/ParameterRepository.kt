@@ -7,6 +7,6 @@ import com.groupec.salesb.core.model.data.Parameter
 import kotlinx.coroutines.flow.Flow
 
 interface ParameterRepository{
-    fun saveParameters() : Flow<Result<Boolean>>
+    fun saveParameters() : Flow<Result<String>>
     fun getParameters() : Flow<Parameter>
 }

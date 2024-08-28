@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.login.LoginScreen
@@ -46,8 +48,8 @@ fun AppNavHost(
                         popUpTo(NavigationItem.Loading.route){ inclusive = true }
                     }
                 },
-                navigateToLogin = {
-                    navController.navigate(NavigationItem.Login.route) {
+                navigateToLogin = { raisonSociale ->
+                    navController.navigate(NavigationItem.Login.route.plus("/${raisonSociale}")) {
                         popUpTo(NavigationItem.Loading.route){ inclusive = true }
                     }
                 },
@@ -61,16 +63,25 @@ fun AppNavHost(
 
         composable(NavigationItem.Configuration.route) {
             ConfigurationScreen(
-                navigateToLogin = {
-                    navController.navigate(NavigationItem.Login.route) {
+                navigateToLogin = { raisonSociale ->
+                    navController.navigate(NavigationItem.Login.route.plus("/${raisonSociale}")) {
                         popUpTo(NavigationItem.Configuration.route){ inclusive = true }
                     }
                 }
             )
         }
 
-        composable(NavigationItem.Login.route) {
+        composable(
+            route =  NavigationItem.Login.route.plus("/{raisonSociale}"),
+            arguments = listOf(
+                navArgument("raisonSociale") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val raisonSociale =  backStackEntry.arguments?.getString("raisonSociale")
             LoginScreen(
+                raisonSociale = raisonSociale ?: "",
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
                         popUpTo(NavigationItem.Login.route){ inclusive = true }

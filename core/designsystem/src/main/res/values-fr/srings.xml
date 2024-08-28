@@ -11,4 +11,6 @@
     <string name="forgot_password">Mot de passe oublié ?</string>
     <string name="invalid_email">Email invalide</string>
     <string name="required_field">Ce champ est obligatoire.</string>
+    <string name="title_login">BIENVENUE %s !</string>
+    <string name="detail_login">Cette application vous permet de gérer vos ventes et vos stocks, veuillez vous connecter à votre compte.</string>
 </resources>
