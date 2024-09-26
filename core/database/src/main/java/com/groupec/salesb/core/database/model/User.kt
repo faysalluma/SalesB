@@ -1,0 +1,33 @@
+package com.groupec.salesb.core.database.model
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "User")
+data class User(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    @ColumnInfo(name = "nomprenom")
+    val nomprenom: String,
+    @ColumnInfo(name = "email")
+    val email: String,
+    @ColumnInfo(name = "password")
+    val password: String,
+    @ColumnInfo(name = "adresse")
+    val adresse: String,
+    @ColumnInfo(name = "tel")
+    val tel: String,
+    @ColumnInfo(name = "privilege")
+    val privilege: String,
+    @ColumnInfo(name = "actif")
+    val actif: Boolean,
+    @ColumnInfo(name = "firstlogin")
+    val firstlogin: Boolean,
+    @ColumnInfo(name = "datecreation")
+    val datecreation: String,
+    @ColumnInfo(name = "datemodif")
+    val datemodif: String,
+    @ColumnInfo(name = "synchronised")
+    val synchronised: Boolean,
+)

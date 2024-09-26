@@ -1,4 +1,4 @@
-package com.groupec.cleanarchitecturesampleapp.core.ui
+package com.groupec.salesb.core.ui
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

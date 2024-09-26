@@ -1,0 +1,36 @@
+package com.groupec.salesb.core.data.model
+
+import com.groupec.salesb.core.currentDateString
+import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.network.model.UserItemResponse
+import com.groupec.salesb.core.network.model.UserResponse
+import com.groupec.salesb.core.database.model.User as UserEntity
+
+
+fun UserResponse.toUser(): User {
+    return user.toUser()
+}
+
+fun UserResponse.toUserEntity(): UserEntity {
+    return user.toUserEntity()
+}
+
+fun UserItemResponse.toUser(): User {
+    return User(
+        id = id, nomprenom = nomprenom, email = email, password = password, adresse = adresse,
+        tel = tel, privilege = privilege, actif = (actif == 1), firstlogin = (firstlogin == 1)
+    )
+}
+
+fun UserItemResponse.toUserEntity() = UserEntity(
+    id = id, nomprenom = nomprenom, email = email, password = password, adresse = adresse,
+    tel = tel, privilege = privilege, actif = (actif == 1), firstlogin = (firstlogin == 1),
+    datecreation = currentDateString(), datemodif = currentDateString(), synchronised = true
+)
+
+fun UserEntity.toUser() = User(
+    id = id, nomprenom = nomprenom, email = email, password = password, adresse = adresse,
+    tel = tel, privilege = privilege, actif = actif, firstlogin = firstlogin,
+    datecreation = datecreation, datemodif = datemodif, synchronised = synchronised)
+
+

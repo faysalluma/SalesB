@@ -6,5 +6,6 @@ class Constants {
 
         // Get endpoint
         const val GET_PARAMETER = "parameter"
+        const val GET_DEFAULT_USER = "defaultUser"
     }
 }

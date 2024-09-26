@@ -5,6 +5,7 @@ import com.groupec.salesb.core.data.repository.ParameterRepository
 import com.groupec.salesb.core.data.repository.ParameterRepositoryImpl
 import com.groupec.salesb.core.data.repository.UserRepository
 import com.groupec.salesb.core.data.repository.UserRepositoryImpl
+import com.groupec.salesb.core.database.room.dao.UserDao
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.network.retrofit.ApiService
 import dagger.Module
@@ -29,8 +30,9 @@ class RepositoryModule  {
     @Singleton
     fun providerUserRepository(
         apiService: ApiService,
+        userDao: UserDao,
         dataStoreManager: DataStoreManager
     ) : UserRepository {
-        return UserRepositoryImpl(apiService, dataStoreManager)
+        return UserRepositoryImpl(apiService, userDao, dataStoreManager)
     }
 }

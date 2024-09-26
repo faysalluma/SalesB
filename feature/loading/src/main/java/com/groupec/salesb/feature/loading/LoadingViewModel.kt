@@ -8,15 +8,13 @@ import com.groupec.salesb.core.domain.GetUserStoreUseCase
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.UserStore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
+
 @HiltViewModel
 class LoadingViewModel @Inject constructor(
     private val getParameterUseCase: GetParameterUseCase,
@@ -26,7 +24,7 @@ class LoadingViewModel @Inject constructor(
     private val _configUiState = MutableStateFlow<ConfigUiState>(ConfigUiState.Loading)
     val configUiState: StateFlow<ConfigUiState> = _configUiState
 
-    init {
+    fun loadScreen() {
         viewModelScope.launch {
             val parameter = getParameterUseCase().firstOrNull() ?: Parameter()
             if (parameter.raisonsociale.isEmpty()) {
@@ -44,6 +42,7 @@ class LoadingViewModel @Inject constructor(
         }
     }
 }
+
 sealed class ConfigUiState {
     data object Loading : ConfigUiState()
     data object Configuration : ConfigUiState()

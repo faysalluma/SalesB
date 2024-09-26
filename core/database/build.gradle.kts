@@ -12,6 +12,11 @@ dependencies {
     // Modules calls
     implementation(project(":core:model"))
 
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
+
     // Test
     implementation(project(":core:testing"))
 }

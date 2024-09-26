@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
+import com.groupec.salesb.core.ui.ComposableLifecycle
 
 
 @Composable
@@ -18,6 +19,10 @@ fun LoadingScreen(
     modifier: Modifier = Modifier,
     viewModel: LoadingViewModel = hiltViewModel(),
 ) {
+    ComposableLifecycle(
+        onCreate = { viewModel.loadScreen() },
+    )
+
     val userStoreState by viewModel.configUiState.collectAsState()
     Box {
         when (userStoreState) {
