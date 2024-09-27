@@ -1,16 +1,11 @@
 package com.groupec.salesb.core.ui
 
-import android.content.Context
 import android.util.Patterns
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,6 +24,7 @@ import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DefaultButton
 import com.groupec.salesb.core.designsystem.component.FieldType
+import com.groupec.salesb.core.designsystem.component.KeyboardAction
 import com.groupec.salesb.core.designsystem.icon.AppIcons.Person
 import com.groupec.salesb.core.designsystem.theme.Primary
 
@@ -38,6 +34,15 @@ fun LoginForm(onSubmitForm: () -> Unit) {
     var credentials by remember { mutableStateOf(Credentials()) }
     var isEmailError by remember { mutableStateOf(false) }
     var isPasswordError by remember { mutableStateOf(false) }
+
+    val submitAction = {
+        isEmailError = credentials.email.isEmpty() || !isValidEmail(credentials.email)
+        isPasswordError = credentials.password.isEmpty()
+        if (!isEmailError && !isPasswordError) {
+            // Submit the form
+            onSubmitForm()
+        }
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,7 +62,7 @@ fun LoginForm(onSubmitForm: () -> Unit) {
                 if (isEmailError) isEmailError = false //  Clear error when user starts typing
             },
             label = stringResource(id = R.string.label_email),
-            placeholder = stringResource(id = R.string.enter_your_email) ,
+            placeholder = stringResource(id = R.string.enter_your_email),
             fieldType = FieldType.Email,
             isError = isEmailError,
             modifier = Modifier.fillMaxWidth()
@@ -76,23 +81,20 @@ fun LoginForm(onSubmitForm: () -> Unit) {
                 if (isPasswordError) isPasswordError = false //  Clear error when user starts typing
             },
             label = stringResource(id = R.string.label_password),
-            placeholder = stringResource(id = R.string.enter_your_password) ,
+            placeholder = stringResource(id = R.string.enter_your_password),
             fieldType = FieldType.Password,
             isError = isPasswordError,
+            keyboardAction = KeyboardAction.Done,
+            submitAction = submitAction,
             modifier = Modifier.fillMaxWidth()
         )
-        Column (modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             DefaultButton(
-                onClick = {
-                    isEmailError = credentials.email.isEmpty() || !isValidEmail(credentials.email)
-                    isPasswordError = credentials.password.isEmpty()
-                    if (!isEmailError && !isPasswordError) {
-                        // Submit the form
-                        onSubmitForm()
-                    }
-                },
-                text = stringResource(id = R.string.btn_login),
-                // enabled = credentials.isNotEmpty()
+                onClick = submitAction,
+                text = stringResource(id = R.string.btn_login)
             )
             Spacer(modifier = Modifier.height(16.dp))
             TextButton(onClick = { /*TODO*/ }) {

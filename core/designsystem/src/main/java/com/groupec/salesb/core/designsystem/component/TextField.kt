@@ -6,15 +6,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -25,26 +21,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.theme.Primary
 
+
 enum class FieldType {
     Text,
     Number,
     Email,
     Password
+}
+
+enum class KeyboardAction {
+    Next,
+    Done
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,10 +57,12 @@ fun AppTextField(
     fieldType: FieldType,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    singleLine : Boolean = true,
-    fieldColor : Color ? = null,
+    singleLine: Boolean = true,
+    fieldColor: Color? = null,
     isError: Boolean = false,
-    ) {
+    keyboardAction: KeyboardAction = KeyboardAction.Next,
+    submitAction: (() -> Unit)? = null
+) {
     val focusManager = LocalFocusManager.current
     var isPasswordVisible by remember { mutableStateOf(false) }
     var textValue by remember { mutableStateOf("") }
@@ -69,7 +70,7 @@ fun AppTextField(
     val passwordTrailingIcon = @Composable {
         IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
             Icon(
-                painter =  if (isPasswordVisible) {
+                painter = if (isPasswordVisible) {
                     painterResource(id = R.drawable.visibility_off)
                 } else {
                     painterResource(id = R.drawable.visibility)
@@ -80,7 +81,7 @@ fun AppTextField(
         }
     }
 
-    val supportingText : @Composable (() -> Unit)? = if (isError) {
+    val supportingText: @Composable (() -> Unit)? = if (isError) {
         @Composable {
             if (fieldType == FieldType.Email && textValue.isNotEmpty() && !isValidEmail(textValue)) {
                 Text(
@@ -106,19 +107,22 @@ fun AppTextField(
         onChange(newValue)
     }
 
-
     TextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon ?: if (fieldType == FieldType.Password) {
-                passwordTrailingIcon
-            } else {
-                null
-            },
+            passwordTrailingIcon
+        } else {
+            null
+        },
         keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Next,
+            imeAction = if (keyboardAction == KeyboardAction.Next) {
+                ImeAction.Next
+            } else {
+                ImeAction.Done
+            },
             keyboardType = when (fieldType) {
                 FieldType.Text -> KeyboardType.Text
                 FieldType.Number -> KeyboardType.Number
@@ -127,19 +131,23 @@ fun AppTextField(
             }
         ),
         keyboardActions = KeyboardActions(
-            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            onNext = {
+                if (keyboardAction == KeyboardAction.Next) {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }
+            },
+            onDone = {
+                if (keyboardAction == KeyboardAction.Done) {
+                    if (submitAction != null) {
+                        submitAction()
+                    }
+                }
+            }
         ),
-        /*keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Done,
-            keyboardType = KeyboardType.Password
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = { submitAction() }
-        ),*/
         placeholder = { Text(placeholder) },
         label = { Text(label) },
         singleLine = singleLine,
-        colors = if (fieldColor != null){
+        colors = if (fieldColor != null) {
             ExposedDropdownMenuDefaults.textFieldColors(
                 focusedContainerColor = fieldColor,
                 unfocusedContainerColor = fieldColor
@@ -163,12 +171,12 @@ fun isValidEmail(email: String): Boolean {
 
 @Preview
 @Composable
-fun TextFieldPreview(){
+fun TextFieldPreview() {
     Column {
         AppTextField(
-            onChange = {} ,
+            onChange = {},
             label = stringResource(id = R.string.label_email),
-            placeholder = stringResource(id = R.string.enter_your_email) ,
+            placeholder = stringResource(id = R.string.enter_your_email),
             fieldType = FieldType.Email,
             modifier = Modifier.padding(16.dp)
         )
