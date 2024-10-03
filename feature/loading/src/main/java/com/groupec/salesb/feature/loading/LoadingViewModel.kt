@@ -3,8 +3,8 @@ package com.groupec.salesb.feature.loading
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.groupec.salesb.core.domain.GetParameterUseCase
-import com.groupec.salesb.core.domain.GetUserStoreUseCase
+import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
+import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.UserStore
 import dagger.hilt.android.lifecycle.HiltViewModel

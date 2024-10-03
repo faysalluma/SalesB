@@ -24,6 +24,7 @@ fun NavController.currentDestinationClassName(): String? {
         NavigationItem.Loading.route -> featurePackage.plus(".LoadingScreen")
         NavigationItem.Configuration.route -> featurePackage.plus(".ConfigurationScreen")
         NavigationItem.Login.route -> featurePackage.plus(".LoginScreen")
+        NavigationItem.ChangePassword.route -> featurePackage.plus(".ChangePasswordScreen")
         NavigationItem.Home.route -> featurePackage.plus(".HomeScreen")
         else -> null
     }

@@ -4,7 +4,6 @@ package com.groupec.salesb.core.data.repository
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.data.model.toUser
 import com.groupec.salesb.core.data.model.toUserEntity
-import com.groupec.salesb.core.database.model.User as UserEntity
 import com.groupec.salesb.core.database.room.dao.UserDao
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.model.data.User
@@ -14,9 +13,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import org.mindrot.jbcrypt.BCrypt
 import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.groupec.salesb.core.database.model.User as UserEntity
 
 @Singleton
 class UserRepositoryImpl @Inject constructor(
@@ -48,14 +49,20 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getDefaultUser(): Flow<Result<User>> = flow {
-        emit(Result.Loading)
-        try {
-            userDao.getDefaultUser().collect { userEntity ->
-                emit(Result.Success(userEntity.toUser()))
+    override suspend fun checkLogin(email: String, password: String): Result<User> {
+        return try {
+            val userEntity= userDao.getUserByEmail(email)
+            if (userEntity == null) {
+                Result.Error(Exception("User not found"))
+            } else {
+                if (BCrypt.checkpw(password, userEntity.password)) {
+                    Result.Success(userEntity.toUser())
+                } else {
+                    Result.Error(Exception("Invalid password"))
+                }
             }
         } catch (e: Exception) {
-            emit(Result.Error(e))
+            Result.Error(e)
         }
     }
 

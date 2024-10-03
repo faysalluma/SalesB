@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,11 +26,12 @@ import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DefaultButton
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.KeyboardAction
+import com.groupec.salesb.core.designsystem.component.isValidEmail
 import com.groupec.salesb.core.designsystem.icon.AppIcons.Person
 import com.groupec.salesb.core.designsystem.theme.Primary
 
 @Composable
-fun LoginForm(onSubmitForm: () -> Unit) {
+fun LoginForm(onSubmitForm: (credentials: Credentials) -> Unit) {
 
     var credentials by remember { mutableStateOf(Credentials()) }
     var isEmailError by remember { mutableStateOf(false) }
@@ -40,7 +42,7 @@ fun LoginForm(onSubmitForm: () -> Unit) {
         isPasswordError = credentials.password.isEmpty()
         if (!isEmailError && !isPasswordError) {
             // Submit the form
-            onSubmitForm()
+            onSubmitForm(credentials)
         }
     }
 
@@ -65,6 +67,17 @@ fun LoginForm(onSubmitForm: () -> Unit) {
             placeholder = stringResource(id = R.string.enter_your_email),
             fieldType = FieldType.Email,
             isError = isEmailError,
+            supportingText = if (credentials.email.isNotEmpty() && !isValidEmail(credentials.email)) {
+                {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.invalid_email),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            } else {
+                null
+            },
             modifier = Modifier.fillMaxWidth()
         )
         AppTextField(
@@ -102,10 +115,6 @@ fun LoginForm(onSubmitForm: () -> Unit) {
             }
         }
     }
-}
-
-fun isValidEmail(email: String): Boolean {
-    return Patterns.EMAIL_ADDRESS.matcher(email).matches()
 }
 
 data class Credentials(

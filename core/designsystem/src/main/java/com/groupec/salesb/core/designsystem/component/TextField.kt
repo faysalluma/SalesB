@@ -60,6 +60,7 @@ fun AppTextField(
     singleLine: Boolean = true,
     fieldColor: Color? = null,
     isError: Boolean = false,
+    supportingText: @Composable (() -> Unit)? = null,
     keyboardAction: KeyboardAction = KeyboardAction.Next,
     submitAction: (() -> Unit)? = null
 ) {
@@ -81,25 +82,20 @@ fun AppTextField(
         }
     }
 
-    val supportingText: @Composable (() -> Unit)? = if (isError) {
-        @Composable {
-            if (fieldType == FieldType.Email && textValue.isNotEmpty() && !isValidEmail(textValue)) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(R.string.invalid_email),
-                    color = MaterialTheme.colorScheme.error
-                )
-            } else {
+
+    val supportingTextValue: (@Composable () -> Unit)? = when {
+        isError -> supportingText ?: if (textValue.isEmpty()) {
+            {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.required_field),
                     color = MaterialTheme.colorScheme.error
                 )
             }
-        }
-    } else {
-        null
+        } else null
+        else -> null
     }
+
 
     // Validate email if the field type is Email
     val onValueChange = { newValue: String ->
@@ -161,7 +157,7 @@ fun AppTextField(
             VisualTransformation.None
         },
         isError = isError,
-        supportingText = supportingText,
+        supportingText = supportingTextValue,
     )
 }
 

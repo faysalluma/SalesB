@@ -3,8 +3,8 @@ package com.groupec.feature.configuration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.domain.SaveUserDefaultUseCase
-import com.groupec.salesb.core.domain.SaveParameterUseCase
+import com.groupec.salesb.core.domain.user.SaveUserDefaultUseCase
+import com.groupec.salesb.core.domain.parameter.SaveParameterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConfigurationViewModel @Inject constructor(private val saveParameterUseCase: SaveParameterUseCase,
-    private val saveUserDefaultUseCase: SaveUserDefaultUseCase) : ViewModel() {
+                                                 private val saveUserDefaultUseCase: SaveUserDefaultUseCase
+) : ViewModel() {
 
     private val _parameterUiState = MutableStateFlow<ParameterUiState>(ParameterUiState.Loading)
     val parameterUiState: StateFlow<ParameterUiState> = _parameterUiState
@@ -48,6 +49,7 @@ class ConfigurationViewModel @Inject constructor(private val saveParameterUseCas
                     }
                 }
             }
+
             // Collecter le second flow si le premier est collecté
             resultFlow.collect { user ->
                 _parameterUiState.value = when (user) {

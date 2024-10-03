@@ -24,12 +24,14 @@ kotlinxCoroutines = "1.6.4"
 androidxLifecycle = "2.7.0"
 room = "2.6.1"
 androidxDataStore = "1.0.0"
+bcrypt ="0.4"
 flipper = "0.183.0"
 soloader = "0.10.5"
 kotlinCompilerExtension = "1.5.1"
 compileSdk = "34"
 versionName = "1.1.0" # X.Y.Z; X = Major, Y = minor, Z = Patch level
 minSdk = "24"
+material = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -79,6 +81,7 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-dataStore-core = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
 androidx-dataStore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDataStore" }
+jbcrypt = { group = "org.mindrot", name = "jbcrypt", version.ref = "bcrypt" }
 facebook-flipper = { group = "com.facebook.flipper", name = "flipper", version.ref = "flipper" }
 facebook-soloader = { group = "com.facebook.soloader", name = "soloader", version.ref = "soloader" }
 facebook-flipper-noop = { group = "com.facebook.flipper", name = "flipper-noop", version.ref = "flipper" }
@@ -87,6 +90,7 @@ facebook-flipper-network = { group = "com.facebook.flipper", name = "flipper-net
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

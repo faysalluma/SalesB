@@ -1,4 +1,4 @@
-package com.groupec.salesb.core.domain
+package com.groupec.salesb.core.domain.user
 
 import com.groupec.salesb.core.data.repository.UserRepository
 import com.groupec.salesb.core.model.data.UserStore

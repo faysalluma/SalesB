@@ -7,6 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserRepository{
     fun saveDefaultUser() : Flow<Result<Unit>>
-    fun getDefaultUser() : Flow<Result<User>>
+    suspend fun checkLogin(email: String, password: String) : Result<User>
     fun getUserStore() : Flow<UserStore>
 }

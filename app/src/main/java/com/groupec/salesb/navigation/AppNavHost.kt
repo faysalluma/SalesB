@@ -13,6 +13,7 @@ import androidx.navigation.navArgument
 import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.login.LoginScreen
+import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
 import com.groupec.salesb.utils.FlipperNavigationLogger
@@ -24,7 +25,7 @@ fun AppNavHost(
     navController: NavHostController,
     startDestination: String = NavigationItem.Loading.route
 ) {
-    LaunchedEffect (Unit) {
+    LaunchedEffect(Unit) {
         val flipperPlugin = NavigationFlipperPlugin.getInstance()
         val flipperLogger = FlipperNavigationLogger(flipperPlugin)
         navController.addOnDestinationChangedListener(flipperLogger)
@@ -45,17 +46,17 @@ fun AppNavHost(
             LoadingScreen(
                 navigateToConfiguration = {
                     navController.navigate(NavigationItem.Configuration.route) {
-                        popUpTo(NavigationItem.Loading.route){ inclusive = true }
+                        popUpTo(NavigationItem.Loading.route) { inclusive = true }
                     }
                 },
                 navigateToLogin = { raisonSociale ->
                     navController.navigate(NavigationItem.Login.route.plus("/${raisonSociale}")) {
-                        popUpTo(NavigationItem.Loading.route){ inclusive = true }
+                        popUpTo(NavigationItem.Loading.route) { inclusive = true }
                     }
                 },
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
-                        popUpTo(NavigationItem.Loading.route){ inclusive = true }
+                        popUpTo(NavigationItem.Loading.route) { inclusive = true }
                     }
                 }
             )
@@ -65,26 +66,53 @@ fun AppNavHost(
             ConfigurationScreen(
                 navigateToLogin = { raisonSociale ->
                     navController.navigate(NavigationItem.Login.route.plus("/${raisonSociale}")) {
-                        popUpTo(NavigationItem.Configuration.route){ inclusive = true }
+                        popUpTo(NavigationItem.Configuration.route) { inclusive = true }
                     }
                 }
             )
         }
 
         composable(
-            route =  NavigationItem.Login.route.plus("/{raisonSociale}"),
+            route = NavigationItem.Login.route.plus("/{raisonSociale}"),
             arguments = listOf(
                 navArgument("raisonSociale") {
                     type = NavType.StringType
                 }
             )
         ) { backStackEntry ->
-            val raisonSociale =  backStackEntry.arguments?.getString("raisonSociale")
+            val raisonSociale = backStackEntry.arguments?.getString("raisonSociale") ?: ""
             LoginScreen(
-                raisonSociale = raisonSociale ?: "",
+                raisonSociale = raisonSociale,
+                navigateToChangePassword = { userId, firstLogin ->
+                    navController.navigate(NavigationItem.ChangePassword.route.plus("/${userId}/${firstLogin}"))
+                },
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
-                        popUpTo(NavigationItem.Login.route){ inclusive = true }
+                        popUpTo(NavigationItem.Login.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = NavigationItem.ChangePassword.route.plus("/{userId}/{firstLogin}"),
+            arguments = listOf(
+                navArgument("userId") {
+                    type = NavType.IntType
+                },
+                navArgument("firstLogin") {
+                    type = NavType.BoolType
+                }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            val firstLogin = backStackEntry.arguments?.getBoolean("firstLogin") ?: false
+            ChangePasswordScreen(
+                userId = userId,
+                firstLogin = firstLogin,
+                navigateToHome = {
+                    navController.navigate(NavigationItem.Home.route) {
+                        popUpTo(NavigationItem.ChangePassword.route) { inclusive = true }
                     }
                 }
             )

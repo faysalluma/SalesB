@@ -9,13 +9,16 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
-    @Query(
+    /*@Query(
         """
         SELECT * FROM user
         LIMIT 1 
         """
     )
-    fun getDefaultUser(): Flow<User>
+    fun getDefaultUser(): Flow<User>*/
+
+    @Query("SELECT * FROM User WHERE email = :email")
+    suspend fun getUserByEmail(email: String): User?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdate(user: User)

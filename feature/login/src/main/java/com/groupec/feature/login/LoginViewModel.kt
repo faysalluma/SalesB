@@ -2,47 +2,49 @@ package com.groupec.feature.login
 
 
 import androidx.lifecycle.ViewModel
-import com.groupec.salesb.core.model.data.Parameter
+import androidx.lifecycle.viewModelScope
+import com.groupec.salesb.core.domain.user.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.ui.Credentials
+import kotlinx.coroutines.flow.asStateFlow
+import okhttp3.internal.EMPTY_RESPONSE
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase
+) : ViewModel() {
 
-    private val _orderUiState = MutableStateFlow<OrderUiState>(OrderUiState.Loading)
-    val orderUiState: StateFlow<OrderUiState> = _orderUiState
+    private val _loginUiState = MutableStateFlow<LoginUiState>(LoginUiState.Loading)
+    val loginUiState: StateFlow<LoginUiState> = _loginUiState.asStateFlow()
 
-   /* init {
-        getOrders()
-    }
-    fun getOrders() {
+    fun login(credentials: Credentials) {
         viewModelScope.launch {
-            getOrderUseCase()
-                .asResult()
-                .collect { result ->
-                    _orderUiState.value = when (result) {
-                        is Result.Loading-> OrderUiState.Loading
-                        is Result.Success -> {
-                            if (result.data.isEmpty()){
-                                OrderUiState.Empty
-                            } else {
-                                OrderUiState.Success(result.data)
-                            }
-                        }
-                        is Result.Error -> OrderUiState.Error(
-                            result.exception.message ?: "Retrofit Unknown error"
-                        )
-                    }
-                }
+            // Set loading state immediately
+            resetFlow()
+
+            // Perform login
+            when (val result = loginUseCase(credentials.email, credentials.password)) {
+                is Result.Loading -> LoginUiState.Loading
+                is Result.Success -> _loginUiState.value = LoginUiState.Success(result.data)
+                is Result.Error -> _loginUiState.value =
+                    LoginUiState.Error(result.exception.message ?: "Failed to check user")
+            }
         }
-    }*/
+    }
+
+    fun resetFlow() {
+        _loginUiState.value = LoginUiState.Loading
+    }
 }
 
-sealed class OrderUiState {
-    data object Loading : OrderUiState()
-    data class Success(val orders: List<Parameter>) : OrderUiState()
-    data class Error(val message: String) : OrderUiState()
-    data object Empty : OrderUiState()
+sealed class LoginUiState {
+    data object Loading : LoginUiState()
+    data class Success(val user: User) : LoginUiState()
+    data class Error(val message: String) : LoginUiState()
 }

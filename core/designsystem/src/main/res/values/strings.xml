@@ -8,10 +8,18 @@
     <string name="enter_your_email">Enter your email</string>
     <string name="label_password">Password</string>
     <string name="enter_your_password">Enter your password</string>
+    <string name="label_anc_password">Old Password</string>
+    <string name="enter_your_anc_password">Enter your old password</string>
+    <string name="label_new_password">New Password</string>
+    <string name="enter_your_new_password">Enter your new password</string>
+    <string name="label_confirmation">Confirmation</string>
+    <string name="enter_your_confirmation">Confirm your password</string>
     <string name="btn_login">Login</string>
+    <string name="btn_change_password">Change Password</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="invalid_email">Invalid email address</string>
     <string name="required_field">This field is required.</string>
     <string name="title_login">WELCOME %s!</string>
     <string name="detail_login">This application lets you manage your sales and inventory, please login to your account.</string>
+    <string name="title_first_connexion">First login: please change your password</string>
 </resources>

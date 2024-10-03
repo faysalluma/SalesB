@@ -1,4 +1,4 @@
-package com.groupec.salesb.core.domain
+package com.groupec.salesb.core.domain.parameter
 
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.data.repository.ParameterRepository

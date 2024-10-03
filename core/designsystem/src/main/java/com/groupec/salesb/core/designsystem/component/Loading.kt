@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.designsystem.R
 
 @Composable
-fun AppLoadingScreen() {
+fun AppLoadingScreen(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator()
