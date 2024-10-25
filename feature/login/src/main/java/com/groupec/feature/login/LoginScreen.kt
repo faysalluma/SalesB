@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,6 +40,7 @@ fun LoginScreen(
     ) {
     val context = LocalContext.current
     val loginState by viewModel.loginUiState.collectAsState()
+    val isLoading  = loginState is LoginUiState.Loading // Get the loading state to show circular progress in button
 
     ComposableLifecycle(
         onStop = {
@@ -73,6 +77,7 @@ fun LoginScreen(
                                     (loginState as LoginUiState.Error).message,
                                     Toast.LENGTH_LONG
                                 ).show()
+                                viewModel.resetFlow()
                             }
                         }
 
@@ -86,9 +91,12 @@ fun LoginScreen(
 
                     Spacer(modifier = Modifier.padding(vertical = 22.dp))
 
-                    LoginForm(onSubmitForm = { credentials ->
-                        viewModel.login(credentials)
-                    })
+                    LoginForm(
+                        onSubmitForm = { credentials ->
+                            viewModel.login(credentials)
+                        },
+                        isLoading = isLoading
+                    )
                 }
             }
         }

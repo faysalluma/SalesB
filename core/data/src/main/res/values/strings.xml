@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_user_not_found">Sorry, this user is not found</string>
+    <string name="error_invalid_password">The password provided is not valid.</string>
+    <string name="error_insupported_mode">Mode is not supported</string>
+    <string name="error_empty_response" translatable="false">Empty response body</string>
+</resources>

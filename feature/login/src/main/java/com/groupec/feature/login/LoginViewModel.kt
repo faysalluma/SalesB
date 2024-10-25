@@ -12,6 +12,9 @@ import javax.inject.Inject
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.ui.Credentials
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.internal.EMPTY_RESPONSE
 
@@ -20,30 +23,28 @@ class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase
 ) : ViewModel() {
 
-    private val _loginUiState = MutableStateFlow<LoginUiState>(LoginUiState.Loading)
+    private val _loginUiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val loginUiState: StateFlow<LoginUiState> = _loginUiState.asStateFlow()
 
     fun login(credentials: Credentials) {
+        _loginUiState.value = LoginUiState.Loading
         viewModelScope.launch {
-            // Set loading state immediately
-            resetFlow()
-
-            // Perform login
             when (val result = loginUseCase(credentials.email, credentials.password)) {
-                is Result.Loading -> LoginUiState.Loading
                 is Result.Success -> _loginUiState.value = LoginUiState.Success(result.data)
                 is Result.Error -> _loginUiState.value =
                     LoginUiState.Error(result.exception.message ?: "Failed to check user")
+                else -> {}
             }
         }
     }
 
     fun resetFlow() {
-        _loginUiState.value = LoginUiState.Loading
+        _loginUiState.value = LoginUiState.Idle
     }
 }
 
 sealed class LoginUiState {
+    data object Idle : LoginUiState()
     data object Loading : LoginUiState()
     data class Success(val user: User) : LoginUiState()
     data class Error(val message: String) : LoginUiState()

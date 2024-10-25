@@ -75,4 +75,5 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             datastore[USER_NAME_KEY] = user.nomprenom
         }
     }
+
 }

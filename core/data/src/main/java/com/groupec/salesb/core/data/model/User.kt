@@ -25,7 +25,7 @@ fun UserItemResponse.toUser(): User {
 fun UserItemResponse.toUserEntity() = UserEntity(
     id = id, nomprenom = nomprenom, email = email, password = password, adresse = adresse,
     tel = tel, privilege = privilege, actif = (actif == 1), firstlogin = (firstlogin == 1),
-    datecreation = currentDateString(), datemodif = currentDateString(), synchronised = true
+    datecreation = currentDateString(), datemodif = currentDateString(), synchronised = false
 )
 
 fun UserEntity.toUser() = User(

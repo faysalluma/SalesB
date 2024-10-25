@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.theme.Primary
+import com.groupec.salesb.core.designsystem.theme.White
 
 
 @Composable
@@ -47,7 +48,7 @@ fun NextButton(onClick: ()->Unit, text : String) {
 }
 
 @Composable
-fun DefaultButton(onClick: ()->Unit, text : String, enabled : Boolean = true) {
+fun DefaultButton(onClick: ()->Unit, text : String, enabled : Boolean = true, isLoading : Boolean = false) {
     MaterialTheme {
         Button(
             modifier = Modifier.fillMaxWidth(),
@@ -57,7 +58,11 @@ fun DefaultButton(onClick: ()->Unit, text : String, enabled : Boolean = true) {
             colors = ButtonDefaults.buttonColors(containerColor = Primary, contentColor = Color.White),
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            Text(text = text)
+            if (isLoading)  {
+                AppLoadingScreen(Modifier.wrapContentSize(), color = White)
+            } else {
+                Text(text = text)
+            }
         }
     }
 }

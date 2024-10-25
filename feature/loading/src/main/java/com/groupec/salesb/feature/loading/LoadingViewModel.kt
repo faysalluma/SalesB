@@ -9,8 +9,10 @@ import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.UserStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +28,11 @@ class LoadingViewModel @Inject constructor(
 
     fun loadScreen() {
         viewModelScope.launch {
+            getParameterUseCase().stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = 0,
+            )
             val parameter = getParameterUseCase().firstOrNull() ?: Parameter()
             if (parameter.raisonsociale.isEmpty()) {
                 // Mettre à jour _userUiState

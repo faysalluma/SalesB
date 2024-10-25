@@ -1,6 +1,5 @@
 package com.groupec.salesb.core.ui
 
-import android.util.Patterns
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,7 +30,7 @@ import com.groupec.salesb.core.designsystem.icon.AppIcons.Person
 import com.groupec.salesb.core.designsystem.theme.Primary
 
 @Composable
-fun LoginForm(onSubmitForm: (credentials: Credentials) -> Unit) {
+fun LoginForm(onSubmitForm: (credentials: Credentials) -> Unit, isLoading: Boolean = false) {
 
     var credentials by remember { mutableStateOf(Credentials()) }
     var isEmailError by remember { mutableStateOf(false) }
@@ -107,7 +106,8 @@ fun LoginForm(onSubmitForm: (credentials: Credentials) -> Unit) {
         ) {
             DefaultButton(
                 onClick = submitAction,
-                text = stringResource(id = R.string.btn_login)
+                text = stringResource(id = R.string.btn_login),
+                isLoading = isLoading
             )
             Spacer(modifier = Modifier.height(16.dp))
             TextButton(onClick = { /*TODO*/ }) {
