@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -24,15 +25,10 @@ class LoadingViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _configUiState = MutableStateFlow<ConfigUiState>(ConfigUiState.Loading)
-    val configUiState: StateFlow<ConfigUiState> = _configUiState
+    val configUiState: StateFlow<ConfigUiState> = _configUiState.asStateFlow()
 
     fun loadScreen() {
         viewModelScope.launch {
-            getParameterUseCase().stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = 0,
-            )
             val parameter = getParameterUseCase().firstOrNull() ?: Parameter()
             if (parameter.raisonsociale.isEmpty()) {
                 // Mettre à jour _userUiState

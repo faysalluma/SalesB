@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.groupec.salesb.core.database.model.User
 import kotlinx.coroutines.flow.Flow
 
@@ -22,4 +23,13 @@ interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdate(user: User)
+
+    @Query("SELECT * FROM User WHERE id = :userId")
+    suspend fun getUserById(userId: Int): User
+
+    @Update
+    suspend fun changePassword(user: User) : Int
+
+    @Query("UPDATE User SET synchronised = false WHERE id = :id")
+    suspend fun markUserForLaterSync(id: Int): Int
 }

@@ -4,6 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import retrofit2.Response
+import com.groupec.salesb.core.Result
 
 suspend fun <T, R> safeApiCall(apiCall: suspend () -> Response<T>, transform: (T) -> R): R {
     return withContext(Dispatchers.IO) {
@@ -15,5 +16,18 @@ suspend fun <T, R> safeApiCall(apiCall: suspend () -> Response<T>, transform: (T
         } else {
             throw HttpException(response)
         }
+    }
+}
+
+suspend fun <T> executeApiCall(apiCall: suspend () -> Response<T>, errorMessage: String? = null): Result<T> {
+    return try {
+        val response = apiCall()
+        if (response.isSuccessful) {
+            Result.Success(response.body()!!)
+        } else {
+            Result.Error(errorMessage?.let { Exception(it)} ?: HttpException(response))
+        }
+    } catch (e: Exception) {
+        Result.Error(e)
     }
 }

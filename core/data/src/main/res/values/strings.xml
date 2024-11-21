@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_user_not_found">Sorry, this user is not found</string>
+    <string name="error_user_not_active">This user is disabled, please contact the administrator.</string>
     <string name="error_invalid_password">The password provided is not valid.</string>
-    <string name="error_insupported_mode">Mode is not supported</string>
     <string name="error_empty_response" translatable="false">Empty response body</string>
+    <string name="error_bad_anc_password">The old password is incorrect. Please try again.</string>
+    <string name="error_updating_data" translatable="false">Error when updating data</string>
 </resources>

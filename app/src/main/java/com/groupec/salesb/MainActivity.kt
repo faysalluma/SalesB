@@ -9,7 +9,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,7 +16,6 @@ import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 import com.groupec.salesb.ui.MainScreen
 import com.groupec.salesb.core.ConnectivityManagerUtils
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
-import com.groupec.salesb.core.designsystem.theme.Red
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

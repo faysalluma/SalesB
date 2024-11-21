@@ -11,5 +11,5 @@ fun ParameterResponse.toParameter(): Parameter {
 
 fun ParamItemResponse.toParameter(): Parameter {
     return Parameter(devise = devise, raisonsociale = raisonsociale, typeentreprise = typeentreprise,
-        mode = mode, primarycolor = primarycolor, secondarycolor = secondarycolor, loadproducts = (loadproducts == 1))
+        offline = (offline == 1), primarycolor = primarycolor, secondarycolor = secondarycolor, loadproducts = (loadproducts == 1))
 }

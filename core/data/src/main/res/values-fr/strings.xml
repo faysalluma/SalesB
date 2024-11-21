@@ -2,5 +2,6 @@
 <resources>
     <string name="error_user_not_found">Aucun utilisateur trouvé, veuillez réessayer.</string>
     <string name="error_invalid_password">Le mot de passe que vous avez saisi est incorrect.</string>
-    <string name="error_insupported_mode">Le mode n\'est pas supporté</string>
+    <string name="error_bad_anc_password">L\'ancien mot de passe est incorrect. Veuillez réessayer.</string>
+    <string name="error_user_not_active">Cet utilisateur est désactivé, veuillez contacter l\'administrateur.</string>
 </resources>

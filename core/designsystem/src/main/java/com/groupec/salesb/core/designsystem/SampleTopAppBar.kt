@@ -21,6 +21,7 @@ import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 import com.groupec.salesb.core.designsystem.theme.Green
+import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,12 +35,12 @@ fun SampleTopAppBar(
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Green,
+            containerColor = Primary,
             titleContentColor = White,
             navigationIconContentColor = White,
             actionIconContentColor = White
         ),
-        title = { Text(text = titleBar, style = MaterialTheme.typography.titleMedium) },
+        title = { Text(text = titleBar.uppercase(), style = MaterialTheme.typography.titleMedium) },
         navigationIcon = {
             if (onNavigationClick != null) {
                 IconButton(onClick = { onNavigationClick() }) {

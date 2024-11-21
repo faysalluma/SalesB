@@ -2,10 +2,12 @@ package com.groupec.salesb.core.data.repository
 
 
 import android.content.Context
-import com.groupec.salesb.core.Mode
+import com.groupec.salesb.core.ConnectivityManagerUtils
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.data.R
 import com.groupec.salesb.core.data.model.toUserEntity
+import com.groupec.salesb.core.data.repository.common.UserLocalRepository
+import com.groupec.salesb.core.data.repository.common.UserRemoteRepository
+import com.groupec.salesb.core.data.repository.common.UserSyncRepository
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.model.data.UserStore
@@ -15,7 +17,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,9 +29,10 @@ class UserRepositoryImpl @Inject constructor(
     private val dataStoreManager: DataStoreManager,
     private val userLocalRepository: UserLocalRepository,
     private val userRemoteRepository: UserRemoteRepository,
+    private val userSyncRepository: UserSyncRepository
 ) : UserRepository {
 
-    private suspend fun getMode() = dataStoreManager.parameterFlow.firstOrNull()?.mode
+    private suspend fun getOfflineMode() = dataStoreManager.parameterFlow.firstOrNull()?.offline
 
     /* Common methods */
     override fun saveDefaultUser(): Flow<Result<Unit>> = flow {
@@ -49,14 +51,25 @@ class UserRepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     override fun getUserStore(): Flow<UserStore> = dataStoreManager.userFlow
-    suspend fun addUser(user: UserEntity) = userLocalRepository.addUser(user)
+
+    private suspend fun addUser(user: UserEntity) = userLocalRepository.addUser(user)
 
     /* Sync methods */
-    override suspend fun checkLogin(email: String, password: String): Result<User> = when (getMode()) {
-        Mode.Offline.name, Mode.All.name -> userLocalRepository.checkLogin(email, password)
-        Mode.Online.name -> userRemoteRepository.checkLogin(email, password)
-        else -> {
-            Result.Error(Exception(context.getString(R.string.error_insupported_mode)))
-        }
+    /* Get methods */
+    override suspend fun checkLogin(email: String, password: String): Result<User> = if (getOfflineMode() == true) {
+        userLocalRepository.checkLogin(email, password)
+    } else {
+        userRemoteRepository.checkLogin(email, password)
+    }
+
+    /* Set methods */
+    override suspend fun changePassword(
+        userId: Int,
+        ancPassword: String,
+        password: String
+    ): Result<User> = if (getOfflineMode() == true) {
+        userSyncRepository.changePassword(userId, ancPassword, password)
+    } else {
+        userRemoteRepository.changePassword(userId, ancPassword, password)
     }
 }

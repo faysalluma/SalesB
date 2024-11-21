@@ -14,6 +14,7 @@
     <string name="enter_your_new_password">Enter your new password</string>
     <string name="label_confirmation">Confirmation</string>
     <string name="enter_your_confirmation">Confirm your password</string>
+    <string name="enter_password_not_matching">The password you entered does not match</string>
     <string name="btn_login">Login</string>
     <string name="btn_change_password">Change Password</string>
     <string name="forgot_password">Forgot password?</string>

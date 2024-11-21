@@ -7,6 +7,7 @@
     <string name="enter_your_email">Entrer votre email</string>
     <string name="label_password">Mot de passe</string>
     <string name="enter_your_password">Entrer votre mot de passe</string>
+    <string name="enter_password_not_matching">Les mots de passe ne correspondent pas</string>
     <string name="btn_login">Se connecter</string>
     <string name="forgot_password">Mot de passe oublié ?</string>
     <string name="invalid_email">Email invalide</string>

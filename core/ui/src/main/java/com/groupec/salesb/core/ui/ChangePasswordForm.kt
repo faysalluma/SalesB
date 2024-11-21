@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +27,7 @@ import com.groupec.salesb.core.designsystem.component.isValidEmail
 import com.groupec.salesb.core.designsystem.theme.Primary
 
 @Composable
-fun ChangePasswordForm(firstLogin: Boolean, onSubmitForm: (password: Password) -> Unit) {
+fun ChangePasswordForm(firstLogin: Boolean, onSubmitForm: (password: Password) -> Unit, isLoading: Boolean = false) {
 
     var passwords by remember { mutableStateOf(Password()) }
     var isAncPasswordError by remember { mutableStateOf(false) }
@@ -33,8 +35,8 @@ fun ChangePasswordForm(firstLogin: Boolean, onSubmitForm: (password: Password) -
     var isConfirmationError by remember { mutableStateOf(false) }
 
     val submitAction = {
-        isAncPasswordError = firstLogin && passwords.ancPassword.isEmpty()
-        isPasswordError = passwords.password.isEmpty() || !isValidEmail(passwords.password)
+        isAncPasswordError = !firstLogin && passwords.ancPassword.isEmpty()
+        isPasswordError = passwords.password.isEmpty()
         isConfirmationError = passwords.confirmation.isEmpty() || !passwords.arePasswordsMatching()
         if (!isAncPasswordError && !isPasswordError && !isConfirmationError) {
             // Submit the form
@@ -46,7 +48,7 @@ fun ChangePasswordForm(firstLogin: Boolean, onSubmitForm: (password: Password) -
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        if (firstLogin) {
+        if (!firstLogin) {
             AppTextField(
                 value = passwords.ancPassword,
                 leadingIcon = {
@@ -113,6 +115,17 @@ fun ChangePasswordForm(firstLogin: Boolean, onSubmitForm: (password: Password) -
             placeholder = stringResource(id = R.string.enter_your_confirmation),
             fieldType = FieldType.Password,
             isError = isConfirmationError,
+            supportingText = if (passwords.confirmation.isNotEmpty() && !passwords.arePasswordsMatching()){
+                {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.enter_password_not_matching),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            } else {
+                null
+            },
             keyboardAction = KeyboardAction.Done,
             submitAction = submitAction,
             modifier = Modifier.fillMaxWidth()
@@ -123,7 +136,8 @@ fun ChangePasswordForm(firstLogin: Boolean, onSubmitForm: (password: Password) -
         ) {
             DefaultButton(
                 onClick = submitAction,
-                text = stringResource(id = R.string.btn_change_password)
+                text = stringResource(id = R.string.btn_change_password),
+                isLoading = isLoading
             )
         }
     }

@@ -88,7 +88,7 @@ fun AppNavHost(
                 },
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
-                        popUpTo(NavigationItem.Login.route) { inclusive = true }
+                        popUpTo(NavigationItem.Login.route.plus("/{raisonSociale}")) { inclusive = true }
                     }
                 }
             )
@@ -112,7 +112,7 @@ fun AppNavHost(
                 firstLogin = firstLogin,
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
-                        popUpTo(NavigationItem.ChangePassword.route) { inclusive = true }
+                       popUpTo(NavigationItem.Login.route.plus("/{raisonSociale}")) { inclusive = true }
                     }
                 }
             )

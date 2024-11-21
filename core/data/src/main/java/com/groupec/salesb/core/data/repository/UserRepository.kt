@@ -9,4 +9,5 @@ interface UserRepository{
     fun saveDefaultUser() : Flow<Result<Unit>>
     suspend fun checkLogin(email: String, password: String) : Result<User>
     fun getUserStore() : Flow<UserStore>
+    suspend fun changePassword(userId: Int, ancPassword: String, password: String) : Result<User>
 }

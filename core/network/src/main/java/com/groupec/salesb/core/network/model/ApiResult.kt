@@ -2,7 +2,7 @@ package com.groupec.salesb.core.network.model
 
 import com.google.gson.annotations.SerializedName
 
-data class NetworkResult<T> (
+data class ApiResult<T> (
     @SerializedName("error")
     val error: Boolean = false,
 

@@ -12,11 +12,7 @@ import javax.inject.Inject
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.ui.Credentials
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import okhttp3.internal.EMPTY_RESPONSE
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(

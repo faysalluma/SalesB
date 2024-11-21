@@ -9,6 +9,8 @@ class Constants {
         // Get endpoint
         const val GET_PARAMETER = "parameter"
         const val GET_DEFAULT_USER = "defaultUser"
-        const val GET_USER_BY_EMAIL = "checkLogin/{email}"
+        const val GET_USER_BY_EMAIL = "checkLoginByEmail/{email}"
+        const val GET_USER_BY_ID = "checkLoginById/{userid}"
+        const val PUT_CHANGE_PASSWORD = "changePassword/{userid}"
     }
 }

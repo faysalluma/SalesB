@@ -22,7 +22,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         private val DEVISE_KEY = stringPreferencesKey("device")
         private val RAISON_SOCIAL_KEY = stringPreferencesKey("raisonsociale")
         private val TYPE_ENTREPRISE_KEY = stringPreferencesKey("typeentreprise")
-        private val MODE_KEY = stringPreferencesKey("mode")
+        private val OFFLINE_KEY = booleanPreferencesKey("offline")
         private val PRIMARY_COLOR_KEY = stringPreferencesKey("primarycolor")
         private val SECONDARY_COLOR_KEY = stringPreferencesKey("secondarycolor")
         private val LOAD_PRODUCT_KEY = booleanPreferencesKey("loadproducts")
@@ -41,7 +41,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
                 preferences[DEVISE_KEY] ?: "",
                 preferences[RAISON_SOCIAL_KEY] ?: "",
                 preferences[TYPE_ENTREPRISE_KEY] ?: "",
-                preferences[MODE_KEY] ?: "",
+                preferences[OFFLINE_KEY] ?: false,
                 preferences[PRIMARY_COLOR_KEY] ?: "",
                 preferences[SECONDARY_COLOR_KEY] ?: "",
                 preferences[LOAD_PRODUCT_KEY] ?: false
@@ -62,7 +62,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             datastore[DEVISE_KEY] = parameter.devise
             datastore[RAISON_SOCIAL_KEY] = parameter.raisonsociale
             datastore[TYPE_ENTREPRISE_KEY] = parameter.typeentreprise
-            datastore[MODE_KEY] = parameter.mode
+            datastore[OFFLINE_KEY] = parameter.offline
             datastore[PRIMARY_COLOR_KEY] = parameter.primarycolor
             datastore[SECONDARY_COLOR_KEY] = parameter.secondarycolor
             datastore[LOAD_PRODUCT_KEY] = parameter.loadproducts

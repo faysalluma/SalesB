@@ -6,10 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.groupec.salesb.core.designsystem.R
-import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.SalesBImage
 import com.groupec.salesb.core.designsystem.component.TitleHeader
 import com.groupec.salesb.core.model.data.User
@@ -40,7 +36,8 @@ fun LoginScreen(
     ) {
     val context = LocalContext.current
     val loginState by viewModel.loginUiState.collectAsState()
-    val isLoading  = loginState is LoginUiState.Loading // Get the loading state to show circular progress in button
+    val isLoading =
+        loginState is LoginUiState.Loading // Get the loading state to show circular progress in button
 
     ComposableLifecycle(
         onStop = {
@@ -89,7 +86,7 @@ fun LoginScreen(
                         detail = stringResource(id = R.string.detail_login)
                     )
 
-                    Spacer(modifier = Modifier.padding(vertical = 22.dp))
+                    Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
                     LoginForm(
                         onSubmitForm = { credentials ->

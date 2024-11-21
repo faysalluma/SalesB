@@ -2,6 +2,7 @@ package com.groupec.salesb.core.data.model
 
 import com.groupec.salesb.core.currentDateString
 import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.network.model.UserItemResponse
 import com.groupec.salesb.core.network.model.UserResponse
 import com.groupec.salesb.core.database.model.User as UserEntity
@@ -28,9 +29,15 @@ fun UserItemResponse.toUserEntity() = UserEntity(
     datecreation = currentDateString(), datemodif = currentDateString(), synchronised = false
 )
 
+fun UserItemResponse.toUserStore() = UserStore(id = id.toString(), nomprenom = nomprenom)
+
 fun UserEntity.toUser() = User(
     id = id, nomprenom = nomprenom, email = email, password = password, adresse = adresse,
     tel = tel, privilege = privilege, actif = actif, firstlogin = firstlogin,
     datecreation = datecreation, datemodif = datemodif, synchronised = synchronised)
+
+fun UserEntity.toUserStore() = UserStore(id = id.toString(), nomprenom = nomprenom)
+
+
 
 

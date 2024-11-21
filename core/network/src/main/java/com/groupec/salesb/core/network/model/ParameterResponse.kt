@@ -16,8 +16,8 @@ data class ParamItemResponse(
     @SerializedName("typeentreprise")
     val typeentreprise: String,
 
-    @SerializedName("mode")
-    val mode: String,
+    @SerializedName("offline")
+    val offline: Int,
 
     @SerializedName("primarycolor")
     val primarycolor: String,
