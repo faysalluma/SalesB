@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.groupec.salesb.R
@@ -22,9 +25,14 @@ import com.groupec.salesb.navigation.NavigationItem
 @Composable
 fun MainScreen(
     connectionState: Boolean,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    viewModel: MainViewModel = hiltViewModel()
 ) {
-    var appBarTitle = stringResource(id = R.string.app_name)
+    // Show title and user name on app bar
+    val title = stringResource(id = R.string.app_name)
+    val userStoreState by viewModel.userStore.collectAsState()
+    val appBarTitle = "${userStoreState.nomprenom} - $title"
+
     var onNavigationClick: (() -> Unit)? = null
     var dropDownItemsMenu: List<Pair<String, () -> Unit>> = emptyList()
 

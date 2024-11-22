@@ -72,6 +72,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:model"))
     implementation(project(":core:testing"))
+    implementation(project(":core:domain"))
 
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material3.adaptive.layout)
