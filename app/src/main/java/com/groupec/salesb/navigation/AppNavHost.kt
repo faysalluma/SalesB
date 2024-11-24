@@ -2,6 +2,7 @@ package com.groupec.salesb.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -120,6 +121,14 @@ fun AppNavHost(
 
         composable(NavigationItem.Home.route) {
             HomeScreen()
+        }
+
+        composable(NavigationItem.Sale.route) {
+            Text("Sale")
+        }
+
+        composable(NavigationItem.Product.route) {
+            Text("Product")
         }
     }
 }

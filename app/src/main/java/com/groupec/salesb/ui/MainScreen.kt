@@ -1,8 +1,15 @@
 package com.groupec.salesb.ui
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -11,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,6 +26,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.groupec.salesb.R
 import com.groupec.salesb.core.designsystem.SampleTopAppBar
+import com.groupec.salesb.core.designsystem.theme.Primary
+import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.navigation.AppNavHost
 import com.groupec.salesb.navigation.NavigationItem
 
@@ -82,18 +92,33 @@ fun MainScreen(
                     dropDownItemsMenu
                 )
             }
+        },
+        floatingActionButton = {
+            LargeFloatingActionButton(
+                onClick = {
+
+                },
+                shape = CircleShape,
+                containerColor = Primary,
+                contentColor = White,
+            ) {
+                Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(31.dp))
+            }
         }
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            AppNavHost(
-                modifier = Modifier.padding(it),
-                connectionState = connectionState,
-                navController = navController
-            )
+        Row(modifier = Modifier.padding(it)) {
+            MyNavigationRail(navController, modifier = Modifier.weight(0.09f))
+            Box(
+                modifier = Modifier
+                    .weight(0.91f)
+                    .padding(16.dp)
+            ) {
+                AppNavHost(
+                    modifier = Modifier.padding(it),
+                    connectionState = connectionState,
+                    navController = navController
+                )
+            }
         }
     }
 }
