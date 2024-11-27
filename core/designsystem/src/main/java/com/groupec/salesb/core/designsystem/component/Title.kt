@@ -50,6 +50,18 @@ fun TitleMedium(title: String, color : Color = Color.Unspecified, modifier: Modi
     )
 }
 
+@Composable
+fun TitleNormal(title: String, color : Color = Color.Unspecified, modifier: Modifier = Modifier){
+    Text(
+        text = title,
+        style = MaterialTheme.typography.bodyLarge.copy(
+            fontWeight = FontWeight.W500
+        ),
+        color = color,
+        modifier = modifier
+    )
+}
+
 @Preview
 @Composable
 fun TitleHeaderPreview(){
@@ -59,6 +71,7 @@ fun TitleHeaderPreview(){
             detail = "Cette application vous permet de gérer vos ventes et stocks"
         )
         TitleLarge(title = "Première connexion")
+        TitleNormal(title = "Première connexion")
     }
 
 }

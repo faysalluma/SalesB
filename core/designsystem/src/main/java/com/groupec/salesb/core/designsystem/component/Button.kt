@@ -7,13 +7,17 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.White
@@ -67,12 +71,35 @@ fun DefaultButton(onClick: ()->Unit, text : String, enabled : Boolean = true, is
     }
 }
 
+@Composable
+fun UnderlinedTextButton(
+    modifier : Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit
+) {
+    TextButton(onClick = onClick) {
+        Text(
+            modifier = modifier,
+            text = text,
+            color = Primary,
+            style = TextStyle(
+                fontSize = 16.sp,
+                textDecoration = TextDecoration.Underline
+            )
+        )
+    }
+}
+
+
 @Preview
 @Composable
 fun ButtonsPreview(){
     Column {
         NextButton(onClick = { /*TODO*/ }, text = "Next")
         DefaultButton(onClick = { /*TODO*/ }, text = "Validate")
+        UnderlinedTextButton(text = "Voir plus") {
+            
+        }
     }
 }
 

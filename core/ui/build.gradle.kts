@@ -14,4 +14,7 @@ dependencies {
 
     implementation(libs.coil.kt)
     implementation(libs.coil.kt.compose)
+
+    // Jetpack compose charts
+    implementation (libs.compose.charts)
 }
