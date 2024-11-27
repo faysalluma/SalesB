@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="statistic_label_sale">Ventes</string>
+    <string name="statistic_label_product">Produits</string>
+    <string name="statistic_label_entrie">Entrées</string>
+    <string name="statistic_label_benefit">Bénéfices</string>
+</resources>

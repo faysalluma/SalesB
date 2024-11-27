@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feature_home_title">Home</string>
+    <string name="title_stat">Statistics</string>
+    <string name="title_last_sales">List of last 10 sales</string>
+    <string name="label_select_period">Period</string>
 </resources>

@@ -34,14 +34,17 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.groupec.salesb.core.designsystem.theme.Primary
+import com.groupec.salesb.core.designsystem.theme.Secondary
+import com.groupec.salesb.core.designsystem.theme.Silver
 
 
 /** ExposedDropdownMenu */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AppExposedDropdownMenu(items: List<String>) {
+fun AppExposedDropdownMenu(items: List<String>, label: String = "", defaultText: String = "") {
     var expanded by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf("") }
+    var text by remember { mutableStateOf(defaultText) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -59,12 +62,12 @@ fun AppExposedDropdownMenu(items: List<String>) {
              },*/
             readOnly = true,
             singleLine = true,
-            label = { Text("Label") },
+            label = { Text(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             // colors = ExposedDropdownMenuDefaults.textFieldColors(),
             colors = ExposedDropdownMenuDefaults.textFieldColors(
                 focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White
+                unfocusedContainerColor = Color.White,
             ),
         )
         ExposedDropdownMenu(

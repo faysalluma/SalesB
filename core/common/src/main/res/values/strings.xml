@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="week">This week</string>
+    <string name="month">This month</string>
+</resources>

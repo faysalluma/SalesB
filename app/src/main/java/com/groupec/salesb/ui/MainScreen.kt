@@ -102,23 +102,17 @@ fun MainScreen(
                 containerColor = Primary,
                 contentColor = White,
             ) {
-                Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(31.dp))
+                Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(32.dp))
             }
         }
     ) {
         Row(modifier = Modifier.padding(it)) {
             MyNavigationRail(navController, modifier = Modifier.weight(0.09f))
-            Box(
-                modifier = Modifier
-                    .weight(0.91f)
-                    .padding(16.dp)
-            ) {
-                AppNavHost(
-                    modifier = Modifier.padding(it),
-                    connectionState = connectionState,
-                    navController = navController
-                )
-            }
+            AppNavHost(
+                modifier = Modifier.weight(0.91f).padding(16.dp),
+                connectionState = connectionState,
+                navController = navController
+            )
         }
     }
 }

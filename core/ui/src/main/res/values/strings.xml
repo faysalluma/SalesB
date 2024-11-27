@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_number">N°: %1$d</string>
+    <string name="statistic_label_title">Total %s</string>
+    <string name="statistic_label_sale">Sales</string>
+    <string name="statistic_label_product">Products</string>
+    <string name="statistic_label_entrie">Entries</string>
+    <string name="statistic_label_benefit">Benefits</string>
 </resources>
