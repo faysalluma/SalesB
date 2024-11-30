@@ -30,4 +30,5 @@ object AppIcons {
     val CheckCircle = Icons.Filled.CheckCircle
     val Sale  = R.drawable.business_center_24
     val Product = R.drawable.product_reorder_24
+    val Photo = R.drawable.photo_camera_24
 }

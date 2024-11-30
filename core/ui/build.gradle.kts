@@ -12,9 +12,6 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:common"))
 
-    implementation(libs.coil.kt)
-    implementation(libs.coil.kt.compose)
-
     // Jetpack compose charts
     implementation (libs.compose.charts)
 }

@@ -1,5 +1,6 @@
 package com.groupec.salesb.feature.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,10 @@ import com.groupec.salesb.core.designsystem.theme.Green
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Red
 import com.groupec.salesb.core.designsystem.theme.Yellow
+import com.groupec.salesb.core.model.data.Product
+import com.groupec.salesb.core.model.data.Sale
+import com.groupec.salesb.core.ui.SaleCard
+import com.groupec.salesb.core.ui.SaleCardList
 import com.groupec.salesb.core.ui.StatisticCard
 import com.groupec.salesb.core.ui.StatisticChart
 
@@ -112,12 +117,42 @@ fun LeftDashBoard(modifier : Modifier = Modifier) {
 
 @Composable
 fun RightDashBoard(modifier: Modifier = Modifier) {
-    Column(modifier = modifier.padding(horizontal = 16.dp)) {
+    Column(modifier = modifier.padding(start = 24.dp)) {
         TitleNormal(
             title = stringResource(R.string.title_last_sales),
             color = Green,
-            modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+            modifier = Modifier.align(alignment = Alignment.CenterHorizontally).padding(bottom = 16.dp)
         )
+        val sales = listOf(
+            Sale(
+                1,
+                "12 Nov 2024 9:50",
+                listOf(
+                    Product(1, "Pain"),
+                    Product(2, "Beurre")
+                ),
+                20.50
+            ),
+            Sale(
+                2,
+                "15 Sept 2024 08:04",
+                listOf(
+                    Product(1, "Sucre"),
+                    Product(2, "Riz")
+                ),
+                980.00
+            ),
+            Sale(
+                3,
+                "30 Oct 2024 10:20",
+                listOf(
+                    Product(1, "Chocolat"),
+                    Product(2, "Lait")
+                ),
+                220.50
+            )
+        )
+        SaleCardList(sales = sales)
     }
 }
 
