@@ -4,4 +4,11 @@
     <string name="yesterday">Yesterday</string>
     <string name="week">This week</string>
     <string name="month">This month</string>
+    <string name="total_sale_product">View total sales and products on home screen</string>
+    <string name="total_entrie_benefit">View total entries and profits on home screen</string>
+    <string name="stat_chart">See statitistics charts on home screen</string>
+    <string name="authorize_view">Authorize viewing</string>
+    <string name="authorize_add">Authorize add</string>
+    <string name="authorize_edit">Authorize edit</string>
+    <string name="authorize_delete">Authorize delete</string>
 </resources>

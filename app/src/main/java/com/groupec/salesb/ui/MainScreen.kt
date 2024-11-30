@@ -119,7 +119,9 @@ fun MainScreen(
 
 fun getDropdownItemsWithActions(navController: NavHostController): List<Pair<String, () -> Unit>> {
     return listOf(
-        DropdownItem.Settings.name to { /* navController.executeAction() */ },
+        DropdownItem.UpdatePassword.name to { /* navController.executeAction() */ },
+        DropdownItem.Logout.name to { /* navController.executeAction() */ },
+        DropdownItem.UserSettings.name to { /* navController.executeAction() */ },
     )
 }
 

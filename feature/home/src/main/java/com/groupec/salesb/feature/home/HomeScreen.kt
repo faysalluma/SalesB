@@ -2,6 +2,7 @@ package com.groupec.salesb.feature.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,6 +38,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     /*val userStoreState by viewModel.configUiState.collectAsState()
     Box {
         when (userStoreState) {
@@ -46,20 +48,11 @@ fun HomeScreen(
             else -> {}
         }
     }*/
-    Row(
+    Column (
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        LeftDashBoard(modifier = Modifier.weight(0.6f))
-        RightDashBoard(modifier = Modifier.weight(0.4f))
-    }
-}
-
-@Composable
-fun LeftDashBoard(modifier : Modifier = Modifier) {
-    val context = LocalContext.current
-    Column (modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -111,10 +104,15 @@ fun LeftDashBoard(modifier : Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        StatisticChart()
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            StatisticChart(modifier = Modifier.fillMaxWidth(0.75f))
+        }
     }
 }
-
+/*
 @Composable
 fun RightDashBoard(modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(start = 24.dp)) {
@@ -154,7 +152,7 @@ fun RightDashBoard(modifier: Modifier = Modifier) {
         )
         SaleCardList(sales = sales)
     }
-}
+}*/
 
 @Composable
 fun SaleStatisticCard(modifier: Modifier = Modifier) {

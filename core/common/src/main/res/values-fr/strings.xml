@@ -4,4 +4,11 @@
     <string name="yesterday">Hier</string>
     <string name="week">Cette semaine</string>
     <string name="month">Ce mois</string>
+    <string name="total_sale_product">Voir le total ventes et produits sur l\'écran d\'accueil</string>
+    <string name="total_entrie_benefit">Voir le total des entrées et des bénéfices sur l\'écran d\'accueil</string>
+    <string name="stat_chart">Voir les graphes de statistiques sur l\'écran d\'accueil</string>
+    <string name="authorize_add">"Autoriser l'ajout "</string>
+    <string name="authorize_edit">Autoriser la modification</string>
+    <string name="authorize_delete">Autoriser la suppression</string>
+    <string name="authorize_view">Autoriser la visualisation</string>
 </resources>

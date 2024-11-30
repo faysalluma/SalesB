@@ -18,10 +18,10 @@ import ir.ehsannarmani.compose_charts.models.Bars
 
 
 @Composable
-fun StatisticChart() {
+fun StatisticChart(modifier: Modifier = Modifier) {
     val  context = LocalContext.current
     ColumnChart(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 22.dp),
         data = remember {
