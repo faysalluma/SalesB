@@ -4,7 +4,7 @@
     <string name="statistic_label_title">Total %s</string>
     <string name="statistic_label_sale">Sales</string>
     <string name="statistic_label_product">Products</string>
-    <string name="statistic_label_entrie">Entries</string>
+    <string name="statistic_label_top_sale">Entries</string>
     <string name="statistic_label_benefit">Benefits</string>
     <string name="sale_number_and_date">N°: %1$d at %2$s</string>
 </resources>

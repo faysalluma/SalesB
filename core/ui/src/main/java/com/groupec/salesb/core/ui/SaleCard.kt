@@ -1,44 +1,29 @@
 package com.groupec.salesb.core.ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.groupec.salesb.core.designsystem.theme.Red
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
-import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.Sale
+import com.groupec.salesb.core.toDate
 
 @Composable
 fun SaleCard(sale: Sale) {
-     Card (
-         shape = RoundedCornerShape(0.dp),
-         onClick = {}
+    Card(
+        shape = RoundedCornerShape(0.dp),
+        onClick = {}
     ) {
         ListItem(
             colors = ListItemDefaults.colors(
@@ -74,9 +59,22 @@ fun SaleCardPreview() {
                 1,
                 "12 Nov 2024",
                 listOf(
-                    Product(1, "Pain"),
-                    Product(2, "Beurre")
-                ),
+                    Product(
+                        id = 1,
+                        libelle = "Pain",
+                        prixttc = 2.0,
+                        datemodif = "2022-10-02 15:22:00".toDate()!!,
+                        userid = 1
+                    ),
+                    Product(
+                        id = 2,
+                        libelle = "Beurre",
+                        prixttc = 4.0,
+                        datemodif = "2022-10-02 15:22:00".toDate()!!,
+                        userid = 1
+                    ),
+
+                    ),
                 20.50
             )
         )

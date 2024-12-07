@@ -11,6 +11,13 @@ class Constants {
         const val GET_DEFAULT_USER = "defaultUser"
         const val GET_USER_BY_EMAIL = "checkLoginByEmail/{email}"
         const val GET_USER_BY_ID = "checkLoginById/{userid}"
+        const val GET_TOTAL_SALES = "getTotalSales/{startDate}/{endDate}"
+        const val GET_TOTAL_AMOUNT_SALES = "getTotalAmountSales/{startDate}/{endDate}"
+        const val GET_TOTAL_PRODUCTS = "getTotalProducts"
+        const val GET_TOP_SALE_PRODUCTS = "getTopSaleProducts/{startDate}/{endDate}"
+        const val GET_ALERT_SEUIL = "getAlertSeuil"
+
+        // Put endpoint
         const val PUT_CHANGE_PASSWORD = "changePassword/{userid}"
     }
 }

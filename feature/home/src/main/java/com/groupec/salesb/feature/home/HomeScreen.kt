@@ -1,6 +1,6 @@
 package com.groupec.salesb.feature.home
 
-import androidx.compose.foundation.background
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,26 +10,29 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.groupec.salesb.core.Approval
 import com.groupec.salesb.core.Period
+import com.groupec.salesb.core.Privileges
 import com.groupec.salesb.core.designsystem.component.AppExposedDropdownMenu
-import com.groupec.salesb.core.designsystem.component.TitleLarge
-import com.groupec.salesb.core.designsystem.component.TitleNormal
+import com.groupec.salesb.core.designsystem.component.EmptyScreen
+import com.groupec.salesb.core.designsystem.component.TitleMedium
 import com.groupec.salesb.core.designsystem.component.UnderlinedTextButton
 import com.groupec.salesb.core.designsystem.theme.Green
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Red
 import com.groupec.salesb.core.designsystem.theme.Yellow
-import com.groupec.salesb.core.model.data.Product
-import com.groupec.salesb.core.model.data.Sale
-import com.groupec.salesb.core.ui.SaleCard
-import com.groupec.salesb.core.ui.SaleCardList
+import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.core.ui.StatisticCard
 import com.groupec.salesb.core.ui.StatisticChart
 
@@ -39,79 +42,136 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-    /*val userStoreState by viewModel.configUiState.collectAsState()
-    Box {
-        when (userStoreState) {
-            is ConfigUiState.Loading -> LoadingScreen()
-            is ConfigUiState.Configuration -> navigateToConfiguration()
-            is ConfigUiState.Login -> navigateToLogin()
-            else -> {}
-        }
-    }*/
-    Column (
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            val periodList = Period.entries.map { it.getTitle(context) }
-            Row (
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ){
-                TitleLarge(
-                    title = stringResource(R.string.title_stat),
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-                UnderlinedTextButton(
-                    modifier = Modifier.padding(top = 8.dp),
-                    text = stringResource(R.string.see_more)
-                ) {
+    val userStoreState by viewModel.userStore.collectAsState()
+    val privileges = userStoreState.getPrivileges()
 
-                }
+    ComposableLifecycle(
+        onCreate = {
+            val startDate = Period.Today.startDate
+            val endDate = Period.Today.endDate
+            viewModel.apply {
+                getTotalSale(startDate, endDate)
+                getTopSaleProducts(startDate, endDate)
+                getTotalProduct()
+                getTotalAlertSeuil()
             }
-
-            AppExposedDropdownMenu(
-                items = periodList,
-                label = stringResource(R.string.label_select_period),
-                defaultText = periodList[0]
-            )
         }
+    )
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        val cardModifier = Modifier.weight(1f)
-        Row (
-            horizontalArrangement = Arrangement.spacedBy(24.dp)
+    Column (
+        modifier = modifier.padding(horizontal = 16.dp)
+    ) {
+        // Check if show home content
+        if (
+            !privileges.containsAll(Privileges.Home.getKeysByApprovals(
+                listOf(
+                    Approval.STAT_PERIODIC,
+                    Approval.STAT_NON_PERIODIC,
+                    Approval.STAT_CHART,
+                )
+            ))
         ) {
-            SaleStatisticCard(modifier = cardModifier)
-            ProductStatisticCard(modifier = cardModifier)
-        }
-
-        Spacer(modifier = Modifier.height(28.dp))
-
-        Row (
-            horizontalArrangement = Arrangement.spacedBy(24.dp)
-        ){
-            EntrieStatisticCard(modifier = cardModifier)
-            BenefitStatisticCard(modifier = cardModifier)
-        }
-
-        Spacer(modifier = Modifier.height(28.dp))
-
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            StatisticChart(modifier = Modifier.fillMaxWidth(0.75f))
+            EmptyScreen(text = stringResource(R.string.no_visual_allowed))
+        } else {
+            val heigthModifier = Modifier.height(34.dp)
+            HeadLigne(context, viewModel)
+            StatisticPeriodic(context, viewModel)
+            Spacer(modifier = heigthModifier)
+            StatisticNonPeriodic(context, viewModel)
+            Spacer(modifier = heigthModifier)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                StatisticChart(modifier = Modifier.fillMaxWidth(0.75f))
+            }
         }
     }
 }
+
+@Composable
+fun HeadLigne(context: Context, viewModel: HomeViewModel) {
+    val periodList = Period.entries.map { it.getTitle(context) }
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.TopEnd,
+    ){
+        Row {
+            UnderlinedTextButton(
+                modifier = Modifier.padding(top = 8.dp),
+                text = stringResource(R.string.see_more)
+            ) {}
+            Box(modifier = Modifier.width(200.dp)) {
+                AppExposedDropdownMenu(
+                    items = periodList,
+                    defaultText = periodList[1]
+                ) { index, item ->
+                    val startDate = Period.entries[index].startDate
+                    val endDate = Period.entries[index].endDate
+                    viewModel.apply {
+                        getTotalSale(startDate, endDate)
+                        getTopSaleProducts(startDate, endDate)
+                        // get Chart
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun StatisticPeriodic(context: Context, viewModel: HomeViewModel) {
+    val parameterState by viewModel.parameter.collectAsState()
+    val totalSalesState by viewModel.totalSales.collectAsState()
+    val totalAmountSalesState by viewModel.totalAmountSales.collectAsState()
+    val topSaleProductsState by viewModel.topSaleProducts.collectAsState()
+
+    Column {
+        TitleMedium(
+            title = stringResource(R.string.title_stat_period),
+        )
+        Row (
+            modifier = Modifier.padding(top = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            val cardModifier = Modifier.weight(1f)
+            SaleStatisticCard(
+                modifier = cardModifier,
+                numberTitle = totalSalesState,
+                dataValue = totalAmountSalesState.toString(),
+                devise = parameterState.devise
+            )
+            TopSaleStatisticCard(
+                modifier = cardModifier,
+                dataValue = topSaleProductsState
+                    .takeIf { it.isNotEmpty() }
+                    ?.joinToString { "${it.libelle} (${it.qtestock})" } ?: context.getString(R.string.no_data),
+            )
+        }
+    }
+}
+
+
+@Composable
+fun StatisticNonPeriodic(context: Context, viewModel: HomeViewModel) {
+    val totalProductsState by viewModel.totalProducts.collectAsState()
+    val totalAlertSeuilState by viewModel.totalAlertSeuilProducts.collectAsState()
+
+    TitleMedium(
+        title = stringResource(R.string.title_stat_no_period),
+    )
+    Row (
+        modifier = Modifier.padding(top = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(24.dp)
+    ){
+        val cardModifier = Modifier.weight(1f)
+        ProductStatisticCard(modifier = cardModifier, dataValue = totalProductsState.toString())
+        AlertInventoryStatisticCard(modifier = cardModifier, dataValue = totalAlertSeuilState.toString())
+    }
+}
+
 /*
 @Composable
 fun RightDashBoard(modifier: Modifier = Modifier) {
@@ -155,48 +215,57 @@ fun RightDashBoard(modifier: Modifier = Modifier) {
 }*/
 
 @Composable
-fun SaleStatisticCard(modifier: Modifier = Modifier) {
+fun SaleStatisticCard(modifier: Modifier = Modifier, numberTitle: Int ? = null, dataValue: String ?, devise: String ? = null) {
     StatisticCard(
         modifier = modifier,
-        labelRes = com.groupec.salesb.core.ui.R.string.statistic_label_sale,
+        labelRes = R.string.statistic_label_sale,
         iconColor = Green,
-        value = 1026f
+        numberTitle = numberTitle,
+        dataValue = dataValue,
+        devise = devise
     ) {
 
     }
 }
 
 @Composable
-fun ProductStatisticCard(modifier: Modifier = Modifier) {
+fun TopSaleStatisticCard(modifier: Modifier = Modifier, numberTitle: Int ? = null, dataValue: String ?, devise: String ? = null) {
     StatisticCard(
         modifier = modifier,
-        labelRes = com.groupec.salesb.core.ui.R.string.statistic_label_product,
+        labelRes = R.string.statistic_label_top,
         iconColor = Yellow,
-        value = 987f
+        numberTitle = numberTitle,
+        dataValue = dataValue,
+        dataValueStyle = MaterialTheme.typography.titleSmall,
+        devise = devise
     ) {
 
     }
 }
 
 @Composable
-fun EntrieStatisticCard(modifier: Modifier = Modifier) {
+fun ProductStatisticCard(modifier: Modifier = Modifier, numberTitle: Int ? = null, dataValue: String ?, devise: String ? = null) {
     StatisticCard(
         modifier = modifier,
-        labelRes = com.groupec.salesb.core.ui.R.string.statistic_label_entrie,
-        iconColor = Red,
-        value = 1026f
-    ) {
-
-    }
-}
-
-@Composable
-fun BenefitStatisticCard(modifier: Modifier = Modifier) {
-    StatisticCard(
-        modifier = modifier,
-        labelRes = com.groupec.salesb.core.ui.R.string.statistic_label_benefit,
+        labelRes = R.string.statistic_label_product,
         iconColor = Primary,
-        value = 150f
+        numberTitle = numberTitle,
+        dataValue = dataValue,
+        devise = devise
+    ) {
+
+    }
+}
+
+@Composable
+fun AlertInventoryStatisticCard(modifier: Modifier = Modifier, numberTitle: Int ? = null, dataValue: String ?, devise: String ? = null) {
+    StatisticCard(
+        modifier = modifier,
+        labelRes = R.string.statistic_label_alert_inventory,
+        iconColor = Red,
+        numberTitle = numberTitle,
+        dataValue = dataValue,
+        devise = devise
     ) {
 
     }

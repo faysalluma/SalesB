@@ -30,6 +30,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         // Login key
         private val USER_ID_KEY = stringPreferencesKey("userid")
         private val USER_NAME_KEY = stringPreferencesKey("nomprenom")
+        private val USER_PRIVILEGES_KEY = stringPreferencesKey("privileges")
     }
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -53,7 +54,8 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             // No type safety.
             UserStore(
                 preferences[USER_ID_KEY] ?: "",
-                preferences[USER_NAME_KEY] ?: ""
+                preferences[USER_NAME_KEY] ?: "",
+                preferences[USER_PRIVILEGES_KEY] ?: ""
             )
         }
 
@@ -73,6 +75,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         context.dataStore.edit { datastore ->
             datastore[USER_ID_KEY] = user.id
             datastore[USER_NAME_KEY] = user.nomprenom
+            datastore[USER_PRIVILEGES_KEY] = user.privilege
         }
     }
 

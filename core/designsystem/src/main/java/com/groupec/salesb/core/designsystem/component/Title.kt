@@ -35,8 +35,7 @@ fun TitleLarge(title: String, color : Color = Color.Unspecified, modifier: Modif
         text = title,
         style = MaterialTheme.typography.titleLarge,
         color = color,
-        modifier = modifier,
-        fontWeight = FontWeight.W500
+        modifier = modifier
     )
 }
 

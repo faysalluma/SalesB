@@ -2,6 +2,7 @@ package com.groupec.salesb.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -80,12 +81,7 @@ fun MainScreen(
 
     Scaffold(
         topBar = {
-            if (currentDestination.value !in listOf(
-                    NavigationItem.Loading.route,
-                    NavigationItem.Configuration.route,
-                    NavigationItem.Login.route
-                )
-            ) {
+            if (shouldShowBarAndRailApp(currentDestination.value)) {
                 SampleTopAppBar(
                     appBarTitle,
                     onNavigationClick,
@@ -107,9 +103,13 @@ fun MainScreen(
         }
     ) {
         Row(modifier = Modifier.padding(it)) {
-            MyNavigationRail(navController, modifier = Modifier.weight(0.09f))
+            if (shouldShowBarAndRailApp(currentDestination.value)) {
+                MyNavigationRail(navController, modifier = Modifier.weight(0.09f))
+            }
             AppNavHost(
-                modifier = Modifier.weight(0.91f).padding(16.dp),
+                modifier = Modifier
+                    .weight(if (shouldShowBarAndRailApp(currentDestination.value)) 0.91f else 1f)
+                    .padding(16.dp),
                 connectionState = connectionState,
                 navController = navController
             )
@@ -125,3 +125,10 @@ fun getDropdownItemsWithActions(navController: NavHostController): List<Pair<Str
     )
 }
 
+private fun shouldShowBarAndRailApp(route: String?): Boolean {
+    return route !in listOf(
+        NavigationItem.Loading.route,
+        NavigationItem.Configuration.route,
+        NavigationItem.Login.route
+    )
+}

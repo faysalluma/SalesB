@@ -1,5 +1,7 @@
 package com.groupec.salesb.core.designsystem.component
 
+
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -77,9 +79,8 @@ fun UnderlinedTextButton(
     text: String,
     onClick: () -> Unit
 ) {
-    TextButton(onClick = onClick) {
+    TextButton(onClick = onClick, modifier = modifier) {
         Text(
-            modifier = modifier,
             text = text,
             color = Primary,
             style = TextStyle(

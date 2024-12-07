@@ -4,6 +4,8 @@ package com.groupec.salesb.core.data.di
 import android.content.Context
 import com.groupec.salesb.core.data.repository.ParameterRepository
 import com.groupec.salesb.core.data.repository.ParameterRepositoryImpl
+import com.groupec.salesb.core.data.repository.StatisticRepository
+import com.groupec.salesb.core.data.repository.StatisticRepositoryImpl
 import com.groupec.salesb.core.data.repository.common.UserLocalRepository
 import com.groupec.salesb.core.data.repository.common.UserRemoteRepository
 import com.groupec.salesb.core.data.repository.UserRepository
@@ -41,5 +43,13 @@ class RepositoryModule  {
         userSyncRepository: UserSyncRepository
     ) : UserRepository {
         return UserRepositoryImpl(context, apiService, dataStoreManager, userLocalRepository, userRemoteRepository, userSyncRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providerStatisticRepository(
+        apiService: ApiService
+    ) : StatisticRepository {
+        return StatisticRepositoryImpl(apiService)
     }
 }

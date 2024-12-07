@@ -3,6 +3,8 @@ package com.groupec.salesb.core.network.retrofit
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.network.model.ApiResult
 import com.groupec.salesb.core.network.model.ParameterResponse
+import com.groupec.salesb.core.network.model.ProductItemResponse
+import com.groupec.salesb.core.network.model.ProductResponse
 import com.groupec.salesb.core.network.model.UserItemResponse
 import com.groupec.salesb.core.network.model.UserResponse
 import com.groupec.salesb.core.network.retrofit.common.Constants
@@ -27,4 +29,21 @@ interface ApiService {
 
     @PUT(Constants.PUT_CHANGE_PASSWORD)
     suspend fun changePassword(@Path("userid") userid: Int, @Body user: User): Response<User>
+
+    @GET(Constants.GET_TOTAL_SALES)
+    suspend fun getTotalSales(@Path("startDate") startDate: String, @Path("endDate") endDate: String): Response<ApiResult<Int>>
+
+    @GET(Constants.GET_TOTAL_AMOUNT_SALES)
+    suspend fun getTotalAmountSales(@Path("startDate") startDate: String, @Path("endDate") endDate: String): Response<ApiResult<Int>>
+
+    @GET(Constants.GET_TOTAL_PRODUCTS)
+    suspend fun getTotalProducts(): Response<ApiResult<Int>>
+
+    @GET(Constants.GET_TOP_SALE_PRODUCTS)
+    suspend fun getTopSaleProducts(@Path("startDate") startDate: String, @Path("endDate") endDate: String): Response<ProductResponse>
+
+    @GET(Constants.GET_ALERT_SEUIL)
+    suspend fun getAlertSeuil(): Response<ApiResult<Int>>
+
+
 }

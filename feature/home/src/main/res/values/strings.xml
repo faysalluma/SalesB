@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feature_home_title" translatable="false">Home</string>
-    <string name="title_stat">Statistics</string>
+    <string name="title_stat_period">Periodic statistics</string>
+    <string name="title_stat_no_period">Non-periodic statistics</string>
     <string name="title_last_sales">List of last 10 sales</string>
     <string name="label_select_period">Period</string>
     <string name="see_more">See more</string>
+    <string name="no_visual_allowed">No visuals allowed for your profile</string>
+    <string name="statistic_label_sale">Total Sales</string>
+    <string name="statistic_label_top">Top 3 best-selling products</string>
+    <string name="statistic_label_product">Total products</string>
+    <string name="statistic_label_alert_inventory">Total low inventory products</string>
+    <string name="no_data">No data available</string>
 </resources>

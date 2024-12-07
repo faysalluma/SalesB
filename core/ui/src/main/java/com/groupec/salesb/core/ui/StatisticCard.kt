@@ -1,10 +1,9 @@
 package com.groupec.salesb.core.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -13,11 +12,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.designsystem.icon.AppIcons
@@ -29,10 +31,12 @@ fun StatisticCard(
     modifier : Modifier = Modifier,
     labelRes: Int,
     iconColor: Color = Primary,
-    value: Float, onclick: () -> Unit
+    numberTitle: Int ? = null,
+    dataValue: String ?,
+    dataValueStyle: TextStyle = MaterialTheme.typography.titleLarge,
+    devise: String ? = null,
+    onclick: () -> Unit
 ) {
-    val context = LocalContext.current
-    val labelValue = context.getString(labelRes)
     Card(
         modifier = modifier,
             // .fillMaxWidth()
@@ -49,14 +53,23 @@ fun StatisticCard(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            val numberTitleValue = numberTitle?.let {
+                "${stringResource(labelRes)} ($it)"
+            } ?: stringResource(labelRes)
             Text(
-                stringResource(R.string.statistic_label_title, labelValue),
+                numberTitleValue,
                 fontWeight = FontWeight.Bold
             )
+
             Row {
+                val dataVal = devise?.let {
+                    "${dataValue} ${it}"
+                } ?: dataValue
                 Text(
-                    value.toString(),
-                    style = MaterialTheme.typography.titleLarge,
+                    dataVal.toString(),
+                    style = dataValueStyle,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(end = 5.dp)
                 )
                 Icon(
@@ -73,7 +86,8 @@ fun StatisticCard(
 // @Preview(device = Devices.TABLET)
 @Composable
 fun StatisticCardPreview() {
-    StatisticCard(labelRes = R.string.statistic_label_sale, value = 100f) {
+    StatisticCard(labelRes = R.string.statistic_label_sale,
+        numberTitle = 12, dataValue = "1000", devise = "EUR") {
 
     }
 }

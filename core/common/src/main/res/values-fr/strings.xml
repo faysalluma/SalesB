@@ -4,8 +4,8 @@
     <string name="yesterday">Hier</string>
     <string name="week">Cette semaine</string>
     <string name="month">Ce mois</string>
-    <string name="total_sale_product">Voir le total ventes et produits sur l\'écran d\'accueil</string>
-    <string name="total_entrie_benefit">Voir le total des entrées et des bénéfices sur l\'écran d\'accueil</string>
+    <string name="view_stat_periodic">Voir les statistiques périodiques (total ventes et top 3 des produits les plus vendus)</string>
+    <string name="total_entrie_benefit">Voir les statistiques non périodiques (total produits et produits avec faible stock)</string>
     <string name="stat_chart">Voir les graphes de statistiques sur l\'écran d\'accueil</string>
     <string name="authorize_add">"Autoriser l'ajout "</string>
     <string name="authorize_edit">Autoriser la modification</string>

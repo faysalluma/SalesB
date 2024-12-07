@@ -6,8 +6,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.DropdownMenuItem
@@ -27,12 +33,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Secondary
@@ -42,7 +50,12 @@ import com.groupec.salesb.core.designsystem.theme.Silver
 /** ExposedDropdownMenu */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AppExposedDropdownMenu(items: List<String>, label: String = "", defaultText: String = "") {
+fun AppExposedDropdownMenu(
+    items: List<String>,
+    label: String ? = null,
+    defaultText: String = "",
+    onItemSelected: (Int, String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf(defaultText) }
 
@@ -62,10 +75,13 @@ fun AppExposedDropdownMenu(items: List<String>, label: String = "", defaultText:
              },*/
             readOnly = true,
             singleLine = true,
-            label = { Text(label) },
+            label = if (!label.isNullOrEmpty()) {
+                { Text(label) }
+            } else null,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             // colors = ExposedDropdownMenuDefaults.textFieldColors(),
             colors = ExposedDropdownMenuDefaults.textFieldColors(
+                // unfocusedIndicatorColor = Primary,
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
             ),
@@ -75,11 +91,12 @@ fun AppExposedDropdownMenu(items: List<String>, label: String = "", defaultText:
             onDismissRequest = { expanded = false },
             modifier = Modifier.background(Color.White)
         ) {
-            items.forEach { option ->
+            items.forEachIndexed { index, option ->
                 DropdownMenuItem(
                     text = { Text(option, style = MaterialTheme.typography.bodyLarge) },
                     onClick = {
                         text = option
+                        onItemSelected(index, option)
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -189,6 +206,7 @@ fun AppMultiSelectDropdownMenu(items: List<String>) {
             // colors = ExposedDropdownMenuDefaults.textFieldColors(),
             modifier = Modifier
                 .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                // Garder la taille de Spinner fixe
                 .onGloballyPositioned { coordinates ->
                     // Convert size from pixels to dp
                     textFieldWidth = coordinates.size.width.pixelToDp().dp
@@ -255,7 +273,9 @@ fun SpinnersPreview() {
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AppExposedDropdownMenu(items)
+        AppExposedDropdownMenu(items) { index, item ->
+
+        }
         AppEditableExposedDropdown(items)
         AppMultiSelectDropdownMenu(items)
     }
