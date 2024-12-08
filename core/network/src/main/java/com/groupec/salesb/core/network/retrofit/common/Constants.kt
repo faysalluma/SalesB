@@ -16,6 +16,8 @@ class Constants {
         const val GET_TOTAL_PRODUCTS = "getTotalProducts"
         const val GET_TOP_SALE_PRODUCTS = "getTopSaleProducts/{startDate}/{endDate}"
         const val GET_ALERT_SEUIL = "getAlertSeuil"
+        const val GET_TOTAL_SALE_DAY = "getTotalSaleMorningEvening/{date}"
+        const val GET_TOTAL_SALE_BY_DATE = "getTotalSalesByDate/{startDate}/{endDate}"
 
         // Put endpoint
         const val PUT_CHANGE_PASSWORD = "changePassword/{userid}"

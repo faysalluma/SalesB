@@ -2,8 +2,9 @@ package com.groupec.salesb.core.network.retrofit
 
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.network.model.ApiResult
+import com.groupec.salesb.core.network.model.ChartDateResponse
+import com.groupec.salesb.core.network.model.ChartDayResponse
 import com.groupec.salesb.core.network.model.ParameterResponse
-import com.groupec.salesb.core.network.model.ProductItemResponse
 import com.groupec.salesb.core.network.model.ProductResponse
 import com.groupec.salesb.core.network.model.UserItemResponse
 import com.groupec.salesb.core.network.model.UserResponse
@@ -45,5 +46,10 @@ interface ApiService {
     @GET(Constants.GET_ALERT_SEUIL)
     suspend fun getAlertSeuil(): Response<ApiResult<Int>>
 
+    @GET(Constants.GET_TOTAL_SALE_DAY)
+    suspend fun getTotalSaleMorningEvening(@Path("date") date: String): Response<ApiResult<ChartDayResponse>>
 
+    @GET(Constants.GET_TOTAL_SALE_BY_DATE)
+    suspend fun getTotalSalesByDate(@Path("startDate") startDate: String, @Path("endDate") endDate: String
+    ): Response<ChartDateResponse>
 }

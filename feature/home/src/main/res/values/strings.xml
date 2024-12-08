@@ -12,4 +12,6 @@
     <string name="statistic_label_product">Total products</string>
     <string name="statistic_label_alert_inventory">Total low inventory products</string>
     <string name="no_data">No data available</string>
+    <string name="morning">Morning</string>
+    <string name="evening">Evening</string>
 </resources>

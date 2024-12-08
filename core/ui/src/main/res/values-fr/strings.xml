@@ -5,4 +5,5 @@
     <string name="statistic_label_top_sale">Entrées</string>
     <string name="statistic_label_benefit">Bénéfices</string>
     <string name="sale_number_and_date">N°: %1$d à %2$s</string>
+    <string name="statistic_label_chart">Ventes périodiques</string>
 </resources>

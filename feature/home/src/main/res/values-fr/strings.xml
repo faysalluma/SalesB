@@ -11,4 +11,6 @@
     <string name="statistic_label_product">Total produits</string>
     <string name="statistic_label_alert_inventory">Total produits avec faible stock</string>
     <string name="no_data">Aucune donnée</string>
+    <string name="morning">Matin</string>
+    <string name="evening">Soir</string>
 </resources>

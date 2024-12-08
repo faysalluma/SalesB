@@ -65,4 +65,26 @@ class StatisticRepositoryImpl @Inject constructor(
         )
         emit(result)
     }.flowOn(Dispatchers.IO)
+
+    override fun getTotalSaleMorningEvening(date: String): Flow<Pair<Double, Double>> = flow {
+        val result = safeApiCall(
+            apiCall = { apiService.getTotalSaleMorningEvening(date) },
+            transform = { response ->
+                response.data?.let {
+                    Pair(it.totalsalemorning, it.totalsalevening)
+                } ?: Pair(0.0,0.0)
+            }
+        )
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
+    override fun getTotalSalesByDate(startDate: String, endDate: String): Flow<List<Pair<String, Double>>> = flow {
+        val result = safeApiCall(
+            apiCall = { apiService.getTotalSalesByDate(startDate, endDate) },
+            transform = { response ->
+                response.sales.map { Pair(it.datevente, it.totalprix) }
+            }
+        )
+        emit(result)
+    }.flowOn(Dispatchers.IO)
 }

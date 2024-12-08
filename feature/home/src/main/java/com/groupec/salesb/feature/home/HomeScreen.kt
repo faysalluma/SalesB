@@ -12,9 +12,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -43,6 +47,7 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val userStoreState by viewModel.userStore.collectAsState()
+    val chartValuesState by viewModel.chartValues.collectAsState()
     val privileges = userStoreState.getPrivileges()
 
     ComposableLifecycle(
@@ -54,6 +59,7 @@ fun HomeScreen(
                 getTopSaleProducts(startDate, endDate)
                 getTotalProduct()
                 getTotalAlertSeuil()
+                getChartDataToday(context, startDate)
             }
         }
     )
@@ -85,7 +91,11 @@ fun HomeScreen(
                     .padding(bottom = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                StatisticChart(modifier = Modifier.fillMaxWidth(0.75f))
+                if (chartValuesState.isNotEmpty()) {
+                    StatisticChart(modifier = Modifier.fillMaxWidth(0.75f), chartValuesState)
+                } else {
+                    Text(stringResource(R.string.no_data))
+                }
             }
         }
     }
@@ -113,7 +123,10 @@ fun HeadLigne(context: Context, viewModel: HomeViewModel) {
                     viewModel.apply {
                         getTotalSale(startDate, endDate)
                         getTopSaleProducts(startDate, endDate)
-                        // get Chart
+                        when (Period.entries[index]) {
+                            Period.Yesterday, Period.Today -> getChartDataToday(context, startDate)
+                            Period.Week, Period.Month -> getChartDataByDate(startDate, endDate)
+                        }
                     }
                 }
             }
