@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Silver
@@ -29,7 +30,12 @@ import com.groupec.salesb.navigation.NavigationItem
 
 @Composable
 fun MyNavigationRail(navController: NavController, modifier: Modifier = Modifier) {
-    var selectedItem by remember { mutableStateOf(NavigationItem.Home.route) }
+
+    // Observer la destination actuelle
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route ?: NavigationItem.Home.route
+
+   // var selectedItem by remember { mutableStateOf(NavigationItem.Home.route) }
     val items = listOf(
         NavigationItem.Home,
         NavigationItem.Sale,
@@ -64,13 +70,13 @@ fun MyNavigationRail(navController: NavController, modifier: Modifier = Modifier
                     }
                 },
                 label = { Text(stringResource(id = item.title), fontSize = 16.sp) },
-                selected = selectedItem == item.route,
+                selected = currentRoute == item.route,
                 onClick = {
-                    if (selectedItem != item.route) {
-                        selectedItem = item.route
+                    if (currentRoute != item.route) {
+                        // currentRoute = item.route
                         navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
+                            popUpTo(navController.graph.startDestinationId) // Supprime la pile jusqu'à startDestinationId
+                            launchSingleTop = true // Eviter les doublons
                         }
                     }
                 },

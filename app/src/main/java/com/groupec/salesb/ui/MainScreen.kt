@@ -1,5 +1,6 @@
 package com.groupec.salesb.ui
 
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,10 +41,11 @@ fun MainScreen(
     navController: NavHostController = rememberNavController(),
     viewModel: MainViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     // Show title and user name on app bar
-    val title = stringResource(id = R.string.app_name)
     val userStoreState by viewModel.userStore.collectAsState()
-    val appBarTitle = "${userStoreState.nomprenom} - $title"
+    val appBarTitle = userStoreState.nomprenom
 
     var onNavigationClick: (() -> Unit)? = null
     var dropDownItemsMenu: List<Pair<String, () -> Unit>> = emptyList()
@@ -60,7 +63,7 @@ fun MainScreen(
 
     when (currentDestination.value) {
         NavigationItem.Home.route -> {
-            dropDownItemsMenu = getDropdownItemsWithActions(navController)
+            dropDownItemsMenu = getDropdownItemsWithActions(context, navController)
         }
 
         /*  NavigationItem.Detail.route -> {
@@ -92,7 +95,10 @@ fun MainScreen(
         floatingActionButton = {
             LargeFloatingActionButton(
                 onClick = {
-
+                    navController.navigate(NavigationItem.Sale.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
                 },
                 shape = CircleShape,
                 containerColor = Primary,
@@ -117,11 +123,11 @@ fun MainScreen(
     }
 }
 
-fun getDropdownItemsWithActions(navController: NavHostController): List<Pair<String, () -> Unit>> {
+fun getDropdownItemsWithActions(context: Context, navController: NavHostController): List<Pair<String, () -> Unit>> {
     return listOf(
-        DropdownItem.UpdatePassword.name to { /* navController.executeAction() */ },
-        DropdownItem.Logout.name to { /* navController.executeAction() */ },
-        DropdownItem.UserSettings.name to { /* navController.executeAction() */ },
+        context.getString(R.string.menu_settings) to { /* navController.executeAction() */ },
+        context.getString(R.string.menu_update_password) to { /* navController.executeAction() */ },
+        context.getString(R.string.menu_log_out) to { /* navController.executeAction() */ },
     )
 }
 

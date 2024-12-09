@@ -2,6 +2,7 @@ package com.groupec.salesb.core.data.repository
 
 import com.groupec.salesb.core.data.model.toProduct
 import com.groupec.salesb.core.data.model.toProductList
+import com.groupec.salesb.core.dayMonth
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.network.retrofit.ApiService
 import com.groupec.salesb.core.network.retrofit.common.safeApiCall
@@ -82,7 +83,7 @@ class StatisticRepositoryImpl @Inject constructor(
         val result = safeApiCall(
             apiCall = { apiService.getTotalSalesByDate(startDate, endDate) },
             transform = { response ->
-                response.sales.map { Pair(it.datevente, it.totalprix) }
+                response.sales.map { Pair(it.datevente.dayMonth(), it.totalprix) }
             }
         )
         emit(result)

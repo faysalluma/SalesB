@@ -6,4 +6,7 @@
     <string name="menu_home">Accueil</string>
     <string name="menu_sale">Ventes</string>
     <string name="menu_product">Produits</string>
+    <string name="menu_update_password">Modifier mot de passe</string>
+    <string name="menu_log_out">Se déconnecter</string>
+    <string name="menu_settings">Paramètres</string>
 </resources>

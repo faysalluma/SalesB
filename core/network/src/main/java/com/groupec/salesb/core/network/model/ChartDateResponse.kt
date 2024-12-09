@@ -1,6 +1,7 @@
 package com.groupec.salesb.core.network.model
 
 import com.google.gson.annotations.SerializedName
+import java.util.Date
 
 data class ChartDateResponse(
     @SerializedName("sales")
@@ -9,7 +10,7 @@ data class ChartDateResponse(
 
 data class ChartDateItemResponse(
     @SerializedName("datevente")
-    val datevente: String,
+    val datevente: Date,
 
     @SerializedName("totalprix")
     val totalprix: Double
