@@ -11,9 +11,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 
 @Composable
-fun EmptyScreen(text : String ? = null) {
+fun EmptyScreen(text : String ? = null, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(text = text ?: "No data available", style = MaterialTheme.typography.bodyLarge)

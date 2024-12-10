@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="no_internet_connexion">Pas de connexion internet</string>
+    <string name="no_internet_connexion">Erreur : Pas de connexion internet</string>
     <string name="error_tablet_desc">Nous sommes désolés, mais cette application fonctionne uniquement que sur tablette.</string>
     <string name="close_app">Fermer</string>
     <string name="menu_home">Accueil</string>
     <string name="menu_sale">Ventes</string>
     <string name="menu_product">Produits</string>
-    <string name="menu_update_password">Modifier mot de passe</string>
+    <string name="menu_update_password">Modifier mon mot de passe</string>
     <string name="menu_log_out">Se déconnecter</string>
     <string name="menu_settings">Paramètres</string>
 </resources>

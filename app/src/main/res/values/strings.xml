@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">SalesB</string>
-    <string name="no_internet_connexion">No internet connexion</string>
+    <string name="no_internet_connexion">Error: No internet connexion</string>
     <string name="error_tablet_desc">We\'re sorry, but this application only works on tablets.</string>
     <string name="close_app">Close</string>
     <string name="menu_home">Home</string>

@@ -7,13 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.groupec.salesb.core.designsystem.theme.Red
 
 @Composable
-fun ErrorScreen(error: String) {
+fun ErrorScreen(error: String, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Error: $error")
+        Text(text = error, color = Red)
     }
 }

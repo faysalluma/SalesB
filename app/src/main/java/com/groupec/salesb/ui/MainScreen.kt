@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.groupec.salesb.R
 import com.groupec.salesb.core.designsystem.SampleTopAppBar
+import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.navigation.AppNavHost
@@ -109,16 +110,22 @@ fun MainScreen(
         }
     ) {
         Row(modifier = Modifier.padding(it)) {
-            if (shouldShowBarAndRailApp(currentDestination.value)) {
-                MyNavigationRail(navController, modifier = Modifier.weight(0.09f))
+            if (!connectionState && shouldShowBarAndRailApp(currentDestination.value)) {
+                ErrorScreen(
+                    error = stringResource(R.string.no_internet_connexion)
+                )
+            } else {
+                if (shouldShowBarAndRailApp(currentDestination.value)) {
+                    MyNavigationRail(navController, modifier = Modifier.weight(0.09f))
+                }
+                AppNavHost(
+                    modifier = Modifier
+                        .weight(if (shouldShowBarAndRailApp(currentDestination.value)) 0.91f else 1f)
+                        .padding(16.dp),
+                    connectionState = connectionState,
+                    navController = navController
+                )
             }
-            AppNavHost(
-                modifier = Modifier
-                    .weight(if (shouldShowBarAndRailApp(currentDestination.value)) 0.91f else 1f)
-                    .padding(16.dp),
-                connectionState = connectionState,
-                navController = navController
-            )
         }
     }
 }
