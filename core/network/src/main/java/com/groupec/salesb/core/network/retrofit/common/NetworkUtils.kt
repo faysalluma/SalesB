@@ -5,9 +5,6 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import retrofit2.Response
 import com.groupec.salesb.core.Result
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import java.io.IOException
 
 suspend fun <T, R> safeApiCall(
@@ -34,7 +31,8 @@ suspend fun <T, R> safeApiCall(
         }
     }
 }
- suspend fun <T, R> safeApiCallGetResult(
+
+suspend fun <T, R> safeApiCallGetResult(
     apiCall: suspend () -> Response<T>,
     transform: (T) -> R,
     default: R

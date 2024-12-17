@@ -1,30 +1,27 @@
 package com.groupec.salesb.ui
 
 import android.content.Context
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.groupec.salesb.R
@@ -47,24 +44,32 @@ fun MainScreen(
     // Show title and user name on app bar
     val userStoreState by viewModel.userStore.collectAsState()
     val appBarTitle = userStoreState.nomprenom
+    val firstLogin = userStoreState.firstLogin
 
+    // For TopAppBar
     var onNavigationClick: (() -> Unit)? = null
     var dropDownItemsMenu: List<Pair<String, () -> Unit>> = emptyList()
 
-    val currentDestination = remember {
-        mutableStateOf(navController.currentDestination?.route)
-    }
-
-    LaunchedEffect(navController) {
-        navController.addOnDestinationChangedListener { _, destination, arguments ->
+    val currentDestination = remember { mutableStateOf(navController.currentDestination?.route) }
+    DisposableEffect(navController) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             currentDestination.value =
-                destination.route?.substringBeforeLast("/")?.substringBeforeLast("?")
+                destination.route?.substringBefore("/")?.substringBefore("?")
+        }
+        navController.addOnDestinationChangedListener(listener)
+        onDispose {
+            navController.removeOnDestinationChangedListener(listener)
         }
     }
 
     when (currentDestination.value) {
         NavigationItem.Home.route -> {
-            dropDownItemsMenu = getDropdownItemsWithActions(context, navController)
+            viewModel.getUserStore()
+            dropDownItemsMenu = getDropdownItemsWithActions(context, navController, viewModel)
+        }
+
+        NavigationItem.ChangePassword.route -> {
+            viewModel.getUserStore()
         }
 
         /*  NavigationItem.Detail.route -> {
@@ -85,7 +90,12 @@ fun MainScreen(
 
     Scaffold(
         topBar = {
-            if (shouldShowBarAndRailApp(currentDestination.value)) {
+            if (
+                shouldShowBarAndRailApp(
+                    route = currentDestination.value,
+                    firstLogin = firstLogin
+                )
+            ) {
                 SampleTopAppBar(
                     appBarTitle,
                     onNavigationClick,
@@ -94,33 +104,46 @@ fun MainScreen(
             }
         },
         floatingActionButton = {
-            LargeFloatingActionButton(
-                onClick = {
-                    navController.navigate(NavigationItem.Sale.route) {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
-                },
-                shape = CircleShape,
-                containerColor = Primary,
-                contentColor = White,
+            if (
+                shouldShowBarAndRailApp(
+                    route = currentDestination.value,
+                    firstLogin = firstLogin
+                )
             ) {
-                Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(32.dp))
+                LargeFloatingActionButton(
+                    onClick = {
+                        navController.navigate(NavigationItem.Sale.route) {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
+                    },
+                    shape = CircleShape,
+                    containerColor = Primary,
+                    contentColor = White,
+                ) {
+                    Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(32.dp))
+                }
             }
         }
     ) {
         Row(modifier = Modifier.padding(it)) {
-            if (!connectionState && shouldShowBarAndRailApp(currentDestination.value)) {
+            if (!connectionState && shouldShowBarAndRailApp(currentDestination.value, firstLogin)) {
                 ErrorScreen(
                     error = stringResource(R.string.no_internet_connexion)
                 )
             } else {
-                if (shouldShowBarAndRailApp(currentDestination.value)) {
+                if (shouldShowBarAndRailApp(currentDestination.value, firstLogin)) {
                     MyNavigationRail(navController, modifier = Modifier.weight(0.09f))
                 }
                 AppNavHost(
                     modifier = Modifier
-                        .weight(if (shouldShowBarAndRailApp(currentDestination.value)) 0.91f else 1f)
+                        .weight(
+                            if (shouldShowBarAndRailApp(
+                                    currentDestination.value,
+                                    firstLogin
+                                )
+                            ) 0.91f else 1f
+                        )
                         .padding(16.dp),
                     connectionState = connectionState,
                     navController = navController
@@ -130,18 +153,40 @@ fun MainScreen(
     }
 }
 
-fun getDropdownItemsWithActions(context: Context, navController: NavHostController): List<Pair<String, () -> Unit>> {
+fun getDropdownItemsWithActions(
+    context: Context,
+    navController: NavHostController,
+    viewModel: MainViewModel
+): List<Pair<String, () -> Unit>> {
     return listOf(
         context.getString(R.string.menu_settings) to { /* navController.executeAction() */ },
-        context.getString(R.string.menu_update_password) to { /* navController.executeAction() */ },
-        context.getString(R.string.menu_log_out) to { /* navController.executeAction() */ },
+        context.getString(R.string.menu_update_password) to {
+            navController.navigate(NavigationItem.ChangePassword.route)
+        },
+        context.getString(R.string.menu_log_out) to {
+            viewModel.logout()
+            navController.navigate(NavigationItem.Loading.route) {
+                // Delete the entire background stack
+                popUpTo(0) { inclusive = true }
+            }
+        },
     )
 }
 
-private fun shouldShowBarAndRailApp(route: String?): Boolean {
-    return route !in listOf(
-        NavigationItem.Loading.route,
-        NavigationItem.Configuration.route,
-        NavigationItem.Login.route
-    )
+private fun shouldShowBarAndRailApp(route: String?, firstLogin: Boolean = false): Boolean {
+    val excludedRoutes = if (firstLogin) {
+        listOf(
+            NavigationItem.Loading.route,
+            NavigationItem.Configuration.route,
+            NavigationItem.Login.route,
+            NavigationItem.ChangePassword.route
+        )
+    } else {
+        listOf(
+            NavigationItem.Loading.route,
+            NavigationItem.Configuration.route,
+            NavigationItem.Login.route
+        )
+    }
+    return route !in excludedRoutes
 }

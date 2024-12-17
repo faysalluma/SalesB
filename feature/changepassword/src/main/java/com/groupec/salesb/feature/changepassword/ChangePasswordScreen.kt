@@ -1,6 +1,8 @@
 package com.groupec.salesb.feature.changepassword
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +26,7 @@ import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.component.TitleHeader
 import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.ui.ChangePasswordForm
+import com.groupec.salesb.core.ui.ComposableLifecycle
 
 
 @Composable
@@ -30,13 +34,20 @@ fun ChangePasswordScreen(
     userId: Int,
     firstLogin: Boolean,
     navigateToHome: () -> Unit,
+    onBackPressed: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChangePasswordViewModel = hiltViewModel(),
-
     ) {
     val context = LocalContext.current
     val loginState by viewModel.changePasswordUiState.collectAsState()
     val isLoading = loginState is ChangePasswordUiState.Loading // Get the loading state to show circular progress in button
+
+    BackHandler {
+        if (firstLogin) {
+            viewModel.logout()
+        }
+        onBackPressed()
+    }
 
     when (loginState) {
         is ChangePasswordUiState.Success -> {

@@ -10,11 +10,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.UIState
+import com.groupec.salesb.core.domain.user.LogoutPasswordUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
-    private val changePasswordUseCase: ChangePasswordUseCase
+    private val changePasswordUseCase: ChangePasswordUseCase,
+    private val logoutPasswordUseCase: LogoutPasswordUseCase
 ) : ViewModel() {
 
     private val _changePasswordUiState =
@@ -41,6 +44,17 @@ class ChangePasswordViewModel @Inject constructor(
 
     fun resetFlow() {
         _changePasswordUiState.value = ChangePasswordUiState.Idle
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            when (val result = logoutPasswordUseCase()) {
+                is Result.Error -> {
+                    ChangePasswordUiState.Error(result.exception.message ?: "Failed to logout")
+                }
+                else -> { /* Nothing to do */ }
+            }
+        }
     }
 }
 

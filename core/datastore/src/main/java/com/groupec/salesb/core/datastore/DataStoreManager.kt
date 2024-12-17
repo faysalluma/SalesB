@@ -7,10 +7,12 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.UserStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,6 +33,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         private val USER_ID_KEY = stringPreferencesKey("userid")
         private val USER_NAME_KEY = stringPreferencesKey("nomprenom")
         private val USER_PRIVILEGES_KEY = stringPreferencesKey("privileges")
+        private val USER_FIRST_LOGIN_KEY = booleanPreferencesKey("firstlogin")
     }
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -55,7 +58,9 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             UserStore(
                 preferences[USER_ID_KEY] ?: "",
                 preferences[USER_NAME_KEY] ?: "",
-                preferences[USER_PRIVILEGES_KEY] ?: ""
+                preferences[USER_PRIVILEGES_KEY] ?: "",
+                preferences[USER_FIRST_LOGIN_KEY] ?: false
+
             )
         }
 
@@ -76,7 +81,20 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             datastore[USER_ID_KEY] = user.id
             datastore[USER_NAME_KEY] = user.nomprenom
             datastore[USER_PRIVILEGES_KEY] = user.privilege
+            datastore[USER_FIRST_LOGIN_KEY] = user.firstLogin
         }
     }
 
+    suspend fun logout()  {
+        context.dataStore.edit { preferences ->
+            // Remove all keys about user
+            preferences.remove(USER_ID_KEY)
+            preferences.remove(USER_NAME_KEY)
+            preferences.remove(USER_PRIVILEGES_KEY)
+            preferences.remove(USER_FIRST_LOGIN_KEY)
+        }
+    }
+
+    // Check if the user is logged in
+    suspend fun isLoggedIn(): Boolean = context.dataStore.data.first()[USER_ID_KEY] != null
 }

@@ -2,7 +2,6 @@ package com.groupec.salesb.core.data.repository
 
 
 import android.content.Context
-import com.groupec.salesb.core.ConnectivityManagerUtils
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.data.model.toUserEntity
 import com.groupec.salesb.core.data.repository.common.UserLocalRepository
@@ -71,5 +70,14 @@ class UserRepositoryImpl @Inject constructor(
         userSyncRepository.changePassword(userId, ancPassword, password)
     } else {
         userRemoteRepository.changePassword(userId, ancPassword, password)
+    }
+
+    override suspend fun logout(): Result<Unit> {
+        return try {
+            dataStoreManager.logout()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 }

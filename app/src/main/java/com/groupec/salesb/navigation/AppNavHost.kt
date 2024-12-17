@@ -115,6 +115,9 @@ fun AppNavHost(
                     navController.navigate(NavigationItem.Home.route) {
                        popUpTo(NavigationItem.Login.route.plus("/{raisonSociale}")) { inclusive = true }
                     }
+                },
+                onBackPressed = {
+                    navController.popBackStack()
                 }
             )
         }
