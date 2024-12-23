@@ -13,6 +13,7 @@ enum class Screen {
     Home,
     Sale,
     Product,
+    ProductDetail
 
 }
 sealed class NavigationItem(val route: String,val title: Int = 0, val icon: NavigationIcon ? = null) {
@@ -23,6 +24,7 @@ sealed class NavigationItem(val route: String,val title: Int = 0, val icon: Navi
     data object Home : NavigationItem(Screen.Home.name, R.string.menu_home, NavigationIcon.VectorIcon(AppIcons.Home))
     data object Sale : NavigationItem(Screen.Sale.name, R.string.menu_sale, NavigationIcon.DrawableIcon(AppIcons.Sale))
     data object Product : NavigationItem(Screen.Product.name, R.string.menu_product, NavigationIcon.DrawableIcon(AppIcons.Product))
+    data object ProductDetail : NavigationItem(Screen.ProductDetail.name)
 }
 
 sealed class NavigationIcon {

@@ -61,7 +61,7 @@ fun Date.dayMonthYear(): String {
  * @sample toStandardDateString(DateFormat.LONG): "30 juillet 2009"
  * @sample toStandardDateString(DateFormat.FULL): "mardi 30 juillet 2009"
  */
-fun Date.toStandardDateString(format: Int): String {
+fun Date.toStandardDateString(format: Int = DateFormat.MEDIUM): String {
     return DateFormat.getDateInstance(format, Locale.getDefault()).format(this)
 }
 

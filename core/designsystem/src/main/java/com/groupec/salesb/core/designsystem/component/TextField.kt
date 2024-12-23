@@ -13,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -52,7 +54,8 @@ fun AppTextField(
     value: String = "",
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    label: String,
+    shape: Shape = TextFieldDefaults.shape,
+    label: String ? = null,
     placeholder: String,
     fieldType: FieldType,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -113,6 +116,7 @@ fun AppTextField(
         } else {
             null
         },
+        shape = shape,
         keyboardOptions = KeyboardOptions(
             imeAction = if (keyboardAction == KeyboardAction.Next) {
                 ImeAction.Next
@@ -141,15 +145,34 @@ fun AppTextField(
             }
         ),
         placeholder = { Text(placeholder) },
-        label = { Text(label) },
+        label = label?.let { { Text(it) } },
         singleLine = singleLine,
-        colors = if (fieldColor != null) {
-            ExposedDropdownMenuDefaults.textFieldColors(
-                focusedContainerColor = fieldColor,
-                unfocusedContainerColor = fieldColor
-            )
-        } else {
-            ExposedDropdownMenuDefaults.textFieldColors()
+        colors = when {
+            fieldColor != null -> {
+                if (shape != TextFieldDefaults.shape) {
+                    ExposedDropdownMenuDefaults.textFieldColors(
+                        focusedContainerColor = fieldColor,
+                        unfocusedContainerColor = fieldColor,
+                        focusedIndicatorColor = Color.Transparent, // Remove underline when focused
+                        unfocusedIndicatorColor = Color.Transparent // Remove underline when unfocused
+                    )
+                } else {
+                    ExposedDropdownMenuDefaults.textFieldColors(
+                        focusedContainerColor = fieldColor,
+                        unfocusedContainerColor = fieldColor
+                    )
+                }
+            }
+            else -> {
+                if (shape != TextFieldDefaults.shape) {
+                    ExposedDropdownMenuDefaults.textFieldColors(
+                        focusedIndicatorColor = Color.Transparent, // Remove underline when focused
+                        unfocusedIndicatorColor = Color.Transparent // Remove underline when unfocused
+                    )
+                } else {
+                    ExposedDropdownMenuDefaults.textFieldColors()
+                }
+            }
         },
         visualTransformation = if (fieldType == FieldType.Password) {
             if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()

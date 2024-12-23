@@ -6,4 +6,8 @@
     <string name="statistic_label_benefit">Bénéfices</string>
     <string name="sale_number_and_date">N°: %1$d à %2$s</string>
     <string name="statistic_label_chart">Ventes périodiques</string>
+    <string name="product_date_and_price">Date : %1$s, Prix: %2$s</string>
+    <string name="none">Aucun</string>
+    <string name="view_item">Modifier</string>
+    <string name="delete_item">Supprimer</string>
 </resources>

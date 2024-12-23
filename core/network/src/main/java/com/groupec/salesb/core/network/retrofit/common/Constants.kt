@@ -4,7 +4,7 @@ class Constants {
     companion object {
         // For emulator user 10.0.2.2 --- (192, 172) for wampserver --- Don't use 10.188 ...
 
-        const val BASE_URL = "http://192.168.1.144/SalesBApi/public/"
+        const val BASE_URL = "http://192.168.1.37/SalesBApi/public/"
 
         // Get endpoint
         const val GET_PARAMETER = "parameter"
@@ -18,6 +18,7 @@ class Constants {
         const val GET_ALERT_SEUIL = "getAlertSeuil"
         const val GET_TOTAL_SALE_DAY = "getTotalSaleMorningEvening/{date}"
         const val GET_TOTAL_SALE_BY_DATE = "getTotalSalesByDate/{startDate}/{endDate}"
+        const val GET_PRODUCTS = "getProducts"
 
         // Put endpoint
         const val PUT_CHANGE_PASSWORD = "changePassword/{userid}"

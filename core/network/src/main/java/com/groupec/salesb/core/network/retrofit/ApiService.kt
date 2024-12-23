@@ -14,6 +14,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
     @GET(Constants.GET_PARAMETER)
@@ -52,4 +53,8 @@ interface ApiService {
     @GET(Constants.GET_TOTAL_SALE_BY_DATE)
     suspend fun getTotalSalesByDate(@Path("startDate") startDate: String, @Path("endDate") endDate: String
     ): Response<ChartDateResponse>
+
+    @GET(Constants.GET_PRODUCTS)
+    suspend fun getProducts(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
+    ): Response<ProductResponse>
 }

@@ -2,9 +2,16 @@ package com.groupec.salesb.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -14,6 +21,9 @@ import androidx.navigation.navArgument
 import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.login.LoginScreen
+import com.groupec.feature.productdetail.ProductDetailScreen
+import com.groupec.feature.productlist.ProductListScreen
+import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
@@ -131,7 +141,21 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.Product.route) {
-            Text("Product")
+            var selectedProduct by remember { mutableStateOf<Product?>(null) }
+            Row {
+                Row(Modifier.weight(1f)) {
+                    ProductListScreen(
+                        onViewDetail = { product ->
+                            selectedProduct = product
+                        }
+                    )
+                    VerticalDivider()
+                }
+
+                Box(Modifier.weight(2f)) {
+                    ProductDetailScreen(product = selectedProduct)
+                }
+            }
         }
     }
 }

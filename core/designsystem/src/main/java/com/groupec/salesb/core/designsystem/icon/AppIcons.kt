@@ -2,10 +2,14 @@ package com.groupec.salesb.core.designsystem.icon
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Person
@@ -31,4 +35,8 @@ object AppIcons {
     val Sale  = R.drawable.business_center_24
     val Product = R.drawable.product_reorder_24
     val Photo = R.drawable.photo_camera_24
+    val MoreHoriz = Icons.Filled.MoreHoriz
+    val Edit = R.drawable.baseline_edit_square_24
+    val Delete = Icons.Default.Cancel
+    val FilterList = Icons.Default.FilterList
 }

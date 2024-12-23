@@ -8,4 +8,8 @@
     <string name="statistic_label_top_sale">Entries</string>
     <string name="statistic_label_benefit">Benefits</string>
     <string name="sale_number_and_date">N°: %1$d at %2$s</string>
+    <string name="product_date_and_price">Date: %1$s,  Price: %2$s</string>
+    <string name="none">None</string>
+    <string name="view_item">Edit</string>
+    <string name="delete_item">Delete</string>
 </resources>

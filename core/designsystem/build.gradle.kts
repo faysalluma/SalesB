@@ -9,7 +9,8 @@ android {
 
 dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
-
     implementation(libs.coil.kt)
     implementation(libs.coil.kt.compose)
+    implementation(libs.androidx.material.icons.extended)
+
 }

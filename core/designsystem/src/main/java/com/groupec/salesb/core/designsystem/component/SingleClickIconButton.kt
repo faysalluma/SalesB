@@ -1,4 +1,4 @@
-package com.famoco.app2apptoolscompose.presentation.utils
+package com.groupec.salesb.core.designsystem.component
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.*
