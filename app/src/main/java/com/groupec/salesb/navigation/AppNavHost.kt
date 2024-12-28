@@ -143,7 +143,7 @@ fun AppNavHost(
         composable(NavigationItem.Product.route) {
             var selectedProduct by remember { mutableStateOf<Product?>(null) }
             Row {
-                Row(Modifier.weight(1f)) {
+                Row(Modifier.weight(0.4f)) {
                     ProductListScreen(
                         onViewDetail = { product ->
                             selectedProduct = product
@@ -152,7 +152,7 @@ fun AppNavHost(
                     VerticalDivider()
                 }
 
-                Box(Modifier.weight(2f)) {
+                Box(Modifier.weight(0.6f)) {
                     ProductDetailScreen(product = selectedProduct)
                 }
             }

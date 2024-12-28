@@ -35,6 +35,7 @@ object AppIcons {
     val Sale  = R.drawable.business_center_24
     val Product = R.drawable.product_reorder_24
     val Photo = R.drawable.photo_camera_24
+    val PhotoLarge = R.drawable.baseline_photo_camera_128
     val MoreHoriz = Icons.Filled.MoreHoriz
     val Edit = R.drawable.baseline_edit_square_24
     val Delete = Icons.Default.Cancel

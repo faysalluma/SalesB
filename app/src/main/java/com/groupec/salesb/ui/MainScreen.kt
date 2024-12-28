@@ -105,10 +105,7 @@ fun MainScreen(
         },
         floatingActionButton = {
             if (
-                shouldShowBarAndRailApp(
-                    route = currentDestination.value,
-                    firstLogin = firstLogin
-                )
+                currentDestination.value == NavigationItem.Home.route
             ) {
                 LargeFloatingActionButton(
                     onClick = {

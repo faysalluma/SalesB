@@ -6,14 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.DropdownMenuItem
@@ -33,18 +28,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.groupec.salesb.core.designsystem.theme.Primary
-import com.groupec.salesb.core.designsystem.theme.Secondary
-import com.groupec.salesb.core.designsystem.theme.Silver
+import com.groupec.salesb.core.designsystem.R
 
 
 /** ExposedDropdownMenu */
@@ -109,19 +101,42 @@ fun AppExposedDropdownMenu(
 /** EditableExposedDropdownMenu */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AppEditableExposedDropdown(items: List<String>) {
+fun AppEditableExposedDropdown(
+    items: List<Pair<String, String>>,
+    modifier: Modifier = Modifier,
+    label: String ? = null,
+    isError: Boolean = false,
+    supportingText: @Composable (() -> Unit)? = null,
+    onItemSelected: (Pair<String, String>) -> Unit
+)  {
     var text by remember { mutableStateOf(TextFieldValue()) }
 
     // The text that the user inputs into the text field can be used to filter the options.
     // This sample uses string subsequence matching.
     val filteredOptions = items.filter {
-        it.lowercase().contains(text.text.lowercase())
-    }.sorted()
+        it.second.lowercase().contains(text.text.lowercase())
+    }.sortedBy { it.second }
+
 
     val (allowExpanded, setExpanded) = remember { mutableStateOf(false) }
     val expanded = allowExpanded && filteredOptions.isNotEmpty()
 
+    // Custom elements
+    val supportingTextValue: (@Composable () -> Unit)? = when {
+        isError -> supportingText ?: if (text.text.isEmpty()) {
+            {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.required_field),
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        } else null
+        else -> null
+    }
+
     ExposedDropdownMenuBox(
+        modifier = modifier,
         expanded = expanded,
         onExpandedChange = setExpanded,
     ) {
@@ -133,11 +148,18 @@ fun AppEditableExposedDropdown(items: List<String>) {
                 // The `menuAnchor` modifier must be passed to the text field to handle
                 // expanding/collapsing the menu on click. An editable text field has
                 // the anchor type `PrimaryEditable`.
-                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryEditable).fillMaxWidth(),
                 value = text,
-                onValueChange = { text = it },
+                onValueChange = { newText ->
+                    text = newText
+                    // Vérifier si la saisie correspond à une valeur valide
+                    items.find { it.second == newText.text }?.let {
+                        onItemSelected(it) // Appeler onItemSelected avec l'élément correspondant
+                    }?:onItemSelected(Pair("", newText.text))
+
+                },
                 singleLine = true,
-                label = { Text("Label") },
+                label = label?.let { { Text(it) } },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(
                         expanded = expanded,
@@ -145,9 +167,11 @@ fun AppEditableExposedDropdown(items: List<String>) {
                         // trailing icon a `menuAnchor` of type `SecondaryEditable`. This
                         // provides a better experience for certain accessibility services
                         // to choose a menu option without typing.
-                        modifier = Modifier.menuAnchor(MenuAnchorType.SecondaryEditable),
+                       // modifier = Modifier.menuAnchor(MenuAnchorType.SecondaryEditable),
                     )
                 },
+                isError = isError,
+                supportingText = supportingTextValue,
                 colors = ExposedDropdownMenuDefaults.textFieldColors(
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White
@@ -157,19 +181,22 @@ fun AppEditableExposedDropdown(items: List<String>) {
 
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { setExpanded(false) },
+            onDismissRequest = {
+                setExpanded(false)
+            },
             modifier = Modifier.background(Color.White)
         ) {
             filteredOptions.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(option, style = MaterialTheme.typography.bodyLarge) },
+                    text = { Text(option.second, style = MaterialTheme.typography.bodyLarge) },
                     onClick = {
                         text =
                             TextFieldValue(
-                                text = option,
-                                selection = TextRange(option.length),
+                                text = option.second,
+                                selection = TextRange(option.second.length), // Placer le curseur à la fin quand on selectionne un element de la liste
                             )
                         setExpanded(false)
+                        onItemSelected(option)
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
@@ -268,6 +295,7 @@ fun Int.pixelToDp(): Int = (this / Resources.getSystem().displayMetrics.density)
 @Composable
 fun SpinnersPreview() {
     val items = listOf("Cupcake", "Donut", "Eclair", "Froyo", "Gingerbread")
+    val pairItems = listOf("1" to "Cupcake" , "2" to "Donut", "3" to "Eclair")
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -276,7 +304,9 @@ fun SpinnersPreview() {
         AppExposedDropdownMenu(items) { index, item ->
 
         }
-        AppEditableExposedDropdown(items)
+        AppEditableExposedDropdown(pairItems) { item ->
+
+        }
         AppMultiSelectDropdownMenu(items)
     }
 }

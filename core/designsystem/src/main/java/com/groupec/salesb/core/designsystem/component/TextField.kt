@@ -45,7 +45,8 @@ enum class FieldType {
 
 enum class KeyboardAction {
     Next,
-    Done
+    Done,
+    Unspecified
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,9 +58,10 @@ fun AppTextField(
     shape: Shape = TextFieldDefaults.shape,
     label: String ? = null,
     placeholder: String,
-    fieldType: FieldType,
+    fieldType: FieldType = FieldType.Text,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
+    maxLines: Int = 1,
     singleLine: Boolean = true,
     fieldColor: Color? = null,
     isError: Boolean = false,
@@ -118,10 +120,16 @@ fun AppTextField(
         },
         shape = shape,
         keyboardOptions = KeyboardOptions(
-            imeAction = if (keyboardAction == KeyboardAction.Next) {
-                ImeAction.Next
-            } else {
-                ImeAction.Done
+            imeAction = when (keyboardAction) {
+                KeyboardAction.Next -> {
+                    ImeAction.Next
+                }
+                KeyboardAction.Done -> {
+                    ImeAction.Done
+                }
+                else -> {
+                    ImeAction.Unspecified
+                }
             },
             keyboardType = when (fieldType) {
                 FieldType.Text -> KeyboardType.Text
@@ -146,6 +154,7 @@ fun AppTextField(
         ),
         placeholder = { Text(placeholder) },
         label = label?.let { { Text(it) } },
+        maxLines = maxLines,
         singleLine = singleLine,
         colors = when {
             fieldColor != null -> {

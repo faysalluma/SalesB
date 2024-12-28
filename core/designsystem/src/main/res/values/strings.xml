@@ -23,4 +23,19 @@
     <string name="title_login">WELCOME %s!</string>
     <string name="detail_login">This application lets you manage your sales and inventory, please login to your account.</string>
     <string name="title_first_connexion">First login: please change your password</string>
+    <string name="add_image">ADD IMAGE</string>
+    <!--  Product Form -->
+    <string name="label_libelle">Name *</string>
+    <string name="label_ref">Reference</string>
+    <string name="label_desc" translatable="false">Description</string>
+    <string name="label_price">Price *</string>
+    <string name="label_qte_stock">Stock quantity *</string>
+    <string name="label_stock_mini">Minimum stock</string>
+    <string name="label_categorie">Category *</string>
+    <string name="label_rayon">Section</string>
+    <string name="label_fournisseur">Vendor</string>
+    <string name="enter_your_value">"Enter the %s "</string>
+    <string name="invalid_libelle">Invalid email address</string>
+    <string name="btn_save">Save</string>
+    <string name="invalid_select"> Invalid selector</string>
 </resources>

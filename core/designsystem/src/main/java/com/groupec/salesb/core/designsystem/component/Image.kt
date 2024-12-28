@@ -6,7 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Card
@@ -54,6 +58,49 @@ fun SalesBImage(modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun CardImage(
+    modifier : Modifier = Modifier,
+    imageUrl: String,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = modifier,
+        elevation = CardDefaults.cardElevation(8.dp), // Ombre de la carte
+        shape = RoundedCornerShape(8.dp),  // Bords arrondis
+        colors = CardDefaults.cardColors(
+            containerColor = White
+        ),
+        onClick = onClick
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(imageUrl)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(AppIcons.PhotoLarge),
+                error = painterResource(AppIcons.PhotoLarge),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.width(54.dp).height(40.dp)
+                // .clip(CircleShape)
+                // .border(2.dp, Color.Gray, CircleShape),
+                // colorFilter = ColorFilter.tint(Color.Blue)
+            )
+            Text(
+                modifier = Modifier.padding(top = 10.dp),
+                text = stringResource(R.string.add_image),
+                style = MaterialTheme.typography.titleSmall
+            )
+        }
+    }
+}
+
 
 @Composable
 fun ProductImage(
@@ -87,7 +134,8 @@ fun ProductImage(
 fun SalesBImagePreview(){
     Column {
         // SalesBImage()
-        ProductImage(imageUrl = "")
+        CardImage(imageUrl = "", onClick = {})
+        // ProductImage(imageUrl = "")
     }
 
 }

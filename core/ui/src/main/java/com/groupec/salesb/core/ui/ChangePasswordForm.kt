@@ -23,7 +23,6 @@ import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DefaultButton
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.KeyboardAction
-import com.groupec.salesb.core.designsystem.component.isValidEmail
 import com.groupec.salesb.core.designsystem.theme.Primary
 
 @Composable
@@ -60,8 +59,7 @@ fun ChangePasswordForm(firstLogin: Boolean, onSubmitForm: (password: Password) -
                 },
                 onChange = { data ->
                     passwords = passwords.copy(ancPassword = data)
-                    if (isAncPasswordError) isAncPasswordError =
-                        false //  Clear error when user starts typing
+                    if (isAncPasswordError) isAncPasswordError = false //  Clear error when user starts typing
                 },
                 label = stringResource(id = R.string.label_anc_password),
                 placeholder = stringResource(id = R.string.enter_your_anc_password),
