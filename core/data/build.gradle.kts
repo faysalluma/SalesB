@@ -26,7 +26,7 @@ dependencies {
     implementation(libs.retrofit.converterGson)
     implementation (libs.retrofit.core)
     implementation (libs.okhttp.core)
-    implementation (libs.logging.interceptor)
+    implementation(libs.okhttp.logging)
 
     // For bcrypt hashing
     implementation(libs.jbcrypt)

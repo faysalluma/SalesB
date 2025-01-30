@@ -74,7 +74,7 @@ fun LoginScreen(
                                     (loginState as LoginUiState.Error).message,
                                     Toast.LENGTH_LONG
                                 ).show()
-                                viewModel.resetFlow()
+                                viewModel.resetFlow() // Because if have same messages error flow dont refresh and snackBar show same things
                             }
                         }
 

@@ -9,4 +9,5 @@ android {
 }
 
 dependencies {
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.10")
 }

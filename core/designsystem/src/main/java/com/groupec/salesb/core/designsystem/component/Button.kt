@@ -69,18 +69,26 @@ fun IconTextButton(
 
 
 @Composable
-fun DefaultButton(onClick: ()->Unit, text : String, enabled : Boolean = true, isLoading : Boolean = false) {
+fun DefaultButton(
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    text : String,
+    textcolor: Color = White,
+    containerColor: Color = Primary,
+    enabled : Boolean = true,
+    isLoading : Boolean = false,
+    onClick: ()->Unit
+) {
     MaterialTheme {
         Button(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier,
             shape = RoundedCornerShape(5.dp),
             enabled = enabled,
             onClick = { onClick() },
-            colors = ButtonDefaults.buttonColors(containerColor = Primary, contentColor = Color.White),
-            contentPadding = PaddingValues(vertical = 16.dp)
+            colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = textcolor),
+            contentPadding = PaddingValues(16.dp)
         ) {
             if (isLoading)  {
-                AppLoadingScreen(Modifier.wrapContentSize(), color = White)
+                AppLoadingScreen(Modifier.wrapContentSize(), color = textcolor)
             } else {
                 Text(text = text)
             }

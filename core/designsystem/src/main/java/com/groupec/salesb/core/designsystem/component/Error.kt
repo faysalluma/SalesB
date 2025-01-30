@@ -10,11 +10,11 @@ import androidx.compose.ui.graphics.Color
 import com.groupec.salesb.core.designsystem.theme.Red
 
 @Composable
-fun ErrorScreen(error: String, modifier: Modifier = Modifier) {
+fun ErrorScreen(error: String, modifier: Modifier = Modifier.fillMaxSize(), color: Color = Red) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        Text(text = error, color = Red)
+        Text(text = error, color = color)
     }
 }

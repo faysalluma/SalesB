@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="detail_title">Détail produits</string>
+    <string name="btn_close">Fermer</string>
+    <string name="detail_title">Détails du produit</string>
     <string name="btn_cancel">Annuler</string>
 </resources>

@@ -2,6 +2,7 @@ package com.groupec.salesb.core.network.retrofit
 
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.network.model.ApiResult
+import com.groupec.salesb.core.network.model.CategorieResponse
 import com.groupec.salesb.core.network.model.ChartDateResponse
 import com.groupec.salesb.core.network.model.ChartDayResponse
 import com.groupec.salesb.core.network.model.ParameterResponse
@@ -9,14 +10,21 @@ import com.groupec.salesb.core.network.model.ProductResponse
 import com.groupec.salesb.core.network.model.UserItemResponse
 import com.groupec.salesb.core.network.model.UserResponse
 import com.groupec.salesb.core.network.retrofit.common.Constants
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
+    /* GET API */
     @GET(Constants.GET_PARAMETER)
     suspend fun getParameter() : Response<ParameterResponse>
 
@@ -28,9 +36,6 @@ interface ApiService {
 
     @GET(Constants.GET_USER_BY_ID)
     suspend fun getUserById(@Path("userid") userId: Int) : Response<ApiResult<UserItemResponse>>
-
-    @PUT(Constants.PUT_CHANGE_PASSWORD)
-    suspend fun changePassword(@Path("userid") userid: Int, @Body user: User): Response<User>
 
     @GET(Constants.GET_TOTAL_SALES)
     suspend fun getTotalSales(@Path("startDate") startDate: String, @Path("endDate") endDate: String): Response<ApiResult<Int>>
@@ -57,4 +62,37 @@ interface ApiService {
     @GET(Constants.GET_PRODUCTS)
     suspend fun getProducts(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
     ): Response<ProductResponse>
+
+    @GET(Constants.GET_CATEGORIES)
+    suspend fun getCategories(): Response<CategorieResponse>
+
+    /* POST API */
+    @Multipart
+    @POST(Constants.ADD_PRODUCT)
+    suspend fun addProduct(
+        @Part("id") id: RequestBody?,
+        @Part("reference") reference: RequestBody?,
+        @Part("libelle") libelle: RequestBody,
+        @Part("description") description: RequestBody?,
+        @Part("image") image: RequestBody?,
+        @Part("prixht") prixht: RequestBody?,
+        @Part("prixttc") prixttc: RequestBody,
+        @Part("qtestock") qtestock: RequestBody?,
+        @Part("stockmini") stockmini: RequestBody?,
+        @Part("categorieid") categorieid: RequestBody?,
+        @Part("rayonid") rayonid: RequestBody?,
+        @Part("fournisseurid") fournisseurid: RequestBody?,
+        @Part("tvaid") tvaid: RequestBody?,
+        @Part("datemodif") datemodif: RequestBody,
+        @Part("userid") userid: RequestBody,
+        @Part imagePart: MultipartBody.Part?
+    ): Response<ApiResult<Unit>>
+
+    /* PUT API */
+    @PUT(Constants.PUT_CHANGE_PASSWORD)
+    suspend fun changePassword(@Path("userid") userid: Int, @Body user: User): Response<User>
+
+    /* DELETE API */
+    @DELETE(Constants.DELETE_PRODUCT)
+    suspend fun deleteProduct(@Path("productid") productid: Int): Response<ApiResult<Boolean>>
 }

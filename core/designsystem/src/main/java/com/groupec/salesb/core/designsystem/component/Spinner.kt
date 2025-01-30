@@ -104,17 +104,18 @@ fun AppExposedDropdownMenu(
 fun AppEditableExposedDropdown(
     items: List<Pair<String, String>>,
     modifier: Modifier = Modifier,
-    label: String ? = null,
+    label: String? = null,
     isError: Boolean = false,
-    supportingText: @Composable (() -> Unit)? = null,
-    onItemSelected: (Pair<String, String>) -> Unit
+    value: TextFieldValue = TextFieldValue(""),
+    onValueChange: ((TextFieldValue) -> Unit) ? = null,
+    supportingText: @Composable() (() -> Unit)? = null,
+    onItemSelected: (Pair<String, String>) -> Unit,
 )  {
-    var text by remember { mutableStateOf(TextFieldValue()) }
 
     // The text that the user inputs into the text field can be used to filter the options.
     // This sample uses string subsequence matching.
     val filteredOptions = items.filter {
-        it.second.lowercase().contains(text.text.lowercase())
+        it.second.lowercase().contains(value.text.lowercase())
     }.sortedBy { it.second }
 
 
@@ -123,7 +124,7 @@ fun AppEditableExposedDropdown(
 
     // Custom elements
     val supportingTextValue: (@Composable () -> Unit)? = when {
-        isError -> supportingText ?: if (text.text.isEmpty()) {
+        isError -> supportingText ?: if (value.text.isEmpty()) {
             {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
@@ -149,9 +150,9 @@ fun AppEditableExposedDropdown(
                 // expanding/collapsing the menu on click. An editable text field has
                 // the anchor type `PrimaryEditable`.
                 modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryEditable).fillMaxWidth(),
-                value = text,
+                value = value,
                 onValueChange = { newText ->
-                    text = newText
+                    onValueChange?.let { it(newText) } // Mettre à jour l'etat externe
                     // Vérifier si la saisie correspond à une valeur valide
                     items.find { it.second == newText.text }?.let {
                         onItemSelected(it) // Appeler onItemSelected avec l'élément correspondant
@@ -190,11 +191,12 @@ fun AppEditableExposedDropdown(
                 DropdownMenuItem(
                     text = { Text(option.second, style = MaterialTheme.typography.bodyLarge) },
                     onClick = {
-                        text =
-                            TextFieldValue(
+                        onValueChange?.let {
+                            it(TextFieldValue(
                                 text = option.second,
-                                selection = TextRange(option.second.length), // Placer le curseur à la fin quand on selectionne un element de la liste
-                            )
+                                selection = TextRange(option.second.length)
+                            ))
+                        }
                         setExpanded(false)
                         onItemSelected(option)
                     },
@@ -304,9 +306,14 @@ fun SpinnersPreview() {
         AppExposedDropdownMenu(items) { index, item ->
 
         }
-        AppEditableExposedDropdown(pairItems) { item ->
+        AppEditableExposedDropdown(
+            pairItems,
+            value = TextFieldValue(""),
+            onValueChange = {},
+            onItemSelected = { item ->
 
-        }
+            }
+        )
         AppMultiSelectDropdownMenu(items)
     }
 }

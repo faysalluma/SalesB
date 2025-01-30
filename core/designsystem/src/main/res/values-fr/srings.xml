@@ -29,10 +29,13 @@
     <string name="label_qte_stock">Quantité en stock *</string>
     <string name="enter_your_value">Entrer %s </string>
     <string name="label_stock_mini">Stock Minimale</string>
-    <string name="label_categorie">Catégorie *</string>
+    <string name="label_categorie">Catégorie</string>
     <string name="label_rayon">Rayon</string>
     <string name="label_fournisseur">Fournisseur</string>
     <string name="invalid_libelle">Email invalide</string>
     <string name="btn_save">Enregister</string>
     <string name="invalid_select">Sélecteur invalide</string>
+    <string name="choose_option">Choisir une option</string>
+    <string name="take_photo">Prendre une photo</string>
+    <string name="select_image">Sélectionner une image</string>
 </resources>

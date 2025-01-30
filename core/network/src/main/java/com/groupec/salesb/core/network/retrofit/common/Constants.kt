@@ -1,10 +1,10 @@
 package com.groupec.salesb.core.network.retrofit.common
 
+import com.groupec.salesb.core.Constants
+
 class Constants {
     companion object {
-        // For emulator user 10.0.2.2 --- (192, 172) for wampserver --- Don't use 10.188 ...
-
-        const val BASE_URL = "http://192.168.1.37/SalesBApi/public/"
+        const val BASE_URL = Constants.BASE_URL
 
         // Get endpoint
         const val GET_PARAMETER = "parameter"
@@ -19,8 +19,15 @@ class Constants {
         const val GET_TOTAL_SALE_DAY = "getTotalSaleMorningEvening/{date}"
         const val GET_TOTAL_SALE_BY_DATE = "getTotalSalesByDate/{startDate}/{endDate}"
         const val GET_PRODUCTS = "getProducts"
+        const val GET_CATEGORIES = "getCategories"
+
+        // Post endpoint
+        const val ADD_PRODUCT = "addProduct"
 
         // Put endpoint
         const val PUT_CHANGE_PASSWORD = "changePassword/{userid}"
+
+        // Delete endpoint
+        const val DELETE_PRODUCT = "deleteProduct/{productid}"
     }
 }

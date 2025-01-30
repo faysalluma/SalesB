@@ -4,6 +4,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.login.LoginScreen
 import com.groupec.feature.productdetail.ProductDetailScreen
 import com.groupec.feature.productlist.ProductListScreen
+import com.groupec.salesb.core.designsystem.component.DataTableScreen
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
@@ -32,6 +34,7 @@ import com.groupec.salesb.utils.FlipperNavigationLogger
 @Composable
 fun AppNavHost(
     modifier: Modifier,
+    snackbarHostState: SnackbarHostState,
     connectionState: Boolean,
     navController: NavHostController,
     startDestination: String = NavigationItem.Loading.route
@@ -99,7 +102,9 @@ fun AppNavHost(
                 },
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
-                        popUpTo(NavigationItem.Login.route.plus("/{raisonSociale}")) { inclusive = true }
+                        popUpTo(NavigationItem.Login.route.plus("/{raisonSociale}")) {
+                            inclusive = true
+                        }
                     }
                 }
             )
@@ -123,7 +128,9 @@ fun AppNavHost(
                 firstLogin = firstLogin,
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
-                       popUpTo(NavigationItem.Login.route.plus("/{raisonSociale}")) { inclusive = true }
+                        popUpTo(NavigationItem.Login.route.plus("/{raisonSociale}")) {
+                            inclusive = true
+                        }
                     }
                 },
                 onBackPressed = {
@@ -137,14 +144,20 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.Sale.route) {
-            Text("Sale")
+            DataTableScreen()
         }
 
         composable(NavigationItem.Product.route) {
             var selectedProduct by remember { mutableStateOf<Product?>(null) }
+            var refreshProductList by remember { mutableStateOf(false) }
+            var removeSelectedBgColor by remember { mutableStateOf(false) }
+
             Row {
                 Row(Modifier.weight(0.4f)) {
                     ProductListScreen(
+                        snackbarHostState = snackbarHostState,
+                        refreshProductList = refreshProductList,
+                        removeSelectedBgColor = removeSelectedBgColor,
                         onViewDetail = { product ->
                             selectedProduct = product
                         }
@@ -153,9 +166,29 @@ fun AppNavHost(
                 }
 
                 Box(Modifier.weight(0.6f)) {
-                    ProductDetailScreen(product = selectedProduct)
+                    ProductDetailScreen(
+                        snackbarHostState = snackbarHostState,
+                        product = selectedProduct,
+                        navigateToCategory = {
+                            navController.navigate(NavigationItem.Category.route) {
+                                popUpTo(navController.graph.startDestinationId)
+                                launchSingleTop = true
+                            }
+                        },
+                        removeSelectedBgColor = {
+                            removeSelectedBgColor = !removeSelectedBgColor
+                        },
+                        refreshProducts = {
+                            refreshProductList  = !refreshProductList
+                        }
+                    )
                 }
             }
         }
+
+        composable(NavigationItem.Category.route) {
+            Text("Categories")
+        }
     }
 }
+

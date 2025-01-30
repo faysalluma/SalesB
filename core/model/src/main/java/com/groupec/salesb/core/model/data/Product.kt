@@ -3,7 +3,8 @@ package com.groupec.salesb.core.model.data
 import java.util.Date
 
 data class Product(
-    val id: Int,
+    val id: Int ? = null,
+    val datecreation: Date ? = null,
     val reference: String ? = null,
     val libelle: String,
     val description: String ? = null,
@@ -13,9 +14,17 @@ data class Product(
     val qtestock: Int ? = 0,
     val stockmini: Int ? = null,
     val categorieid: Int ? = null,
+    val categorielibelle: String ? = null,
     val rayonid: Int ? = null,
+    val rayonlibelle: String ? = null,
     val fournisseurid: Int ? = null,
+    val fournisseurlibelle: String ? = null,
     val tvaid: Int ? = null,
     val datemodif: Date ? = null,
-    val userid: Int ? = null
+    val userid: Int ? = null,
+    val username: String ? = null
 )
+
+// Note : Si je veux save dans la base
+// Transformer le Product en sorte de ProductData (minify) pour envoyé à l'API retrofit lors du save
+// Et ci garder le model complet comme recu (un peu ou non) du ResponseItem

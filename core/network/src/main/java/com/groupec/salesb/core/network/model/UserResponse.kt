@@ -34,3 +34,11 @@ data class UserItemResponse(
     @SerializedName("firstlogin")
     val firstlogin: Int
 )
+
+data class UserReducedResponse(
+    @SerializedName("id")
+    val id: Int,
+
+    @SerializedName("nomprenom")
+    val nomprenom: String
+)

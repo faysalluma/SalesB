@@ -16,9 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -112,7 +109,9 @@ fun HeadLigne(context: Context, viewModel: HomeViewModel) {
             UnderlinedTextButton(
                 modifier = Modifier.padding(top = 8.dp),
                 text = stringResource(R.string.see_more)
-            ) {}
+            ) {
+
+            }
             Box(modifier = Modifier.width(200.dp)) {
                 AppExposedDropdownMenu(
                     items = periodList,

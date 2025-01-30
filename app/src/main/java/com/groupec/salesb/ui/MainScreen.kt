@@ -9,14 +9,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -26,8 +31,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.groupec.salesb.R
 import com.groupec.salesb.core.designsystem.SampleTopAppBar
+import com.groupec.salesb.core.designsystem.component.CustomSnackBar
 import com.groupec.salesb.core.designsystem.component.ErrorScreen
+import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
+import com.groupec.salesb.core.designsystem.theme.DarkRed
+import com.groupec.salesb.core.designsystem.theme.Green
 import com.groupec.salesb.core.designsystem.theme.Primary
+import com.groupec.salesb.core.designsystem.theme.Red
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.navigation.AppNavHost
 import com.groupec.salesb.navigation.NavigationItem
@@ -40,6 +50,8 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     // Show title and user name on app bar
     val userStoreState by viewModel.userStore.collectAsState()
@@ -89,6 +101,21 @@ fun MainScreen(
     }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                snackbar = { data ->
+                    val isError = (data.visuals as? SnackbarVisualsWithState)?.isError ?: false
+                    val containerColor = if (isError) Red else Green
+
+                    CustomSnackBar(
+                        data = data,
+                        containerColor = containerColor,
+                        contentColor = White
+                    )
+                }
+            )
+        },
         topBar = {
             if (
                 shouldShowBarAndRailApp(
@@ -133,6 +160,7 @@ fun MainScreen(
                     MyNavigationRail(navController, modifier = Modifier.weight(0.09f))
                 }
                 AppNavHost(
+                    snackbarHostState = snackbarHostState,
                     modifier = Modifier
                         .weight(
                             if (shouldShowBarAndRailApp(

@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import java.util.UUID
 
 class Utility {
 
@@ -13,7 +14,8 @@ class Utility {
         fun checkForInternet(context: Context): Boolean {
 
             // register activity with the connectivity manager service
-            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
             // if the android version is equal to M
             // or greater we need to use the
@@ -26,7 +28,8 @@ class Utility {
                 val network = connectivityManager.activeNetwork ?: return false
 
                 // Representation of the capabilities of an active network.
-                val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+                val activeNetwork =
+                    connectivityManager.getNetworkCapabilities(network) ?: return false
 
                 return when {
                     // Indicates this network uses a Wi-Fi transport,
@@ -49,5 +52,7 @@ class Utility {
             }
         }
 
+        /* Generate unique value */
+        fun generateUniqueStringValue(): String = "${UUID.randomUUID()}_${currentDateString(pattern = "yyyyMMddHHmmss")}"
     }
 }

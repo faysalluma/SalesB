@@ -110,9 +110,9 @@ fun String.toDate(format: String = "yyyy-mm-dd HH:mm:ss"): Date? {
     }
 }
 
-fun currentDateString() : String {
+fun currentDateString(pattern: String ="yyyy-MM-dd HH:mm:ss") : String {
     val currentDateTime = Calendar.getInstance().time
-    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val formatter = SimpleDateFormat(pattern, Locale.getDefault())
     return formatter.format(currentDateTime)
 }
 

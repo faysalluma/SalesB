@@ -2,8 +2,13 @@ package com.groupec.salesb.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -14,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,13 +39,20 @@ import com.groupec.salesb.core.dayMonthYear
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
+import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.toDate
 
 @Composable
-fun ProductCard(product: Product, onViewDetail: (Product) -> Unit, onDelete: (Int) -> Unit) {
+fun ProductCard(
+    product: Product,
+    isSelected: Boolean,
+    onViewDetail: (Product) -> Unit,
+    onDelete: (Int) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
+    val cardColor = if (isSelected) Silver else White // Define the color based on the 'selected' state
 
     Card(
         shape = RoundedCornerShape(0.dp),
@@ -47,7 +60,7 @@ fun ProductCard(product: Product, onViewDetail: (Product) -> Unit, onDelete: (In
     ) {
         ListItem(
             colors = ListItemDefaults.colors(
-                containerColor = White
+                containerColor = cardColor
             ),
             headlineContent = {
                 Text(
@@ -61,9 +74,10 @@ fun ProductCard(product: Product, onViewDetail: (Product) -> Unit, onDelete: (In
             supportingContent = {
                 Text(
                     text = stringResource(
-                        R.string.product_date_and_price,
-                        product.datemodif?.dayMonthYear() ?: stringResource(R.string.none),
-                        product.prixttc
+                        R.string.product_item_detail,
+                        product.datecreation?.dayMonthYear() ?: stringResource(R.string.none),
+                        product.prixttc, product.qtestock ?: 0,
+                        product.username ?: ""
                     )
                 )
             },
@@ -84,7 +98,10 @@ fun ProductCard(product: Product, onViewDetail: (Product) -> Unit, onDelete: (In
                             )
                         },
                         text = { Text(stringResource(R.string.view_item), color = Black) },
-                        onClick = { onViewDetail(product) }
+                        onClick = {
+                            onViewDetail(product)
+                            expanded = false // Close DropdownMenuItem
+                        }
                     )
                     DropdownMenuItem(
                         leadingIcon = {
@@ -94,7 +111,10 @@ fun ProductCard(product: Product, onViewDetail: (Product) -> Unit, onDelete: (In
                             )
                         },
                         text = { Text(stringResource(R.string.delete_item), color = Black) },
-                        onClick = { onDelete(product.id) }
+                        onClick = { product.id?.let {
+                            onDelete(it)
+                            expanded = false // Close DropdownMenuItem
+                        } }
                     )
                 }
 
@@ -140,6 +160,7 @@ fun ProductCardPreview() {
                 prixttc = 100.0,
                 datemodif = "2022:10:12 16:51".toDate(),
             ),
+            isSelected = false,
             onViewDetail = {},
             onDelete = {}
         )

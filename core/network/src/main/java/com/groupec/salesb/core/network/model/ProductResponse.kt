@@ -9,7 +9,10 @@ data class ProductResponse(
 )
 data class ProductItemResponse(
     @SerializedName("id")
-    val id: Int,
+    val id: Int ? = null,
+
+    @SerializedName("datecreation")
+    val datecreation: Date ? = null,
 
     @SerializedName("reference")
     val reference: String ? = null,
@@ -35,8 +38,8 @@ data class ProductItemResponse(
     @SerializedName("stockmini")
     val stockmini: Int ? = null,
 
-    @SerializedName("categorieid")
-    val categorieid: Int ? = null,
+    @SerializedName("categorie")
+    val categorie: CategorieItemResponse ? = null,
 
     @SerializedName("rayonid")
     val rayonid: Int ? = null,
@@ -50,6 +53,6 @@ data class ProductItemResponse(
     @SerializedName("datemodif")
     val datemodif: Date ? = null,
 
-    @SerializedName("userid")
-    val userid: Int ? = null
+    @SerializedName("user")
+    val user: UserReducedResponse ? = null
 )

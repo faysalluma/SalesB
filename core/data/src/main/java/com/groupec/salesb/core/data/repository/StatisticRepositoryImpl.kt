@@ -1,12 +1,9 @@
 package com.groupec.salesb.core.data.repository
 
-import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.data.model.toProduct
 import com.groupec.salesb.core.data.model.toProductList
 import com.groupec.salesb.core.dayMonth
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.network.retrofit.ApiService
-import com.groupec.salesb.core.network.retrofit.common.safeApiCall
 import com.groupec.salesb.core.network.retrofit.common.safeApiCallGetResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +16,7 @@ import javax.inject.Singleton
 class StatisticRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : StatisticRepository {
-    override fun getTotalSales(startDate: String, endDate: String) : Flow<Int> = flow {
+    override fun getTotalSales(startDate: String, endDate: String): Flow<Int> = flow {
         val result = safeApiCallGetResult(
             apiCall = { apiService.getTotalSales(startDate, endDate) },
             transform = { response ->
@@ -30,7 +27,7 @@ class StatisticRepositoryImpl @Inject constructor(
         emit(result)
     }.flowOn(Dispatchers.IO)
 
-    override fun getTotalAmountSales(startDate: String, endDate: String) : Flow<Int> = flow {
+    override fun getTotalAmountSales(startDate: String, endDate: String): Flow<Int> = flow {
         val result = safeApiCallGetResult(
             apiCall = { apiService.getTotalAmountSales(startDate, endDate) },
             transform = { response ->
@@ -52,16 +49,17 @@ class StatisticRepositoryImpl @Inject constructor(
         emit(result)
     }.flowOn(Dispatchers.IO)
 
-    override fun getTopSaleProducts(startDate: String, endDate: String): Flow<List<Product>> = flow {
-        val result = safeApiCallGetResult(
-            apiCall = { apiService.getTopSaleProducts(startDate, endDate) },
-            transform = { response ->
-                response.toProductList()
-            },
-            default = emptyList()
-        )
-        emit(result)
-    }.flowOn(Dispatchers.IO)
+    override fun getTopSaleProducts(startDate: String, endDate: String): Flow<List<Product>> =
+        flow {
+            val result = safeApiCallGetResult(
+                apiCall = { apiService.getTopSaleProducts(startDate, endDate) },
+                transform = { response ->
+                    response.toProductList()
+                },
+                default = emptyList()
+            )
+            emit(result)
+        }.flowOn(Dispatchers.IO)
 
     override fun getAlertSeuil(): Flow<Int> = flow {
         val result = safeApiCallGetResult(
@@ -80,14 +78,17 @@ class StatisticRepositoryImpl @Inject constructor(
             transform = { response ->
                 response.data?.let {
                     Pair(it.totalsalemorning, it.totalsalevening)
-                } ?: Pair(0.0,0.0)
+                } ?: Pair(0.0, 0.0)
             },
-            default = Pair(0.0,0.0)
+            default = Pair(0.0, 0.0)
         )
         emit(result)
     }.flowOn(Dispatchers.IO)
 
-    override fun getTotalSalesByDate(startDate: String, endDate: String): Flow<List<Pair<String, Double>>> = flow {
+    override fun getTotalSalesByDate(
+        startDate: String,
+        endDate: String
+    ): Flow<List<Pair<String, Double>>> = flow {
         val result = safeApiCallGetResult(
             apiCall = { apiService.getTotalSalesByDate(startDate, endDate) },
             transform = { response ->

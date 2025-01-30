@@ -4,18 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,10 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.groupec.salesb.core.allowOnlyDigits
 import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.component.AppEditableExposedDropdown
 import com.groupec.salesb.core.designsystem.component.AppTextField
@@ -38,31 +33,48 @@ import com.groupec.salesb.core.designsystem.component.KeyboardAction
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
+import com.groupec.salesb.core.normalizeDecimalSeparator
 
 @Composable
 fun ProductForm(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
     categorieItems: List<Pair<String, String>>,
-    onSubmitForm: (product: Product) -> Unit,
+    rayonItems: List<Pair<String, String>>,
+    fournisseurItems: List<Pair<String, String>>,
+    products: ProductDataForm,
+    categorielibelleState: TextFieldValue,
+    navigateToCategory: () -> Unit,
+    rayonlibelleState: TextFieldValue,
+    fournisseurlibelleState: TextFieldValue,
+    onProductDataChanged: (ProductDataForm) -> Unit,
+    onCategorielibelleState: (TextFieldValue) -> Unit,
+    onRayonlibelleState: (TextFieldValue) -> Unit,
+    onFournisseurlibelleState: (TextFieldValue) -> Unit,
+    onSubmitForm: (product: ProductDataForm) -> Unit
 ) {
 
-    var products by remember { mutableStateOf(Product()) }
     var isLibelleError by remember { mutableStateOf(false) }
     var isPrixttcError by remember { mutableStateOf(false) }
     var isQteStockError by remember { mutableStateOf(false) }
     var isCategorieLibelleError by remember { mutableStateOf(false) }
+    var isRayonLibelleError by remember { mutableStateOf(false) }
+    var isFournisseurLibelleError by remember { mutableStateOf(false) }
 
     val submitAction = {
         isLibelleError = products.libelle.isEmpty()
         isPrixttcError = products.prixttc.isEmpty()
         isQteStockError = products.qtestock.isEmpty()
-        isCategorieLibelleError = products.categorielibelle.isEmpty() || categorieItems.none { it.second == products.categorielibelle }
-        if (!isLibelleError && !isPrixttcError && !isQteStockError && !isCategorieLibelleError) {
+        isCategorieLibelleError = products.categorielibelle.isNotEmpty() && categorieItems.none { it.second == products.categorielibelle }
+        isRayonLibelleError = products.rayonlibelle.isNotEmpty() && rayonItems.none { it.second == products.rayonlibelle }
+        isFournisseurLibelleError =  products.fournisseurlibelle.isNotEmpty() && fournisseurItems.none { it.second == products.fournisseurlibelle }
+        if (!isLibelleError && !isPrixttcError && !isQteStockError && !isCategorieLibelleError
+            && !isRayonLibelleError && !isFournisseurLibelleError) {
             // Submit the form
             onSubmitForm(products)
         }
     }
+
 
     Column(
         modifier = modifier,
@@ -72,7 +84,7 @@ fun ProductForm(
         AppTextField(
             value = products.reference,
             onChange = { data ->
-                products = products.copy(reference = data)
+                onProductDataChanged(products.copy(reference = data))
             },
             label = stringResource(id = R.string.label_ref),
             placeholder = stringResource(
@@ -86,7 +98,7 @@ fun ProductForm(
         AppTextField(
             value = products.libelle,
             onChange = { data ->
-                products = products.copy(libelle = data)
+                onProductDataChanged(products.copy(libelle = data))
                 if (isLibelleError) isLibelleError = false //  Clear error when user starts typing
             },
             label = stringResource(id = R.string.label_libelle),
@@ -102,7 +114,7 @@ fun ProductForm(
         AppTextField(
             value = products.description,
             onChange = { data ->
-                products = products.copy(description = data)
+                onProductDataChanged(products.copy(description = data))
             },
             label = stringResource(id = R.string.label_desc),
             placeholder = stringResource(
@@ -121,14 +133,11 @@ fun ProductForm(
         AppTextField(
             value = products.prixttc,
             onChange = { data ->
-                products = products.copy(prixttc = data)
+                onProductDataChanged(products.copy(prixttc = data.normalizeDecimalSeparator()))
                 if (isPrixttcError) isPrixttcError = false //  Clear error when user starts typing
             },
             label = stringResource(id = R.string.label_price),
-            placeholder = stringResource(
-                R.string.enter_your_value,
-                stringResource(R.string.label_price)
-            ),
+            placeholder = "0.0",
             fieldType = FieldType.Number,
             isError = isPrixttcError,
             fieldColor = White,
@@ -138,14 +147,11 @@ fun ProductForm(
         AppTextField(
             value = products.qtestock,
             onChange = { data ->
-                products = products.copy(qtestock = data)
+                onProductDataChanged(products.copy(qtestock = data.allowOnlyDigits()))
                 if (isQteStockError) isQteStockError = false //  Clear error when user starts typing
             },
             label = stringResource(id = R.string.label_qte_stock),
-            placeholder = stringResource(
-                R.string.enter_your_value,
-                stringResource(R.string.label_qte_stock)
-            ),
+            placeholder = "0",
             fieldType = FieldType.Number,
             isError = isQteStockError,
             fieldColor = White,
@@ -155,7 +161,7 @@ fun ProductForm(
         AppTextField(
             value = products.stockmini,
             onChange = { data ->
-                products = products.copy(stockmini = data)
+                onProductDataChanged(products.copy(stockmini = data.allowOnlyDigits()))
             },
             label = stringResource(id = R.string.label_stock_mini),
             placeholder = stringResource(
@@ -185,9 +191,14 @@ fun ProductForm(
                 } else {
                     null
                 },
-                modifier = Modifier.weight(1f)
+                value = categorielibelleState,
+                onValueChange = {
+                    onCategorielibelleState(it)
+                    if (isCategorieLibelleError) isCategorieLibelleError = false // Supprimer l'erreur
+                },
+                modifier = Modifier.weight(1f),
             ) { item ->
-                products = products.copy(categorieid = item.first, categorielibelle = item.second)
+                onProductDataChanged(products.copy(categorieid = item.first, categorielibelle = item.second))
                 if (isCategorieLibelleError) isCategorieLibelleError = false // Supprimer l'erreur
             }
 
@@ -196,25 +207,46 @@ fun ProductForm(
                 icon = {
                     Icon(
                         imageVector = AppIcons.Add,
-                        contentDescription = "Add more products",
+                        contentDescription = "Add more categories",
                         // modifier = Modifier.size(ButtonDefaults.IconSize)
                     )
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Color.Black)
             ) {
-
+                navigateToCategory()
             }
 
         }
 
         Row(modifier = Modifier.fillMaxWidth()) {
             AppEditableExposedDropdown(
-                items = categorieItems,
+                items = rayonItems,
+                modifier = Modifier.weight(1f),
                 label = stringResource(id = R.string.label_rayon),
-                modifier = Modifier.weight(1f)
-            ) { item ->
-                products = products.copy(rayonid = item.first, rayonlibelle = item.second)
-            }
+                isError = isRayonLibelleError,
+                supportingText = if (
+                    products.rayonlibelle.isNotEmpty() && rayonItems.none { it.second == products.rayonlibelle }
+                ) {
+                    {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = stringResource(R.string.invalid_select),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                } else {
+                    null
+                },
+                value = rayonlibelleState,
+                onValueChange = {
+                   onRayonlibelleState(it)
+                    if (isRayonLibelleError) isRayonLibelleError = false // Supprimer l'erreur
+                },
+                onItemSelected = { item ->
+                    onProductDataChanged(products.copy(rayonid = item.first, rayonlibelle = item.second))
+                    if (isRayonLibelleError) isRayonLibelleError = false // Supprimer l'erreur
+                }
+            )
 
             IconTextButton(
                 modifier = Modifier.padding(top = 4.dp, start = 12.dp),
@@ -234,12 +266,33 @@ fun ProductForm(
 
         Row(modifier = Modifier.fillMaxWidth()) {
             AppEditableExposedDropdown(
-                items = categorieItems,
+                items = fournisseurItems,
+                modifier = Modifier.weight(1f),
                 label = stringResource(id = R.string.label_fournisseur),
-                modifier = Modifier.weight(1f)
-            ) { item ->
-                products = products.copy(categorieid = item.first, categorielibelle = item.second)
-            }
+                isError = isFournisseurLibelleError,
+                supportingText = if (
+                    products.fournisseurlibelle.isNotEmpty() && fournisseurItems.none { it.second == products.fournisseurlibelle }
+                ) {
+                    {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = stringResource(R.string.invalid_select),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                } else {
+                    null
+                },
+                value = fournisseurlibelleState,
+                onValueChange = {
+                    onFournisseurlibelleState(it)
+                    if (isFournisseurLibelleError) isFournisseurLibelleError = false // Supprimer l'erreur
+                },
+                onItemSelected = { item ->
+                    onProductDataChanged(products.copy(fournisseurid = item.first, fournisseurlibelle = item.second))
+                    if (isFournisseurLibelleError) isFournisseurLibelleError = false // Supprimer l'erreur
+                }
+            )
 
             IconTextButton(
                 modifier = Modifier.padding(top = 4.dp, start = 12.dp),
@@ -257,28 +310,6 @@ fun ProductForm(
 
         }
 
-
-        /* AppTextField(
-             value = credentials.password,
-             leadingIcon = {
-                 Icon(
-                     imageVector = ImageVector.vectorResource(id = R.drawable.key),
-                     contentDescription = null,
-                     tint = Primary
-                 )
-             },
-             onChange = { data ->
-                 credentials = credentials.copy(password = data)
-                 if (isPasswordError) isPasswordError = false //  Clear error when user starts typing
-             },
-             label = stringResource(id = R.string.label_password),
-             placeholder = stringResource(id = R.string.enter_your_password),
-             fieldType = FieldType.Password,
-             isError = isPasswordError,
-             keyboardAction = KeyboardAction.Done,
-             submitAction = submitAction,
-             modifier = Modifier.fillMaxWidth()
-         )*/
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
@@ -292,21 +323,19 @@ fun ProductForm(
     }
 }
 
-data class Product(
+data class ProductDataForm(
     val id: String = "",
     val reference: String = "",
     val libelle: String = "",
     val description: String = "",
     val image: String = "",
-    val prixttc: String = "0.0",
-    val qtestock: String = "0",
+    val prixttc: String = "",
+    val qtestock: String = "",
     val stockmini: String = "",
     val categorieid: String = "",
     val categorielibelle: String = "",
     val rayonid: String = "",
     val rayonlibelle: String = "",
     val fournisseurid: String = "",
-    val fournisseurlibelle: String = "",
-    val datemodif: String = "",
-    val userid: String = ""
+    val fournisseurlibelle: String = ""
 )
