@@ -8,11 +8,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ImageNotSupported
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,9 +32,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.icon.AppIcons
+import com.groupec.salesb.core.designsystem.theme.Silver
+import com.groupec.salesb.core.designsystem.theme.Silver2
 import com.groupec.salesb.core.designsystem.theme.White
 
 @Composable
@@ -98,30 +106,46 @@ fun CardImage(
     }
 }
 
+@Composable
+fun ProductImage(url: String?) {
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(url)
+            .crossfade(true)
+            .build(),
+        // model = imageUri or url,
+        placeholder = painterResource(AppIcons.NoImage),
+        error = painterResource(AppIcons.NoImage),
+        contentDescription = "Product Image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .size(72.dp)
+            .clip(CircleShape)
+        // .border(2.dp, Color.Gray, CircleShape),
+        // colorFilter = ColorFilter.tint(Color.Blue)
+    )
+}
 
 @Composable
-fun ProductImage(
-    modifier: Modifier = Modifier,
-    imageUrl: String,
-) {
-    Card(
-        modifier = modifier,
-        elevation = CardDefaults.cardElevation(8.dp), // Ombre de la carte
-        shape = RoundedCornerShape(8.dp),  // Bords arrondis
-    ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(imageUrl)
-                .crossfade(true)
-                .build(),
-            placeholder = painterResource(AppIcons.Photo),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.padding(16.dp)
-            //.size(120.dp)
-            // .clip(CircleShape)
-            // .border(2.dp, Color.Gray, CircleShape),
-            // colorFilter = ColorFilter.tint(Color.Blue)
+fun IconMinus(onclick: () -> Unit){
+    IconButton(onClick = { onclick() }) {
+        Icon(
+            imageVector = AppIcons.MinusCircle,
+            contentDescription = "Remove value",
+            tint = Silver2,
+            modifier = Modifier.size(64.dp)
+        )
+    }
+}
+
+@Composable
+fun IconPlus(onclick: () -> Unit){
+    IconButton(onClick = { onclick() }) {
+        Icon(
+            imageVector = AppIcons.AddCircle,
+            contentDescription = "Add value",
+            tint = Silver2,
+            modifier = Modifier.size(64.dp)
         )
     }
 }
@@ -132,7 +156,8 @@ fun SalesBImagePreview() {
     Column {
         // SalesBImage()
         CardImage(onClick = {})
-        // ProductImage(imageUrl = "")
+        ProductImage(url = "")
+        IconPlus(onclick = {})
     }
 
 }

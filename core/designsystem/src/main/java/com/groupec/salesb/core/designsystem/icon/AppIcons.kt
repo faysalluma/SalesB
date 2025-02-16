@@ -1,14 +1,18 @@
 package com.groupec.salesb.core.designsystem.icon
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.ImageNotSupported
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
@@ -41,4 +45,7 @@ object AppIcons {
     val Delete = Icons.Default.Cancel
     val FilterList = Icons.Default.FilterList
     val Category = Icons.Filled.Category
+    val NoImage = R.drawable.baseline_image_not_supported_64
+    val AddCircle = Icons.Filled.AddCircleOutline
+    val MinusCircle = Icons.Default.RemoveCircleOutline
 }

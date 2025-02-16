@@ -213,7 +213,7 @@ fun ProductForm(
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Color.Black)
             ) {
-                navigateToCategory()
+                // navigateToCategory()
             }
 
         }
@@ -329,9 +329,9 @@ data class ProductDataForm(
     val libelle: String = "",
     val description: String = "",
     val image: String = "",
-    val prixttc: String = "",
-    val qtestock: String = "",
-    val stockmini: String = "",
+    val prixttc: String = "0",
+    val qtestock: String = "0",
+    val stockmini: String = "0",
     val categorieid: String = "",
     val categorielibelle: String = "",
     val rayonid: String = "",

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="retry">Réessayer</string>
+    <string name="loading_products">Chargement de produits …</string>
+    <string name="search_product_place_holder">Rechercher ici</string>
+    <string name="my_products">Mes produits</string>
+</resources>

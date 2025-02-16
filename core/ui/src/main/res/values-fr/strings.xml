@@ -12,4 +12,8 @@
     <string name="delete_item">Supprimer</string>
     <string name="product_operate_succesfully">Opération effectuée avec succès !</string>
     <string name="loading">Chargement…</string>
+    <string name="summary">Résumé</string>
+    <string name="quantity">Quantité</string>
+    <string name="title_product">Produits</string>
+    <string name="price">Prix</string>
 </resources>

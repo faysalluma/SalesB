@@ -1,0 +1,175 @@
+package com.groupec.feature.sale
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
+import com.groupec.salesb.core.designsystem.component.AppTextField
+import com.groupec.salesb.core.designsystem.component.DefaultButton
+import com.groupec.salesb.core.designsystem.component.ErrorScreen
+import com.groupec.salesb.core.designsystem.component.FieldType
+import com.groupec.salesb.core.designsystem.component.TitleLarge
+import com.groupec.salesb.core.designsystem.icon.AppIcons
+import com.groupec.salesb.core.designsystem.theme.Silver
+import com.groupec.salesb.core.model.data.Product
+import com.groupec.salesb.core.ui.ProductGridAdaptive
+import com.groupec.salesb.core.ui.SaleDetailCard
+
+@Composable
+fun SaleScreen(
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
+    viewModel: SaleViewModel = hiltViewModel(),
+) {
+
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val isSearching by viewModel.isSearching.collectAsState()
+    val products = viewModel.pagedProducts.collectAsLazyPagingItems()
+    val error = (products.loadState.refresh as? LoadState.Error)?.error?.message
+    val parameter by viewModel.parameter.collectAsState()
+
+    // For selected Products and handling of multiples textfield created
+    val selectedProducts = remember { mutableStateListOf<Pair<Int, Product>>() }
+    val textFieldValues = remember { mutableStateMapOf<Int, String>() }
+
+   Row(modifier = Modifier.padding(start = 12.dp, top = 8.dp, end = 8.dp)) {
+       Box (modifier = Modifier.weight(1.8f)) {
+           // if get error when fetching products
+           if (error != null) {
+               Column(
+                   modifier = Modifier
+                       .fillMaxSize()
+                       .padding(16.dp),
+                   horizontalAlignment = Alignment.CenterHorizontally,
+                   verticalArrangement = Arrangement.Center
+               ) {
+                   ErrorScreen(
+                       error = error,
+                       modifier = Modifier
+                           .wrapContentWidth()
+                           .padding(bottom = 16.dp)
+                   )
+                   DefaultButton(
+                       modifier = Modifier.wrapContentWidth(),
+                       text = stringResource(R.string.retry)
+                   ) {
+                       products.refresh()
+                   }
+               }
+           } else {
+               // Show Progress bar waiting load products
+               if (!isSearching && products.itemCount == 0) {
+                   AppLoadingScreen(text = stringResource(R.string.loading_products))
+               } else {
+                   Column {
+                       // Head
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            TitleLarge(
+                                title = stringResource(R.string.my_products),
+                                modifier = Modifier.padding(top = 12.dp)
+                            )
+                            // Barre de recherche
+                            AppTextField(
+                                value = searchQuery,
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = AppIcons.Search,
+                                        contentDescription = "Search icon"
+                                    )
+                                },
+                                trailingIcon = {
+                                    if (searchQuery.isNotEmpty()) {
+                                        IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                                            Icon(
+                                                imageVector = AppIcons.Close,
+                                                contentDescription = "Clear text"
+                                            )
+                                        }
+                                    }
+                                },
+                                onChange = { viewModel.updateSearchQuery(it) },
+                                placeholder = stringResource(R.string.search_product_place_holder),
+                                fieldType = FieldType.Text,
+                                fieldColor = Silver,
+                                shape = RoundedCornerShape(28.dp)
+                            )
+                        }
+
+                       HorizontalDivider(modifier = Modifier.padding(top = 12.dp))
+
+                       // Paginated list
+                       ProductGridAdaptive(
+                           products = products,
+                           selectedProducts = selectedProducts,
+                           textFieldValues = textFieldValues,
+                           isSearching = isSearching
+                       )
+                   }
+               }
+           }
+       }
+
+       Box (modifier = Modifier.weight(1.2f)) {
+            SaleDetailScreen(
+                selectedProducts = selectedProducts,
+                textFieldValues = textFieldValues,
+                devise = parameter.devise,
+                onSave = {
+
+                }
+            )
+       }
+   }
+}
+
+@Composable
+fun SaleDetailScreen(
+    selectedProducts: MutableList<Pair<Int, Product>>,
+    textFieldValues: MutableMap<Int, String>,
+    devise: String,
+    onSave: () -> Unit
+) {
+    SaleDetailCard(
+        selectedProducts = selectedProducts,
+        textFieldValues = textFieldValues,
+        devise = devise,
+        onQuantityChange = { productLine ->
+            val (index, product)  = productLine
+            val quantityValue = textFieldValues[index]?.takeIf { it.isNotEmpty() }?.toDouble() ?: 1.0
+            if (quantityValue <= 0) {
+                selectedProducts.remove(productLine)
+                textFieldValues.remove(index)
+            } else {
+                textFieldValues[index] = quantityValue.toString()
+            }
+        },
+        onSave = onSave
+    )
+}

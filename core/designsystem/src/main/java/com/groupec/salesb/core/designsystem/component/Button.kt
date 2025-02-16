@@ -76,6 +76,7 @@ fun DefaultButton(
     containerColor: Color = Primary,
     enabled : Boolean = true,
     isLoading : Boolean = false,
+    style: TextStyle ? = null,
     onClick: ()->Unit
 ) {
     MaterialTheme {
@@ -90,7 +91,12 @@ fun DefaultButton(
             if (isLoading)  {
                 AppLoadingScreen(Modifier.wrapContentSize(), color = textcolor)
             } else {
-                Text(text = text)
+                if (style != null) {
+                    Text(text = text, style = style)
+                } else {
+                    Text(text = text)
+                }
+
             }
         }
     }

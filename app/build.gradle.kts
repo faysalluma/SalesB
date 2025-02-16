@@ -66,6 +66,7 @@ dependencies {
     implementation(project(":feature:changepassword"))
     implementation(project(":feature:productlist"))
     implementation(project(":feature:productdetail"))
+    implementation(project(":feature:sale"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

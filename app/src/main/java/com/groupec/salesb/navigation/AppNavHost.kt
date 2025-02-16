@@ -24,6 +24,7 @@ import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.login.LoginScreen
 import com.groupec.feature.productdetail.ProductDetailScreen
 import com.groupec.feature.productlist.ProductListScreen
+import com.groupec.feature.sale.SaleScreen
 import com.groupec.salesb.core.designsystem.component.DataTableScreen
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
@@ -144,7 +145,8 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.Sale.route) {
-            DataTableScreen()
+            // DataTableScreen()
+            SaleScreen(snackbarHostState = snackbarHostState)
         }
 
         composable(NavigationItem.Product.route) {

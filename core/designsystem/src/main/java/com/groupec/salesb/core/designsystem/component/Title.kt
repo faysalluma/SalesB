@@ -23,6 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
@@ -51,8 +52,7 @@ fun TitleHeader(
 fun TitleLarge(title: String, color: Color = Color.Unspecified, modifier: Modifier = Modifier) {
     Text(
         text = title,
-        style = MaterialTheme.typography.titleLarge,
-        color = color,
+        style = MaterialTheme.typography.titleLarge.copy(fontSize = 18.sp, color = color),
         modifier = modifier
     )
 }
@@ -68,8 +68,38 @@ fun TitleMedium(title: String, color: Color = Color.Unspecified, modifier: Modif
 }
 
 @Composable
+fun TitleSmall(title: String, color: Color = Color.Unspecified, modifier: Modifier = Modifier) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleSmall,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis,
+        color = color,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun TextNormal(
+    text: String,
+    textAlign: TextAlign = TextAlign.Start,
+    style: TextStyle = MaterialTheme.typography.bodyMedium,
+    color: Color = Color.Unspecified,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        textAlign = textAlign,
+        text = text,
+        style = style,
+        color = color,
+        modifier = modifier
+    )
+}
+
+@Composable
 fun AppHeadLine(
     text: String,
+    style: TextStyle =  MaterialTheme.typography.bodyLarge,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
     leadingContent: (@Composable () -> Unit)? = null,
@@ -90,8 +120,11 @@ fun AppHeadLine(
             modifier = Modifier.align(Alignment.Center),
             contentAlignment = Alignment.Center
         ) {
-            // Text(text = text, textAlign = TextAlign.Center)
-            TitleNormal(title = text, color = color)
+            Text(
+                text = text,
+                style = style,
+                color = color
+            )
         }
 
         // Trailing content (aligné à droite)
@@ -105,17 +138,6 @@ fun AppHeadLine(
             }
         }
     }
-}
-
-
-@Composable
-fun TitleNormal(title: String, color: Color = Color.Unspecified, modifier: Modifier = Modifier) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.bodyLarge, //.copy(fontWeight = FontWeight.W500),
-        color = color,
-        modifier = modifier
-    )
 }
 
 @Composable
