@@ -73,7 +73,6 @@ class ProductDetailViewModel @Inject constructor(
         }
     }
 
-
     fun resetFlow() {
         _addProductUiState.value = FormUIState.Idle
     }

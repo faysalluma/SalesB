@@ -16,4 +16,5 @@
     <string name="quantity">Quantité</string>
     <string name="title_product">Produits</string>
     <string name="price">Prix</string>
+    <string name="confirm_sale_message">Confirmer la vente de %s ?</string>
 </resources>

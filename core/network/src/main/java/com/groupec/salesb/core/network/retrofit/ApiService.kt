@@ -1,5 +1,6 @@
 package com.groupec.salesb.core.network.retrofit
 
+import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.network.model.ApiResult
 import com.groupec.salesb.core.network.model.CategorieResponse
@@ -41,7 +42,7 @@ interface ApiService {
     suspend fun getTotalSales(@Path("startDate") startDate: String, @Path("endDate") endDate: String): Response<ApiResult<Int>>
 
     @GET(Constants.GET_TOTAL_AMOUNT_SALES)
-    suspend fun getTotalAmountSales(@Path("startDate") startDate: String, @Path("endDate") endDate: String): Response<ApiResult<Int>>
+    suspend fun getTotalAmountSales(@Path("startDate") startDate: String, @Path("endDate") endDate: String): Response<ApiResult<Double>>
 
     @GET(Constants.GET_TOTAL_PRODUCTS)
     suspend fun getTotalProducts(): Response<ApiResult<Int>>
@@ -87,6 +88,9 @@ interface ApiService {
         @Part("userid") userid: RequestBody,
         @Part imagePart: MultipartBody.Part?
     ): Response<ApiResult<Unit>>
+
+    @POST(Constants.ADD_SALE)
+    suspend fun addSale(@Body sale: Sale): Response<Unit>
 
     /* PUT API */
     @PUT(Constants.PUT_CHANGE_PASSWORD)

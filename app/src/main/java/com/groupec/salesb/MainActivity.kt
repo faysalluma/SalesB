@@ -16,6 +16,7 @@ import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 import com.groupec.salesb.ui.MainScreen
 import com.groupec.salesb.core.ConnectivityManagerUtils
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
+import com.groupec.salesb.core.designsystem.theme.Primary
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,10 +32,10 @@ class MainActivity : ComponentActivity() {
                 if (!isTablet()) {
                     AppAlertInfoDialog(
                         title = stringResource(id = R.string.app_name),
-                        icon = null,
-                        tintIcon = null,
+                        titleColor = Primary,
                         message = stringResource(id = R.string.error_tablet_desc),
-                        textButton = stringResource(id = R.string.close_app) ,
+                        confirmButtonText = stringResource(id = R.string.close_app),
+                        onConfirmButton = { /* Call default onConfirmButton action */ },
                         closing = this
                     )
                 } else {

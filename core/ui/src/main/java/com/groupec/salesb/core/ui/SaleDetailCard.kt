@@ -1,5 +1,6 @@
 package com.groupec.salesb.core.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,50 +12,32 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.groupec.salesb.core.autoRound
+import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.DefaultButton
 import com.groupec.salesb.core.designsystem.component.EmptyScreen
-import com.groupec.salesb.core.designsystem.component.IconMinus
-import com.groupec.salesb.core.designsystem.component.IconPlus
 import com.groupec.salesb.core.designsystem.component.TextNormal
 import com.groupec.salesb.core.designsystem.component.TitleLarge
 import com.groupec.salesb.core.designsystem.component.TitleMedium
-import com.groupec.salesb.core.designsystem.component.TitleSmall
+import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.model.data.Product
-import com.groupec.salesb.core.normalizeDecimalSeparator
-import ir.ehsannarmani.compose_charts.extensions.format
 
 
 @Composable
@@ -62,8 +45,10 @@ fun SaleDetailCard(
     selectedProducts: List<Pair<Int, Product>>,
     textFieldValues: MutableMap<Int, String>,
     devise: String,
+    isLoading: Boolean,
     onQuantityChange: (Pair<Int, Product>) -> Unit,
-    onSave: () -> Unit
+    onSave: (Double) -> Unit,
+    onClear: () -> Unit
 ) {
 
     Column(
@@ -106,124 +91,94 @@ fun SaleDetailCard(
                     )
                 }
 
-                DetailSaleList(selectedProducts,textFieldValues, onQuantityChange, devise)
+                SaleDetailList(selectedProducts, textFieldValues, onQuantityChange, devise)
             }
 
             // Bottom section
+            val total = selectedProducts
+                .map { it.second.prixttc * textFieldValues[it.first]?.toDouble()!! }
+                .reduce { acc, value -> acc + value }
+                .autoRound()
             Column(
                 modifier = Modifier.weight(0.3f),
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ){
-                    val total = selectedProducts
-                        .map { it.second.prixttc * textFieldValues[it.first]?.toDouble()!! }
-                        .reduce { acc, value -> acc + value }
-                        .autoRound()
-
-                    TitleMedium(title = stringResource(R.string.total), modifier = Modifier.padding(top = 8.dp))
-                    Text(
-                        text = total.toString(),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    DefaultButton(
-                        onClick = onSave,
-                        text = stringResource(id = com.groupec.salesb.core.designsystem.R.string.btn_save),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
+                BottomContentScreen(
+                    total = total,
+                    devise = devise,
+                    isLoading = isLoading,
+                    onSave = onSave,
+                    onClear = onClear
+                )
             }
         }
     }
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun DetailSaleList(
-    selectedProducts: List<Pair<Int, Product>>,
-    textFieldValues:  MutableMap<Int, String>,
-    onQuantityChange: (Pair<Int, Product>) -> Unit,
-    devise: String
+private fun BottomContentScreen(
+    total: String,
+    devise: String,
+    isLoading: Boolean,
+    onSave: (Double) -> Unit,
+    onClear: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState()),
+    val focusManager = LocalFocusManager.current
+    var showDialog = rememberSaveable { mutableStateOf(false) }
+    val totalLabel = total.plus(" $devise")
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-
-        selectedProducts.forEach { productLine ->
-            val (index, product) = productLine
-
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 6.dp),
-            ) {
-                TitleSmall(
-                    title = product.libelle,
-                    modifier = Modifier.weight(1.2f)
-                )
-                Row(
-                    modifier = Modifier.weight(2f),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    IconMinus {
-                        textFieldValues[index] = textFieldValues[index]!!.toDouble().minus(1.0).autoRound()
-                        onQuantityChange(Pair(index, product))
-                    }
-                    TextField(
-                        value =  textFieldValues[index]!!,
-                        onValueChange = {
-                            // textFieldQuantity = it.normalizeDecimalSeparator()
-                            textFieldValues[index] = it.normalizeDecimalSeparator()
-                            onQuantityChange(Pair(index, product))
-                        },
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(
-                            focusedContainerColor = Silver,
-                            unfocusedContainerColor = Silver,
-                            focusedIndicatorColor = Color.Transparent, // Remove underline when focused
-                            unfocusedIndicatorColor = Color.Transparent // Remove underline when unfocused
-                        ),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number
-                        ),
-                        singleLine = true,
-                        textStyle = TextStyle(
-                            textAlign = TextAlign.Center,
-                            fontSize = 16.sp // Optional: customize text size
-                        ),
-                        modifier = Modifier
-                            .scale(0.9f)
-                            .width(75.dp)
-                    )
-                    IconPlus {
-                        textFieldValues[index] = textFieldValues[index]!!.toDouble().plus(1.0).autoRound()
-                        onQuantityChange(Pair(index, product))
-                    }
-                }
-                Column(modifier = Modifier.weight(0.8f), horizontalAlignment = Alignment.End) {
-                    Text(
-                        text = product.prixttc.toString(),
-                        fontWeight = FontWeight.W500,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    TextNormal(
-                        text = devise,
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.W300)
-                    )
-                }
-            }
-            HorizontalDivider()
+        TitleMedium(title = stringResource(R.string.total), modifier = Modifier.padding(top = 8.dp))
+        Text(
+            text = total,
+            style = MaterialTheme.typography.titleLarge
+        )
+    }
+    Spacer(modifier = Modifier.height(8.dp))
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        DefaultButton(
+            modifier = Modifier.weight(1f),
+            text = stringResource(id = com.groupec.salesb.core.designsystem.R.string.btn_save),
+            style = MaterialTheme.typography.titleMedium
+        ) {
+            showDialog.value = true
         }
+        Spacer(Modifier.width(16.dp))
+        DefaultButton(
+            modifier = Modifier.weight(1f),
+            containerColor = Silver,
+            border = BorderStroke(1.dp, Silver),
+            onClick = onClear,
+            text = stringResource(id = com.groupec.salesb.core.designsystem.R.string.btn_cancel),
+            style = MaterialTheme.typography.titleMedium.copy(
+                color = Black,
+                fontWeight = FontWeight.W400
+            )
+        )
+    }
+
+    // Show Dialogue
+    if (showDialog.value) {
+        AppAlertInfoDialog(
+            setShowDialog = {
+                showDialog.value = it
+                focusManager.clearFocus()
+            },
+            title = stringResource(R.string.confirm_sale_message, totalLabel),
+            isLoading = isLoading,
+            onConfirmButton = {
+                onSave(total.toDouble())
+            },
+            disableConfirmActionDismiss = true,
+            onDismissButton = {
+                focusManager.clearFocus()
+            }
+        )
     }
 }
 

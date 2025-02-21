@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface StatisticRepository {
     fun getTotalSales(startDate: String, endDate: String) : Flow<Int>
-    fun getTotalAmountSales(startDate: String, endDate: String) : Flow<Int>
+    fun getTotalAmountSales(startDate: String, endDate: String) : Flow<Double>
     fun getTotalProducts() : Flow<Int>
     fun getTopSaleProducts(startDate: String, endDate: String) : Flow<List<Product>>
     fun getAlertSeuil() : Flow<Int>

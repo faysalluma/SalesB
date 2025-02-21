@@ -23,6 +23,7 @@ class Constants {
 
         // Post endpoint
         const val ADD_PRODUCT = "addProduct"
+        const val ADD_SALE = "addSale"
 
         // Put endpoint
         const val PUT_CHANGE_PASSWORD = "changePassword/{userid}"

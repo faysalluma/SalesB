@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.groupec.salesb.core.FormUIState
+import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.domain.product.DeleteProductUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +19,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
+import com.groupec.salesb.core.domain.sale.SaveSaleUseCase
 import com.groupec.salesb.core.model.data.Parameter
+import com.groupec.salesb.core.model.data.Sale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -26,7 +30,8 @@ import kotlinx.coroutines.flow.first
 @OptIn(ExperimentalCoroutinesApi::class)
 class SaleViewModel @Inject constructor(
     private val getProductUseCase: GetProductUseCase,
-    private val getParameterUseCase: GetParameterUseCase
+    private val getParameterUseCase: GetParameterUseCase,
+    private val saveSaleUseCase: SaveSaleUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -37,6 +42,9 @@ class SaleViewModel @Inject constructor(
 
     private val _parameter = MutableStateFlow(Parameter())
     val parameter : StateFlow<Parameter> = _parameter.asStateFlow()
+
+    private val _addSaleUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
+    val addSaleUiState : StateFlow<FormUIState<*>> = _addSaleUiState.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -56,6 +64,26 @@ class SaleViewModel @Inject constructor(
 
     fun updateSearchQuery(newQuery: String) {
         _searchQuery.value = newQuery
+    }
+
+    fun addSale(sale: Sale) {
+        _addSaleUiState.value = FormUIState.Loading
+        viewModelScope.launch {
+            when (val result = saveSaleUseCase(sale)) {
+                is Result.Success -> {
+                    _addSaleUiState.value = FormUIState.Success(Unit)
+                }
+
+                is Result.Error -> {
+                    _addSaleUiState.value = FormUIState.Error(result.exception.message ?: "Error when adding product")
+                }
+                else -> {}
+            }
+        }
+    }
+
+    fun resetFlow() {
+        _addSaleUiState.value = FormUIState.Idle
     }
 
 }

@@ -8,6 +8,8 @@ import com.groupec.salesb.core.data.repository.ParameterRepository
 import com.groupec.salesb.core.data.repository.ParameterRepositoryImpl
 import com.groupec.salesb.core.data.repository.ProductRepository
 import com.groupec.salesb.core.data.repository.ProductRepositoryImpl
+import com.groupec.salesb.core.data.repository.SaleRepository
+import com.groupec.salesb.core.data.repository.SaleRepositoryImpl
 import com.groupec.salesb.core.data.repository.StatisticRepository
 import com.groupec.salesb.core.data.repository.StatisticRepositoryImpl
 import com.groupec.salesb.core.data.repository.common.UserLocalRepository
@@ -74,5 +76,14 @@ class RepositoryModule  {
         dataStoreManager: DataStoreManager
     ) : CategorieRepository {
         return CategorieRepositoryImpl(apiService, dataStoreManager)
+    }
+
+    @Provides
+    @Singleton
+    fun providerSaleRepository(
+        apiService: ApiService,
+        dataStoreManager: DataStoreManager
+    ) : SaleRepository {
+        return SaleRepositoryImpl(apiService, dataStoreManager)
     }
 }

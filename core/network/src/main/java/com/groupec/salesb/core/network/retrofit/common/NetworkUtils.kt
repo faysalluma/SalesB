@@ -46,18 +46,18 @@ suspend fun <T, R> safeApiCallGetResult(
     transform: (T) -> R,
     default: R
 ): R {
-    val result = apiCallResult(apiCall = apiCall, transform = transform)
+    val result = safeApiCallResult(apiCall = apiCall, transform = transform)
     return when (result) {
         is Result.Success -> result.data
         is Result.Error -> {
-            println(result.exception)
+            println("safeApiCallResult error ${result.exception}")
             default
         }
         else -> {default}
     }
 }
 
-private suspend fun <T, R> apiCallResult(
+suspend fun <T, R> safeApiCallResult(
     apiCall: suspend () -> Response<T>,
     transform: (T) -> R
 ): Result<R> {

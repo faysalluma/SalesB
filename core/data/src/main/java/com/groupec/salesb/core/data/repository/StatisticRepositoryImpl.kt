@@ -27,13 +27,13 @@ class StatisticRepositoryImpl @Inject constructor(
         emit(result)
     }.flowOn(Dispatchers.IO)
 
-    override fun getTotalAmountSales(startDate: String, endDate: String): Flow<Int> = flow {
+    override fun getTotalAmountSales(startDate: String, endDate: String): Flow<Double> = flow {
         val result = safeApiCallGetResult(
             apiCall = { apiService.getTotalAmountSales(startDate, endDate) },
             transform = { response ->
-                response.data ?: 0
+                response.data ?: 0.0
             },
-            default = 0
+            default = 0.0
         )
         emit(result)
     }.flowOn(Dispatchers.IO)

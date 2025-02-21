@@ -14,28 +14,33 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DefaultButton
 import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
+import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.component.TitleLarge
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.model.data.Product
+import com.groupec.salesb.core.model.data.Sale
+import com.groupec.salesb.core.model.data.SaleDetail
 import com.groupec.salesb.core.ui.ProductGridAdaptive
 import com.groupec.salesb.core.ui.SaleDetailCard
 
@@ -45,16 +50,45 @@ fun SaleScreen(
     modifier: Modifier = Modifier,
     viewModel: SaleViewModel = hiltViewModel(),
 ) {
-
+    val context = LocalContext.current
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
     val products = viewModel.pagedProducts.collectAsLazyPagingItems()
     val error = (products.loadState.refresh as? LoadState.Error)?.error?.message
     val parameter by viewModel.parameter.collectAsState()
+    val addSaleUiState by viewModel.addSaleUiState.collectAsState()
+    val isLoading = addSaleUiState is FormUIState.Loading
 
     // For selected Products and handling of multiples textfield created
     val selectedProducts = remember { mutableStateListOf<Pair<Int, Product>>() }
     val textFieldValues = remember { mutableStateMapOf<Int, String>() }
+
+   when (addSaleUiState) {
+       is FormUIState.Success -> {
+           LaunchedEffect(Unit) {
+               selectedProducts.clear()
+               textFieldValues.clear()
+               snackbarHostState.showSnackbar(
+                   SnackbarVisualsWithState(
+                       message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                   )
+               )
+               viewModel.resetFlow()
+           }
+       }
+       is FormUIState.Error -> {
+           LaunchedEffect(Unit) {
+               snackbarHostState.showSnackbar(
+                   SnackbarVisualsWithState(
+                       message =(addSaleUiState as FormUIState.Error).message,
+                       isError = true
+                   )
+               )
+               viewModel.resetFlow()
+           }
+       }
+       else -> {}
+   }
 
    Row(modifier = Modifier.padding(start = 12.dp, top = 8.dp, end = 8.dp)) {
        Box (modifier = Modifier.weight(1.8f)) {
@@ -141,8 +175,17 @@ fun SaleScreen(
                 selectedProducts = selectedProducts,
                 textFieldValues = textFieldValues,
                 devise = parameter.devise,
-                onSave = {
-
+                isLoading = isLoading,
+                onSave = { total ->
+                    val saleDetail = selectedProducts.map { productLine ->
+                        val quantity = textFieldValues[productLine.first]
+                        SaleDetail(productLine.second.id!!, quantity?.toDouble()?:0.0, productLine.second.prixttc)
+                    }
+                    viewModel.addSale(Sale(totalprix = total, details = saleDetail))
+                },
+                onClear = {
+                    selectedProducts.clear()
+                    textFieldValues.clear()
                 }
             )
        }
@@ -154,12 +197,15 @@ fun SaleDetailScreen(
     selectedProducts: MutableList<Pair<Int, Product>>,
     textFieldValues: MutableMap<Int, String>,
     devise: String,
-    onSave: () -> Unit
+    isLoading: Boolean,
+    onSave: (Double) -> Unit,
+    onClear: () -> Unit
 ) {
     SaleDetailCard(
         selectedProducts = selectedProducts,
         textFieldValues = textFieldValues,
         devise = devise,
+        isLoading = isLoading,
         onQuantityChange = { productLine ->
             val (index, product)  = productLine
             val quantityValue = textFieldValues[index]?.takeIf { it.isNotEmpty() }?.toDouble() ?: 1.0
@@ -170,6 +216,7 @@ fun SaleDetailScreen(
                 textFieldValues[index] = quantityValue.toString()
             }
         },
-        onSave = onSave
+        onSave = onSave,
+        onClear = onClear
     )
 }

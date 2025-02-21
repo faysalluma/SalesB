@@ -51,8 +51,8 @@ class HomeViewModel @Inject constructor(
     private val _totalProducts = MutableStateFlow(0)
     val totalProducts : StateFlow<Int> = _totalProducts.asStateFlow()
 
-    private val _totalAmountSales = MutableStateFlow(0)
-    val totalAmountSales : StateFlow<Int> = _totalAmountSales.asStateFlow()
+    private val _totalAmountSales = MutableStateFlow(0.0)
+    val totalAmountSales : StateFlow<Double> = _totalAmountSales.asStateFlow()
 
     private val _topSaleProducts = MutableStateFlow<List<Product>>(emptyList())
     val topSaleProducts : StateFlow<List<Product>> = _topSaleProducts.asStateFlow()

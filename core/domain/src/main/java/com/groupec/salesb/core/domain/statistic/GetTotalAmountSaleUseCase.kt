@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetTotalAmountSaleUseCase @Inject constructor(private val statisticRepository: StatisticRepository) {
-    operator fun invoke(startDate: String, endDate: String) : Flow<Int> = statisticRepository.getTotalAmountSales(startDate, endDate)
+    operator fun invoke(startDate: String, endDate: String) : Flow<Double> = statisticRepository.getTotalAmountSales(startDate, endDate)
 }
