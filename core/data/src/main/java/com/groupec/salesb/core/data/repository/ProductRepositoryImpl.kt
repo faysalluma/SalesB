@@ -36,6 +36,7 @@ class ProductRepositoryImpl @Inject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = 15,
+                initialLoadSize = 15,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {

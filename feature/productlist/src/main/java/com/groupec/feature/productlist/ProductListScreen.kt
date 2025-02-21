@@ -14,6 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +29,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.groupec.feature.product.R
 import com.groupec.salesb.core.UIState
+import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.AppTextField
@@ -53,6 +58,9 @@ fun ProductListScreen(
     val products = viewModel.pagedProducts.collectAsLazyPagingItems()
     val error = (products.loadState.refresh as? LoadState.Error)?.error?.message
     val deleteProductState by viewModel.deleteProductUiState.collectAsState()
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+    var productIdLibelle by remember { mutableStateOf(Pair(0, "")) }
+
 
     // Refresh list after insert, update or delete product
     LaunchedEffect(refreshProductList) {
@@ -160,9 +168,27 @@ fun ProductListScreen(
                     products = products,
                     isSearching = isSearching,
                     onViewDetail = onViewDetail,
-                    onDelete = viewModel::deleteProduct,
+                    onDelete = { id, libelle ->
+                        showDialog = true
+                        productIdLibelle = Pair(id, libelle)
+                    },
                     removeSelectedBgColor = removeSelectedBgColor
                 )
+                if (showDialog) {
+                    AppAlertInfoDialog(
+                        setShowDialog = {
+                            showDialog = it
+                            focusManager.clearFocus()
+                        },
+                        title = stringResource(com.groupec.salesb.core.ui.R.string.confirm_delete_message, productIdLibelle.second),
+                        onConfirmButton = {
+                            viewModel.deleteProduct(productIdLibelle.first)
+                        },
+                        onDismissButton = {
+                            focusManager.clearFocus()
+                        }
+                    )
+                }
             }
         }
     }

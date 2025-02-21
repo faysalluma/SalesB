@@ -124,7 +124,7 @@ private fun BottomContentScreen(
     onClear: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
-    var showDialog = rememberSaveable { mutableStateOf(false) }
+    val showDialog = rememberSaveable { mutableStateOf(false) }
     val totalLabel = total.plus(" $devise")
     Row(
         modifier = Modifier.fillMaxWidth(),

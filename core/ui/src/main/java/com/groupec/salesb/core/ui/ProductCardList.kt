@@ -20,7 +20,7 @@ fun ProductCardList(
     products: LazyPagingItems<Product>,
     isSearching: Boolean,
     onViewDetail: (Product) -> Unit,
-    onDelete: (Int) -> Unit,
+    onDelete: (Int, String) -> Unit,
     removeSelectedBgColor: Boolean
 ) {
 
@@ -44,7 +44,7 @@ fun ProductCardList(
                         selectedIndex = index
                         onViewDetail(it)
                     },
-                    onDelete
+                    onDelete = onDelete
                 )
             }
         }

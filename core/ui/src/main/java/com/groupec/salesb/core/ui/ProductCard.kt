@@ -43,7 +43,7 @@ fun ProductCard(
     product: Product,
     isSelected: Boolean,
     onViewDetail: (Product) -> Unit,
-    onDelete: (Int) -> Unit
+    onDelete: (Int, String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     val cardColor = if (isSelected) Silver else White // Define the color based on the 'selected' state
@@ -105,10 +105,10 @@ fun ProductCard(
                             )
                         },
                         text = { Text(stringResource(R.string.delete_item), color = Black) },
-                        onClick = { product.id?.let {
-                            onDelete(it)
+                        onClick = {
+                            onDelete(product.id?:0, product.libelle)
                             expanded = false // Close DropdownMenuItem
-                        } }
+                        }
                     )
                 }
 
@@ -156,7 +156,8 @@ fun ProductCardPreview() {
             ),
             isSelected = false,
             onViewDetail = {},
-            onDelete = {}
+            onDelete = { id, libelle ->
+            }
         )
     }
 }

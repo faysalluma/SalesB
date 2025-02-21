@@ -17,4 +17,5 @@
     <string name="title_product">Produits</string>
     <string name="price">Prix</string>
     <string name="confirm_sale_message">Confirmer la vente de %s ?</string>
+    <string name="confirm_delete_message">Confirmer la suppression de : %s ?</string>
 </resources>

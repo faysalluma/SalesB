@@ -1,5 +1,6 @@
 package com.groupec.salesb.core.data.repository
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.groupec.salesb.core.data.model.toProductList
@@ -25,6 +26,8 @@ class ProductPagingSource(
             val response = api.getProducts(currentPage, params.loadSize, searchQuery)
             if (response.isSuccessful) {
                 val products = response.body()?.toProductList().orEmpty()
+                Log.d("Paging", "Loading page: $currentPage, items: ${products.size}")
+
                 LoadResult.Page(
                     data = products,
                     prevKey = null,  // pour la pagination vers le haut,  if (currentPage == 1) null else currentPage - 1
