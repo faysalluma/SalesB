@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -21,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -34,7 +32,6 @@ import com.groupec.salesb.core.designsystem.SampleTopAppBar
 import com.groupec.salesb.core.designsystem.component.CustomSnackBar
 import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
-import com.groupec.salesb.core.designsystem.theme.DarkRed
 import com.groupec.salesb.core.designsystem.theme.Green
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Red
@@ -55,6 +52,7 @@ fun MainScreen(
 
     // Show title and user name on app bar
     val userStoreState by viewModel.userStore.collectAsState()
+    val userId = userStoreState.id
     val appBarTitle = userStoreState.nomprenom
     val firstLogin = userStoreState.firstLogin
 
@@ -77,7 +75,7 @@ fun MainScreen(
     when (currentDestination.value) {
         NavigationItem.Home.route -> {
             viewModel.getUserStore()
-            dropDownItemsMenu = getDropdownItemsWithActions(context, navController, viewModel)
+            dropDownItemsMenu = getDropdownItemsWithActions(context, navController, viewModel, userId, firstLogin)
         }
 
         NavigationItem.ChangePassword.route -> {
@@ -136,7 +134,7 @@ fun MainScreen(
             ) {
                 LargeFloatingActionButton(
                     onClick = {
-                        navController.navigate(NavigationItem.Sale.route) {
+                        navController.navigate(NavigationItem.SaveSale.route) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
                         }
@@ -181,12 +179,15 @@ fun MainScreen(
 fun getDropdownItemsWithActions(
     context: Context,
     navController: NavHostController,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    userId: String,
+    firstLogin: Boolean
 ): List<Pair<String, () -> Unit>> {
+
     return listOf(
         context.getString(R.string.menu_settings) to { /* navController.executeAction() */ },
         context.getString(R.string.menu_update_password) to {
-            navController.navigate(NavigationItem.ChangePassword.route)
+            navController.navigate(NavigationItem.ChangePassword.route.plus("/$userId/$firstLogin"))
         },
         context.getString(R.string.menu_log_out) to {
             viewModel.logout()

@@ -185,7 +185,7 @@ private fun BottomContentScreen(
 @Preview
 // @Preview(device = Devices.TABLET)
 @Composable
-fun SaleCardPreview() {
+fun SaleDetailCardPreview() {
     SalesBAppTheme {
 
     }

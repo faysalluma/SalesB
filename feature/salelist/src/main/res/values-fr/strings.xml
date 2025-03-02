@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="retry">Réessayer</string>
+    <string name="loading_sales">Chargement des ventes …</string>
+    <string name="my_sales">Mes ventes</string>
+    <string name="search_sale_place_holder">Rechercher par montant</string>
+    <string name="start_date">Date début</string>
+    <string name="end_date">Date fin</string>
+    <string name="sale_dialog_title">Vente : %1$d du %2$s </string>
+    <string name="view_chart">Voir le graphe</string>
+</resources>

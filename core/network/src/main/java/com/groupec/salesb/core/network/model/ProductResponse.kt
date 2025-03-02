@@ -56,3 +56,17 @@ data class ProductItemResponse(
     @SerializedName("user")
     val user: UserReducedResponse ? = null
 )
+
+data class ProductReducedResponse(
+    @SerializedName("id")
+    val id: Int,
+
+    @SerializedName("libelle")
+    val libelle: String,
+
+    @SerializedName("qte")
+    val qte: Double,
+
+    @SerializedName("prix")
+    val prix: Double
+)

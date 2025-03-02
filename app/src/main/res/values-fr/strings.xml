@@ -4,10 +4,11 @@
     <string name="error_tablet_desc">Nous sommes désolés, mais cette application fonctionne uniquement que sur tablette.</string>
     <string name="close_app">Fermer</string>
     <string name="menu_home">Accueil</string>
-    <string name="menu_sale">Ventes</string>
+    <string name="menu_save_sale">Encaisser</string>
     <string name="menu_product">Produits</string>
     <string name="menu_update_password">Modifier mon mot de passe</string>
     <string name="menu_log_out">Se déconnecter</string>
     <string name="menu_settings">Paramètres</string>
     <string name="menu_category">Catégories</string>
+    <string name="menu_my_sales">Mes ventes</string>
 </resources>

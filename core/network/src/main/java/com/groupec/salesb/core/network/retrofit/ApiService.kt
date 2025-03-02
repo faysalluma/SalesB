@@ -8,6 +8,7 @@ import com.groupec.salesb.core.network.model.ChartDateResponse
 import com.groupec.salesb.core.network.model.ChartDayResponse
 import com.groupec.salesb.core.network.model.ParameterResponse
 import com.groupec.salesb.core.network.model.ProductResponse
+import com.groupec.salesb.core.network.model.SaleResponse
 import com.groupec.salesb.core.network.model.UserItemResponse
 import com.groupec.salesb.core.network.model.UserResponse
 import com.groupec.salesb.core.network.retrofit.common.Constants
@@ -23,6 +24,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface ApiService {
     /* GET API */
@@ -66,6 +68,10 @@ interface ApiService {
 
     @GET(Constants.GET_CATEGORIES)
     suspend fun getCategories(): Response<CategorieResponse>
+
+    @GET(Constants.GET_SALES)
+    suspend fun getSales(@Query("page") page: Int, @Query("limit") limit: Int, @QueryMap searchParams: Map<String, String>
+    ): Response<SaleResponse>
 
     /* POST API */
     @Multipart

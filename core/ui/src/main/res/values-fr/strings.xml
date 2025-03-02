@@ -18,4 +18,9 @@
     <string name="price">Prix</string>
     <string name="confirm_sale_message">Confirmer la vente de %s ?</string>
     <string name="confirm_delete_message">Confirmer la suppression de : %s ?</string>
+    <string name="total_amount">Montant total</string>
+    <string name="registered_by">Enregistrée par</string>
+    <string name="view_detail">Détail</string>
+    <string name="sale_item_dialog_title">Vente n° %1$s de %2$s, réalisée le  %3$s par  %4$s.</string>
+    <string name="label">Libellé</string>
 </resources>

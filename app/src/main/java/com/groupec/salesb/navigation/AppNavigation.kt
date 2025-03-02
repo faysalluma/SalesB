@@ -11,7 +11,8 @@ enum class Screen {
     Login,
     ChangePassword,
     Home,
-    Sale,
+    SaveSale,
+    MySales,
     Product,
     ProductDetail,
     Category
@@ -22,7 +23,8 @@ sealed class NavigationItem(val route: String,val title: Int = 0, val icon: Navi
     data object Login : NavigationItem(Screen.Login.name)
     data object ChangePassword : NavigationItem(Screen.ChangePassword.name)
     data object Home : NavigationItem(Screen.Home.name, R.string.menu_home, NavigationIcon.VectorIcon(AppIcons.Home))
-    data object Sale : NavigationItem(Screen.Sale.name, R.string.menu_sale, NavigationIcon.DrawableIcon(AppIcons.Sale))
+    data object SaveSale : NavigationItem(Screen.SaveSale.name, R.string.menu_save_sale, NavigationIcon.VectorIcon(AppIcons.SaveSale))
+    data object MySales : NavigationItem(Screen.MySales.name, R.string.menu_my_sales, NavigationIcon.VectorIcon(AppIcons.MySales))
     data object Product : NavigationItem(Screen.Product.name, R.string.menu_product, NavigationIcon.DrawableIcon(AppIcons.Product))
     data object ProductDetail : NavigationItem(Screen.ProductDetail.name)
     data object Category : NavigationItem(Screen.Category.name, R.string.menu_category, NavigationIcon.VectorIcon(AppIcons.Category))

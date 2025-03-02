@@ -25,7 +25,7 @@ import com.groupec.feature.login.LoginScreen
 import com.groupec.feature.productdetail.ProductDetailScreen
 import com.groupec.feature.productlist.ProductListScreen
 import com.groupec.feature.sale.SaleScreen
-import com.groupec.salesb.core.designsystem.component.DataTableScreen
+import com.groupec.feature.salelist.SaleListScreen
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
@@ -136,17 +136,30 @@ fun AppNavHost(
                 },
                 onBackPressed = {
                     navController.popBackStack()
+                },
+                navigateToStartDestination = {
+                    navController.navigate(NavigationItem.Loading.route) {
+                        // Delete the entire background stack
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
 
         composable(NavigationItem.Home.route) {
-            HomeScreen()
+            HomeScreen(
+                navigateToSaleList = {
+                    navController.navigate(NavigationItem.MySales.route)
+                }
+            )
         }
 
-        composable(NavigationItem.Sale.route) {
-            // DataTableScreen()
+        composable(NavigationItem.SaveSale.route) {
             SaleScreen(snackbarHostState = snackbarHostState)
+        }
+
+        composable(NavigationItem.MySales.route) {
+            SaleListScreen(snackbarHostState = snackbarHostState)
         }
 
         composable(NavigationItem.Product.route) {

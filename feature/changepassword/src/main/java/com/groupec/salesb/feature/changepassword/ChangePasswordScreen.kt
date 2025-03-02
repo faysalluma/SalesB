@@ -22,11 +22,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.component.TitleHeader
 import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.ui.ChangePasswordForm
 import com.groupec.salesb.core.ui.ComposableLifecycle
+import kotlinx.coroutines.runBlocking
 
 
 @Composable
@@ -35,6 +37,7 @@ fun ChangePasswordScreen(
     firstLogin: Boolean,
     navigateToHome: () -> Unit,
     onBackPressed: () -> Unit,
+    navigateToStartDestination: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChangePasswordViewModel = hiltViewModel(),
     ) {
@@ -52,7 +55,13 @@ fun ChangePasswordScreen(
     when (loginState) {
         is ChangePasswordUiState.Success -> {
             LaunchedEffect(Unit) {
-                navigateToHome()
+                if (!firstLogin) {
+                    viewModel.logout()
+                    navigateToStartDestination()
+                } else {
+                    println("toto no")
+                    navigateToHome()
+                }
             }
         }
 

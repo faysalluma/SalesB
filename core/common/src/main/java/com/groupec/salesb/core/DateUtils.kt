@@ -3,6 +3,8 @@ package com.groupec.salesb.core
 import android.text.format.DateUtils
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Calendar.SUNDAY
 import java.util.Date
@@ -61,7 +63,7 @@ fun Date.dayMonthYear(): String {
  * @sample toStandardDateString(DateFormat.LONG): "30 juillet 2009"
  * @sample toStandardDateString(DateFormat.FULL): "mardi 30 juillet 2009"
  */
-fun Date.toStandardDateString(format: Int = DateFormat.MEDIUM): String {
+fun Date.toStandardDateString(format: Int = DateFormat.DEFAULT): String {
     return DateFormat.getDateInstance(format, Locale.getDefault()).format(this)
 }
 
@@ -87,8 +89,8 @@ fun Date.numberOfDaysInMonth(): Int {
     return cal.getActualMaximum(Calendar.DAY_OF_MONTH)
 }
 
-fun Date.toDateString(): String =
-    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(this)
+fun Date.toDateString(format: String = "yyyy-MM-dd HH:mm:ss"): String =
+    SimpleDateFormat(format, Locale.getDefault()).format(this)
 
 fun Date.sameDay(date: Date): Boolean {
     val calendar = Calendar.getInstance()
@@ -100,7 +102,7 @@ fun Date.sameDay(date: Date): Boolean {
             calendar.get(Calendar.YEAR) == otherCalendar.get(Calendar.YEAR)
 }
 
-fun String.toDate(format: String = "yyyy-mm-dd HH:mm:ss"): Date? {
+fun String.toDate(format: String = "yyyy-MM-dd HH:mm:ss"): Date? {
     return try {
         val dateFormat = SimpleDateFormat(format, Locale.getDefault())
         dateFormat.parse(this)
@@ -121,6 +123,12 @@ fun getCurrentDate(): String {
     val currentDateTime = Calendar.getInstance().time
     val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     return formatter.format(currentDateTime)
+}
+
+fun currentDate(pattern: String = "yyyy-MM-dd HH:mm:ss"): Date? {
+    val formatter = SimpleDateFormat(pattern, Locale.getDefault())
+    val currentDateTimeString = formatter.format(Date())
+    return formatter.parse(currentDateTimeString)
 }
 
 // Function to get yesterday's date in yyyy-MM-dd format

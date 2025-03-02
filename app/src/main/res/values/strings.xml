@@ -4,7 +4,8 @@
     <string name="error_tablet_desc">We\'re sorry, but this application only works on tablets.</string>
     <string name="close_app">Close</string>
     <string name="menu_home">Home</string>
-    <string name="menu_sale">Sales</string>
+    <string name="menu_save_sale">Cash in</string>
+    <string name="menu_my_sales">My sales</string>
     <string name="menu_product">Products</string>
     <string name="menu_category">Categories</string>
     <string name="menu_update_password">Modify password</string>

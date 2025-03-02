@@ -44,4 +44,7 @@
     <string name="take_photo">Take Photo</string>
     <string name="select_image">Select image</string>
     <string name="no_data">No data available</string>
+    <string name="format_date">MM/DD/YYYY</string>
+    <string name="select_date">Select date</string>
+    <string name="cancel">Cancel</string>
 </resources>

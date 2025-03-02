@@ -49,11 +49,17 @@ fun TitleHeader(
 }
 
 @Composable
-fun TitleLarge(title: String, color: Color = Color.Unspecified, modifier: Modifier = Modifier) {
+fun TitleLarge(
+    title: String,
+    color: Color = Color.Unspecified,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign ?= null
+) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleLarge.copy(fontSize = 18.sp, color = color),
-        modifier = modifier
+        modifier = modifier,
+        textAlign = textAlign
     )
 }
 

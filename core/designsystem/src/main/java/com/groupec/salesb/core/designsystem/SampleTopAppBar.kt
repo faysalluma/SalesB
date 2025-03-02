@@ -64,7 +64,10 @@ fun SampleTopAppBar(
                     dropDownItemsMenu.forEach {item ->
                         DropdownMenuItem(
                             text = { Text(item.first, color = Black) },
-                            onClick = { item.second() }
+                            onClick = {
+                                expanded = false // Close DropdownMenuItem
+                                item.second()
+                            }
                         )
                     }
                 }

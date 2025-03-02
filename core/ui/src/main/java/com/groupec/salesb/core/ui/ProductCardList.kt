@@ -23,7 +23,6 @@ fun ProductCardList(
     onDelete: (Int, String) -> Unit,
     removeSelectedBgColor: Boolean
 ) {
-
     // Track selected item index
     var selectedIndex by remember { mutableStateOf<Int?>(null) }
 

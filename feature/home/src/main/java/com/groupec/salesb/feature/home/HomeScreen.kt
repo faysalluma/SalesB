@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -40,6 +41,7 @@ import com.groupec.salesb.core.ui.StatisticChart
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    navigateToSaleList: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -77,7 +79,7 @@ fun HomeScreen(
             EmptyScreen(text = stringResource(R.string.no_visual_allowed))
         } else {
             val heigthModifier = Modifier.height(34.dp)
-            HeadLigne(context, viewModel)
+            HeadLigne(context, viewModel, navigateToSaleList)
             StatisticPeriodic(context, viewModel)
             Spacer(modifier = heigthModifier)
             StatisticNonPeriodic(context, viewModel)
@@ -99,7 +101,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun HeadLigne(context: Context, viewModel: HomeViewModel) {
+fun HeadLigne(context: Context, viewModel: HomeViewModel, navigateToSaleList: () -> Unit) {
     val periodList = Period.entries.map { it.getTitle(context) }
     Box(
         modifier = Modifier.fillMaxWidth(),
@@ -110,7 +112,7 @@ fun HeadLigne(context: Context, viewModel: HomeViewModel) {
                 modifier = Modifier.padding(top = 8.dp),
                 text = stringResource(R.string.see_more)
             ) {
-
+                navigateToSaleList()
             }
             Box(modifier = Modifier.width(200.dp)) {
                 AppExposedDropdownMenu(

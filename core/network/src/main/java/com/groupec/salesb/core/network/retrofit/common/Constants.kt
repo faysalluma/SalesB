@@ -20,6 +20,7 @@ class Constants {
         const val GET_TOTAL_SALE_BY_DATE = "getTotalSalesByDate/{startDate}/{endDate}"
         const val GET_PRODUCTS = "getProducts"
         const val GET_CATEGORIES = "getCategories"
+        const val GET_SALES = "getSales"
 
         // Post endpoint
         const val ADD_PRODUCT = "addProduct"

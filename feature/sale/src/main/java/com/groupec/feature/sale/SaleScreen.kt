@@ -179,7 +179,11 @@ fun SaleScreen(
                 onSave = { total ->
                     val saleDetail = selectedProducts.map { productLine ->
                         val quantity = textFieldValues[productLine.first]
-                        SaleDetail(productLine.second.id!!, quantity?.toDouble()?:0.0, productLine.second.prixttc)
+                        SaleDetail(
+                            produitid = productLine.second.id!!,
+                            qte = quantity?.toDouble()?:0.0,
+                            prix = productLine.second.prixttc
+                        )
                     }
                     viewModel.addSale(Sale(totalprix = total, details = saleDetail))
                 },
@@ -207,7 +211,7 @@ fun SaleDetailScreen(
         devise = devise,
         isLoading = isLoading,
         onQuantityChange = { productLine ->
-            val (index, product)  = productLine
+            val (index, _)  = productLine
             val quantityValue = textFieldValues[index]?.takeIf { it.isNotEmpty() }?.toDouble() ?: 1.0
             if (quantityValue <= 0) {
                 selectedProducts.remove(productLine)

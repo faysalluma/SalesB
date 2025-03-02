@@ -79,7 +79,7 @@ class UserRemoteRepository @Inject constructor(
 
     private suspend fun updatePassword(user: User, ancPassword: String, password: String): Result<User> {
         return when {
-            !user.firstlogin && user.password != ancPassword -> {
+            !user.firstlogin && !BCrypt.checkpw(ancPassword, user.password) -> {
                 Result.Error(Exception(context.getString(R.string.error_bad_anc_password)))
             }
             else -> {

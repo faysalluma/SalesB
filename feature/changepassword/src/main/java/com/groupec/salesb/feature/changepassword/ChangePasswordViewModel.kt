@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.domain.user.LogoutPasswordUseCase
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,7 +47,7 @@ class ChangePasswordViewModel @Inject constructor(
     }
 
     fun logout() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             when (val result = logoutPasswordUseCase()) {
                 is Result.Error -> {
                     ChangePasswordUiState.Error(result.exception.message ?: "Failed to logout")
