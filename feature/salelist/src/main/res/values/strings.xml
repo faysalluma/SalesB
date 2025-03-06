@@ -8,4 +8,5 @@
     <string name="end_date">End date</string>
     <string name="sale_dialog_title">Sale: %1$d from %2$s </string>
     <string name="view_chart">View Chart</string>
+    <string name="no_sales">No sales</string>
 </resources>

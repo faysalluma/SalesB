@@ -118,6 +118,18 @@ fun currentDateString(pattern: String ="yyyy-MM-dd HH:mm:ss") : String {
     return formatter.format(currentDateTime)
 }
 
+fun currentLocalDateString() : String {
+    val currentDateTime = Calendar.getInstance().time
+    val locale = Locale.getDefault()
+    val pattern =  if (locale.language.equals("fr", ignoreCase = true)) {
+        "dd/MM/yyyy"
+    } else {
+        "MM/dd/yyyy"
+    }
+    val formatter = SimpleDateFormat(pattern, locale)
+    return formatter.format(currentDateTime)
+}
+
 // Function to get the current date in yyyy-MM-dd format
 fun getCurrentDate(): String {
     val currentDateTime = Calendar.getInstance().time

@@ -32,16 +32,17 @@ fun DatePickerFieldToModal(
     modifier: Modifier = Modifier,
     label: String,
     defaultDate: String = "",
-    onDateSelected: (String) -> Unit
+    onDateSelected: (dateValue: String) -> Unit
 ) {
-    var selectedDate by remember { mutableStateOf<Long?>(null) }
+    val defaultDateMillis = convertDateToMillis(defaultDate)
+    var selectedDate by remember { mutableStateOf<Long?>(defaultDateMillis) }
     var showModal by remember { mutableStateOf(false) }
 
     OutlinedTextField(
         value = selectedDate?.let {
-            onDateSelected(convertMillisToDate(it, useServerFormat = true))
+            onDateSelected(convertMillisToDate(it))
             convertMillisToDate(it)
-        } ?: defaultDate,
+        } ?: "",
         onValueChange = { },
         label = { Text(label) },
         placeholder = { Text(stringResource(R.string.format_date)) },
@@ -117,5 +118,22 @@ fun convertMillisToDate(millis: Long, useServerFormat: Boolean = false): String 
         }
         val formatter = SimpleDateFormat(pattern, locale)
         formatter.format(Date(millis))
+    }
+}
+
+fun convertDateToMillis(dateString: String): Long? {
+    return try {
+        val locale = Locale.getDefault()
+        val pattern = if (locale.language.equals("fr", ignoreCase = true)) {
+            "dd/MM/yyyy"
+        } else {
+            "MM/dd/yyyy"
+        }
+        val formatter = SimpleDateFormat(pattern, locale)
+        val date = formatter.parse(dateString)
+        date?.time
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }

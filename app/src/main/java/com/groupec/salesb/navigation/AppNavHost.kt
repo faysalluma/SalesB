@@ -25,6 +25,7 @@ import com.groupec.feature.login.LoginScreen
 import com.groupec.feature.productdetail.ProductDetailScreen
 import com.groupec.feature.productlist.ProductListScreen
 import com.groupec.feature.sale.SaleScreen
+import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
@@ -159,7 +160,12 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.MySales.route) {
-            SaleListScreen(snackbarHostState = snackbarHostState)
+            SaleListScreen(
+                snackbarHostState = snackbarHostState,
+                navigateToSaleChart = { startDate, endDate ->
+                    navController.navigate(NavigationItem.SaleChart.route.plus("/${startDate}/${endDate}"))
+                }
+            )
         }
 
         composable(NavigationItem.Product.route) {
@@ -203,6 +209,25 @@ fun AppNavHost(
 
         composable(NavigationItem.Category.route) {
             Text("Categories")
+        }
+
+        composable(
+            route = NavigationItem.SaleChart.route.plus("/{startDate}/{endDate}"),
+            arguments = listOf(
+                navArgument("startDate") {
+                    type = NavType.StringType
+                },
+                navArgument("endDate") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val startDate = backStackEntry.arguments?.getString("startDate") ?: ""
+            val endDate = backStackEntry.arguments?.getString("endDate") ?: ""
+            SaleChartScreen(
+                startDate = startDate,
+                endDate = endDate
+            )
         }
     }
 }

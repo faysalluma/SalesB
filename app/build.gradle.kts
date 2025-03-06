@@ -68,6 +68,7 @@ dependencies {
     implementation(project(":feature:productdetail"))
     implementation(project(":feature:sale"))
     implementation(project(":feature:salelist"))
+    implementation(project(":feature:salechart"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

@@ -1,6 +1,8 @@
 package com.groupec.salesb.core
 
 import java.math.RoundingMode
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 /* Replace , by . to have good dougle format */
 fun String.normalizeDecimalSeparator(): String {
@@ -31,3 +33,36 @@ fun Double.autoRound(): String {
     }
     return formatted
 }
+
+fun String.convertToServerDateFormat(): String {
+    val locale = Locale.getDefault()
+    val pattern = if (locale.language.equals("fr", ignoreCase = true)) {
+        "dd/MM/yyyy"
+    } else {
+        "MM/dd/yyyy"
+    }
+
+    val originalFormat = SimpleDateFormat(pattern, locale)
+    val targetFormat = SimpleDateFormat("yyyy-MM-dd", locale)
+    val date = originalFormat.parse(this)
+
+    // Formater l'objet Date dans le format souhaité
+    return targetFormat.format(date)
+}
+
+fun String.convertToViewDateFormat(): String {
+    val locale = Locale.getDefault()
+    val originalFormat = SimpleDateFormat("yyyy-MM-dd", locale)
+    val targetPattern = if (locale.language.equals("fr", ignoreCase = true)) {
+        "dd/MM/yyyy"
+    } else {
+        "MM/dd/yyyy"
+    }
+    val targetFormat = SimpleDateFormat(targetPattern, locale)
+    val date = originalFormat.parse(this)
+
+    // Formater l'objet Date dans le format souhaité
+    return targetFormat.format(date)
+}
+
+

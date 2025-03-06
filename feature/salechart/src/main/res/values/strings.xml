@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sales_chart_title">Statistics from %1$s to %2$s</string>
+    <string name="no_data_chart">No Data available</string>
+</resources>

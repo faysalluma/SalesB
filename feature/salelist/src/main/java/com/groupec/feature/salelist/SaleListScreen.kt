@@ -28,12 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.groupec.salesb.core.convertToServerDateFormat
 import com.groupec.salesb.core.currentDateString
+import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.designsystem.component.AppCustomDialog
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DatePickerFieldToModal
 import com.groupec.salesb.core.designsystem.component.DefaultButton
+import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.TitleLarge
@@ -47,6 +50,7 @@ import com.groupec.salesb.core.ui.SaleItemDetailProduct
 fun SaleListScreen(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
+    navigateToSaleChart: (String, String) -> Unit,
     viewModel: SaleListViewModel = hiltViewModel(),
 ) {
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -56,6 +60,8 @@ fun SaleListScreen(
     val parameter by viewModel.parameter.collectAsState()
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var saleGetValue by remember { mutableStateOf<Sale?>(null) }
+    var startDate by rememberSaveable { mutableStateOf(currentLocalDateString()) }
+    var endDate by rememberSaveable { mutableStateOf(currentLocalDateString()) }
 
     Box(
         modifier = Modifier
@@ -133,9 +139,10 @@ fun SaleListScreen(
                                     .width(230.dp)
                                     .padding(start = 20.dp),
                                 label = stringResource(R.string.start_date),
-                                defaultDate = currentDateString(pattern = "dd/MM/yyyy")
+                                defaultDate = startDate
                             ) { dateValue ->
-                                viewModel.updateStartDateQuery(dateValue)
+                                viewModel.updateStartDateQuery(dateValue.convertToServerDateFormat())
+                                startDate = dateValue
                             }
 
                             DatePickerFieldToModal(
@@ -143,37 +150,46 @@ fun SaleListScreen(
                                     .width(230.dp)
                                     .padding(horizontal = 20.dp),
                                 label = stringResource(R.string.end_date),
-                                defaultDate = currentDateString(pattern = "dd/MM/yyyy")
+                                defaultDate = endDate
                             ) { dateValue ->
-                                viewModel.updateEndDateQuery(dateValue)
+                                viewModel.updateEndDateQuery(dateValue.convertToServerDateFormat())
+                                endDate = dateValue
                             }
 
                             DefaultButton(
                                 modifier = Modifier
                                     .wrapContentWidth()
                                     .padding(top = 10.dp),
-                                text = stringResource(R.string.view_chart)
-                            ) {
-
-                            }
+                                text = stringResource(R.string.view_chart),
+                                onClick = {
+                                    navigateToSaleChart(
+                                        startDate.convertToServerDateFormat(),
+                                        endDate.convertToServerDateFormat()
+                                    )
+                                }
+                            )
                         }
                     }
 
                     HorizontalDivider(modifier = Modifier.padding(top = 26.dp))
 
                     // Paginated list
-                    SaleCardList(
-                        sales = sales,
-                        isSearching = isSearching,
-                        onViewDetail = { sale ->
-                            showDialog = true
-                            saleGetValue = sale
-                        },
-                        onDelete = { id, libelle ->
-                            /* showDialog = true
-                             productIdLibelle = Pair(id, libelle)*/
-                        },
-                    )
+                    if (sales.itemCount == 0) {
+                        EmptyScreen(text = stringResource(R.string.no_sales))
+                    } else {
+                        SaleCardList(
+                            sales = sales,
+                            isSearching = isSearching,
+                            onViewDetail = { sale ->
+                                saleGetValue = sale
+                                showDialog = true
+                            },
+                            onDelete = { id, libelle ->
+                                /* showDialog = true
+                                 productIdLibelle = Pair(id, libelle)*/
+                            },
+                        )
+                    }
 
                     if (showDialog) {
                         AppCustomDialog(setShowDialog = { showDialog = it} ) {
