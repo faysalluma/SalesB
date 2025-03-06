@@ -4,9 +4,11 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,7 +34,9 @@ import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
 import com.groupec.salesb.utils.FlipperNavigationLogger
+import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavHost(
     modifier: Modifier,
@@ -172,39 +176,54 @@ fun AppNavHost(
             var selectedProduct by remember { mutableStateOf<Product?>(null) }
             var refreshProductList by remember { mutableStateOf(false) }
             var removeSelectedBgColor by remember { mutableStateOf(false) }
+            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
 
-            Row {
-                Row(Modifier.weight(0.4f)) {
-                    ProductListScreen(
-                        snackbarHostState = snackbarHostState,
-                        refreshProductList = refreshProductList,
-                        removeSelectedBgColor = removeSelectedBgColor,
-                        onViewDetail = { product ->
-                            selectedProduct = product
-                        }
-                    )
-                    VerticalDivider()
-                }
-
-                Box(Modifier.weight(0.6f)) {
-                    ProductDetailScreen(
-                        snackbarHostState = snackbarHostState,
-                        product = selectedProduct,
-                        navigateToCategory = {
-                            navController.navigate(NavigationItem.Category.route) {
-                                popUpTo(navController.graph.startDestinationId)
-                                launchSingleTop = true
-                            }
-                        },
-                        removeSelectedBgColor = {
-                            removeSelectedBgColor = !removeSelectedBgColor
-                        },
-                        refreshProducts = {
-                            refreshProductList  = !refreshProductList
-                        }
-                    )
+            LaunchedEffect(isRefreshing) {
+                // Show refresh indicator during 1s
+                if (isRefreshing) {
+                    delay(1000)
+                    isRefreshing = false
                 }
             }
+
+            PullToRefreshBox(isRefreshing = isRefreshing /* isManualRefreshing */, onRefresh = {
+                refreshProductList  = !refreshProductList
+                isRefreshing = true
+            }) {
+                Row {
+                    Row(Modifier.weight(0.4f)) {
+                        ProductListScreen(
+                            snackbarHostState = snackbarHostState,
+                            refreshProductList = refreshProductList,
+                            removeSelectedBgColor = removeSelectedBgColor,
+                            onViewDetail = { product ->
+                                selectedProduct = product
+                            }
+                        )
+                        VerticalDivider()
+                    }
+
+                    Box(Modifier.weight(0.6f)) {
+                        ProductDetailScreen(
+                            snackbarHostState = snackbarHostState,
+                            product = selectedProduct,
+                            navigateToCategory = {
+                                navController.navigate(NavigationItem.Category.route) {
+                                    popUpTo(navController.graph.startDestinationId)
+                                    launchSingleTop = true
+                                }
+                            },
+                            removeSelectedBgColor = {
+                                removeSelectedBgColor = !removeSelectedBgColor
+                            },
+                            refreshProducts = {
+                                refreshProductList  = !refreshProductList
+                            }
+                        )
+                    }
+                }
+            }
+
         }
 
         composable(NavigationItem.Category.route) {

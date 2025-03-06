@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -60,12 +62,20 @@ fun ProductListScreen(
     val deleteProductState by viewModel.deleteProductUiState.collectAsState()
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var productIdLibelle by remember { mutableStateOf(Pair(0, "")) }
-
+    val isRefreshing = products.loadState.refresh is LoadState.Loading
+    var isManualRefreshing by remember { mutableStateOf(false) }
 
     // Refresh list after insert, update or delete product
     LaunchedEffect(refreshProductList) {
         products.refresh() // Refresh the LazyPagingItems
     }
+
+   /* // Update isManualRefreshing when products.refresh for the SwipeToRefresh
+    LaunchedEffect(isRefreshing) {
+        if (!isRefreshing && isManualRefreshing) {
+            isManualRefreshing = false
+        }
+    }*/
 
     when (deleteProductState) {
         is UIState.Success -> {
@@ -95,6 +105,13 @@ fun ProductListScreen(
         }
         else -> {}
     }
+    
+    /*PullToRefreshBox(isRefreshing = isRefreshing *//* isManualRefreshing *//*, onRefresh = {
+        // isManualRefreshing = true
+        products.refresh()
+    }) {
+       // Content
+    }*/
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -192,4 +209,5 @@ fun ProductListScreen(
             }
         }
     }
+
 }
