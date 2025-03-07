@@ -23,6 +23,7 @@
     <string name="title_login">WELCOME %s!</string>
     <string name="detail_login">This application lets you manage your sales and inventory, please login to your account.</string>
     <string name="title_first_connexion">First login: please change your password</string>
+    <string name="title_update_password">Update your password</string>
     <string name="add_image">ADD IMAGE</string>
     <!--  Product Form -->
     <string name="label_libelle">Name *</string>

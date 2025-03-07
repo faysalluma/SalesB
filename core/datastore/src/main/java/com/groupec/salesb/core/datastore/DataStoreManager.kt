@@ -97,4 +97,10 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
 
     // Check if the user is logged in
     suspend fun isLoggedIn(): Boolean = context.dataStore.data.first()[USER_ID_KEY] != null
+
+    suspend fun updateFirstLogin() {
+        context.dataStore.edit { preferences ->
+            preferences [USER_FIRST_LOGIN_KEY] = false
+        }
+    }
 }

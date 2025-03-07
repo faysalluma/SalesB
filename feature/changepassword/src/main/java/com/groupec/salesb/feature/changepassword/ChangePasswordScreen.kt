@@ -2,7 +2,6 @@ package com.groupec.salesb.feature.changepassword
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,22 +12,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.component.TitleHeader
-import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.ui.ChangePasswordForm
-import com.groupec.salesb.core.ui.ComposableLifecycle
-import kotlinx.coroutines.runBlocking
 
 
 @Composable
@@ -40,10 +33,11 @@ fun ChangePasswordScreen(
     navigateToStartDestination: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChangePasswordViewModel = hiltViewModel(),
-    ) {
+) {
     val context = LocalContext.current
     val loginState by viewModel.changePasswordUiState.collectAsState()
-    val isLoading = loginState is ChangePasswordUiState.Loading // Get the loading state to show circular progress in button
+    val isLoading =
+        loginState is ChangePasswordUiState.Loading // Get the loading state to show circular progress in button
 
     BackHandler {
         if (firstLogin) {
@@ -59,7 +53,6 @@ fun ChangePasswordScreen(
                     viewModel.logout()
                     navigateToStartDestination()
                 } else {
-                    println("toto no")
                     navigateToHome()
                 }
             }
@@ -83,10 +76,14 @@ fun ChangePasswordScreen(
         contentAlignment = Alignment.Center,
         modifier = modifier.fillMaxSize(),
     ) {
-        Column(modifier = Modifier.fillMaxWidth(0.5f)){
+        Column(modifier = Modifier.fillMaxWidth(0.5f)) {
 
-            TitleHeader(title = stringResource(id = R.string.title_first_connexion),
-                textAlign = TextAlign.Center)
+            TitleHeader(
+                title =
+                if (firstLogin) stringResource(id = R.string.title_first_connexion)
+                else stringResource(id = R.string.title_update_password),
+                textAlign = TextAlign.Center
+            )
 
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
 

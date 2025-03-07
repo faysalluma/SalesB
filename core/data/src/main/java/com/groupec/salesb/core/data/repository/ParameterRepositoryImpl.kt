@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,4 +34,15 @@ class ParameterRepositoryImpl @Inject constructor(private val apiService: ApiSer
     }.flowOn(Dispatchers.IO)
 
     override fun getParameters(): Flow<Parameter> = dataStoreManager.parameterFlow
+
+    override suspend fun updateFirstLogin(): Result<Unit> {
+        return try {
+            withContext(Dispatchers.IO) {
+                dataStoreManager.updateFirstLogin()
+            }
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
 }

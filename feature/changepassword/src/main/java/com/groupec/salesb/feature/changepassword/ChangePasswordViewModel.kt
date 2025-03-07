@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.domain.parameter.UpdateFirstLoginParameterUseCase
 import com.groupec.salesb.core.domain.user.LogoutPasswordUseCase
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
     private val changePasswordUseCase: ChangePasswordUseCase,
-    private val logoutPasswordUseCase: LogoutPasswordUseCase
+    private val logoutPasswordUseCase: LogoutPasswordUseCase,
+    private val updateFirstLoginParameterUseCase: UpdateFirstLoginParameterUseCase
 ) : ViewModel() {
 
     private val _changePasswordUiState =
@@ -29,8 +31,9 @@ class ChangePasswordViewModel @Inject constructor(
         _changePasswordUiState.value = ChangePasswordUiState.Loading
         viewModelScope.launch {
             when (val result = changePasswordUseCase(userId, ancPassword, password)) {
-                is Result.Success -> _changePasswordUiState.value =
-                    ChangePasswordUiState.Success(result.data)
+                is Result.Success -> {
+                    updateFirstLogin(result.data)
+                }
 
                 is Result.Error -> _changePasswordUiState.value =
                     ChangePasswordUiState.Error(
@@ -44,6 +47,21 @@ class ChangePasswordViewModel @Inject constructor(
 
     fun resetFlow() {
         _changePasswordUiState.value = ChangePasswordUiState.Idle
+    }
+
+    private fun updateFirstLogin(user: User) {
+        viewModelScope.launch {
+            when (val result =  updateFirstLoginParameterUseCase()) {
+                is Result.Success -> {
+                    _changePasswordUiState.value = ChangePasswordUiState.Success(user)
+                }
+                is Result.Error -> _changePasswordUiState.value =
+                    ChangePasswordUiState.Error(
+                        result.exception.message ?: "Failed to update first login"
+                    )
+                else -> {}
+            }
+        }
     }
 
     fun logout() {
