@@ -52,24 +52,25 @@ fun SampleTopAppBar(
             }
         },
         actions = {
-            if (dropDownItemsMenu.isNotEmpty()){
-                IconButton(onClick = { expanded = true }) {
-                    Icon(AppIcons.MoreVert, contentDescription = "Menu")
-                }
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(White)
-                ) {
-                    dropDownItemsMenu.forEach {item ->
-                        DropdownMenuItem(
-                            text = { Text(item.first, color = Black) },
-                            onClick = {
-                                expanded = false // Close DropdownMenuItem
-                                item.second()
-                            }
-                        )
-                    }
+            /*if (dropDownItemsMenu.isNotEmpty()){
+
+            }*/
+            IconButton(onClick = { expanded = true }) {
+                Icon(AppIcons.MoreVert, contentDescription = "Menu")
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.background(White)
+            ) {
+                dropDownItemsMenu.forEach {item ->
+                    DropdownMenuItem(
+                        text = { Text(item.first, color = Black) },
+                        onClick = {
+                            expanded = false // Close DropdownMenuItem
+                            item.second()
+                        }
+                    )
                 }
             }
         }

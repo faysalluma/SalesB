@@ -58,7 +58,8 @@ fun MainScreen(
 
     // For TopAppBar
     var onNavigationClick: (() -> Unit)? = null
-    var dropDownItemsMenu: List<Pair<String, () -> Unit>> = emptyList()
+    // var dropDownItemsMenu: List<Pair<String, () -> Unit>> = emptyList()
+    var dropDownItemsMenu = getDropdownItemsWithActions(context, navController, viewModel, userId, firstLogin)
 
     val currentDestination = remember { mutableStateOf(navController.currentDestination?.route) }
     DisposableEffect(navController) {
@@ -75,7 +76,7 @@ fun MainScreen(
     when (currentDestination.value) {
         NavigationItem.Home.route -> {
             viewModel.getUserStore()
-            dropDownItemsMenu = getDropdownItemsWithActions(context, navController, viewModel, userId, firstLogin)
+            // dropDownItemsMenu = getDropdownItemsWithActions(context, navController, viewModel, userId, firstLogin)
         }
 
         NavigationItem.ChangePassword.route -> {
@@ -185,7 +186,7 @@ fun getDropdownItemsWithActions(
 ): List<Pair<String, () -> Unit>> {
 
     return listOf(
-        context.getString(R.string.menu_settings) to { /* navController.executeAction() */ },
+        /*context.getString(R.string.menu_settings) to { *//* navController.executeAction() *//* },*/
         context.getString(R.string.menu_update_password) to {
             navController.navigate(NavigationItem.ChangePassword.route.plus("/$userId/$firstLogin"))
         },
