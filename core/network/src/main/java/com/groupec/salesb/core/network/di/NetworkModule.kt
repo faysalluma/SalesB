@@ -33,6 +33,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -43,6 +44,9 @@ class NetworkModule {
     @Singleton
     fun provideHttpClient(@ApplicationContext context: Context) : OkHttpClient {
         return OkHttpClient.Builder()
+            //.connectTimeout(15, TimeUnit.SECONDS) // Increase connection timeout
+            .readTimeout(15, TimeUnit.SECONDS)    // Increase read timeout
+            .writeTimeout(15, TimeUnit.SECONDS)   // Increase write timeout
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .addNetworkInterceptor(FlipperOkhttpInterceptor(getNetworkFlipperPlugin(context)))
             .build()

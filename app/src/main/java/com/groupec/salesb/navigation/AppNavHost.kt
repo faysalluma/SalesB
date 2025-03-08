@@ -186,7 +186,7 @@ fun AppNavHost(
                 }
             }
 
-            PullToRefreshBox(isRefreshing = isRefreshing /* isManualRefreshing */, onRefresh = {
+            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
                 refreshProductList  = !refreshProductList
                 isRefreshing = true
             }) {
@@ -223,7 +223,6 @@ fun AppNavHost(
                     }
                 }
             }
-
         }
 
         composable(NavigationItem.Category.route) {
