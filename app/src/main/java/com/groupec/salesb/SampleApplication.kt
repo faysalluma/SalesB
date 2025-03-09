@@ -3,14 +3,13 @@ package com.groupec.salesb
 import android.app.Application
 import android.content.Context
 import android.content.pm.ApplicationInfo
-import com.facebook.flipper.android.AndroidFlipperClient
+/*import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
 import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
-import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
-import com.facebook.soloader.SoLoader
+import com.facebook.soloader.SoLoader*/
 import dagger.hilt.android.HiltAndroidApp
 
 
@@ -18,11 +17,11 @@ import dagger.hilt.android.HiltAndroidApp
 class SampleApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        initFlipper(this)
+        // initFlipper(this)
     }
 }
 
-private fun initFlipper (context: Context) {
+/*private fun initFlipper (context: Context) {
     SoLoader.init(context, false)
 
     if (isDebugBuild(context) && FlipperUtils.shouldEnableFlipper(context)) {
@@ -40,7 +39,7 @@ private fun initFlipper (context: Context) {
         // Start client
         client.start()
     }
-}
+}*/
 
 fun isDebugBuild(context: Context): Boolean {
     return context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0

@@ -21,7 +21,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
+// import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.login.LoginScreen
 import com.groupec.feature.productdetail.ProductDetailScreen
@@ -33,7 +33,7 @@ import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
-import com.groupec.salesb.utils.FlipperNavigationLogger
+// import com.groupec.salesb.utils.FlipperNavigationLogger
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,11 +45,11 @@ fun AppNavHost(
     navController: NavHostController,
     startDestination: String = NavigationItem.Loading.route
 ) {
-    LaunchedEffect(Unit) {
+    /*LaunchedEffect(Unit) {
         val flipperPlugin = NavigationFlipperPlugin.getInstance()
         val flipperLogger = FlipperNavigationLogger(flipperPlugin)
         navController.addOnDestinationChangedListener(flipperLogger)
-    }
+    }*/
 
     NavHost(
         modifier = modifier,
