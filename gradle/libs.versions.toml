@@ -34,7 +34,9 @@ flipper = "0.183.0"
 soloader = "0.10.5"
 kotlinCompilerExtension = "1.5.1"
 compileSdk = "34"
-versionName = "1.1.0" # X.Y.Z; X = Major, Y = minor, Z = Patch level
+versionName = "1.1.0-beta" # X.Y.Z; X = Major(Changement majeur, souvent incompatible avec les versions précédentes),
+# Y = Minor (Changement mineur, ajouts de fonctionnalités compatibles avec la version précédente),
+# Z = Patch level (Corrections de bugs ou améliorations mineures, sans changement de fonctionnalités.)
 minSdk = "24"
 material = "1.12.0"
 
