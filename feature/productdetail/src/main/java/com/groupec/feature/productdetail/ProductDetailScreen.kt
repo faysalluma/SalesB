@@ -172,7 +172,6 @@ fun ProductDetailScreen(
                 }
             )
 
-            val categorieItems = listOf("1" to "Surgeles", "2" to "Laiter", "3" to "Omega ")
             ProductForm(
                 modifier = Modifier.fillMaxWidth(0.8f),
                 isLoading = isLoading,

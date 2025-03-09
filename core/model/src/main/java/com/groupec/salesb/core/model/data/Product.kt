@@ -11,7 +11,7 @@ data class Product(
     val image: String ? = null,
     val prixht: Double ? = null,
     val prixttc: Double,
-    val qtestock: Int ? = 0,
+    val qtestock: Int ? = null,
     val stockmini: Int ? = null,
     val categorieid: Int ? = null,
     val categorielibelle: String ? = null,

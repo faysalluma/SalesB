@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.domain.product.DeleteProductUseCase
@@ -25,7 +26,9 @@ import com.groupec.salesb.core.model.data.Sale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -57,6 +60,11 @@ class SaleViewModel @Inject constructor(
         .flatMapLatest { query ->
             _isSearching.value = true // Indique qu'une recherche commence
             getProductUseCase(query)
+                .map { pagingData ->
+                    pagingData.filter { product ->
+                        product.qtestock?.let { it > 0 } ?: true // Keep product with qtestock>0 or null
+                    }
+                }
                 .onCompletion {
                     _isSearching.value = false
                 } // Recherche terminée

@@ -56,7 +56,6 @@ fun ProductForm(
 
     var isLibelleError by remember { mutableStateOf(false) }
     var isPrixttcError by remember { mutableStateOf(false) }
-    var isQteStockError by remember { mutableStateOf(false) }
     var isCategorieLibelleError by remember { mutableStateOf(false) }
     var isRayonLibelleError by remember { mutableStateOf(false) }
     var isFournisseurLibelleError by remember { mutableStateOf(false) }
@@ -64,11 +63,10 @@ fun ProductForm(
     val submitAction = {
         isLibelleError = products.libelle.isEmpty()
         isPrixttcError = products.prixttc.isEmpty()
-        isQteStockError = products.qtestock.isEmpty()
         isCategorieLibelleError = products.categorielibelle.isNotEmpty() && categorieItems.none { it.second == products.categorielibelle }
         isRayonLibelleError = products.rayonlibelle.isNotEmpty() && rayonItems.none { it.second == products.rayonlibelle }
         isFournisseurLibelleError =  products.fournisseurlibelle.isNotEmpty() && fournisseurItems.none { it.second == products.fournisseurlibelle }
-        if (!isLibelleError && !isPrixttcError && !isQteStockError && !isCategorieLibelleError
+        if (!isLibelleError && !isPrixttcError && !isCategorieLibelleError
             && !isRayonLibelleError && !isFournisseurLibelleError) {
             // Submit the form
             onSubmitForm(products)
@@ -148,12 +146,13 @@ fun ProductForm(
             value = products.qtestock,
             onChange = { data ->
                 onProductDataChanged(products.copy(qtestock = data.allowOnlyDigits()))
-                if (isQteStockError) isQteStockError = false //  Clear error when user starts typing
             },
             label = stringResource(id = R.string.label_qte_stock),
-            placeholder = "0",
+            placeholder = stringResource(
+                R.string.enter_your_value,
+                stringResource(R.string.label_qte_stock)
+            ),
             fieldType = FieldType.Number,
-            isError = isQteStockError,
             fieldColor = White,
             modifier = Modifier.fillMaxWidth()
         )
@@ -330,8 +329,8 @@ data class ProductDataForm(
     val description: String = "",
     val image: String = "",
     val prixttc: String = "0",
-    val qtestock: String = "0",
-    val stockmini: String = "0",
+    val qtestock: String = "",
+    val stockmini: String = "",
     val categorieid: String = "",
     val categorielibelle: String = "",
     val rayonid: String = "",

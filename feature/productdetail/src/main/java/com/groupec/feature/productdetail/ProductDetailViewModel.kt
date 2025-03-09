@@ -58,7 +58,7 @@ class ProductDetailViewModel @Inject constructor(
                 libelle = p.libelle,
                 description = p.description.takeIf { it.isNotEmpty() },
                 prixttc = p.prixttc.toDouble(),
-                qtestock = p.qtestock.toInt(),
+                qtestock = p.qtestock.takeIf { it.isNotEmpty() }?.toInt(),
                 stockmini = p.stockmini.takeIf { it.isNotEmpty() }?.toInt(),
                 categorieid = p.categorieid.takeIf { it.isNotEmpty() }?.toInt(),
                 rayonid = p.rayonid.takeIf { it.isNotEmpty() }?.toInt(),
