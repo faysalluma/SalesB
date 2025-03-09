@@ -1,5 +1,6 @@
 package com.groupec.salesb.utils
 
+/*
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -30,4 +31,4 @@ fun NavController.currentDestinationClassName(): String? {
     }
 }
 
-const val featurePackage = "com.groupec.salesb.feature"
+const val featurePackage = "com.groupec.salesb.feature"*/

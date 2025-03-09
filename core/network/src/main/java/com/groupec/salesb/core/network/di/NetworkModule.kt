@@ -17,9 +17,9 @@
 package com.groupec.salesb.core.network.di
 
 import android.content.Context
-import com.facebook.flipper.android.AndroidFlipperClient
+/*import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
-import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
+import com.facebook.flipper.plugins.network.NetworkFlipperPlugin*/
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.groupec.salesb.core.network.retrofit.ApiService
@@ -48,7 +48,7 @@ class NetworkModule {
             .readTimeout(15, TimeUnit.SECONDS)    // Increase read timeout
             .writeTimeout(15, TimeUnit.SECONDS)   // Increase write timeout
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-            .addNetworkInterceptor(FlipperOkhttpInterceptor(getNetworkFlipperPlugin(context)))
+            //.addNetworkInterceptor(FlipperOkhttpInterceptor(getNetworkFlipperPlugin(context)))
             .build()
     }
 
@@ -80,7 +80,7 @@ class NetworkModule {
         return retrofit.create(ApiService::class.java)
     }
 
-    private fun getNetworkFlipperPlugin(context: Context) = AndroidFlipperClient
+   /* private fun getNetworkFlipperPlugin(context: Context) = AndroidFlipperClient
         .getInstance(context)
-        .getPluginByClass(NetworkFlipperPlugin::class.java)
+        .getPluginByClass(NetworkFlipperPlugin::class.java)*/
 }
