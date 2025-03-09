@@ -62,6 +62,7 @@ fun SaleScreen(
     // For selected Products and handling of multiples textfield created
     val selectedProducts = remember { mutableStateListOf<Pair<Int, Product>>() }
     val textFieldValues = remember { mutableStateMapOf<Int, String>() }
+    var quantityCheck = remember { mutableStateMapOf<Int, Boolean>() }
 
    when (addSaleUiState) {
        is FormUIState.Success -> {
@@ -163,6 +164,7 @@ fun SaleScreen(
                            products = products,
                            selectedProducts = selectedProducts,
                            textFieldValues = textFieldValues,
+                           quantityCheck = quantityCheck,
                            isSearching = isSearching
                        )
                    }
@@ -174,6 +176,7 @@ fun SaleScreen(
             SaleDetailScreen(
                 selectedProducts = selectedProducts,
                 textFieldValues = textFieldValues,
+                quantityCheck = quantityCheck,
                 devise = parameter.devise,
                 isLoading = isLoading,
                 onSave = { total ->
@@ -200,6 +203,7 @@ fun SaleScreen(
 fun SaleDetailScreen(
     selectedProducts: MutableList<Pair<Int, Product>>,
     textFieldValues: MutableMap<Int, String>,
+    quantityCheck: MutableMap<Int, Boolean>,
     devise: String,
     isLoading: Boolean,
     onSave: (Double) -> Unit,
@@ -211,16 +215,20 @@ fun SaleDetailScreen(
         devise = devise,
         isLoading = isLoading,
         onQuantityChange = { productLine ->
-            val (index, _)  = productLine
+            val (index, product)  = productLine
             val quantityValue = textFieldValues[index]?.takeIf { it.isNotEmpty() }?.toDouble() ?: 1.0
             if (quantityValue <= 0) {
                 selectedProducts.remove(productLine)
                 textFieldValues.remove(index)
+                quantityCheck.remove(index)
             } else {
                 textFieldValues[index] = quantityValue.toString()
+                // Check if quantityValue > product quantity
+                quantityCheck[index] = product.qtestock?.let { quantityValue > it } ?: false
             }
         },
         onSave = onSave,
-        onClear = onClear
+        onClear = onClear,
+        quantityCheck = quantityCheck
     )
 }

@@ -20,6 +20,7 @@ fun ProductGridAdaptive(
     products: LazyPagingItems<Product>,
     selectedProducts: MutableList<Pair<Int, Product>>,
     textFieldValues: MutableMap<Int, String>,
+    quantityCheck: MutableMap<Int, Boolean>,
     isSearching: Boolean
 ) {
     LazyVerticalGrid(
@@ -41,9 +42,11 @@ fun ProductGridAdaptive(
                         if (isChecked) {
                             selectedProducts.remove(Pair(index, product))
                             textFieldValues.remove(index)
+                            quantityCheck.remove(index)
                         } else {
                             selectedProducts.add(index to product)
                             textFieldValues[index] = "1.0"
+                            quantityCheck[index] = false
                         }
                     }
                 )

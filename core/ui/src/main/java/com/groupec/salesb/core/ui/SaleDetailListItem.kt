@@ -14,10 +14,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -26,10 +31,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.groupec.salesb.core.autoRound
+import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.component.IconMinus
 import com.groupec.salesb.core.designsystem.component.IconPlus
 import com.groupec.salesb.core.designsystem.component.TextNormal
 import com.groupec.salesb.core.designsystem.component.TitleSmall
+import com.groupec.salesb.core.designsystem.component.isValidEmail
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.normalizeDecimalSeparator
@@ -41,10 +48,10 @@ fun SaleDetailListItem(
     productLine: Pair<Int, Product>,
     textFieldValues: MutableMap<Int, String>,
     onQuantityChange: (Pair<Int, Product>) -> Unit,
-    devise: String
+    devise: String,
+    quantityCheck: Map<Int, Boolean>
 ) {
     val (index, product) = productLine
-
     Row(
         Modifier
             .fillMaxWidth()
@@ -79,6 +86,7 @@ fun SaleDetailListItem(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
                 ),
+                isError = quantityCheck[index]!!,
                 singleLine = true,
                 textStyle = TextStyle(
                     textAlign = TextAlign.Center,
@@ -105,6 +113,15 @@ fun SaleDetailListItem(
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.W300)
             )
         }
+    }
+    if (quantityCheck[index]!!) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleSmall,
+            text = stringResource(com.groupec.salesb.core.ui.R.string.quantity_greater),
+            color = MaterialTheme.colorScheme.error
+        )
     }
     HorizontalDivider()
 }

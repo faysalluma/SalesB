@@ -12,14 +12,15 @@ fun SaleDetailList(
     selectedProducts: List<Pair<Int, Product>>,
     textFieldValues: MutableMap<Int, String>,
     onQuantityChange: (Pair<Int, Product>) -> Unit,
-    devise: String
+    devise: String,
+    quantityCheck: Map<Int, Boolean>
 ) {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState()),
     ) {
         selectedProducts.forEach { productLine ->
-            SaleDetailListItem(productLine, textFieldValues, onQuantityChange, devise)
+            SaleDetailListItem(productLine, textFieldValues, onQuantityChange, devise, quantityCheck)
         }
     }
 }

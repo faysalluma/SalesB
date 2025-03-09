@@ -15,10 +15,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -44,6 +43,7 @@ import com.groupec.salesb.core.model.data.Product
 fun SaleDetailCard(
     selectedProducts: List<Pair<Int, Product>>,
     textFieldValues: MutableMap<Int, String>,
+    quantityCheck: Map<Int, Boolean>,
     devise: String,
     isLoading: Boolean,
     onQuantityChange: (Pair<Int, Product>) -> Unit,
@@ -91,14 +91,19 @@ fun SaleDetailCard(
                     )
                 }
 
-                SaleDetailList(selectedProducts, textFieldValues, onQuantityChange, devise)
+                SaleDetailList(selectedProducts, textFieldValues, onQuantityChange, devise, quantityCheck)
             }
 
             // Bottom section
             val total = selectedProducts
-                .map { it.second.prixttc * textFieldValues[it.first]?.toDouble()!! }
+                .map {
+                    it.second.prixttc * textFieldValues[it.first]?.toDouble()!!
+                }
                 .reduce { acc, value -> acc + value }
                 .autoRound()
+
+            val enabled = selectedProducts.all { quantityCheck[it.first] == false }
+
             Column(
                 modifier = Modifier.weight(0.3f),
                 verticalArrangement = Arrangement.SpaceEvenly
@@ -107,6 +112,7 @@ fun SaleDetailCard(
                     total = total,
                     devise = devise,
                     isLoading = isLoading,
+                    enabled = enabled,
                     onSave = onSave,
                     onClear = onClear
                 )
@@ -121,7 +127,8 @@ private fun BottomContentScreen(
     devise: String,
     isLoading: Boolean,
     onSave: (Double) -> Unit,
-    onClear: () -> Unit
+    onClear: () -> Unit,
+    enabled: Boolean
 ) {
     val focusManager = LocalFocusManager.current
     val showDialog = rememberSaveable { mutableStateOf(false) }
@@ -144,6 +151,7 @@ private fun BottomContentScreen(
         DefaultButton(
             modifier = Modifier.weight(1f),
             text = stringResource(id = com.groupec.salesb.core.designsystem.R.string.btn_save),
+            enabled = enabled,
             style = MaterialTheme.typography.titleMedium
         ) {
             showDialog.value = true
