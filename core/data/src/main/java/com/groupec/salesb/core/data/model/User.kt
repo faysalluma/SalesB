@@ -18,7 +18,8 @@ fun UserResponse.toUserEntity(): UserEntity {
 
 fun UserItemResponse.toUser(): User {
     return User(
-        id = id, nomprenom = nomprenom, email = email, password = password, adresse = adresse,
+        id = id, nomprenom = nomprenom, email = email, password = password,
+        resetpassword = resetpassword, resetexpire = resetexpire, adresse = adresse,
         tel = tel, privilege = privilege, actif = (actif == 1), firstlogin = (firstlogin == 1)
     )
 }
