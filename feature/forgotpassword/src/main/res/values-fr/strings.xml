@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="send_email_message">Un email contenant les instructions pour réinitialiser votre mot de passe vous a été envoyé. Veuillez vérifier votre boîte de réception.</string>
+</resources>

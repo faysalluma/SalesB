@@ -6,6 +6,7 @@ import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.domain.user.SaveUserDefaultUseCase
 import com.groupec.salesb.core.domain.parameter.SaveParameterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
@@ -14,8 +15,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ConfigurationViewModel @Inject constructor(private val saveParameterUseCase: SaveParameterUseCase,
-                                                 private val saveUserDefaultUseCase: SaveUserDefaultUseCase
+class ConfigurationViewModel @Inject constructor(
+    private val saveParameterUseCase: SaveParameterUseCase,
+    private val saveUserDefaultUseCase: SaveUserDefaultUseCase
 ) : ViewModel() {
 
     private val _parameterUiState = MutableStateFlow<ParameterUiState>(ParameterUiState.Loading)
@@ -25,6 +27,7 @@ class ConfigurationViewModel @Inject constructor(private val saveParameterUseCas
         getParameter()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun getParameter() {
         viewModelScope.launch {
 

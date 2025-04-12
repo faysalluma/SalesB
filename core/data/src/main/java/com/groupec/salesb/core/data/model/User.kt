@@ -8,18 +8,10 @@ import com.groupec.salesb.core.network.model.UserResponse
 import com.groupec.salesb.core.database.model.User as UserEntity
 
 
-fun UserResponse.toUser(): User {
-    return user.toUser()
-}
-
-fun UserResponse.toUserEntity(): UserEntity {
-    return user.toUserEntity()
-}
-
 fun UserItemResponse.toUser(): User {
     return User(
         id = id, nomprenom = nomprenom, email = email, password = password,
-        resetpassword = resetpassword, resetexpire = resetexpire, adresse = adresse,
+        reset_password = reset_password, reset_expires = reset_expires, adresse = adresse,
         tel = tel, privilege = privilege, actif = (actif == 1), firstlogin = (firstlogin == 1)
     )
 }
@@ -27,18 +19,20 @@ fun UserItemResponse.toUser(): User {
 fun UserItemResponse.toUserEntity() = UserEntity(
     id = id, nomprenom = nomprenom, email = email, password = password, adresse = adresse,
     tel = tel, privilege = privilege, actif = (actif == 1), firstlogin = (firstlogin == 1),
-    datecreation = currentDateString(), datemodif = currentDateString(), synchronised = false
+    datecreation = currentDateString(), datemodif = currentDateString(),
+    reset_password = reset_password, reset_expires = reset_expires, synchronised = false
 )
 
 fun UserItemResponse.toUserStore() = UserStore(id = id.toString(), nomprenom = nomprenom, privilege = privilege,
-    firstLogin = (firstlogin == 1))
+    firstLogin = (firstlogin == 1), reset_password = reset_password ?: "")
 
 fun UserEntity.toUser() = User(
     id = id, nomprenom = nomprenom, email = email, password = password, adresse = adresse,
     tel = tel, privilege = privilege, actif = actif, firstlogin = firstlogin,
-    datecreation = datecreation, datemodif = datemodif, synchronised = synchronised)
+    datecreation = datecreation,  datemodif = datemodif,  reset_password = reset_password, reset_expires = reset_expires, synchronised = synchronised)
 
-fun UserEntity.toUserStore() = UserStore(id = id.toString(), nomprenom = nomprenom, privilege = privilege, firstLogin = firstlogin)
+fun UserEntity.toUserStore() = UserStore(id = id.toString(), nomprenom = nomprenom, privilege = privilege, firstLogin = firstlogin,
+reset_password = reset_password ?: "")
 
 
 

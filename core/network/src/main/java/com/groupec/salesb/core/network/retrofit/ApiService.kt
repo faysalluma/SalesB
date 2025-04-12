@@ -98,6 +98,9 @@ interface ApiService {
     @POST(Constants.ADD_SALE)
     suspend fun addSale(@Body sale: Sale): Response<Unit>
 
+    @POST(Constants.FORGOT_PASSWORD)
+    suspend fun forgotPassword(@Path("email") email: String): Response<Unit>
+
     /* PUT API */
     @PUT(Constants.PUT_CHANGE_PASSWORD)
     suspend fun changePassword(@Path("userid") userid: Int, @Body user: User): Response<User>

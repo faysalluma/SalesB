@@ -19,6 +19,12 @@ data class UserItemResponse(
     @SerializedName("password")
     val password: String,
 
+    @SerializedName("reset_password")
+    val reset_password: String ? = null,
+
+    @SerializedName("reset_expires")
+    val reset_expires: String ? = null,
+
     @SerializedName("adresse")
     val adresse: String,
 

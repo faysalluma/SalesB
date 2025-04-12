@@ -21,7 +21,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.navDeepLink
 // import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.forgotpassword.ForgotPasswordScreen
@@ -31,7 +30,6 @@ import com.groupec.feature.productlist.ProductListScreen
 import com.groupec.feature.sale.SaleScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
-import com.groupec.salesb.core.Constants
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
@@ -65,38 +63,24 @@ fun AppNavHost(
             ExitTransition.None
         }
     ) {
-        composable(
-            route = NavigationItem.Loading.route,
-            deepLinks = listOf(
-                navDeepLink {
-                    uriPattern = Constants.APP_LINK.plus("/{requestChangePwdByEmail}")
+        composable(NavigationItem.Loading.route) {
+            LoadingScreen(
+                navigateToConfiguration = {
+                    navController.navigate(NavigationItem.Configuration.route) {
+                        popUpTo(NavigationItem.Loading.route) { inclusive = true }
+                    }
+                },
+                navigateToLogin = { raisonSociale ->
+                    navController.navigate(NavigationItem.Login.route.plus("/${raisonSociale}")) {
+                        popUpTo(NavigationItem.Loading.route) { inclusive = true }
+                    }
+                },
+                navigateToHome = {
+                    navController.navigate(NavigationItem.Home.route) {
+                        popUpTo(NavigationItem.Loading.route) { inclusive = true }
+                    }
                 }
             )
-        ) { backStackEntry ->
-            val email = backStackEntry.arguments?.getString("requestChangePwdByEmail") ?: ""
-            if (email.isNotEmpty()) {
-                LaunchedEffect(Unit) {
-                    navController.navigate(NavigationItem.ChangePassword.route.plus("?firstLogin=true&email=$email"))
-                }
-            } else {
-                LoadingScreen(
-                    navigateToConfiguration = {
-                        navController.navigate(NavigationItem.Configuration.route) {
-                            popUpTo(NavigationItem.Loading.route) { inclusive = true }
-                        }
-                    },
-                    navigateToLogin = { raisonSociale ->
-                        navController.navigate(NavigationItem.Login.route.plus("/${raisonSociale}")) {
-                            popUpTo(NavigationItem.Loading.route) { inclusive = true }
-                        }
-                    },
-                    navigateToHome = {
-                        navController.navigate(NavigationItem.Home.route) {
-                            popUpTo(NavigationItem.Loading.route) { inclusive = true }
-                        }
-                    }
-                )
-            }
         }
 
         composable(NavigationItem.Configuration.route) {
@@ -120,8 +104,8 @@ fun AppNavHost(
             val raisonSociale = backStackEntry.arguments?.getString("raisonSociale") ?: ""
             LoginScreen(
                 raisonSociale = raisonSociale,
-                navigateToChangePassword = { userId, firstLogin ->
-                    navController.navigate(NavigationItem.ChangePassword.route.plus("?userId={userId}&firstLogin={firstLogin}"))
+                navigateToChangePassword = { userId, firstLoginOrResetPwd ->
+                    navController.navigate(NavigationItem.ChangePassword.route.plus("/${userId}/${firstLoginOrResetPwd}"))
                 },
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
@@ -134,31 +118,22 @@ fun AppNavHost(
             )
         }
 
-
         composable(
-            route = NavigationItem.ChangePassword.route.plus("?userId={userId}&firstLogin={firstLogin}&email={email}"),
+            route = NavigationItem.ChangePassword.route.plus("/{userId}/{firstLoginOrResetPwd}"),
             arguments = listOf(
                 navArgument("userId") {
                     type = NavType.IntType
-                    defaultValue = 0
                 },
-                navArgument("firstLogin") {
+                navArgument("firstLoginOrResetPwd") {
                     type = NavType.BoolType
-                    defaultValue = false
-                },
-                navArgument("email") {
-                    type = NavType.StringType
-                    defaultValue = ""
                 }
             )
         ) { backStackEntry ->
             val userId = backStackEntry.arguments?.getInt("userId") ?: 0
-            val firstLogin = backStackEntry.arguments?.getBoolean("firstLogin") ?: false
-            val email = backStackEntry.arguments?.getString("email") ?: ""
+            val firstLoginOrResetPwd = backStackEntry.arguments?.getBoolean("firstLoginOrResetPwd") ?: false
             ChangePasswordScreen(
                 userId = userId,
-                firstLogin = firstLogin,
-                email = email,
+                firstLoginOrResetPwd = firstLoginOrResetPwd,
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
                         popUpTo(NavigationItem.Login.route.plus("/{raisonSociale}")) {

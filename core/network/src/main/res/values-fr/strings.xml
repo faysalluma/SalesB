@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_500_internal_server">Une erreur générique côté serveur.</string>
+    <string name="error_401_unauthorized">L\'utilisateur n\'est pas authentifié.</string>
+    <string name="error_403_forbidden">L\'accès est interdit.</string>
+    <string name="error_502_bad_gateway">Une erreur inattendue s\'est produite</string>
+    <string name="error_404_not_found">Ce compte utilisateur est introuvable.</string>
+</resources>

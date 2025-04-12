@@ -7,4 +7,6 @@
     <string name="error_bad_anc_password">The old password is incorrect. Please try again.</string>
     <string name="error_updating_data" translatable="false">Error when updating data</string>
     <string name="error_deleting_data" translatable="false">Error when deleting data</string>
+    <string name="error_tempory_password_expire">The temporary password has expired.</string>
+    <string name="error_incorrect_tempory_password">Temporary password is incorrect.</string>
 </resources>

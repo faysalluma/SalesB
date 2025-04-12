@@ -24,4 +24,6 @@
     <string name="sale_item_dialog_title">Vente n° %1$s de %2$s, réalisée le  %3$s par  %4$s.</string>
     <string name="label">Libellé</string>
     <string name="quantity_greater">Quantité supérieur à celle en stock</string>
+    <string name="success_title">Succès</string>
+    <string name="error">Erreur !</string>
 </resources>

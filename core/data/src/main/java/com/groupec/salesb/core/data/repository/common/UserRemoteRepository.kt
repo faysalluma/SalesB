@@ -8,6 +8,7 @@ import com.groupec.salesb.core.data.R
 import com.groupec.salesb.core.data.model.toUser
 import com.groupec.salesb.core.data.model.toUserStore
 import com.groupec.salesb.core.datastore.DataStoreManager
+import com.groupec.salesb.core.fixBCryptHash
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.network.retrofit.ApiService
 import com.groupec.salesb.core.network.retrofit.common.executeApiCall
@@ -25,7 +26,7 @@ class UserRemoteRepository @Inject constructor(
     @ApplicationContext val context: Context
 ) {
 
-    suspend fun checkLogin(email: String, password: String): Result<User> {
+    suspend fun checkLogin(email: String, password: String): Result<Pair<User, Boolean>> {
         return try {
             val response = apiService.getUserByEmail(email)
             if (response.isSuccessful) {
@@ -38,9 +39,18 @@ class UserRemoteRepository @Inject constructor(
                         if (user.actif == 0) {
                             Result.Error(Exception(context.getString(R.string.error_user_not_active)))
                         } else {
-                            if (BCrypt.checkpw(password, user.password)) {
+                            val isMainPasswordValid = BCrypt.checkpw(password, user.password)
+                            val isResetPasswordValid =user.reset_password?.let {
+                                BCrypt.checkpw(password, it.fixBCryptHash())
+                            } ?: false
+                            val isResetPasswordExpired = user.reset_expires?.let {
+                                it <= currentDateString()
+                            } ?: false
+                            if (isMainPasswordValid || (isResetPasswordValid && !isResetPasswordExpired)) {
                                 dataStoreManager.setUserConfig(user.toUserStore())
-                                Result.Success(user.toUser())
+                                Result.Success(user.toUser() to isMainPasswordValid)
+                            } else if (isResetPasswordValid) {
+                                Result.Error(Exception(context.getString(R.string.error_tempory_password_expire)))
                             } else {
                                 Result.Error(Exception(context.getString(R.string.error_invalid_password)))
                             }
@@ -76,12 +86,16 @@ class UserRemoteRepository @Inject constructor(
         }
     }
 
-
-    private suspend fun updatePassword(user: User, ancPassword: String, password: String): Result<User> {
+    private suspend fun updatePassword(
+        user: User,
+        ancPassword: String,
+        password: String
+    ): Result<User> {
         return when {
-            !user.firstlogin && !BCrypt.checkpw(ancPassword, user.password) -> {
+            !user.firstlogin && !BCrypt.checkpw(ancPassword, user.password) && user.reset_password == null -> {
                 Result.Error(Exception(context.getString(R.string.error_bad_anc_password)))
             }
+
             else -> {
                 // Hash pawword with salt generating
                 val hashPassword = BCrypt.hashpw(password, BCrypt.gensalt())

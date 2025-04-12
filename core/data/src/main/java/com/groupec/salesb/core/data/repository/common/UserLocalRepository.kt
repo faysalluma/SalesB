@@ -9,6 +9,7 @@ import com.groupec.salesb.core.data.model.toUser
 import com.groupec.salesb.core.data.model.toUserStore
 import com.groupec.salesb.core.database.room.dao.UserDao
 import com.groupec.salesb.core.datastore.DataStoreManager
+import com.groupec.salesb.core.fixBCryptHash
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.model.data.UserStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -33,7 +34,7 @@ class UserLocalRepository @Inject constructor(
         }
     }
 
-    suspend fun checkLogin(email: String, password: String): Result<User> {
+    suspend fun checkLogin(email: String, password: String): Result<Pair<User, Boolean>> {
         return try {
             val userEntity= userDao.getUserByEmail(email)
             if (userEntity == null) {
@@ -42,9 +43,16 @@ class UserLocalRepository @Inject constructor(
                 if (!userEntity.actif) {
                     Result.Error(Exception(context.getString(R.string.error_user_not_active)))
                 } else {
-                    if (BCrypt.checkpw(password, userEntity.password)) {
+                    val isMainPasswordValid =  BCrypt.checkpw(password, userEntity.password)
+                    val isResetPasswordValid =  userEntity.reset_password?.let {
+                        BCrypt.checkpw(password, it.fixBCryptHash())
+                    } ?: false
+                    val isResetPasswordExpired = userEntity.reset_expires?.let { it <= currentDateString() } ?: false
+                    if (isMainPasswordValid || (isResetPasswordValid && !isResetPasswordExpired)) {
                         dataStoreManager.setUserConfig(userEntity.toUserStore())
-                        Result.Success(userEntity.toUser())
+                        Result.Success(userEntity.toUser() to isMainPasswordValid)
+                    } else if (isResetPasswordValid) {
+                        Result.Error(Exception(context.getString(R.string.error_tempory_password_expire)))
                     } else {
                         Result.Error(Exception(context.getString(R.string.error_invalid_password)))
                     }

@@ -16,7 +16,8 @@ enum class Screen {
     Product,
     ProductDetail,
     Category,
-    SaleChart
+    SaleChart,
+    ForgotPassword
 }
 sealed class NavigationItem(val route: String,val title: Int = 0, val icon: NavigationIcon ? = null) {
     data object Loading : NavigationItem(Screen.Loading.name)
@@ -30,6 +31,7 @@ sealed class NavigationItem(val route: String,val title: Int = 0, val icon: Navi
     data object ProductDetail : NavigationItem(Screen.ProductDetail.name)
     data object Category : NavigationItem(Screen.Category.name, R.string.menu_category, NavigationIcon.VectorIcon(AppIcons.Category))
     data object SaleChart : NavigationItem(Screen.SaleChart.name)
+    data object ForgotPassword : NavigationItem(Screen.ForgotPassword.name)
 }
 
 sealed class NavigationIcon {

@@ -4,4 +4,6 @@
     <string name="error_invalid_password">Le mot de passe que vous avez saisi est incorrect.</string>
     <string name="error_bad_anc_password">L\'ancien mot de passe est incorrect. Veuillez réessayer.</string>
     <string name="error_user_not_active">Cet utilisateur est désactivé, veuillez contacter l\'administrateur.</string>
+    <string name="error_tempory_password_expire">Le mot de passe provisoire a expiré.</string>
+    <string name="error_incorrect_tempory_password">Le mot de passe provisoire est incorrect.</string>
 </resources>

@@ -18,7 +18,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -48,18 +47,17 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
     // Show title and user name on app bar
     val userStoreState by viewModel.userStore.collectAsState()
     val userId = userStoreState.id
     val appBarTitle = userStoreState.nomprenom
     val firstLogin = userStoreState.firstLogin
+    val resetPassword = userStoreState.reset_password
 
     // For TopAppBar
-    var onNavigationClick: (() -> Unit)? = null
-    // var dropDownItemsMenu: List<Pair<String, () -> Unit>> = emptyList()
-    var dropDownItemsMenu = getDropdownItemsWithActions(context, navController, viewModel, userId, firstLogin)
+    val onNavigationClick: (() -> Unit)? = null
+    val dropDownItemsMenu = getDropdownItemsWithActions(context, navController, viewModel, userId, firstLogin)
 
     val currentDestination = remember { mutableStateOf(navController.currentDestination?.route) }
     DisposableEffect(navController) {
@@ -119,7 +117,8 @@ fun MainScreen(
             if (
                 shouldShowBarAndRailApp(
                     route = currentDestination.value,
-                    firstLogin = firstLogin
+                    firstLogin = firstLogin,
+                    resetPassword = resetPassword
                 )
             ) {
                 SampleTopAppBar(
@@ -150,12 +149,12 @@ fun MainScreen(
         }
     ) {
         Row(modifier = Modifier.padding(it)) {
-            if (!connectionState && shouldShowBarAndRailApp(currentDestination.value, firstLogin)) {
+            if (!connectionState && shouldShowBarAndRailApp(currentDestination.value, firstLogin, resetPassword)) {
                 ErrorScreen(
                     error = stringResource(R.string.no_internet_connexion)
                 )
             } else {
-                if (shouldShowBarAndRailApp(currentDestination.value, firstLogin)) {
+                if (shouldShowBarAndRailApp(currentDestination.value, firstLogin, resetPassword)) {
                     MyNavigationRail(navController, modifier = Modifier.weight(0.09f))
                 }
                 AppNavHost(
@@ -164,7 +163,8 @@ fun MainScreen(
                         .weight(
                             if (shouldShowBarAndRailApp(
                                     currentDestination.value,
-                                    firstLogin
+                                    firstLogin,
+                                    resetPassword
                                 )
                             ) 0.91f else 1f
                         )
@@ -186,7 +186,6 @@ fun getDropdownItemsWithActions(
 ): List<Pair<String, () -> Unit>> {
 
     return listOf(
-        /*context.getString(R.string.menu_settings) to { *//* navController.executeAction() *//* },*/
         context.getString(R.string.menu_update_password) to {
             navController.navigate(NavigationItem.ChangePassword.route.plus("/$userId/$firstLogin"))
         },
@@ -200,20 +199,23 @@ fun getDropdownItemsWithActions(
     )
 }
 
-private fun shouldShowBarAndRailApp(route: String?, firstLogin: Boolean = false): Boolean {
-    val excludedRoutes = if (firstLogin) {
-        listOf(
-            NavigationItem.Loading.route,
-            NavigationItem.Configuration.route,
-            NavigationItem.Login.route,
+private fun shouldShowBarAndRailApp(
+    route: String?,
+    firstLogin: Boolean = false,
+    resetPassword: String
+): Boolean {
+    val excludedRoutes =  mutableListOf(
+        NavigationItem.Loading.route,
+        NavigationItem.Configuration.route,
+        NavigationItem.Login.route,
+        NavigationItem.ForgotPassword.route
+    )
+
+    if (firstLogin || resetPassword.isNotEmpty()) {
+        excludedRoutes.add(
             NavigationItem.ChangePassword.route
         )
-    } else {
-        listOf(
-            NavigationItem.Loading.route,
-            NavigationItem.Configuration.route,
-            NavigationItem.Login.route
-        )
     }
+
     return route !in excludedRoutes
 }

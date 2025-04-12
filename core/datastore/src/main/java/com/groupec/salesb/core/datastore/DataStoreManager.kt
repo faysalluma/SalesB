@@ -34,6 +34,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         private val USER_NAME_KEY = stringPreferencesKey("nomprenom")
         private val USER_PRIVILEGES_KEY = stringPreferencesKey("privileges")
         private val USER_FIRST_LOGIN_KEY = booleanPreferencesKey("firstlogin")
+        private val USER_RESET_PASSWORD_KEY = stringPreferencesKey("resetpassword")
     }
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -59,7 +60,8 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
                 preferences[USER_ID_KEY] ?: "",
                 preferences[USER_NAME_KEY] ?: "",
                 preferences[USER_PRIVILEGES_KEY] ?: "",
-                preferences[USER_FIRST_LOGIN_KEY] ?: false
+                preferences[USER_FIRST_LOGIN_KEY] ?: false,
+                preferences[USER_RESET_PASSWORD_KEY] ?: ""
 
             )
         }
@@ -82,6 +84,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             datastore[USER_NAME_KEY] = user.nomprenom
             datastore[USER_PRIVILEGES_KEY] = user.privilege
             datastore[USER_FIRST_LOGIN_KEY] = user.firstLogin
+            datastore[USER_RESET_PASSWORD_KEY] = user.reset_password
         }
     }
 

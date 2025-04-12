@@ -12,3 +12,5 @@ data class ApiResult<T> (
     @SerializedName("message")
     val message: String? = null
 )
+
+

@@ -10,16 +10,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.ui.Credentials
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase,
-    private val getUserStoreUseCase: GetUserStoreUseCase
+    private val loginUseCase: LoginUseCase
 ) : ViewModel() {
 
     private val _loginUiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
@@ -47,6 +44,6 @@ class LoginViewModel @Inject constructor(
 sealed class LoginUiState {
     data object Idle : LoginUiState()
     data object Loading : LoginUiState()
-    data class Success(val user: User) : LoginUiState()
+    data class Success(val userInfo: Pair<User, Boolean>) : LoginUiState()
     data class Error(val message: String) : LoginUiState()
 }
