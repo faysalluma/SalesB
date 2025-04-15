@@ -4,7 +4,6 @@ import com.groupec.salesb.core.currentDateString
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.network.model.UserItemResponse
-import com.groupec.salesb.core.network.model.UserResponse
 import com.groupec.salesb.core.database.model.User as UserEntity
 
 

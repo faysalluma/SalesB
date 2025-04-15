@@ -8,8 +8,7 @@ android {
 }
 
 dependencies {
-
-
+    implementation(libs.commons.net)
     // Test
     testImplementation(libs.kotlinx.coroutines.test)
 }

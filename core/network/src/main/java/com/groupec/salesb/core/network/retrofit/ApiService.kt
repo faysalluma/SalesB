@@ -90,7 +90,6 @@ interface ApiService {
         @Part("rayonid") rayonid: RequestBody?,
         @Part("fournisseurid") fournisseurid: RequestBody?,
         @Part("tvaid") tvaid: RequestBody?,
-        @Part("datemodif") datemodif: RequestBody,
         @Part("userid") userid: RequestBody,
         @Part imagePart: MultipartBody.Part?
     ): Response<ApiResult<Unit>>

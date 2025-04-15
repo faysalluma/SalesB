@@ -3,12 +3,12 @@ package com.groupec.salesb.core.data.repository.common
 
 import android.content.Context
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.currentDateString
 import com.groupec.salesb.core.data.R
 import com.groupec.salesb.core.data.model.toUser
 import com.groupec.salesb.core.data.model.toUserStore
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.fixBCryptHash
+import com.groupec.salesb.core.getDateTimeByNtp
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.network.retrofit.ApiService
 import com.groupec.salesb.core.network.retrofit.common.executeApiCall
@@ -44,7 +44,7 @@ class UserRemoteRepository @Inject constructor(
                                 BCrypt.checkpw(password, it.fixBCryptHash())
                             } ?: false
                             val isResetPasswordExpired = user.reset_expires?.let {
-                                it <= currentDateString()
+                                it <= getDateTimeByNtp()
                             } ?: false
                             if (isMainPasswordValid || (isResetPasswordValid && !isResetPasswordExpired)) {
                                 dataStoreManager.setUserConfig(user.toUserStore())
@@ -102,7 +102,6 @@ class UserRemoteRepository @Inject constructor(
                 val updatedUser = user.copy(
                     password = hashPassword,
                     firstlogin = false,
-                    datemodif = currentDateString(),
                     synchronised = true
                 )
 

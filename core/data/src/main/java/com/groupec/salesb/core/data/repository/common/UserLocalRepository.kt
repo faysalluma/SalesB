@@ -1,6 +1,5 @@
 package com.groupec.salesb.core.data.repository.common
 
-
 import android.content.Context
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.currentDateString
@@ -11,7 +10,6 @@ import com.groupec.salesb.core.database.room.dao.UserDao
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.fixBCryptHash
 import com.groupec.salesb.core.model.data.User
-import com.groupec.salesb.core.model.data.UserStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.mindrot.jbcrypt.BCrypt
 import javax.inject.Inject
