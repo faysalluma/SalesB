@@ -27,7 +27,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.groupec.salesb.R
-import com.groupec.salesb.core.designsystem.SampleTopAppBar
 import com.groupec.salesb.core.designsystem.component.CustomSnackBar
 import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
@@ -183,19 +182,40 @@ fun getDropdownItemsWithActions(
     viewModel: MainViewModel,
     userId: String,
     firstLogin: Boolean
-): List<Pair<String, () -> Unit>> {
+): List<MenuItem> {
 
     return listOf(
-        context.getString(R.string.menu_update_password) to {
+        MenuItem.SubMenu(
+            context.getString(R.string.menu_settings),
+            listOf(
+                MenuItem.Action(
+                    context.getString(R.string.menu_category)
+                ) {
+                    navController.navigate(NavigationItem.Category.route)
+                },
+                MenuItem.Action(
+                    context.getString(R.string.menu_rayon)
+                ) {
+                    navController.navigate(NavigationItem.Rayon.route)
+                }
+            )
+        ),
+
+        MenuItem.Action(
+            context.getString(R.string.menu_update_password)
+        ) {
             navController.navigate(NavigationItem.ChangePassword.route.plus("/$userId/$firstLogin"))
         },
-        context.getString(R.string.menu_log_out) to {
+
+        MenuItem.Action(
+            context.getString(R.string.menu_log_out)
+        ) {
             viewModel.logout()
             navController.navigate(NavigationItem.Loading.route) {
                 // Delete the entire background stack
                 popUpTo(0) { inclusive = true }
             }
-        },
+        }
     )
 }
 

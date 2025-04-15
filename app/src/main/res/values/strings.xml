@@ -8,6 +8,7 @@
     <string name="menu_my_sales">My sales</string>
     <string name="menu_product">Products</string>
     <string name="menu_category">Categories</string>
+    <string name="menu_rayon" translatable="false">Rayons</string>
     <string name="menu_update_password">Modify password</string>
     <string name="menu_log_out">Log out</string>
     <string name="menu_settings">Settings</string>

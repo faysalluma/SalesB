@@ -230,6 +230,10 @@ fun AppNavHost(
             Text("Categories")
         }
 
+        composable(NavigationItem.Rayon.route) {
+            Text("Rayon")
+        }
+
         composable(
             route = NavigationItem.SaleChart.route.plus("/{startDate}/{endDate}"),
             arguments = listOf(
