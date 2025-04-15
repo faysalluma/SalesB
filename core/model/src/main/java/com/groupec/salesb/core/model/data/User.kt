@@ -5,6 +5,8 @@ data class User(
     val nomprenom: String,
     val email: String,
     val password: String,
+    val reset_password: String ? = null,
+    val reset_expires: String ? = null,
     val adresse: String,
     val tel: String,
     val privilege: String,

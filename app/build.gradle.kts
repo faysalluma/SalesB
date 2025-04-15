@@ -36,9 +36,9 @@ android {
 
     buildTypes {
 
-        debug {
+        /*debug {
             applicationIdSuffix = ".debug"
-        }
+        }*/
 
         release {
             isMinifyEnabled = true
@@ -69,6 +69,7 @@ dependencies {
     implementation(project(":feature:sale"))
     implementation(project(":feature:salelist"))
     implementation(project(":feature:salechart"))
+    implementation(project(":feature:forgotpassword"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

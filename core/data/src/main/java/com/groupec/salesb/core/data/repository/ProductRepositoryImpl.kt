@@ -19,7 +19,6 @@ import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.currentDateString
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.network.retrofit.common.safeApiCall
 import kotlinx.coroutines.flow.first
@@ -62,7 +61,6 @@ class ProductRepositoryImpl @Inject constructor(
         // Required field
         val libelleBody = product.libelle.toRequestBody("text/plain".toMediaTypeOrNull())
         val prixttcBody = product.prixttc.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-        val datemodifBody = currentDateString().toRequestBody("text/plain".toMediaTypeOrNull())
         val useridBody = dataStoreManager.userFlow.first().id.toRequestBody("text/plain".toMediaTypeOrNull())
 
         // Optional field
@@ -88,7 +86,7 @@ class ProductRepositoryImpl @Inject constructor(
             val response =  apiService.addProduct(
                 idBody, referenceBody, libelleBody, descriptionBody, imageBody, prixhtBody, prixttcBody,
                 qtestockBody, stockminiBody, categorieidBody, rayonidBody, fournisseuridBody,
-                tvaidBody, datemodifBody, useridBody, imagePart
+                tvaidBody, useridBody, imagePart
             )
             if (response.isSuccessful) {
                 Result.Success(Unit)

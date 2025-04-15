@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="send_email_message">An email with instructions to reset your password has been sent to you. Please check your inbox.</string>
+</resources>

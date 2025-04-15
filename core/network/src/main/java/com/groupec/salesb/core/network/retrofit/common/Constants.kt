@@ -21,6 +21,7 @@ class Constants {
         const val GET_PRODUCTS = "getProducts"
         const val GET_CATEGORIES = "getCategories"
         const val GET_SALES = "getSales"
+        const val FORGOT_PASSWORD = "forgotPassword/{email}"
 
         // Post endpoint
         const val ADD_PRODUCT = "addProduct"

@@ -23,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 // import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.groupec.feature.configuration.ConfigurationScreen
+import com.groupec.feature.forgotpassword.ForgotPasswordScreen
 import com.groupec.feature.login.LoginScreen
 import com.groupec.feature.productdetail.ProductDetailScreen
 import com.groupec.feature.productlist.ProductListScreen
@@ -103,8 +104,8 @@ fun AppNavHost(
             val raisonSociale = backStackEntry.arguments?.getString("raisonSociale") ?: ""
             LoginScreen(
                 raisonSociale = raisonSociale,
-                navigateToChangePassword = { userId, firstLogin ->
-                    navController.navigate(NavigationItem.ChangePassword.route.plus("/${userId}/${firstLogin}"))
+                navigateToChangePassword = { userId, firstLoginOrResetPwd ->
+                    navController.navigate(NavigationItem.ChangePassword.route.plus("/${userId}/${firstLoginOrResetPwd}"))
                 },
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
@@ -112,26 +113,27 @@ fun AppNavHost(
                             inclusive = true
                         }
                     }
-                }
+                },
+                navigateToForgotPassword = { navController.navigate(NavigationItem.ForgotPassword.route) }
             )
         }
 
         composable(
-            route = NavigationItem.ChangePassword.route.plus("/{userId}/{firstLogin}"),
+            route = NavigationItem.ChangePassword.route.plus("/{userId}/{firstLoginOrResetPwd}"),
             arguments = listOf(
                 navArgument("userId") {
                     type = NavType.IntType
                 },
-                navArgument("firstLogin") {
+                navArgument("firstLoginOrResetPwd") {
                     type = NavType.BoolType
                 }
             )
         ) { backStackEntry ->
             val userId = backStackEntry.arguments?.getInt("userId") ?: 0
-            val firstLogin = backStackEntry.arguments?.getBoolean("firstLogin") ?: false
+            val firstLoginOrResetPwd = backStackEntry.arguments?.getBoolean("firstLoginOrResetPwd") ?: false
             ChangePasswordScreen(
                 userId = userId,
-                firstLogin = firstLogin,
+                firstLoginOrResetPwd = firstLoginOrResetPwd,
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
                         popUpTo(NavigationItem.Login.route.plus("/{raisonSociale}")) {
@@ -150,7 +152,6 @@ fun AppNavHost(
                 }
             )
         }
-
         composable(NavigationItem.Home.route) {
             HomeScreen(
                 navigateToSaleList = {
@@ -229,6 +230,10 @@ fun AppNavHost(
             Text("Categories")
         }
 
+        composable(NavigationItem.Rayon.route) {
+            Text("Rayon")
+        }
+
         composable(
             route = NavigationItem.SaleChart.route.plus("/{startDate}/{endDate}"),
             arguments = listOf(
@@ -246,6 +251,12 @@ fun AppNavHost(
                 startDate = startDate,
                 endDate = endDate
             )
+        }
+
+        composable(NavigationItem.ForgotPassword.route) {
+            ForgotPasswordScreen {
+                navController.popBackStack()
+            }
         }
     }
 }

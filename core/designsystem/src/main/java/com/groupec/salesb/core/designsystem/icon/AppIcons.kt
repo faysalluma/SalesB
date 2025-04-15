@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreHoriz
@@ -52,4 +53,5 @@ object AppIcons {
     val AddCircle = Icons.Filled.AddCircleOutline
     val MinusCircle = Icons.Default.RemoveCircleOutline
     val MoreInfo = Icons.Rounded.Info
+    val ChevronRight = Icons.Default.ChevronRight
 }

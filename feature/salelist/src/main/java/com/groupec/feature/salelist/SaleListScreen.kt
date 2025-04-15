@@ -29,7 +29,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.groupec.salesb.core.convertToServerDateFormat
-import com.groupec.salesb.core.currentDateString
 import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.designsystem.component.AppCustomDialog
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen

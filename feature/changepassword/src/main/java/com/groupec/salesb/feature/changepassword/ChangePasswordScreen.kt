@@ -27,7 +27,7 @@ import com.groupec.salesb.core.ui.ChangePasswordForm
 @Composable
 fun ChangePasswordScreen(
     userId: Int,
-    firstLogin: Boolean,
+    firstLoginOrResetPwd: Boolean,
     navigateToHome: () -> Unit,
     onBackPressed: () -> Unit,
     navigateToStartDestination: () -> Unit,
@@ -40,7 +40,7 @@ fun ChangePasswordScreen(
         loginState is ChangePasswordUiState.Loading // Get the loading state to show circular progress in button
 
     BackHandler {
-        if (firstLogin) {
+        if (firstLoginOrResetPwd) {
             viewModel.logout()
         }
         onBackPressed()
@@ -49,7 +49,7 @@ fun ChangePasswordScreen(
     when (loginState) {
         is ChangePasswordUiState.Success -> {
             LaunchedEffect(Unit) {
-                if (!firstLogin) {
+                if (!firstLoginOrResetPwd) {
                     viewModel.logout()
                     navigateToStartDestination()
                 } else {
@@ -80,7 +80,7 @@ fun ChangePasswordScreen(
 
             TitleHeader(
                 title =
-                if (firstLogin) stringResource(id = R.string.title_first_connexion)
+                if (firstLoginOrResetPwd) stringResource(id = R.string.update_password_required)
                 else stringResource(id = R.string.title_update_password),
                 textAlign = TextAlign.Center
             )
@@ -88,7 +88,7 @@ fun ChangePasswordScreen(
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
             ChangePasswordForm(
-                firstLogin = firstLogin,
+                firstLogin = firstLoginOrResetPwd,
                 onSubmitForm = { passwords ->
                     viewModel.changePassword(userId, passwords.ancPassword, passwords.password)
                 },

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_500_internal_server">Internal Server Error.</string>
+    <string name="error_403_forbidden">Access is forbidden.</string>
+    <string name="error_502_bad_gateway">An unexpected error has occurred</string>
+    <string name="error_401_unauthorized">The user is not authenticated.</string>
+    <string name="error_404_not_found">The requested resource cannot be found.</string>
+</resources>

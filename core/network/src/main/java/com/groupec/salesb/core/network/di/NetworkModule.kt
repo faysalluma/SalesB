@@ -47,6 +47,7 @@ class NetworkModule {
             //.connectTimeout(15, TimeUnit.SECONDS) // Increase connection timeout
             .readTimeout(15, TimeUnit.SECONDS)    // Increase read timeout
             .writeTimeout(15, TimeUnit.SECONDS)   // Increase write timeout
+            .addInterceptor(TimeZoneInterceptor())
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             //.addNetworkInterceptor(FlipperOkhttpInterceptor(getNetworkFlipperPlugin(context)))
             .build()

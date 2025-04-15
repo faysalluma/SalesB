@@ -11,6 +11,7 @@ import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.network.retrofit.ApiService
+import com.groupec.salesb.core.network.retrofit.common.executeApiCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -55,7 +56,7 @@ class UserRepositoryImpl @Inject constructor(
 
     /* Sync methods */
     /* Get methods */
-    override suspend fun checkLogin(email: String, password: String): Result<User> = if (getOfflineMode() == true) {
+    override suspend fun checkLogin(email: String, password: String): Result<Pair<User, Boolean>> = if (getOfflineMode() == true) {
         userLocalRepository.checkLogin(email, password)
     } else {
         userRemoteRepository.checkLogin(email, password)
@@ -78,6 +79,12 @@ class UserRepositoryImpl @Inject constructor(
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e)
+        }
+    }
+
+    override suspend fun forgotPassword(email: String): Result<Unit> {
+        return executeApiCall (context = context) {
+            apiService.forgotPassword(email)
         }
     }
 }

@@ -30,7 +30,11 @@ import com.groupec.salesb.core.designsystem.icon.AppIcons.Person
 import com.groupec.salesb.core.designsystem.theme.Primary
 
 @Composable
-fun LoginForm(onSubmitForm: (credentials: Credentials) -> Unit, isLoading: Boolean = false) {
+fun LoginForm(
+    onSubmitForm: (credentials: Credentials) -> Unit,
+    isLoading: Boolean = false,
+    onForgotPassword : () -> Unit
+) {
 
     var credentials by remember { mutableStateOf(Credentials()) }
     var isEmailError by remember { mutableStateOf(false) }
@@ -110,7 +114,7 @@ fun LoginForm(onSubmitForm: (credentials: Credentials) -> Unit, isLoading: Boole
                 isLoading = isLoading
             )
             Spacer(modifier = Modifier.height(16.dp))
-            TextButton(onClick = { /*TODO*/ }) {
+            TextButton(onClick = { onForgotPassword() }) {
                 Text(text = stringResource(id = R.string.forgot_password))
             }
         }

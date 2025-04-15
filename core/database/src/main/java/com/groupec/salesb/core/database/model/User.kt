@@ -14,6 +14,10 @@ data class User(
     val email: String,
     @ColumnInfo(name = "password")
     val password: String,
+    @ColumnInfo(name = "reset_password")
+    val reset_password: String ? = null,
+    @ColumnInfo(name = "reset_expires")
+    val reset_expires: String ? = null,
     @ColumnInfo(name = "adresse")
     val adresse: String,
     @ColumnInfo(name = "tel")

@@ -53,13 +53,16 @@ fun TitleLarge(
     title: String,
     color: Color = Color.Unspecified,
     modifier: Modifier = Modifier,
-    textAlign: TextAlign ?= null
+    textAlign: TextAlign ?= null,
+    fontWeight: FontWeight ? = null,
+    fontSize: TextUnit = 18.sp
 ) {
     Text(
         text = title,
-        style = MaterialTheme.typography.titleLarge.copy(fontSize = 18.sp, color = color),
         modifier = modifier,
-        textAlign = textAlign
+        textAlign = textAlign,
+        fontWeight = fontWeight,
+        style = MaterialTheme.typography.titleLarge.copy(fontSize = fontSize, color = color)
     )
 }
 
@@ -91,11 +94,13 @@ fun TextNormal(
     textAlign: TextAlign = TextAlign.Start,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
     color: Color = Color.Unspecified,
+    fontSize: TextUnit = TextUnit.Unspecified,
     modifier: Modifier = Modifier
 ) {
     Text(
         textAlign = textAlign,
         text = text,
+        fontSize = fontSize,
         style = style,
         color = color,
         modifier = modifier
@@ -207,6 +212,9 @@ fun TitleHeaderPreview() {
             detail = "Cette application vous permet de gérer vos ventes et stocks"
         )
         TitleLarge(title = "Première connexion")
+        TitleMedium(title = "Première connexion")
+        TitleSmall(title = "Première connexion")
+        TextNormal(text = "Première connexion")
     }
 
 }

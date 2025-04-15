@@ -9,6 +9,7 @@
     <string name="label_password">Password</string>
     <string name="enter_your_password">Enter your password</string>
     <string name="label_anc_password">Old Password</string>
+    <string name="temporary_password">Temporary password</string>
     <string name="enter_your_anc_password">Enter your old password</string>
     <string name="label_new_password">New Password</string>
     <string name="enter_your_new_password">Enter your new password</string>
@@ -16,14 +17,18 @@
     <string name="enter_your_confirmation">Confirm your password</string>
     <string name="enter_password_not_matching">The password you entered does not match</string>
     <string name="btn_login">Login</string>
-    <string name="btn_change_password">Change Password</string>
+    <string name="btn_change_password">Change Password</string>password_forgot_details_info
     <string name="forgot_password">Forgot password?</string>
+    <string name="password_forgot_details_info">No worries, we\'ll send you reset instructions.</string>
+    <string name="btn_reset_password">Reset password</string>
     <string name="invalid_email">Invalid email address</string>
     <string name="required_field">This field is required.</string>
     <string name="title_login">WELCOME %s!</string>
     <string name="detail_login">This application lets you manage your sales and inventory, please login to your account.</string>
-    <string name="title_first_connexion">First login: please change your password</string>
+    <string name="update_password_required">Account access: a new password is required.</string>
+    <string name="title_reset_password">Reset your password</string>
     <string name="title_update_password">Update your password</string>
+    <string name="in_progress">In progress…</string>
     <string name="add_image">ADD IMAGE</string>
     <!--  Product Form -->
     <string name="label_libelle">Name *</string>
@@ -48,4 +53,7 @@
     <string name="format_date">MM/DD/YYYY</string>
     <string name="select_date">Select date</string>
     <string name="cancel">Cancel</string>
+    <string name="success_title">Successful</string>
+    <string name="error">Error!</string>
+    <string name="close">Close</string>
 </resources>

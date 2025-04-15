@@ -1,10 +1,13 @@
 package com.groupec.salesb.core.network.retrofit.common
 
+import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import retrofit2.Response
 import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.network.R
+import com.groupec.salesb.core.network.model.ApiResult
 import java.io.IOException
 
 
@@ -28,13 +31,26 @@ suspend fun <T, R> safeApiCall(apiCall: suspend () -> Response<T>, transform: (T
 }
 
 /* Make input actions and get body result */
-suspend fun <T> executeApiCall(apiCall: suspend () -> Response<T>, errorMessage: String? = null): Result<T> {
+suspend fun <T> executeApiCall(
+    context: Context ? = null,
+    errorMessage: String? = null,
+    apiCall: suspend () -> Response<T>
+): Result<T> {
     return try {
         val response = apiCall()
         if (response.isSuccessful) {
             Result.Success(response.body()!!)
         } else {
-            Result.Error(errorMessage?.let { Exception(it)} ?: HttpException(response))
+            context?.let {
+                when (response.code()) {
+                    401 -> Result.Error(Exception(context.getString(R.string.error_401_unauthorized)))
+                    403 -> Result.Error(Exception(context.getString(R.string.error_403_forbidden)))
+                    404 -> Result.Error(Exception(context.getString(R.string.error_404_not_found)))
+                    500 -> Result.Error(Exception(context.getString(R.string.error_500_internal_server)))
+                    502 -> Result.Error(Exception(context.getString(R.string.error_502_bad_gateway)))
+                    else -> Result.Error(HttpException(response))
+                }
+            } ?: Result.Error(errorMessage?.let { Exception(it)} ?: HttpException(response))
         }
     } catch (e: Exception) {
         Result.Error(e)
@@ -57,7 +73,7 @@ suspend fun <T, R> safeApiCallGetResult(
     }
 }
 
-suspend fun <T, R> safeApiCallResult(
+private suspend fun <T, R> safeApiCallResult(
     apiCall: suspend () -> Response<T>,
     transform: (T) -> R
 ): Result<R> {

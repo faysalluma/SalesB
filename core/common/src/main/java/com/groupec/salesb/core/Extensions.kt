@@ -65,4 +65,10 @@ fun String.convertToViewDateFormat(): String {
     return targetFormat.format(date)
 }
 
+// Because of BCrypt in Java/Kotlin (for org.mindrot.BCrypt) don't accept $2y$ format
+fun String.fixBCryptHash(): String {
+    return this.replace("$2y$", "$2a$")
+}
+
+
 

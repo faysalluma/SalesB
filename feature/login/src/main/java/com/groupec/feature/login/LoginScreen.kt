@@ -30,6 +30,7 @@ fun LoginScreen(
     raisonSociale: String,
     navigateToChangePassword: (Int, Boolean) -> Unit,
     navigateToHome: (User) -> Unit,
+    navigateToForgotPassword: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
 
@@ -57,10 +58,11 @@ fun LoginScreen(
                 Column(modifier = Modifier.padding(24.dp)) {
                     when (loginState) {
                         is LoginUiState.Success -> {
-                            val user = (loginState as LoginUiState.Success).user
+                            val userInfo = (loginState as LoginUiState.Success).userInfo
+                            val (user, isMainPassword) = userInfo
                             LaunchedEffect(Unit) {
-                                if (user.firstlogin) {
-                                    navigateToChangePassword(user.id, user.firstlogin)
+                                if (user.firstlogin || (user.reset_password != null && !isMainPassword)) {
+                                    navigateToChangePassword(user.id, true)
                                 } else {
                                     navigateToHome(user)
                                 }
@@ -92,7 +94,8 @@ fun LoginScreen(
                         onSubmitForm = { credentials ->
                             viewModel.login(credentials)
                         },
-                        isLoading = isLoading
+                        isLoading = isLoading,
+                        onForgotPassword = navigateToForgotPassword
                     )
                 }
             }

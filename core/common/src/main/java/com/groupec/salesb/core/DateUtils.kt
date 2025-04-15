@@ -1,6 +1,11 @@
 package com.groupec.salesb.core
 
 import android.text.format.DateUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.apache.commons.net.ntp.NTPUDPClient
+import org.apache.commons.net.ntp.TimeInfo
+import java.net.InetAddress
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -112,10 +117,33 @@ fun String.toDate(format: String = "yyyy-MM-dd HH:mm:ss"): Date? {
     }
 }
 
+suspend fun getDateTimeByNtp(pattern: String ="yyyy-MM-dd HH:mm:ss") : String {
+    return getNtpDateTime(pattern) ?: currentDateString(pattern)
+}
+
 fun currentDateString(pattern: String ="yyyy-MM-dd HH:mm:ss") : String {
     val currentDateTime = Calendar.getInstance().time
     val formatter = SimpleDateFormat(pattern, Locale.getDefault())
     return formatter.format(currentDateTime)
+}
+
+suspend fun getNtpDateTime(pattern: String = "yyyy-MM-dd HH:mm:ss"): String? = withContext(
+    Dispatchers.IO) {
+    return@withContext try {
+        val client = NTPUDPClient().apply {
+            defaultTimeout = 5000
+            open()
+        }
+        val address = InetAddress.getByName("pool.ntp.org")
+        val info: TimeInfo = client.getTime(address).apply { computeDetails() }
+
+        info.message?.transmitTimeStamp?.time?.let {
+            SimpleDateFormat(pattern, Locale.getDefault()).format(Date(it))
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 fun currentLocalDateString() : String {
