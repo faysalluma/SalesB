@@ -212,7 +212,7 @@ fun ProductForm(
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Color.Black)
             ) {
-                // navigateToCategory()
+                navigateToCategory()
             }
 
         }

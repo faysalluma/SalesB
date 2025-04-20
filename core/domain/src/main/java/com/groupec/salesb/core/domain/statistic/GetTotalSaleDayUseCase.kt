@@ -1,6 +1,6 @@
 package com.groupec.salesb.core.domain.statistic
 
-import com.groupec.salesb.core.data.repository.StatisticRepository
+import com.groupec.salesb.core.data.repository.product.StatisticRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

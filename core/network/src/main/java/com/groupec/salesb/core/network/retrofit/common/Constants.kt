@@ -19,6 +19,7 @@ class Constants {
         const val GET_TOTAL_SALE_DAY = "getTotalSaleMorningEvening/{date}"
         const val GET_TOTAL_SALE_BY_DATE = "getTotalSalesByDate/{startDate}/{endDate}"
         const val GET_PRODUCTS = "getProducts"
+        const val GET_PAGED_CATEGORIES = "getPagedCategories"
         const val GET_CATEGORIES = "getCategories"
         const val GET_SALES = "getSales"
         const val FORGOT_PASSWORD = "forgotPassword/{email}"
@@ -26,11 +27,13 @@ class Constants {
         // Post endpoint
         const val ADD_PRODUCT = "addProduct"
         const val ADD_SALE = "addSale"
+        const val ADD_CATEGORY = "addCategory"
 
         // Put endpoint
         const val PUT_CHANGE_PASSWORD = "changePassword/{userid}"
 
         // Delete endpoint
         const val DELETE_PRODUCT = "deleteProduct/{productid}"
+        const val DELETE_CATEGORY = "deleteCategory/{categoryid}"
     }
 }

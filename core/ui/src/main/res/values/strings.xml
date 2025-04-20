@@ -10,6 +10,7 @@
     <string name="statistic_label_benefit">Benefits</string>
     <string name="sale_number_and_date">N°: %1$d at %2$s</string>
     <string name="product_item_detail">Date: %1$s,  Price: %2$s, Quantity: %3$d, Created by: %4$s</string>
+    <string name="category_item_detail">Date: %1$s,  Description: %2$s, Created by: %3$s</string>
     <string name="none">None</string>
     <string name="view_item">Edit</string>
     <string name="view_detail">Detail</string>
@@ -29,4 +30,8 @@
     <string name="actions" translatable="false">Actions</string>
     <string name="sale_item_dialog_title">Sale n° %1$d of %2$s, realized on  %3$s by  %4$s.</string>
     <string name="quantity_greater">Quantity greater than stock</string>
+    <string name="retry">Retry</string>
+    <string name="search_place_holder">Search here</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_cancel">Cancel</string>
 </resources>

@@ -39,7 +39,7 @@ data class ProductItemResponse(
     val stockmini: Int ? = null,
 
     @SerializedName("categorie")
-    val categorie: CategorieItemResponse ? = null,
+    val categorie: CategoryItemResponse ? = null,
 
     @SerializedName("rayonid")
     val rayonid: Int ? = null,

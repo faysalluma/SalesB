@@ -7,6 +7,7 @@
     <string name="sale_number_and_date">N°: %1$d à %2$s</string>
     <string name="statistic_label_chart">Ventes périodiques</string>
     <string name="product_item_detail">Date : %1$s, Prix : %2$s, Quantité : %3$s, Auteur : %4$s</string>
+    <string name="category_item_detail">Date: %1$s,  Description: %2$s, Auteur : %3$s</string>
     <string name="none">Aucun</string>
     <string name="view_item">Modifier</string>
     <string name="delete_item">Supprimer</string>
@@ -26,4 +27,8 @@
     <string name="quantity_greater">Quantité supérieur à celle en stock</string>
     <string name="success_title">Succès</string>
     <string name="error">Erreur !</string>
+    <string name="retry">Réessayer</string>
+    <string name="search_place_holder">Rechercher ici</string>
+    <string name="btn_close">Fermer</string>
+    <string name="btn_cancel">Annuler</string>
 </resources>

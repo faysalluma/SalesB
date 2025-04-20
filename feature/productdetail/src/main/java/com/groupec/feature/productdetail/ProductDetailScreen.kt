@@ -32,6 +32,7 @@ import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.ui.AddImage
+import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.core.ui.ProductDataForm
 import com.groupec.salesb.core.ui.ProductForm
 import java.io.File
@@ -57,6 +58,12 @@ fun ProductDetailScreen(
     var rayonlibelleState by remember { mutableStateOf(TextFieldValue(productDataForm.rayonlibelle)) }
     var fournisseurlibelleState by remember { mutableStateOf(TextFieldValue(productDataForm.fournisseurlibelle)) }
     val uri = remember { mutableStateOf<Uri?>(null) }
+
+    ComposableLifecycle(
+        onResume = {
+            viewModel.getCategories()
+        }
+    )
 
     LaunchedEffect(product) {
         // Form Data and methods
@@ -137,7 +144,7 @@ fun ProductDetailScreen(
             text = stringResource(R.string.detail_title),
             trailingContent = {
                 Text(
-                    stringResource(R.string.btn_cancel),
+                    stringResource(com.groupec.salesb.core.ui.R.string.btn_cancel),
                     color = Primary,
                     modifier = Modifier.clickable {
                         resetProductForm()

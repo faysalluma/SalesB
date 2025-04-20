@@ -141,7 +141,7 @@ fun ProductListScreen(
                 )
                 DefaultButton(
                     modifier = Modifier.wrapContentWidth(),
-                    text = stringResource(R.string.retry)
+                    text = stringResource(com.groupec.salesb.core.ui.R.string.retry)
                 ) {
                     products.refresh()
                 }
@@ -174,7 +174,7 @@ fun ProductListScreen(
                         }
                     },
                     onChange = { viewModel.updateSearchQuery(it) },
-                    placeholder = stringResource(R.string.search_product_place_holder),
+                    placeholder = stringResource(com.groupec.salesb.core.ui.R.string.search_place_holder),
                     fieldType = FieldType.Text,
                     fieldColor = Silver,
                     shape = RoundedCornerShape(28.dp)

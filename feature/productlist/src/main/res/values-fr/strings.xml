@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="search_product_place_holder">Rechercher ici</string>
     <string name="head_title">Produits</string>
-    <string name="retry">Réessayer</string>
     <string name="loading_products">Chargement de produits …</string>
 </resources>
