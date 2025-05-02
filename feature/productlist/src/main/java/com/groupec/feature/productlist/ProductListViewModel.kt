@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.domain.product.DeleteProductUseCase
 import com.groupec.salesb.core.domain.product.GetProductUseCase
 import com.groupec.salesb.core.model.data.Product
@@ -33,8 +33,8 @@ class ProductListViewModel @Inject constructor(
     private val _isSearching = MutableStateFlow(false) // État de recherche
     val isSearching: StateFlow<Boolean> = _isSearching
 
-    private val _deleteProductUiState = MutableStateFlow<UIState<*>>(UIState.Loading)
-    val deleteProductUiState: StateFlow<UIState<*>> = _deleteProductUiState.asStateFlow()
+    private val _deleteProductUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
+    val deleteProductUiState: StateFlow<FormUIState<*>> = _deleteProductUiState.asStateFlow()
 
     val pagedProducts: Flow<PagingData<Product>> = _searchQuery
         .flatMapLatest { query ->
@@ -51,20 +51,24 @@ class ProductListViewModel @Inject constructor(
     }
 
     fun deleteProduct(id: Int) {
-        _deleteProductUiState.value = UIState.Loading
+        _deleteProductUiState.value = FormUIState.Loading
         viewModelScope.launch {
             when (val result = deleteProductUseCase(id)) {
                 is Result.Success -> {
-                    _deleteProductUiState.value = UIState.Success(Unit)
+                    _deleteProductUiState.value = FormUIState.Success(Unit)
                 }
 
                 is Result.Error -> {
                     _deleteProductUiState.value =
-                        UIState.Error(result.exception.message ?: "Error when deleting product")
+                        FormUIState.Error(result.exception.message ?: "Error when deleting product")
                 }
 
                 else -> {}
             }
         }
+    }
+
+    fun resetFlow() {
+        _deleteProductUiState.value = FormUIState.Idle
     }
 }

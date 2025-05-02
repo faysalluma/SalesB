@@ -7,7 +7,6 @@ import retrofit2.HttpException
 import retrofit2.Response
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.network.R
-import com.groupec.salesb.core.network.model.ApiResult
 import java.io.IOException
 
 

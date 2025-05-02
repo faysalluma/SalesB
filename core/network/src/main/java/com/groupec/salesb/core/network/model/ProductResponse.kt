@@ -41,8 +41,8 @@ data class ProductItemResponse(
     @SerializedName("categorie")
     val categorie: CategoryItemResponse ? = null,
 
-    @SerializedName("rayonid")
-    val rayonid: Int ? = null,
+    @SerializedName("rayon")
+    val rayon: RayonItemResponse ? = null,
 
     @SerializedName("fournisseurid")
     val fournisseurid: Int ? = null,

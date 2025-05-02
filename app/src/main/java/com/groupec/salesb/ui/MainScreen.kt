@@ -168,7 +168,6 @@ fun MainScreen(
                             ) 0.91f else 1f
                         )
                         .padding(16.dp),
-                    connectionState = connectionState,
                     navController = navController
                 )
             }

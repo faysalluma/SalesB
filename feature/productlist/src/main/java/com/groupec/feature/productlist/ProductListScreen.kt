@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
@@ -30,7 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.groupec.feature.product.R
-import com.groupec.salesb.core.UIState
+import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
@@ -70,15 +69,15 @@ fun ProductListScreen(
         products.refresh() // Refresh the LazyPagingItems
     }
 
-   /* // Update isManualRefreshing when products.refresh for the SwipeToRefresh
-    LaunchedEffect(isRefreshing) {
-        if (!isRefreshing && isManualRefreshing) {
-            isManualRefreshing = false
-        }
-    }*/
+    /* // Update isManualRefreshing when products.refresh for the SwipeToRefresh
+     LaunchedEffect(isRefreshing) {
+         if (!isRefreshing && isManualRefreshing) {
+             isManualRefreshing = false
+         }
+     }*/
 
     when (deleteProductState) {
-        is UIState.Success -> {
+        is FormUIState.Success -> {
             LaunchedEffect(Unit) {
                 focusManager.clearFocus()
                 snackbarHostState.currentSnackbarData?.dismiss()
@@ -88,24 +87,26 @@ fun ProductListScreen(
                         message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
                     )
                 )
-
+                viewModel.resetFlow()
             }
         }
 
-        is UIState.Error -> {
+        is FormUIState.Error -> {
             LaunchedEffect(Unit) {
                 snackbarHostState.currentSnackbarData?.dismiss()
                 snackbarHostState.showSnackbar(
                     SnackbarVisualsWithState(
-                        message =(deleteProductState as UIState.Error).message,
+                        message = (deleteProductState as FormUIState.Error).message,
                         isError = true
                     )
                 )
+                viewModel.resetFlow()
             }
         }
+
         else -> {}
     }
-    
+
     /*PullToRefreshBox(isRefreshing = isRefreshing *//* isManualRefreshing *//*, onRefresh = {
         // isManualRefreshing = true
         products.refresh()
@@ -197,7 +198,10 @@ fun ProductListScreen(
                             showDialog = it
                             focusManager.clearFocus()
                         },
-                        title = stringResource(com.groupec.salesb.core.ui.R.string.confirm_delete_message, productIdLibelle.second),
+                        title = stringResource(
+                            com.groupec.salesb.core.ui.R.string.confirm_delete_message,
+                            productIdLibelle.second
+                        ),
                         onConfirmButton = {
                             viewModel.deleteProduct(productIdLibelle.first)
                         },

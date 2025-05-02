@@ -21,6 +21,7 @@ class Constants {
         const val GET_PRODUCTS = "getProducts"
         const val GET_PAGED_CATEGORIES = "getPagedCategories"
         const val GET_CATEGORIES = "getCategories"
+        const val GET_RAYONS = "getRayons"
         const val GET_SALES = "getSales"
         const val FORGOT_PASSWORD = "forgotPassword/{email}"
 
@@ -28,6 +29,7 @@ class Constants {
         const val ADD_PRODUCT = "addProduct"
         const val ADD_SALE = "addSale"
         const val ADD_CATEGORY = "addCategory"
+        const val ADD_RAYON = "addRayon"
 
         // Put endpoint
         const val PUT_CHANGE_PASSWORD = "changePassword/{userid}"
@@ -35,5 +37,6 @@ class Constants {
         // Delete endpoint
         const val DELETE_PRODUCT = "deleteProduct/{productid}"
         const val DELETE_CATEGORY = "deleteCategory/{categoryid}"
+        const val DELETE_RAYON = "deleteRayon/{rayonid}"
     }
 }

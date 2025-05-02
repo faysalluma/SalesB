@@ -1,6 +1,7 @@
 package com.groupec.salesb.core.network.retrofit
 
 import com.groupec.salesb.core.model.data.Category
+import com.groupec.salesb.core.model.data.Rayon
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.network.model.ApiResult
@@ -9,6 +10,7 @@ import com.groupec.salesb.core.network.model.ChartDateResponse
 import com.groupec.salesb.core.network.model.ChartDayResponse
 import com.groupec.salesb.core.network.model.ParameterResponse
 import com.groupec.salesb.core.network.model.ProductResponse
+import com.groupec.salesb.core.network.model.RayonResponse
 import com.groupec.salesb.core.network.model.SaleResponse
 import com.groupec.salesb.core.network.model.UserItemResponse
 import com.groupec.salesb.core.network.model.UserResponse
@@ -74,6 +76,9 @@ interface ApiService {
     @GET(Constants.GET_CATEGORIES)
     suspend fun getCategories(): Response<CategoryResponse>
 
+    @GET(Constants.GET_RAYONS)
+    suspend fun getRayons(@Query("search") search: String): Response<RayonResponse>
+
     @GET(Constants.GET_SALES)
     suspend fun getSales(@Query("page") page: Int, @Query("limit") limit: Int, @QueryMap searchParams: Map<String, String>
     ): Response<SaleResponse>
@@ -105,6 +110,9 @@ interface ApiService {
     @POST(Constants.ADD_CATEGORY)
     suspend fun addCategory(@Body category: Category): Response<Unit>
 
+    @POST(Constants.ADD_RAYON)
+    suspend fun addRayon(@Body rayon: Rayon): Response<Unit>
+
     @POST(Constants.FORGOT_PASSWORD)
     suspend fun forgotPassword(@Path("email") email: String): Response<Unit>
 
@@ -118,4 +126,7 @@ interface ApiService {
 
     @DELETE(Constants.DELETE_CATEGORY)
     suspend fun deleteCategory(@Path("categoryid") categoryid: Int): Response<ApiResult<Boolean>>
+
+    @DELETE(Constants.DELETE_RAYON)
+    suspend fun deleteRayon(@Path("rayonid") rayonid: Int): Response<ApiResult<Boolean>>
 }
