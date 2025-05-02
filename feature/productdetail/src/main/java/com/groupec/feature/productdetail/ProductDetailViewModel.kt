@@ -8,22 +8,23 @@ import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.UploadUtility
 import com.groupec.salesb.core.asResult
-import com.groupec.salesb.core.domain.categorie.GetCategorieUsecase
+import com.groupec.salesb.core.domain.category.GetCategoryUseCase
 import com.groupec.salesb.core.domain.product.SaveProductUseCase
+import com.groupec.salesb.core.domain.rayon.GetRayonUseCase
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.ui.ProductDataForm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(
     private val saveProductUseCase: SaveProductUseCase,
-    private val getCategorieUsecase: GetCategorieUsecase
+    private val getCategorieUsecase: GetCategoryUseCase,
+    private val getRayonUseCase: GetRayonUseCase
 ) : ViewModel() {
 
     private val _addProductUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
@@ -32,11 +33,10 @@ class ProductDetailViewModel @Inject constructor(
     private val _categoriesUiPairState = MutableStateFlow<List<Pair<String, String>>>(emptyList())
     val categoriesUiPairState = _categoriesUiPairState.asStateFlow()
 
-    init {
-      getCategories()
-    }
+    private val _rayonsUiPairState = MutableStateFlow<List<Pair<String, String>>>(emptyList())
+    val rayonsUiPairState = _rayonsUiPairState.asStateFlow()
 
-    private fun getCategories() {
+    fun getCategories() {
         viewModelScope.launch {
             getCategorieUsecase()
                 .asResult()
@@ -44,6 +44,19 @@ class ProductDetailViewModel @Inject constructor(
                     when (result) {
                         is Result.Success ->_categoriesUiPairState.value = result.data.map { Pair(it.id.toString(), it.libelle) }
                         else -> _categoriesUiPairState.value = emptyList()
+                    }
+                }
+        }
+    }
+
+    fun getRayons() {
+        viewModelScope.launch {
+            getRayonUseCase("")
+                .asResult()
+                .collect { result ->
+                    when (result) {
+                        is Result.Success ->_rayonsUiPairState.value = result.data.map { Pair(it.id.toString(), it.libelle) }
+                        else -> _rayonsUiPairState.value = emptyList()
                     }
                 }
         }

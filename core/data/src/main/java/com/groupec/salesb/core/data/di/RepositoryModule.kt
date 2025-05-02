@@ -2,20 +2,22 @@
 package com.groupec.salesb.core.data.di
 
 import android.content.Context
-import com.groupec.salesb.core.data.repository.CategorieRepository
-import com.groupec.salesb.core.data.repository.CategorieRepositoryImpl
-import com.groupec.salesb.core.data.repository.ParameterRepository
-import com.groupec.salesb.core.data.repository.ParameterRepositoryImpl
-import com.groupec.salesb.core.data.repository.ProductRepository
-import com.groupec.salesb.core.data.repository.ProductRepositoryImpl
-import com.groupec.salesb.core.data.repository.SaleRepository
-import com.groupec.salesb.core.data.repository.SaleRepositoryImpl
-import com.groupec.salesb.core.data.repository.StatisticRepository
-import com.groupec.salesb.core.data.repository.StatisticRepositoryImpl
+import com.groupec.salesb.core.data.repository.rayon.RayonRepository
+import com.groupec.salesb.core.data.repository.rayon.RayonRepositoryImpl
+import com.groupec.salesb.core.data.repository.category.CategoryRepository
+import com.groupec.salesb.core.data.repository.category.CategoryRepositoryImpl
+import com.groupec.salesb.core.data.repository.parameter.ParameterRepository
+import com.groupec.salesb.core.data.repository.parameter.ParameterRepositoryImpl
+import com.groupec.salesb.core.data.repository.product.ProductRepository
+import com.groupec.salesb.core.data.repository.product.ProductRepositoryImpl
+import com.groupec.salesb.core.data.repository.sale.SaleRepository
+import com.groupec.salesb.core.data.repository.sale.SaleRepositoryImpl
+import com.groupec.salesb.core.data.repository.product.StatisticRepository
+import com.groupec.salesb.core.data.repository.product.StatisticRepositoryImpl
 import com.groupec.salesb.core.data.repository.common.UserLocalRepository
 import com.groupec.salesb.core.data.repository.common.UserRemoteRepository
-import com.groupec.salesb.core.data.repository.UserRepository
-import com.groupec.salesb.core.data.repository.UserRepositoryImpl
+import com.groupec.salesb.core.data.repository.user.UserRepository
+import com.groupec.salesb.core.data.repository.user.UserRepositoryImpl
 import com.groupec.salesb.core.data.repository.common.UserSyncRepository
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.network.retrofit.ApiService
@@ -74,8 +76,17 @@ class RepositoryModule  {
     fun providerCategorieRepository(
         apiService: ApiService,
         dataStoreManager: DataStoreManager
-    ) : CategorieRepository {
-        return CategorieRepositoryImpl(apiService, dataStoreManager)
+    ) : CategoryRepository {
+        return CategoryRepositoryImpl(apiService, dataStoreManager)
+    }
+
+    @Provides
+    @Singleton
+    fun providerRayonRepository(
+        apiService: ApiService,
+        dataStoreManager: DataStoreManager
+    ) : RayonRepository {
+        return RayonRepositoryImpl(apiService, dataStoreManager)
     }
 
     @Provides

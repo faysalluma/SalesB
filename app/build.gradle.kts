@@ -70,6 +70,10 @@ dependencies {
     implementation(project(":feature:salelist"))
     implementation(project(":feature:salechart"))
     implementation(project(":feature:forgotpassword"))
+    implementation(project(":feature:categorylist"))
+    implementation(project(":feature:categorydetail"))
+    implementation(project(":feature:rayonlist"))
+    implementation(project(":feature:rayondetail"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

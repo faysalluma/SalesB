@@ -2,7 +2,7 @@ package com.groupec.salesb.core.domain.product
 
 import android.net.Uri
 
-import com.groupec.salesb.core.data.repository.ProductRepository
+import com.groupec.salesb.core.data.repository.product.ProductRepository
 import com.groupec.salesb.core.model.data.Product
 import javax.inject.Inject
 import com.groupec.salesb.core.Result

@@ -168,7 +168,6 @@ fun MainScreen(
                             ) 0.91f else 1f
                         )
                         .padding(16.dp),
-                    connectionState = connectionState,
                     navController = navController
                 )
             }
@@ -191,12 +190,16 @@ fun getDropdownItemsWithActions(
                 MenuItem.Action(
                     context.getString(R.string.menu_category)
                 ) {
-                    navController.navigate(NavigationItem.Category.route)
+                    navController.navigate(NavigationItem.Category.route) {
+                        launchSingleTop = true
+                    }
                 },
                 MenuItem.Action(
                     context.getString(R.string.menu_rayon)
                 ) {
-                    navController.navigate(NavigationItem.Rayon.route)
+                    navController.navigate(NavigationItem.Rayon.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         ),
@@ -204,7 +207,9 @@ fun getDropdownItemsWithActions(
         MenuItem.Action(
             context.getString(R.string.menu_update_password)
         ) {
-            navController.navigate(NavigationItem.ChangePassword.route.plus("/$userId/$firstLogin"))
+            navController.navigate(NavigationItem.ChangePassword.route.plus("/$userId/$firstLogin")) {
+                launchSingleTop = true
+            }
         },
 
         MenuItem.Action(

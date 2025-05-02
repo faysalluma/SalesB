@@ -45,6 +45,7 @@ fun ProductForm(
     products: ProductDataForm,
     categorielibelleState: TextFieldValue,
     navigateToCategory: () -> Unit,
+    navigateToRayon: () -> Unit,
     rayonlibelleState: TextFieldValue,
     fournisseurlibelleState: TextFieldValue,
     onProductDataChanged: (ProductDataForm) -> Unit,
@@ -212,7 +213,7 @@ fun ProductForm(
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Color.Black)
             ) {
-                // navigateToCategory()
+                navigateToCategory()
             }
 
         }
@@ -258,12 +259,12 @@ fun ProductForm(
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Color.Black)
             ) {
-
+                navigateToRayon()
             }
 
         }
 
-        Row(modifier = Modifier.fillMaxWidth()) {
+       /* Row(modifier = Modifier.fillMaxWidth()) {
             AppEditableExposedDropdown(
                 items = fournisseurItems,
                 modifier = Modifier.weight(1f),
@@ -307,7 +308,7 @@ fun ProductForm(
 
             }
 
-        }
+        }*/
 
         Box(
             modifier = Modifier.fillMaxWidth(),

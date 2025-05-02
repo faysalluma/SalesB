@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -21,16 +20,22 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.groupec.feature.categorydetail.CategoryDetailScreen
+import com.groupec.feature.categorylist.CategoryListScreen
 // import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.forgotpassword.ForgotPasswordScreen
 import com.groupec.feature.login.LoginScreen
 import com.groupec.feature.productdetail.ProductDetailScreen
 import com.groupec.feature.productlist.ProductListScreen
+import com.groupec.feature.rayondetail.RayonDetailScreen
+import com.groupec.feature.rayonlist.RayonListScreen
 import com.groupec.feature.sale.SaleScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
+import com.groupec.salesb.core.model.data.Category
 import com.groupec.salesb.core.model.data.Product
+import com.groupec.salesb.core.model.data.Rayon
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
@@ -42,7 +47,6 @@ import kotlinx.coroutines.delay
 fun AppNavHost(
     modifier: Modifier,
     snackbarHostState: SnackbarHostState,
-    connectionState: Boolean,
     navController: NavHostController,
     startDestination: String = NavigationItem.Loading.route
 ) {
@@ -214,6 +218,12 @@ fun AppNavHost(
                                     launchSingleTop = true
                                 }
                             },
+                            navigateToRayon = {
+                                navController.navigate(NavigationItem.Rayon.route) {
+                                    popUpTo(navController.graph.startDestinationId)
+                                    launchSingleTop = true
+                                }
+                            },
                             removeSelectedBgColor = {
                                 removeSelectedBgColor = !removeSelectedBgColor
                             },
@@ -227,11 +237,97 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.Category.route) {
-            Text("Categories")
+            var selectedCategory by remember { mutableStateOf<Category?>(null) }
+            var refreshCategoryList by remember { mutableStateOf(false) }
+            var removeSelectedBgColor by remember { mutableStateOf(false) }
+            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+
+            LaunchedEffect(isRefreshing) {
+                // Show refresh indicator during 1s
+                if (isRefreshing) {
+                    delay(1000)
+                    isRefreshing = false
+                }
+            }
+
+            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+                refreshCategoryList  = !refreshCategoryList
+                isRefreshing = true
+            }) {
+                Row {
+                    Row(Modifier.weight(0.4f)) {
+                        CategoryListScreen(
+                            snackbarHostState = snackbarHostState,
+                            refreshCategoryList = refreshCategoryList,
+                            removeSelectedBgColor = removeSelectedBgColor,
+                            onViewDetail = { category ->
+                                selectedCategory = category
+                            }
+                        )
+                        VerticalDivider()
+                    }
+
+                    Box(Modifier.weight(0.6f)) {
+                        CategoryDetailScreen(
+                            snackbarHostState = snackbarHostState,
+                            category = selectedCategory,
+                            removeSelectedBgColor = {
+                                removeSelectedBgColor = !removeSelectedBgColor
+                            },
+                            refreshCategories = {
+                                refreshCategoryList  = !refreshCategoryList
+                            }
+                        )
+                    }
+                }
+            }
         }
 
         composable(NavigationItem.Rayon.route) {
-            Text("Rayon")
+            var selectedRayon by remember { mutableStateOf<Rayon?>(null) }
+            var refreshList by remember { mutableStateOf(false) }
+            var removeSelectedBgColor by remember { mutableStateOf(false) }
+            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+
+            LaunchedEffect(isRefreshing) {
+                // Show refresh indicator during 1s
+                if (isRefreshing) {
+                    delay(1000)
+                    isRefreshing = false
+                }
+            }
+
+            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+                refreshList  = !refreshList
+                isRefreshing = true
+            }) {
+                Row {
+                    Row(Modifier.weight(0.4f)) {
+                        RayonListScreen(
+                            snackbarHostState = snackbarHostState,
+                            refreshList = refreshList,
+                            removeSelectedBgColor = removeSelectedBgColor,
+                            onViewDetail = { rayon ->
+                                selectedRayon = rayon
+                            }
+                        )
+                        VerticalDivider()
+                    }
+
+                    Box(Modifier.weight(0.6f)) {
+                        RayonDetailScreen(
+                            snackbarHostState = snackbarHostState,
+                            rayon = selectedRayon,
+                            removeSelectedBgColor = {
+                                removeSelectedBgColor = !removeSelectedBgColor
+                            },
+                            refreshRayons = {
+                                refreshList  = !refreshList
+                            }
+                        )
+                    }
+                }
+            }
         }
 
         composable(

@@ -1,7 +1,7 @@
 package com.groupec.salesb.core.domain.sale
 
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.data.repository.SaleRepository
+import com.groupec.salesb.core.data.repository.sale.SaleRepository
 import com.groupec.salesb.core.model.data.Sale
 import javax.inject.Inject
 

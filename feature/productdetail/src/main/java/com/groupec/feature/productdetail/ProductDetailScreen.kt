@@ -32,6 +32,7 @@ import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.ui.AddImage
+import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.core.ui.ProductDataForm
 import com.groupec.salesb.core.ui.ProductForm
 import java.io.File
@@ -41,6 +42,7 @@ fun ProductDetailScreen(
     snackbarHostState: SnackbarHostState,
     product: Product?,
     navigateToCategory: () -> Unit,
+    navigateToRayon: () -> Unit,
     refreshProducts: () -> Unit,
     removeSelectedBgColor: () -> Unit,
     modifier: Modifier = Modifier,
@@ -51,12 +53,20 @@ fun ProductDetailScreen(
     val addProductState by viewModel.addProductUiState.collectAsState()
     val isLoading = addProductState is FormUIState.Loading
     val categoriesPairState by viewModel.categoriesUiPairState.collectAsState()
+    val rayonsPairState by viewModel.rayonsUiPairState.collectAsState()
 
     var productDataForm by remember { mutableStateOf(ProductDataForm()) }
     var categorielibelleState by remember { mutableStateOf(TextFieldValue(productDataForm.categorielibelle)) }
     var rayonlibelleState by remember { mutableStateOf(TextFieldValue(productDataForm.rayonlibelle)) }
     var fournisseurlibelleState by remember { mutableStateOf(TextFieldValue(productDataForm.fournisseurlibelle)) }
     val uri = remember { mutableStateOf<Uri?>(null) }
+
+    ComposableLifecycle(
+        onResume = {
+            viewModel.getCategories()
+            viewModel.getRayons()
+        }
+    )
 
     LaunchedEffect(product) {
         // Form Data and methods
@@ -113,6 +123,7 @@ fun ProductDetailScreen(
                         message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
                     )
                 )
+                viewModel.resetFlow()
             }
         }
 
@@ -137,7 +148,7 @@ fun ProductDetailScreen(
             text = stringResource(R.string.detail_title),
             trailingContent = {
                 Text(
-                    stringResource(R.string.btn_cancel),
+                    stringResource(com.groupec.salesb.core.ui.R.string.btn_cancel),
                     color = Primary,
                     modifier = Modifier.clickable {
                         resetProductForm()
@@ -176,11 +187,12 @@ fun ProductDetailScreen(
                 modifier = Modifier.fillMaxWidth(0.8f),
                 isLoading = isLoading,
                 categorieItems = categoriesPairState,
-                rayonItems = listOf(),
+                rayonItems = rayonsPairState,
                 fournisseurItems = listOf(),
                 products = productDataForm,
                 categorielibelleState = categorielibelleState,
                 navigateToCategory = navigateToCategory,
+                navigateToRayon = navigateToRayon,
                 rayonlibelleState = rayonlibelleState,
                 fournisseurlibelleState = fournisseurlibelleState,
                 onProductDataChanged = { newProduct ->
