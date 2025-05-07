@@ -10,6 +10,7 @@
     <string name="statistic_label_benefit">Benefits</string>
     <string name="sale_number_and_date">N°: %1$d at %2$s</string>
     <string name="product_item_detail">Date: %1$s,  Price: %2$s, Quantity: %3$d, Created by: %4$s</string>
+    <string name="output_item_detail">Date: %1$s,  Price: %2$s, Created by: %3$s</string>
     <string name="item_detail">Date: %1$s, Created by: %2$s</string>
     <string name="none">None</string>
     <string name="view_item">Edit</string>

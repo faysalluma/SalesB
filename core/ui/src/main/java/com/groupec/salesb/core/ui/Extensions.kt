@@ -25,3 +25,7 @@ fun RowScope.TableCell(
         textAlign = alignment,
     )
 }
+fun String.truncate(maxLength: Int = 30): String {
+    return if (this.length > maxLength) this.take(maxLength - 3) + "..." else this
+}
+

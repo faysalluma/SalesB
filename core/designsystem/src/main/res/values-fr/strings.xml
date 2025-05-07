@@ -13,6 +13,7 @@
     <string name="enter_your_password">Entrer votre mot de passe</string>
     <string name="enter_password_not_matching">Les mots de passe ne correspondent pas</string>
     <string name="btn_login">Se connecter</string>
+    <string name="label_desc_require">Description *</string>
     <string name="forgot_password">Mot de passe oublié ?</string>
     <string name="btn_reset_password">Réinitialiser le mot de passe</string>
     <string name="temporary_password">Mot de passe provisoire</string>

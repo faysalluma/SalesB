@@ -1,6 +1,7 @@
 package com.groupec.salesb.core.network.retrofit
 
 import com.groupec.salesb.core.model.data.Category
+import com.groupec.salesb.core.model.data.Output
 import com.groupec.salesb.core.model.data.Rayon
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.User
@@ -8,6 +9,7 @@ import com.groupec.salesb.core.network.model.ApiResult
 import com.groupec.salesb.core.network.model.CategoryResponse
 import com.groupec.salesb.core.network.model.ChartDateResponse
 import com.groupec.salesb.core.network.model.ChartDayResponse
+import com.groupec.salesb.core.network.model.OutputResponse
 import com.groupec.salesb.core.network.model.ParameterResponse
 import com.groupec.salesb.core.network.model.ProductResponse
 import com.groupec.salesb.core.network.model.RayonResponse
@@ -73,6 +75,10 @@ interface ApiService {
     suspend fun getPagedCategories(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
     ): Response<CategoryResponse>
 
+    @GET(Constants.GET_OUTPUTS)
+    suspend fun getOutputs(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
+    ): Response<OutputResponse>
+
     @GET(Constants.GET_CATEGORIES)
     suspend fun getCategories(): Response<CategoryResponse>
 
@@ -110,6 +116,9 @@ interface ApiService {
     @POST(Constants.ADD_CATEGORY)
     suspend fun addCategory(@Body category: Category): Response<Unit>
 
+    @POST(Constants.ADD_OUTPUT)
+    suspend fun addOutput(@Body output: Output): Response<Unit>
+
     @POST(Constants.ADD_RAYON)
     suspend fun addRayon(@Body rayon: Rayon): Response<Unit>
 
@@ -129,4 +138,8 @@ interface ApiService {
 
     @DELETE(Constants.DELETE_RAYON)
     suspend fun deleteRayon(@Path("rayonid") rayonid: Int): Response<ApiResult<Boolean>>
+
+    @DELETE(Constants.DELETE_OUTPUT)
+    suspend fun deleteOutput(@Path("outputid") outputid: Int): Response<ApiResult<Boolean>>
+
 }
