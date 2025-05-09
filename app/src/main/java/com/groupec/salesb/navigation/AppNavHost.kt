@@ -163,6 +163,9 @@ fun AppNavHost(
             HomeScreen(
                 navigateToSaleList = {
                     navController.navigate(NavigationItem.MySales.route)
+                },
+                navigateToProduct = {
+                    navController.navigate(NavigationItem.Product.route)
                 }
             )
         }

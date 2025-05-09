@@ -1,6 +1,7 @@
 package com.groupec.salesb.core
 
-import java.math.RoundingMode
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -31,6 +32,21 @@ fun Double.autoRound(): String {
     if (formatted.endsWith(".")) {
         formatted = formatted.dropLast(1)
     }
+    return formatted
+}
+
+fun Double.formatAmount(forceStyleFrenchUseDot: Boolean = false): String {
+    val locale = Locale.getDefault()
+    val symbols = DecimalFormatSymbols(locale)
+
+    val decimalFormat = DecimalFormat("#,##0.00", symbols)
+    var formatted = decimalFormat.format(this)
+
+    if (forceStyleFrenchUseDot && locale.language == "fr") {
+        // Remplacer les espaces insécables (U+00A0 ou U+202F) par des points
+        formatted = formatted.replace(Regex("[\\u00A0\\u202F]"), ".")
+    }
+
     return formatted
 }
 

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreHoriz
@@ -56,4 +57,5 @@ object AppIcons {
     val MoreInfo = Icons.Rounded.Info
     val ChevronRight = Icons.Default.ChevronRight
     val Output = Icons.Rounded.Output
+    val Copy = Icons.Default.ContentCopy
 }
