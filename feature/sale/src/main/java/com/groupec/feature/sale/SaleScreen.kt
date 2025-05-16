@@ -69,6 +69,7 @@ fun SaleScreen(
            LaunchedEffect(Unit) {
                selectedProducts.clear()
                textFieldValues.clear()
+               products.refresh()
                snackbarHostState.showSnackbar(
                    SnackbarVisualsWithState(
                        message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)

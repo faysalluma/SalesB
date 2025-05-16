@@ -30,7 +30,7 @@ class SalePagingSource(
 
                 LoadResult.Page(
                     data = sales,
-                    prevKey = null,  // pour la pagination vers le haut,  if (currentPage == 1) null else currentPage - 1
+                    prevKey =  if (currentPage == 1) null else currentPage - 1,  // ou null si je ne veux pas naviguer vers le haut
                     nextKey = if (sales.isEmpty()) null else currentPage + 1
                 )
             } else {

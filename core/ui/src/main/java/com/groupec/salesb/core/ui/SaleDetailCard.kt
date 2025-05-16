@@ -36,6 +36,7 @@ import com.groupec.salesb.core.designsystem.component.TitleMedium
 import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 import com.groupec.salesb.core.designsystem.theme.Silver
+import com.groupec.salesb.core.formatAmount
 import com.groupec.salesb.core.model.data.Product
 
 
@@ -132,14 +133,14 @@ private fun BottomContentScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val showDialog = rememberSaveable { mutableStateOf(false) }
-    val totalLabel = total.plus(" $devise")
+    val totalLabel = total.toDouble().formatAmount().plus(" $devise")
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         TitleMedium(title = stringResource(R.string.total), modifier = Modifier.padding(top = 8.dp))
         Text(
-            text = total,
+            text = totalLabel,
             style = MaterialTheme.typography.titleLarge
         )
     }

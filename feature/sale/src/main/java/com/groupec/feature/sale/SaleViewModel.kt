@@ -62,7 +62,7 @@ class SaleViewModel @Inject constructor(
             getProductUseCase(query)
                 .map { pagingData ->
                     pagingData.filter { product ->
-                        product.qtestock?.let { it > 0 } ?: true // Keep product with qtestock>0 or null
+                        product.qtestock?.let { it > 0 } ?: true // Keep product with qtestock > 0 or null
                     }
                 }
                 .onCompletion {
