@@ -7,6 +7,7 @@
     <string name="sale_number_and_date">N°: %1$d à %2$s</string>
     <string name="statistic_label_chart">Ventes périodiques</string>
     <string name="product_item_detail">Date : %1$s, Prix : %2$s, Quantité : %3$s, Auteur : %4$s</string>
+    <string name="output_item_detail">Date : %1$s, Prix : %2$s, Auteur : %3$s</string>
     <string name="item_detail">Date: %1$s, Auteur : %2$s</string>
     <string name="none">Aucun</string>
     <string name="view_item">Modifier</string>
@@ -25,10 +26,17 @@
     <string name="sale_item_dialog_title">Vente n° %1$s de %2$s, réalisée le  %3$s par  %4$s.</string>
     <string name="label">Libellé</string>
     <string name="quantity_greater">Quantité supérieur à celle en stock</string>
+    <string name="validate_and_send_invoice">Valider et envoyer la facture par email</string>
     <string name="success_title">Succès</string>
     <string name="error">Erreur !</string>
     <string name="retry">Réessayer</string>
     <string name="search_place_holder">Rechercher ici</string>
     <string name="btn_close">Fermer</string>
     <string name="btn_cancel">Annuler</string>
+    <string name="low_inventory_products">Produits avec faible stock</string>
+    <string name="validate">Valider vente</string>
+    <string name="validate_and_edit_invoice">Valider et Editer facture</string>
+    <string name="validate_and_download_invoice">Valider télécharger la facture</string>
+    <string name="validate_and_print_receipt">Valider et imprimer un recu</string>
+    <string name="validate_and_print_invoice_a4">Valider et imprimer une facture A4</string>
 </resources>

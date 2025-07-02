@@ -7,6 +7,11 @@ import kotlinx.parcelize.Parcelize
 data class Parameter(
     val devise: String = "",
     val raisonsociale: String = "",
+    val adresse: String = "",
+    val telephone: String = "",
+    val email: String ? = "",
+    val ifu: String ? = "",
+    val website: String ? = "",
     val typeentreprise: String = "",
     val offline: Boolean = false,
     val primarycolor: String = "",

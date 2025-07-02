@@ -6,8 +6,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
 import com.groupec.salesb.core.FormUIState
+import com.groupec.salesb.core.print.PrintAction
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.domain.product.DeleteProductUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,15 +18,12 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.domain.sale.SaveSaleUseCase
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
@@ -47,8 +44,8 @@ class SaleViewModel @Inject constructor(
     private val _parameter = MutableStateFlow(Parameter())
     val parameter : StateFlow<Parameter> = _parameter.asStateFlow()
 
-    private val _addSaleUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
-    val addSaleUiState : StateFlow<FormUIState<*>> = _addSaleUiState.asStateFlow()
+    private val _addSaleUiState = MutableStateFlow<FormUIState<Pair<PrintAction, Sale>>>(FormUIState.Idle)
+    val addSaleUiState : StateFlow<FormUIState<Pair<PrintAction, Sale>>> = _addSaleUiState.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -62,7 +59,7 @@ class SaleViewModel @Inject constructor(
             getProductUseCase(query)
                 .map { pagingData ->
                     pagingData.filter { product ->
-                        product.qtestock?.let { it > 0 } ?: true // Keep product with qtestock>0 or null
+                        product.qtestock?.let { it > 0 } ?: true // Keep product with qtestock > 0 or null
                     }
                 }
                 .onCompletion {
@@ -75,12 +72,12 @@ class SaleViewModel @Inject constructor(
         _searchQuery.value = newQuery
     }
 
-    fun addSale(sale: Sale) {
+    fun addSale(sale: Sale, printAction: PrintAction) {
         _addSaleUiState.value = FormUIState.Loading
         viewModelScope.launch {
             when (val result = saveSaleUseCase(sale)) {
                 is Result.Success -> {
-                    _addSaleUiState.value = FormUIState.Success(Unit)
+                    _addSaleUiState.value = FormUIState.Success(Pair(printAction, result.data))
                 }
 
                 is Result.Error -> {

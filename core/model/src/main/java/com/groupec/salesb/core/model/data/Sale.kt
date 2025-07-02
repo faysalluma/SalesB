@@ -13,7 +13,7 @@ data class Sale(
 )
 
 data class SaleDetail(
-    val produitid: Int,
+    val id: Int,
     val libelle: String ? = null,
     val qte: Double,
     val prix: Double

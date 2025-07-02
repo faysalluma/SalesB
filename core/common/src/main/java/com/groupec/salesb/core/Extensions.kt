@@ -1,7 +1,11 @@
 package com.groupec.salesb.core
 
-import java.math.RoundingMode
+import android.content.Context
+import android.graphics.drawable.Drawable
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 /* Replace , by . to have good dougle format */
@@ -31,6 +35,21 @@ fun Double.autoRound(): String {
     if (formatted.endsWith(".")) {
         formatted = formatted.dropLast(1)
     }
+    return formatted
+}
+
+fun Double.formatAmount(forceStyleFrenchUseDot: Boolean = false): String {
+    val locale = Locale.getDefault()
+    val symbols = DecimalFormatSymbols(locale)
+
+    val decimalFormat = DecimalFormat("#,##0.00", symbols)
+    var formatted = decimalFormat.format(this)
+
+    if (forceStyleFrenchUseDot && locale.language == "fr") {
+        // Remplacer les espaces insécables (U+00A0 ou U+202F) par des points
+        formatted = formatted.replace(Regex("[\\u00A0\\u202F]"), ".")
+    }
+
     return formatted
 }
 
@@ -65,10 +84,18 @@ fun String.convertToViewDateFormat(): String {
     return targetFormat.format(date)
 }
 
+
 // Because of BCrypt in Java/Kotlin (for org.mindrot.BCrypt) don't accept $2y$ format
 fun String.fixBCryptHash(): String {
     return this.replace("$2y$", "$2a$")
 }
+
+fun getDrawableResIdIfExists(context: Context, drawableName: String = "logo"): Int? {
+    val resId = context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+    return resId.takeIf { it != 0 }
+}
+
+
 
 
 

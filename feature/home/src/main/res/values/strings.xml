@@ -14,4 +14,7 @@
     <string name="no_data">No data available</string>
     <string name="morning">Morning</string>
     <string name="evening">Evening</string>
+    <string name="profit_label">Profits: %1$s %2$s</string>
+    <string name="output_label">Outputs: %1$s %2$s</string>
+    <string name="products_copied">Products copied</string>
 </resources>

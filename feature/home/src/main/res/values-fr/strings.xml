@@ -13,4 +13,7 @@
     <string name="no_data">Aucune donnée</string>
     <string name="morning">Matin</string>
     <string name="evening">Soir</string>
+    <string name="profit_label">Bénéfices: %1$s %2$s</string>
+    <string name="output_label">Sorties: %1$s %2$s</string>
+    <string name="products_copied">Produits copiés</string>
 </resources>

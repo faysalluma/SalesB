@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tel">Tel :</string>
+    <string name="email">Email :</string>
+    <string name="ifu">Ifu :</string>
+    <string name="date">"Date : "</string>
+    <string name="noticket">Ticket N° :</string>
+    <string name="qte_description">Qte Désignation</string>
+    <string name="price">Prix</string>
+    <string name="amount">MONTANT</string>
+    <string name="nb_product">Nombre d\'articles : </string>
+    <string name="total_sale">TOTAL : </string>
+    <string name="software_message">Logiciel : SalesB</string>
+    <string name="thanks_you">Merci de votre visite !</string>
+</resources>

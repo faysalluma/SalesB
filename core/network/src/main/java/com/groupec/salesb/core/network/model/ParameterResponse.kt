@@ -1,6 +1,7 @@
 package com.groupec.salesb.core.network.model
 
 import com.google.gson.annotations.SerializedName
+import javax.annotation.Nullable
 
 data class ParameterResponse(
     @SerializedName("parameter")
@@ -12,6 +13,21 @@ data class ParamItemResponse(
 
     @SerializedName("raisonsociale")
     val raisonsociale: String,
+
+    @SerializedName("adresse")
+    val adresse: String,
+
+    @SerializedName("telephone")
+    val telephone: String,
+
+    @SerializedName("email")
+    val email: String?,
+
+    @SerializedName("ifu")
+    val ifu: String?,
+
+    @SerializedName("website")
+    val website: String?,
 
     @SerializedName("typeentreprise")
     val typeentreprise: String,

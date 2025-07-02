@@ -127,7 +127,7 @@ fun currentDateString(pattern: String ="yyyy-MM-dd HH:mm:ss") : String {
     return formatter.format(currentDateTime)
 }
 
-suspend fun getNtpDateTime(pattern: String = "yyyy-MM-dd HH:mm:ss"): String? = withContext(
+suspend private fun getNtpDateTime(pattern: String = "yyyy-MM-dd HH:mm:ss"): String? = withContext(
     Dispatchers.IO) {
     return@withContext try {
         val client = NTPUDPClient().apply {
@@ -169,6 +169,17 @@ fun currentDate(pattern: String = "yyyy-MM-dd HH:mm:ss"): Date? {
     val formatter = SimpleDateFormat(pattern, Locale.getDefault())
     val currentDateTimeString = formatter.format(Date())
     return formatter.parse(currentDateTimeString)
+}
+
+fun Date.convertToLocaleDateTimeFormat(): String {
+    val locale = Locale.getDefault()
+    val pattern = if (locale.language.equals("fr", ignoreCase = true)) {
+        "dd/MM/yyyy - HH:mm"
+    } else {
+        "MM/dd/yyyy - HH:mm"
+    }
+    val formatter = SimpleDateFormat(pattern, locale)
+    return formatter.format(this)
 }
 
 // Function to get yesterday's date in yyyy-MM-dd format
