@@ -26,6 +26,7 @@
     <string name="sale_item_dialog_title">Vente n° %1$s de %2$s, réalisée le  %3$s par  %4$s.</string>
     <string name="label">Libellé</string>
     <string name="quantity_greater">Quantité supérieur à celle en stock</string>
+    <string name="validate_and_send_invoice">Valider et envoyer la facture par email</string>
     <string name="success_title">Succès</string>
     <string name="error">Erreur !</string>
     <string name="retry">Réessayer</string>
@@ -33,4 +34,9 @@
     <string name="btn_close">Fermer</string>
     <string name="btn_cancel">Annuler</string>
     <string name="low_inventory_products">Produits avec faible stock</string>
+    <string name="validate">Valider vente</string>
+    <string name="validate_and_edit_invoice">Valider et Editer facture</string>
+    <string name="validate_and_download_invoice">Valider télécharger la facture</string>
+    <string name="validate_and_print_receipt">Valider et imprimer un recu</string>
+    <string name="validate_and_print_invoice_a4">Valider et imprimer une facture A4</string>
 </resources>

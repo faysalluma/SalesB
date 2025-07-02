@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ReceiptLong
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.CheckCircle
@@ -56,6 +57,7 @@ object AppIcons {
     val MinusCircle = Icons.Default.RemoveCircleOutline
     val MoreInfo = Icons.Rounded.Info
     val ChevronRight = Icons.Default.ChevronRight
+    val ChevronDown = Icons.Default.ArrowDropDown
     val Output = Icons.Rounded.Output
     val Copy = Icons.Default.ContentCopy
 }

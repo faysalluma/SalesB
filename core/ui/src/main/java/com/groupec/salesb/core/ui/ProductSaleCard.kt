@@ -38,7 +38,7 @@ fun ProductTableRow(
     Row(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.weight(1f)) {
             TableCell(
-                text = saleDetail?.produitid?.toString() ?: "Id",
+                text = saleDetail?.id?.toString() ?: "Id",
                 weight = column1Weight,
                 alignment = TextAlign.Left,
                 isTitle = isTitle

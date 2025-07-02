@@ -11,9 +11,9 @@ import com.groupec.salesb.core.network.model.ChartDateResponse
 import com.groupec.salesb.core.network.model.ChartDayResponse
 import com.groupec.salesb.core.network.model.OutputResponse
 import com.groupec.salesb.core.network.model.ParameterResponse
-import com.groupec.salesb.core.network.model.ProductReducedResponse
 import com.groupec.salesb.core.network.model.ProductResponse
 import com.groupec.salesb.core.network.model.RayonResponse
+import com.groupec.salesb.core.network.model.SaleItemResponse
 import com.groupec.salesb.core.network.model.SaleResponse
 import com.groupec.salesb.core.network.model.UserItemResponse
 import com.groupec.salesb.core.network.model.UserResponse
@@ -118,7 +118,7 @@ interface ApiService {
     ): Response<ApiResult<Unit>>
 
     @POST(Constants.ADD_SALE)
-    suspend fun addSale(@Body sale: Sale): Response<Unit>
+    suspend fun addSale(@Body sale: Sale): Response<ApiResult<SaleItemResponse>>
 
     @POST(Constants.ADD_CATEGORY)
     suspend fun addCategory(@Body category: Category): Response<Unit>

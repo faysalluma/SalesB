@@ -104,8 +104,9 @@ class RepositoryModule  {
     @Singleton
     fun providerSaleRepository(
         apiService: ApiService,
-        dataStoreManager: DataStoreManager
+        dataStoreManager: DataStoreManager,
+        @ApplicationContext context: Context,
     ) : SaleRepository {
-        return SaleRepositoryImpl(apiService, dataStoreManager)
+        return SaleRepositoryImpl(apiService, dataStoreManager, context)
     }
 }

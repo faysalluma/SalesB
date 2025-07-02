@@ -1,8 +1,11 @@
 package com.groupec.salesb.core
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 /* Replace , by . to have good dougle format */
@@ -81,10 +84,18 @@ fun String.convertToViewDateFormat(): String {
     return targetFormat.format(date)
 }
 
+
 // Because of BCrypt in Java/Kotlin (for org.mindrot.BCrypt) don't accept $2y$ format
 fun String.fixBCryptHash(): String {
     return this.replace("$2y$", "$2a$")
 }
+
+fun getDrawableResIdIfExists(context: Context, drawableName: String = "logo"): Int? {
+    val resId = context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+    return resId.takeIf { it != 0 }
+}
+
+
 
 
 

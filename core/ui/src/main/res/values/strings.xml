@@ -36,4 +36,10 @@
     <string name="btn_close">Close</string>
     <string name="btn_cancel">Cancel</string>
     <string name="low_inventory_products">Low inventory products</string>
+    <string name="validate">Validate Sale</string>
+    <string name="validate_and_edit_invoice">Validate and Edit invoice</string>
+    <string name="validate_and_download_invoice">Validate and download invoice</string>
+    <string name="validate_and_send_invoice">Validate and send invoice by e-mail</string>
+    <string name="validate_and_print_receipt">Validate and print a receipt</string>
+    <string name="validate_and_print_invoice_a4">Validate and print an A4 invoice</string>
 </resources>

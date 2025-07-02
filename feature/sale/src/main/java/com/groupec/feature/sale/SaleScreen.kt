@@ -1,5 +1,15 @@
 package com.groupec.feature.sale
 
+import android.Manifest
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Intent
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +29,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,7 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.groupec.salesb.core.FormUIState
+import com.groupec.salesb.core.print.PrintAction
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DefaultButton
@@ -38,12 +54,17 @@ import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.component.TitleLarge
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Silver
+import com.groupec.salesb.core.getDrawableResIdIfExists
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.SaleDetail
+import com.groupec.salesb.core.print.Print
 import com.groupec.salesb.core.ui.ProductGridAdaptive
 import com.groupec.salesb.core.ui.SaleDetailCard
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SaleScreen(
     snackbarHostState: SnackbarHostState,
@@ -51,6 +72,7 @@ fun SaleScreen(
     viewModel: SaleViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
     val products = viewModel.pagedProducts.collectAsLazyPagingItems()
@@ -62,11 +84,96 @@ fun SaleScreen(
     // For selected Products and handling of multiples textfield created
     val selectedProducts = remember { mutableStateListOf<Pair<Int, Product>>() }
     val textFieldValues = remember { mutableStateMapOf<Int, String>() }
-    var quantityCheck = remember { mutableStateMapOf<Int, Boolean>() }
+    val quantityCheck = remember { mutableStateMapOf<Int, Boolean>() }
+
+    // Bluetooth
+    val bluetoothPrint = Print(context)
+    var savedSale by remember { mutableStateOf<Sale?>(null) }
+
+    val bluetoothPermissions =
+        // Checks if the device has Android 12 or above
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            rememberMultiplePermissionsState(
+                permissions = listOf(
+                    Manifest.permission.BLUETOOTH,
+                    Manifest.permission.BLUETOOTH_ADMIN,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_SCAN,
+                )
+            )
+        } else {
+            rememberMultiplePermissionsState(
+                permissions = listOf(
+                    Manifest.permission.BLUETOOTH,
+                    Manifest.permission.BLUETOOTH_ADMIN,
+                )
+            )
+        }
+
+    val enableBluetoothContract = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == Activity.RESULT_OK) {
+            Log.d("bluetoothLauncher", "Success")
+            savedSale?.let { sale ->
+                scope.launch(Dispatchers.IO) {
+                    bluetoothPrint.print(
+                        getDrawableResIdIfExists(context),
+                        sale = sale,
+                        parameter = parameter
+                    )
+                }
+            }
+        } else {
+            Log.w("bluetoothLauncher", "Failed")
+        }
+    }
+
+    // This intent will open the enable bluetooth dialog
+    val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+    val bluetoothManager = remember { context.getSystemService(BluetoothManager::class.java) }
+    val bluetoothAdapter: BluetoothAdapter? = remember { bluetoothManager.adapter }
 
    when (addSaleUiState) {
        is FormUIState.Success -> {
            LaunchedEffect(Unit) {
+               val (printAction, sale) = (addSaleUiState as FormUIState.Success).data
+               savedSale = sale // Set saved sale
+               when (printAction) {
+                   PrintAction.Thermal -> {
+                       if (bluetoothPermissions.allPermissionsGranted) {
+                           if (bluetoothAdapter?.isEnabled == true) {
+                               // Bluetooth is on print the receipt
+                               scope.launch(Dispatchers.IO) {
+                                   bluetoothPrint.print(
+                                       getDrawableResIdIfExists(context),
+                                       sale = sale,
+                                       parameter = parameter
+                                   )
+                               }
+                           } else {
+                               // Bluetooth is off, ask user to turn it on
+                               enableBluetoothContract.launch(enableBluetoothIntent)
+                           }
+                       } else {
+                           bluetoothPermissions.launchMultiplePermissionRequest()
+                           // Show error message
+                           Toast.makeText(context,"Permission denied for access bluetooth", Toast.LENGTH_SHORT).show()
+                       }
+                   }
+                   PrintAction.Normal -> {
+
+                   }
+                   PrintAction.SendByEmail -> {
+
+                   }
+                   PrintAction.Download -> {
+
+                   }
+                   PrintAction.None -> {
+
+                   }
+               }
                selectedProducts.clear()
                textFieldValues.clear()
                products.refresh()
@@ -180,16 +287,17 @@ fun SaleScreen(
                 quantityCheck = quantityCheck,
                 devise = parameter.devise,
                 isLoading = isLoading,
-                onSave = { total ->
+                onSave = { total, printAction ->
                     val saleDetail = selectedProducts.map { productLine ->
                         val quantity = textFieldValues[productLine.first]
                         SaleDetail(
-                            produitid = productLine.second.id!!,
+                            id = productLine.second.id!!,
                             qte = quantity?.toDouble()?:0.0,
+                            libelle = productLine.second.libelle,
                             prix = productLine.second.prixttc
                         )
                     }
-                    viewModel.addSale(Sale(totalprix = total, details = saleDetail))
+                    viewModel.addSale(Sale(totalprix = total, details = saleDetail), printAction)
                 },
                 onClear = {
                     selectedProducts.clear()
@@ -207,7 +315,7 @@ fun SaleDetailScreen(
     quantityCheck: MutableMap<Int, Boolean>,
     devise: String,
     isLoading: Boolean,
-    onSave: (Double) -> Unit,
+    onSave: (Double, PrintAction) -> Unit,
     onClear: () -> Unit
 ) {
     SaleDetailCard(

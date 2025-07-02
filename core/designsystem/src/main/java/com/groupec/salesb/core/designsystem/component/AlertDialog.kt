@@ -57,6 +57,7 @@ fun AppAlertInfoDialog(
             // Dismiss the dialog when the user clicks outside the dialog or on the back
             // button. If you want to disable that functionality, simply use an empty
             // onDismissRequest.
+            // setShowDialog permet de contrôler l'affichage du dialogue depuis le composant parent.
             setShowDialog?.let { it(false) }
         },
         icon = {
