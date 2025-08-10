@@ -34,6 +34,7 @@
     <string name="label_libelle">Name *</string>
     <string name="label_ref">Reference</string>
     <string name="label_desc" translatable="false">Description</string>
+    <string name="label_desc_require">Description*</string>
     <string name="label_price">Price *</string>
     <string name="label_qte_stock">Stock quantity</string>
     <string name="label_stock_mini">Minimum stock</string>
@@ -57,4 +58,7 @@
     <string name="error">Error!</string>
     <string name="close">Close</string>
     <string name="item_description" translatable="false">Description</string>
+    <!--  Invoicing Form -->
+    <string name="full_name">Full name *</string>
+    <string name="address">Billing address*</string>
 </resources>

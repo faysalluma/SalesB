@@ -9,4 +9,5 @@
     <string name="sale_dialog_title">Vente : %1$d du %2$s </string>
     <string name="view_chart">Voir le graphe</string>
     <string name="no_sales">Aucune vente</string>
+    <string name="print_succesfully">Impression réussie !</string>
 </resources>

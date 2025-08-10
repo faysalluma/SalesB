@@ -11,6 +11,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 import com.groupec.salesb.core.model.data.SaleDetail
+import java.util.Locale
+import com.groupec.salesb.core.ui.R
 
 
 @Composable
@@ -26,19 +28,33 @@ fun ProductSaleHeaderCard() {
 }
 
 @Composable
+fun ProductPrintCard(
+    saleDetail: SaleDetail
+) {
+    ProductTableRow(saleDetail = saleDetail, showAmount = true)
+}
+
+@Composable
+fun ProductHeaderPrintCard() {
+    ProductTableRow(isTitle = true, showAmount = true)
+}
+
+@Composable
 fun ProductTableRow(
     saleDetail: SaleDetail? = null,
-    isTitle: Boolean = false
+    isTitle: Boolean = false,
+    showAmount: Boolean = false
 ) {
-    val column1Weight = .15f
-    val column2Weight = .3f
-    val column3Weight = .25f
-    val column4Weight = .3f
+    val column1Weight = if (showAmount) 0.1f else 0.15f
+    val column2Weight = 0.3f
+    val column3Weight = if (showAmount) 0.175f else 0.25f
+    val column4Weight = if (showAmount) 0.175f else 0.3f
+    val column5Weight = 0.25f
 
     Row(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.weight(1f)) {
             TableCell(
-                text = saleDetail?.produitid?.toString() ?: "Id",
+                text = saleDetail?.id?.toString() ?: "Id",
                 weight = column1Weight,
                 alignment = TextAlign.Left,
                 isTitle = isTitle
@@ -58,8 +74,17 @@ fun ProductTableRow(
                 weight = column4Weight,
                 isTitle = isTitle
             )
+
+            if (showAmount) {
+                TableCell(
+                    text = saleDetail?.let {
+                        String.format(Locale.getDefault(), "%.2f", it.prix * it.qte)
+                    } ?: stringResource(R.string.amount),
+                    weight = column5Weight,
+                    isTitle = isTitle
+                )
+            }
         }
-        // Additional code
     }
     HorizontalDivider()
 }
@@ -70,8 +95,8 @@ fun ProductTableRow(
 fun ProductSaleCardPreview() {
     SalesBAppTheme {
         Column {
-            ProductSaleCardPreview()
             ProductSaleCard(saleDetail = SaleDetail(1, "P1", 2.0, 1.0))
+            ProductHeaderPrintCard()
         }
 
     }

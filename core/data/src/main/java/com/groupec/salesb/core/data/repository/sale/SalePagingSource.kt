@@ -26,11 +26,12 @@ class SalePagingSource(
             val response = api.getSales(currentPage, params.loadSize, searchParams)
             if (response.isSuccessful) {
                 val sales = response.body()?.toSaleList().orEmpty()
-                Log.d("Paging", "Loading page: $currentPage, items: ${sales.size}")
+                //Log.d("Paging", "Loading page: $currentPage, items: ${sales.size}")
+                Log.d("Paging", "Page=$currentPage, sales=${sales.map { it.id }}")
 
                 LoadResult.Page(
                     data = sales,
-                    prevKey = null,  // pour la pagination vers le haut,  if (currentPage == 1) null else currentPage - 1
+                    prevKey =  if (currentPage == 1) null else currentPage - 1,  // ou null si je ne veux pas naviguer vers le haut
                     nextKey = if (sales.isEmpty()) null else currentPage + 1
                 )
             } else {

@@ -6,5 +6,5 @@ import com.groupec.salesb.core.model.data.Sale
 import javax.inject.Inject
 
 class SaveSaleUseCase @Inject constructor(private val saleRepository: SaleRepository) {
-    suspend operator fun invoke(sale: Sale): Result<Unit> = saleRepository.saveSale(sale)
+    suspend operator fun invoke(sale: Sale): Result<Sale> = saleRepository.saveSale(sale)
 }

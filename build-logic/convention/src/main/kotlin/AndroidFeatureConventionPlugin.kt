@@ -11,7 +11,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 apply("gradlePlugins.android.hilt")
             }
 
-
             dependencies {
                 add("implementation", project(":core:designsystem"))
                 add("implementation", project(":core:ui"))
@@ -26,6 +25,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx.hilt.navigation.compose").get())
                 add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
                 add("implementation", libs.findLibrary("retrofit.converterGson").get())
+                add("implementation", libs.findLibrary("accompanist.permissions").get())
             }
         }
     }

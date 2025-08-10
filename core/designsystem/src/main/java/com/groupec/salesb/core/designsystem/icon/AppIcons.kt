@@ -1,23 +1,29 @@
 package com.groupec.salesb.core.designsystem.icon
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ForwardToInbox
 import androidx.compose.material.icons.automirrored.rounded.ReceiptLong
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.PointOfSale
+import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Output
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PointOfSale
 import androidx.compose.material.icons.rounded.Search
@@ -54,4 +60,11 @@ object AppIcons {
     val MinusCircle = Icons.Default.RemoveCircleOutline
     val MoreInfo = Icons.Rounded.Info
     val ChevronRight = Icons.Default.ChevronRight
+    val ChevronDown = Icons.Default.ArrowDropDown
+    val Output = Icons.Rounded.Output
+    val Copy = Icons.Default.ContentCopy
+    val Print = Icons.Filled.Print
+    val Download = Icons.Filled.Download
+    val EditInvoice = Icons.Filled.Description
+    val ShareByEmail = Icons.AutoMirrored.Filled.ForwardToInbox
 }

@@ -4,11 +4,16 @@ plugins {
 }
 
 android {
-    namespace = "com.groupec.salesb.common"
+    namespace = "com.groupec.salesb.core"
 }
 
 dependencies {
+    // Upload
     implementation(libs.commons.net)
+
+    // Convert decimal amount into capital letter
+    implementation(libs.icu4j)
+
     // Test
     testImplementation(libs.kotlinx.coroutines.test)
 }

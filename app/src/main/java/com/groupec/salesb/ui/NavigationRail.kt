@@ -38,7 +38,8 @@ fun MyNavigationRail(navController: NavController, modifier: Modifier = Modifier
         NavigationItem.Home,
         NavigationItem.SaveSale,
         NavigationItem.MySales,
-        NavigationItem.Product
+        NavigationItem.Product,
+        NavigationItem.Outputs
     )
 
     NavigationRail(

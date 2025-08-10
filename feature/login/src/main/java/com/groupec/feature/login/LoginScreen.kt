@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.component.SalesBImage
 import com.groupec.salesb.core.designsystem.component.TitleHeader
 import com.groupec.salesb.core.model.data.User
@@ -84,8 +83,8 @@ fun LoginScreen(
                     }
 
                     TitleHeader(
-                        title = stringResource(id = R.string.title_login, raisonSociale),
-                        detail = stringResource(id = R.string.detail_login)
+                        title = stringResource(id = com.groupec.salesb.core.designsystem.R.string.title_login, raisonSociale),
+                        detail = stringResource(id = com.groupec.salesb.core.designsystem.R.string.detail_login)
                     )
 
                     Spacer(modifier = Modifier.padding(vertical = 16.dp))

@@ -30,7 +30,7 @@ class ProductPagingSource(
 
                 LoadResult.Page(
                     data = products,
-                    prevKey = null,  // pour la pagination vers le haut,  if (currentPage == 1) null else currentPage - 1
+                    prevKey = if (currentPage == 1) null else currentPage - 1,
                     nextKey = if (products.isEmpty()) null else currentPage + 1
                 )
             } else {

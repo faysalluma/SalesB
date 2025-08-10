@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.component.TitleHeader
 import com.groupec.salesb.core.ui.ChangePasswordForm
 
@@ -80,8 +79,8 @@ fun ChangePasswordScreen(
 
             TitleHeader(
                 title =
-                if (firstLoginOrResetPwd) stringResource(id = R.string.update_password_required)
-                else stringResource(id = R.string.title_update_password),
+                if (firstLoginOrResetPwd) stringResource(id = com.groupec.salesb.core.designsystem.R.string.update_password_required)
+                else stringResource(id = com.groupec.salesb.core.designsystem.R.string.title_update_password),
                 textAlign = TextAlign.Center
             )
 

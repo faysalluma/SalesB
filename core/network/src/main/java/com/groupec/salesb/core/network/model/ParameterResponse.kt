@@ -13,6 +13,21 @@ data class ParamItemResponse(
     @SerializedName("raisonsociale")
     val raisonsociale: String,
 
+    @SerializedName("adresse")
+    val adresse: String,
+
+    @SerializedName("telephone")
+    val telephone: String,
+
+    @SerializedName("email")
+    val email: String?,
+
+    @SerializedName("ifu")
+    val ifu: String?,
+
+    @SerializedName("website")
+    val website: String?,
+
     @SerializedName("typeentreprise")
     val typeentreprise: String,
 
@@ -26,5 +41,8 @@ data class ParamItemResponse(
     val secondarycolor: String,
 
     @SerializedName("loadproducts")
-    val loadproducts: Int
+    val loadproducts: Int,
+
+    @SerializedName("tva")
+    val tva: Double
 )

@@ -1,5 +1,15 @@
 package com.groupec.feature.salelist
 
+import android.Manifest
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Intent
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,19 +25,27 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ExperimentalComposeApi
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.convertToServerDateFormat
 import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.designsystem.component.AppCustomDialog
@@ -38,13 +56,22 @@ import com.groupec.salesb.core.designsystem.component.DefaultButton
 import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
+import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.component.TitleLarge
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Silver
+import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Sale
+import com.groupec.salesb.core.print.PrintAction
+import com.groupec.salesb.core.ui.InvoiceAction
+import com.groupec.salesb.core.ui.InvoiceContent
+import com.groupec.salesb.core.ui.InvoicingInfoScreen
 import com.groupec.salesb.core.ui.SaleCardList
 import com.groupec.salesb.core.ui.SaleItemDetailProduct
 
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalComposeUiApi::class,
+    ExperimentalComposeApi::class
+)
 @Composable
 fun SaleListScreen(
     snackbarHostState: SnackbarHostState,
@@ -52,15 +79,82 @@ fun SaleListScreen(
     navigateToSaleChart: (String, String) -> Unit,
     viewModel: SaleListViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
     val sales = viewModel.pagedProducts.collectAsLazyPagingItems()
     val error = (sales.loadState.refresh as? LoadState.Error)?.error?.message
     val parameter by viewModel.parameter.collectAsState()
     var showDialog by rememberSaveable { mutableStateOf(false) }
+    var showInvoiceDialog by rememberSaveable { mutableStateOf(false) }
     var saleGetValue by remember { mutableStateOf<Sale?>(null) }
+    var invoicingGetValue by remember { mutableStateOf<Invoicing?>(null) }
     var startDate by rememberSaveable { mutableStateOf(currentLocalDateString()) }
     var endDate by rememberSaveable { mutableStateOf(currentLocalDateString()) }
+    val thermalPrintUiSate by viewModel.printUiState.collectAsState(FormUIState.Idle)
+    var showInvoice by rememberSaveable { mutableStateOf(false) }
+
+    val bluetoothPermissions =
+        // Checks if the device has Android 12 or above
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            rememberMultiplePermissionsState(
+                permissions = listOf(
+                    Manifest.permission.BLUETOOTH,
+                    Manifest.permission.BLUETOOTH_ADMIN,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_SCAN,
+                )
+            )
+        } else {
+            rememberMultiplePermissionsState(
+                permissions = listOf(
+                    Manifest.permission.BLUETOOTH,
+                    Manifest.permission.BLUETOOTH_ADMIN,
+                )
+            )
+        }
+
+    val enableBluetoothContract = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == Activity.RESULT_OK) {
+            Log.d("bluetoothLauncher", "Success")
+            saleGetValue?.let { sale ->
+                viewModel.printThermalReceipt(
+                    sale = sale,
+                    parameter = parameter
+                )
+            }
+        } else {
+            Log.w("bluetoothLauncher", "Failed")
+        }
+    }
+
+    // This intent will open the enable bluetooth dialog
+    val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+    val bluetoothManager = remember { context.getSystemService(BluetoothManager::class.java) }
+    val bluetoothAdapter: BluetoothAdapter? = remember { bluetoothManager.adapter }
+
+    when (thermalPrintUiSate) {
+        is FormUIState.Success -> {
+            LaunchedEffect(Unit) {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = context.getString(R.string.print_succesfully)
+                    )
+                )
+            }
+        }
+        is FormUIState.Error -> {
+            LaunchedEffect(Unit) {
+                val message =(thermalPrintUiSate as FormUIState.Error).message
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            }
+        }
+        else -> {}
+    }
 
     Box(
         modifier = Modifier
@@ -183,16 +277,76 @@ fun SaleListScreen(
                                 saleGetValue = sale
                                 showDialog = true
                             },
-                            onDelete = { id, libelle ->
-                                /* showDialog = true
-                                 productIdLibelle = Pair(id, libelle)*/
-                            },
+                            onPrintOrShare = { sale, printAction ->
+                                saleGetValue = sale
+                                when (printAction) {
+                                    PrintAction.Normal, PrintAction.Download, PrintAction.SendByEmail -> {
+                                        showInvoiceDialog = true
+                                    }
+                                    PrintAction.Thermal -> {
+                                        if (bluetoothPermissions.allPermissionsGranted) {
+                                            if (bluetoothAdapter?.isEnabled == true) {
+                                                // Bluetooth is on print the receipt
+                                                viewModel.printThermalReceipt(
+                                                    sale = sale,
+                                                    parameter = parameter
+                                                )
+                                            } else {
+                                                // Bluetooth is off, ask user to turn it on
+                                                enableBluetoothContract.launch(enableBluetoothIntent)
+                                            }
+                                        } else {
+                                            bluetoothPermissions.launchMultiplePermissionRequest()
+                                            // Show error message
+                                            Toast.makeText(context,"Permission denied for access bluetooth", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                    else -> {}
+                                }
+                            }
                         )
                     }
 
                     if (showDialog) {
                         AppCustomDialog(setShowDialog = { showDialog = it} ) {
                             SaleItemDetailProduct(sale = saleGetValue, devise = parameter.devise)
+                        }
+                    }
+
+                    if (showInvoiceDialog) {
+                        AppCustomDialog(setShowDialog = { showInvoiceDialog = it} ) {
+                            if (!showInvoice) {
+                                InvoicingInfoScreen { invoicingData ->
+                                    invoicingGetValue = invoicingData
+                                    showInvoice = true
+                                }
+                            } else {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    /* Print Screen for pdf */
+                                    // Composable content to be captured.
+                                    // Here, everything inside below Column will be get captured
+                                    if (saleGetValue != null && invoicingGetValue != null) {
+
+                                        InvoiceAction(
+                                            onChangeInvoiceData = {
+                                                showInvoice = false
+                                            },
+                                            onDownload = { /*TODO*/ },
+                                            onPrint = {
+                                                viewModel.onPrint(context, saleGetValue!!, parameter, invoicingGetValue!!)
+                                            }
+                                        )
+
+                                        InvoiceContent(
+                                            sale = saleGetValue!!,
+                                            parameter = parameter,
+                                            invoicing = invoicingGetValue!!
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }

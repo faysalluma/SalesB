@@ -22,6 +22,11 @@ fun RowScope.TableCell(
             .padding(10.dp)
             .then(if (weight != null) Modifier.weight(weight) else Modifier),
         fontWeight = if (isTitle) FontWeight.Bold else FontWeight.Normal,
-        textAlign = alignment,
+        textAlign = alignment
     )
 }
+
+fun String.truncate(maxLength: Int = 30): String {
+    return if (this.length > maxLength) this.take(maxLength - 3) + "..." else this
+}
+

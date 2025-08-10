@@ -1,5 +1,7 @@
 package com.groupec.salesb.navigation
 
+// import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
+// import com.groupec.salesb.utils.FlipperNavigationLogger
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -22,10 +24,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.groupec.feature.categorydetail.CategoryDetailScreen
 import com.groupec.feature.categorylist.CategoryListScreen
-// import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.forgotpassword.ForgotPasswordScreen
 import com.groupec.feature.login.LoginScreen
+import com.groupec.feature.outputdetail.OutputDetailScreen
+import com.groupec.feature.outputlist.OutputListScreen
 import com.groupec.feature.productdetail.ProductDetailScreen
 import com.groupec.feature.productlist.ProductListScreen
 import com.groupec.feature.rayondetail.RayonDetailScreen
@@ -34,12 +37,12 @@ import com.groupec.feature.sale.SaleScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
 import com.groupec.salesb.core.model.data.Category
+import com.groupec.salesb.core.model.data.Output
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.Rayon
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
-// import com.groupec.salesb.utils.FlipperNavigationLogger
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -160,6 +163,9 @@ fun AppNavHost(
             HomeScreen(
                 navigateToSaleList = {
                     navController.navigate(NavigationItem.MySales.route)
+                },
+                navigateToProduct = {
+                    navController.navigate(NavigationItem.Product.route)
                 }
             )
         }
@@ -322,6 +328,53 @@ fun AppNavHost(
                                 removeSelectedBgColor = !removeSelectedBgColor
                             },
                             refreshRayons = {
+                                refreshList  = !refreshList
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        composable(NavigationItem.Outputs.route) {
+            var selectedOutput by remember { mutableStateOf<Output?>(null) }
+            var refreshList by remember { mutableStateOf(false) }
+            var removeSelectedBgColor by remember { mutableStateOf(false) }
+            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+
+            LaunchedEffect(isRefreshing) {
+                // Show refresh indicator during 1s
+                if (isRefreshing) {
+                    delay(1000)
+                    isRefreshing = false
+                }
+            }
+
+            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+                refreshList  = !refreshList
+                isRefreshing = true
+            }) {
+                Row {
+                    Row(Modifier.weight(0.4f)) {
+                        OutputListScreen(
+                            snackbarHostState = snackbarHostState,
+                            refreshList = refreshList,
+                            removeSelectedBgColor = removeSelectedBgColor,
+                            onViewDetail = { output ->
+                                selectedOutput = output
+                            }
+                        )
+                        VerticalDivider()
+                    }
+
+                    Box(Modifier.weight(0.6f)) {
+                        OutputDetailScreen(
+                            snackbarHostState = snackbarHostState,
+                            output = selectedOutput,
+                            removeSelectedBgColor = {
+                                removeSelectedBgColor = !removeSelectedBgColor
+                            },
+                            refreshList = {
                                 refreshList  = !refreshList
                             }
                         )

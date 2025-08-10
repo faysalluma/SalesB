@@ -6,6 +6,6 @@ import com.groupec.salesb.core.model.data.Sale
 import kotlinx.coroutines.flow.Flow
 
 interface SaleRepository {
-    suspend fun saveSale(sale: Sale) : Result<Unit>
+    suspend fun saveSale(sale: Sale) : Result<Sale>
     fun getPagedProducts(searchParams: Map<String, String>) : Flow<PagingData<Sale>>
 }

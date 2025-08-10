@@ -10,6 +10,7 @@ fun ParameterResponse.toParameter(): Parameter {
 }
 
 fun ParamItemResponse.toParameter(): Parameter {
-    return Parameter(devise = devise, raisonsociale = raisonsociale, typeentreprise = typeentreprise,
-        offline = (offline == 1), primarycolor = primarycolor, secondarycolor = secondarycolor, loadproducts = (loadproducts == 1))
+    return Parameter(devise = devise, raisonsociale = raisonsociale, adresse = adresse, email = email,
+        telephone = telephone, ifu = ifu, website = website, typeentreprise = typeentreprise, offline = (offline == 1),
+        primarycolor = primarycolor, secondarycolor = secondarycolor, loadproducts = (loadproducts == 1), tva = tva)
 }

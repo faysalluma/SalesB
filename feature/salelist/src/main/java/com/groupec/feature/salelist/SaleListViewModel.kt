@@ -1,44 +1,49 @@
 package com.groupec.feature.salelist
 
+import android.content.Context
+import android.print.PrintManager
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.map
+import com.groupec.salesb.core.BitmapPrintAdapter
 import com.groupec.salesb.core.FormUIState
-import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.currentDateString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import com.groupec.salesb.core.domain.product.GetProductUseCase
-import com.groupec.salesb.core.model.data.Product
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
+import com.groupec.salesb.core.domain.sale.GenerateInvoicePdfUseCase
 import com.groupec.salesb.core.domain.sale.GetSaleUseCase
-import com.groupec.salesb.core.domain.sale.SaveSaleUseCase
+import com.groupec.salesb.core.getDrawableResIdIfExists
+import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
+import com.groupec.salesb.core.print.Print
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.onStart
 
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 class SaleListViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val getSaleUseCase:GetSaleUseCase,
     private val getParameterUseCase: GetParameterUseCase,
+    private val generateInvoicePdfUseCase: GenerateInvoicePdfUseCase
 ) : ViewModel() {
 
     private val defaultDate = currentDateString(pattern = "yyyy-MM-dd")
@@ -53,6 +58,11 @@ class SaleListViewModel @Inject constructor(
 
     private val _parameter = MutableStateFlow(Parameter())
     val parameter : StateFlow<Parameter> = _parameter.asStateFlow()
+
+    // Bluetooth
+    val bluetoothPrint = Print(context)
+    private val _printUiState = MutableSharedFlow<FormUIState<Unit>>(replay = 0)
+    val printUiState: SharedFlow<FormUIState<Unit>> = _printUiState.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -88,6 +98,33 @@ class SaleListViewModel @Inject constructor(
 
     fun updateEndDateQuery(newQuery: String) {
         _endDate.value = newQuery
+    }
+
+    fun printThermalReceipt(sale: Sale, parameter: Parameter) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _printUiState.emit(FormUIState.Loading)
+
+            val result = bluetoothPrint.printWithResult(
+                getDrawableResIdIfExists(context),
+                sale = sale,
+                parameter = parameter
+            )
+            if (result.isSuccess) {
+                _printUiState.emit(FormUIState.Success(Unit))
+            } else {
+                _printUiState.emit(FormUIState.Error(result.exceptionOrNull()?.message ?: "Unknown error"))
+            }
+        }
+    }
+
+    fun onPrint(activityContext: Context, sale: Sale, parameter: Parameter, invoicing: Invoicing) {
+        viewModelScope.launch {
+            val pdfBytes = generateInvoicePdfUseCase(activityContext, sale, parameter, invoicing)
+            val printAdapter = BitmapPrintAdapter(pdfBytes)
+
+            val printManager = activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager
+            printManager.print("MonPDF", printAdapter, null)
+        }
     }
 
 }

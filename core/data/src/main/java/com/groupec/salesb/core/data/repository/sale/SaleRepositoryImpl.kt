@@ -1,32 +1,44 @@
 package com.groupec.salesb.core.data.repository.sale
 
+import android.content.Context
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.data.R
+import com.groupec.salesb.core.data.model.toSale
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.network.retrofit.ApiService
-import com.groupec.salesb.core.network.retrofit.common.executeApiCall
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class SaleRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-    private val dataStoreManager: DataStoreManager
+    private val dataStoreManager: DataStoreManager,
+    private val context: Context
 ) : SaleRepository {
-    override suspend fun saveSale(sale: Sale): Result<Unit> {
-        val saleValue = sale.copy(
-            userid = dataStoreManager.userFlow.first().id.toInt()
-        )
-        return executeApiCall(
-            apiCall = {
-                apiService.addSale(saleValue)
+    override suspend fun saveSale(sale: Sale): Result<Sale> {
+        return try {
+            val saleValue = sale.copy(
+                userid = dataStoreManager.userFlow.first().id.toInt()
+            )
+            val response =  apiService.addSale(saleValue)
+            if (response.isSuccessful) {
+                response.body()?.let { result ->
+                    val sales = result.data!!.toSale()
+                    Result.Success(sales)
+                } ?: Result.Error(Exception(context.getString(R.string.error_empty_response)))
+            } else {
+                Result.Error(HttpException(response))
             }
-        )
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
     override fun getPagedProducts(searchParams: Map<String, String>): Flow<PagingData<Sale>> {

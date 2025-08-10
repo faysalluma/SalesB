@@ -5,10 +5,20 @@
     <string name="week">Cette semaine</string>
     <string name="month">Ce mois</string>
     <string name="view_stat_periodic">Voir les statistiques périodiques (total ventes et top 3 des produits les plus vendus)</string>
-    <string name="total_entrie_benefit">Voir les statistiques non périodiques (total produits et produits avec faible stock)</string>
+    <string name="view_stat_non_periodic">Voir les statistiques non périodiques (total produits et produits avec faible stock)</string>
     <string name="stat_chart">Voir les graphes de statistiques sur l\'écran d\'accueil</string>
     <string name="authorize_add">"Autoriser l'ajout "</string>
     <string name="authorize_edit">Autoriser la modification</string>
     <string name="authorize_delete">Autoriser la suppression</string>
     <string name="authorize_view">Autoriser la visualisation</string>
+
+    <!-- For generating pdf -->
+    <string name="billing_address">Adresse de facturation</string>
+    <string name="date_of_checkout">Date de passage en caisse :</string>
+    <string name="invoice_no">N° de facture :</string>
+    <string name="invoice_date">Date de facturation :</string>
+    <string name="invoice_summary">Récapitulatif de votre facture - %d article(s)</string>
+    <string name="infos_tva">TVA : %s</string>
+    <string name="total_sale_view">TOTAL : %s</string>
+    <string name="etablish_invoice_message">Arrêté la présente facture à la somme de : %s.</string>
 </resources>

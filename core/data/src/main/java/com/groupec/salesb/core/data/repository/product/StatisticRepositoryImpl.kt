@@ -4,6 +4,7 @@ import com.groupec.salesb.core.data.model.toProductList
 import com.groupec.salesb.core.dayMonth
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.network.retrofit.ApiService
+import com.groupec.salesb.core.network.retrofit.common.safeApiCall
 import com.groupec.salesb.core.network.retrofit.common.safeApiCallGetResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -38,6 +39,17 @@ class StatisticRepositoryImpl @Inject constructor(
         emit(result)
     }.flowOn(Dispatchers.IO)
 
+    override fun getTotalAmountOutputs(startDate: String, endDate: String): Flow<Double> = flow {
+        val result = safeApiCallGetResult(
+            apiCall = { apiService.getTotalAmountOutputs(startDate, endDate) },
+            transform = { response ->
+                response.data ?: 0.0
+            },
+            default = 0.0
+        )
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
     override fun getTotalProducts(): Flow<Int> = flow {
         val result = safeApiCallGetResult(
             apiCall = { apiService.getTotalProducts() },
@@ -60,6 +72,16 @@ class StatisticRepositoryImpl @Inject constructor(
             )
             emit(result)
         }.flowOn(Dispatchers.IO)
+
+    override fun getProductsWithLowInventory(): Flow<List<Product>> = flow {
+        val result = safeApiCall(
+            apiCall = { apiService.getProductsWithLowInventory() },
+            transform = { response ->
+                response.toProductList()
+            }
+        )
+        emit(result)
+    }.flowOn(Dispatchers.IO)
 
     override fun getAlertSeuil(): Flow<Int> = flow {
         val result = safeApiCallGetResult(

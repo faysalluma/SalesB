@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.UserStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,6 +22,11 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         // Parameters key
         private val DEVISE_KEY = stringPreferencesKey("device")
         private val RAISON_SOCIAL_KEY = stringPreferencesKey("raisonsociale")
+        private val ADRESSE_KEY = stringPreferencesKey("adresse")
+        private val TELEPHONE_KEY = stringPreferencesKey("telephone")
+        private val EMAIL_KEY = stringPreferencesKey("email")
+        private val IFU_KEY = stringPreferencesKey("ifu")
+        private val WEBSITE_KEY = stringPreferencesKey("website")
         private val TYPE_ENTREPRISE_KEY = stringPreferencesKey("typeentreprise")
         private val OFFLINE_KEY = booleanPreferencesKey("offline")
         private val PRIMARY_COLOR_KEY = stringPreferencesKey("primarycolor")
@@ -45,6 +49,11 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             Parameter(
                 preferences[DEVISE_KEY] ?: "",
                 preferences[RAISON_SOCIAL_KEY] ?: "",
+                preferences[ADRESSE_KEY] ?: "",
+                preferences[TELEPHONE_KEY] ?: "",
+                preferences[EMAIL_KEY] ?: "",
+                preferences[IFU_KEY] ?: "",
+                preferences[WEBSITE_KEY] ?: "",
                 preferences[TYPE_ENTREPRISE_KEY] ?: "",
                 preferences[OFFLINE_KEY] ?: false,
                 preferences[PRIMARY_COLOR_KEY] ?: "",
@@ -70,6 +79,11 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         context.dataStore.edit { datastore ->
             datastore[DEVISE_KEY] = parameter.devise
             datastore[RAISON_SOCIAL_KEY] = parameter.raisonsociale
+            datastore[ADRESSE_KEY] = parameter.adresse
+            datastore[TELEPHONE_KEY] = parameter.telephone
+            datastore[EMAIL_KEY] = parameter.email ?: ""
+            datastore[IFU_KEY] = parameter.ifu ?: ""
+            datastore[WEBSITE_KEY] = parameter.website ?: ""
             datastore[TYPE_ENTREPRISE_KEY] = parameter.typeentreprise
             datastore[OFFLINE_KEY] = parameter.offline
             datastore[PRIMARY_COLOR_KEY] = parameter.primarycolor
