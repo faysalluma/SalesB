@@ -1,6 +1,7 @@
 package com.groupec.salesb.core.designsystem.icon
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ForwardToInbox
 import androidx.compose.material.icons.automirrored.rounded.ReceiptLong
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowBack
@@ -10,11 +11,13 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.PointOfSale
+import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
@@ -60,4 +63,8 @@ object AppIcons {
     val ChevronDown = Icons.Default.ArrowDropDown
     val Output = Icons.Rounded.Output
     val Copy = Icons.Default.ContentCopy
+    val Print = Icons.Filled.Print
+    val Download = Icons.Filled.Download
+    val EditInvoice = Icons.Filled.Description
+    val ShareByEmail = Icons.AutoMirrored.Filled.ForwardToInbox
 }

@@ -5,7 +5,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.data.model.toCategorieList
-import com.groupec.salesb.core.data.repository.product.ProductPagingSource
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.model.data.Category
 import com.groupec.salesb.core.network.retrofit.ApiService

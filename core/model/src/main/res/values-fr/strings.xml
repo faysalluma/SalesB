@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quantity_view">Quantité</string>
+    <string name="amount_view">Montant</string>
+    <string name="price_view">Prix</string>
+    <string name="label_view">Libellé</string>
+</resources>

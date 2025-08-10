@@ -1,10 +1,7 @@
 package com.groupec.salesb.core
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.Uri
-import android.os.Build
 import android.provider.OpenableColumns
 import java.io.File
 import java.io.FileOutputStream

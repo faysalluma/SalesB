@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quantity">@string/quantity_view</string>
+    <string name="amount">@string/amount_view</string>
+    <string name="price">@string/price_view</string>
+    <string name="label">@string/label_view</string>
+    <string name="total_sales">@string/total_sale_view</string>
+</resources>

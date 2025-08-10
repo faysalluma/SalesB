@@ -1,7 +1,6 @@
 package com.groupec.salesb.core
 
 import android.content.Context
-import com.groupec.salesb.common.R
 
 enum class Privileges(val values: Map<Int, Approval>) {
     Home(

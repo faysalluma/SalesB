@@ -1,11 +1,15 @@
 package com.groupec.salesb.core
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Bitmap.createBitmap
+import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import androidx.core.content.ContextCompat
+import com.ibm.icu.text.RuleBasedNumberFormat
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 /* Replace , by . to have good dougle format */
@@ -38,6 +42,8 @@ fun Double.autoRound(): String {
     return formatted
 }
 
+// Formatter pour afficher le montant en chaîne de caractères avec deux décimales, selon la locale par défaut du système
+// En français, le séparateur de milliers est un espace, remplace l'espace par point si forceStyleFrenchUseDot
 fun Double.formatAmount(forceStyleFrenchUseDot: Boolean = false): String {
     val locale = Locale.getDefault()
     val symbols = DecimalFormatSymbols(locale)
@@ -95,7 +101,60 @@ fun getDrawableResIdIfExists(context: Context, drawableName: String = "logo"): I
     return resId.takeIf { it != 0 }
 }
 
+fun getBitmapFromVectorDrawable(context: Context, drawableId: Int): Bitmap {
+    val drawable: Drawable = ContextCompat.getDrawable(context, drawableId)!!
 
+    val bitmap = createBitmap(
+        drawable.intrinsicWidth,
+        drawable.intrinsicHeight,
+        Bitmap.Config.ARGB_8888
+    )
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
 
+    return bitmap
+}
 
+fun Double.toPercentFormat() = "${(this * 100).toInt()} %"
+
+fun Double.toWordsWithIcuRespectingFrOrEn(): String {
+    val locale = if (Locale.getDefault().language == "fr") Locale.FRENCH else Locale.ENGLISH
+    val formatter = RuleBasedNumberFormat(locale, RuleBasedNumberFormat.SPELLOUT)
+
+    val euros = this.toInt()
+    val cents = ((this - euros) * 100).toInt()
+
+    val euroLabel = if (locale.language == "fr") " euro" else " euro"
+    val centLabel = if (locale.language == "fr") " centime" else " cent"
+
+    val euroPart = formatter.format(euros) + euroLabel + if (euros > 1 && locale.language == "fr") "s" else ""
+    val centPart = if (cents > 0) {
+        val plural = if (cents > 1) "s" else ""
+        " and ${formatter.format(cents)}$centLabel$plural"
+    } else ""
+
+    return euroPart + centPart
+}
+
+fun Double.toWordsWithIcuRespectingLocaleAndCurrency(
+    mainUnit: String = "euro",
+    subUnit: String? = "centime" // null si la devise n’a pas de sous-unité
+): String {
+    val locale = if (Locale.getDefault().language == "fr") Locale.FRENCH else Locale.ENGLISH
+    val formatter = RuleBasedNumberFormat(locale, RuleBasedNumberFormat.SPELLOUT)
+
+    val mainValue = this.toInt()
+    val subValue = ((this - mainValue) * 100).toInt()
+
+    val mainLabel = " $mainUnit" + if (locale.language == "fr" && mainValue > 1) "s" else ""
+    val mainPart = formatter.format(mainValue) + mainLabel
+
+    val subPart = if (subUnit != null && subValue > 0) {
+        val subLabel = " $subUnit" + if (locale.language == "fr" && subValue > 1) "s" else ""
+        (if (locale.language == "fr") " et " else " and ") + formatter.format(subValue) + subLabel
+    } else ""
+
+    return mainPart + subPart
+}
 

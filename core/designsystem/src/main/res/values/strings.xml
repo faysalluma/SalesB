@@ -58,4 +58,7 @@
     <string name="error">Error!</string>
     <string name="close">Close</string>
     <string name="item_description" translatable="false">Description</string>
+    <!--  Invoicing Form -->
+    <string name="full_name">Full name *</string>
+    <string name="address">Billing address*</string>
 </resources>

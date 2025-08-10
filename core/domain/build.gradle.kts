@@ -14,4 +14,5 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.itext7.core)
 }

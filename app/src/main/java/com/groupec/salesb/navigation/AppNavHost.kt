@@ -1,5 +1,7 @@
 package com.groupec.salesb.navigation
 
+// import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
+// import com.groupec.salesb.utils.FlipperNavigationLogger
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -22,7 +24,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.groupec.feature.categorydetail.CategoryDetailScreen
 import com.groupec.feature.categorylist.CategoryListScreen
-// import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.forgotpassword.ForgotPasswordScreen
 import com.groupec.feature.login.LoginScreen
@@ -42,7 +43,6 @@ import com.groupec.salesb.core.model.data.Rayon
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
-// import com.groupec.salesb.utils.FlipperNavigationLogger
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)

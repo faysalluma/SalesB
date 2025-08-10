@@ -1,7 +1,6 @@
 package com.groupec.salesb.core
 
 import android.content.Context
-import com.groupec.salesb.common.R
 
 enum class Period(val titleRes: Int, val startDate: String, val endDate: String = startDate) {
     Yesterday(R.string.yesterday, getYesterdayDate()),

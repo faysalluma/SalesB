@@ -55,7 +55,6 @@ import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.core.ui.ProductsWithLowInventoryList
 import com.groupec.salesb.core.ui.StatisticCard
 import com.groupec.salesb.core.ui.StatisticChart
-import kotlin.reflect.KFunction0
 
 @Composable
 fun HomeScreen(

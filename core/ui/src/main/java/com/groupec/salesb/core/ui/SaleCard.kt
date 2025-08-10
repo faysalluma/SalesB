@@ -1,67 +1,40 @@
 package com.groupec.salesb.core.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.groupec.salesb.core.dayMonthYear
+import com.groupec.salesb.core.convertToLocaleDateTimeFormat
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
-import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
-import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.SaleDetail
-import com.groupec.salesb.core.toDate
-import com.groupec.salesb.core.toDateString
+import com.groupec.salesb.core.print.PrintAction
 
 @Composable
 fun SaleCard(
     sale: Sale,
     onViewDetail: (Sale) -> Unit,
-    onDelete: (Int, String) -> Unit
+    onPrintOrShare: (Sale, PrintAction) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -91,19 +64,45 @@ fun SaleCard(
                                 expanded = false // Close DropdownMenuItem
                             }
                         )
-                        /*DropdownMenuItem(
+                        DropdownMenuItem(
                             leadingIcon = {
                                 Icon(
-                                    imageVector = AppIcons.Delete,
-                                    contentDescription = "Delete Icon"
+                                    imageVector = AppIcons.Print,
+                                    contentDescription = "Print a receipt"
                                 )
                             },
-                            text = { Text(stringResource(R.string.delete_item), color = Black) },
+                            text = { Text(stringResource(R.string.print_receipt), color = Black) },
                             onClick = {
-                                onDelete(sale.id?:0, sale.id.toString())
+                                onPrintOrShare(sale, PrintAction.Thermal)
                                 expanded = false // Close DropdownMenuItem
                             }
-                        )*/
+                        )
+                        DropdownMenuItem(
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = AppIcons.EditInvoice,
+                                    contentDescription = "Edit A4 invoice"
+                                )
+                            },
+                            text = { Text(stringResource(R.string.edit_invoice_a4), color = Black) },
+                            onClick = {
+                                onPrintOrShare(sale, PrintAction.Normal)
+                                expanded = false // Close DropdownMenuItem
+                            }
+                        )
+                        DropdownMenuItem(
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = AppIcons.ShareByEmail,
+                                    contentDescription = "Send invoice by e-mail"
+                                )
+                            },
+                            text = { Text(stringResource(R.string.send_invoice), color = Black) },
+                            onClick = {
+                                onPrintOrShare(sale, PrintAction.SendByEmail)
+                                expanded = false // Close DropdownMenuItem
+                            }
+                        )
                     }
                 }
             }
@@ -136,9 +135,7 @@ fun TableRow(
                 isTitle = isTitle
             )
             TableCell(
-                text =  sale?.datevente?.toDateString(
-                    format = "dd/MM/yyyy  HH:mm:ss"
-                ) ?: "Date" ,
+                text =  sale?.datevente?.convertToLocaleDateTimeFormat() ?: "Date" ,
                 weight = column2Weight,
                 isTitle = isTitle
             )
@@ -181,7 +178,7 @@ fun SaleCardPreview() {
                     details = listOf(SaleDetail(1,"P1", 2.0, 1.0))
                 ),
                 onViewDetail = {},
-                onDelete = { id, libelle ->
+                onPrintOrShare = { s, printAction ->
                 }
             )
         }

@@ -1,7 +1,6 @@
 package com.groupec.salesb.core.network.model
 
 import com.google.gson.annotations.SerializedName
-import javax.annotation.Nullable
 
 data class ParameterResponse(
     @SerializedName("parameter")
@@ -42,5 +41,8 @@ data class ParamItemResponse(
     val secondarycolor: String,
 
     @SerializedName("loadproducts")
-    val loadproducts: Int
+    val loadproducts: Int,
+
+    @SerializedName("tva")
+    val tva: Double
 )

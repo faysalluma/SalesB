@@ -6,7 +6,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
-import android.util.DisplayMetrics
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.dantsu.escposprinter.EscPosPrinter
@@ -16,6 +15,7 @@ import com.groupec.salesb.core.convertToLocaleDateTimeFormat
 import com.groupec.salesb.core.formatAmount
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
+import com.groupec.salesb.core.toPercentFormat
 import java.util.Locale
 
 
@@ -42,6 +42,27 @@ class Print(
             }
         }
     }
+
+    fun printWithResult(
+        logoRes: Int? = null,
+        sale: Sale,
+        parameter: Parameter
+    ): Result<Unit> {
+        return try {
+            val printerConnection = BluetoothPrintersConnections.selectFirstPaired()
+            if (printerConnection != null) {
+                val printer = EscPosPrinter(printerConnection, 203, 48f, 32)
+                val formattedText = createFormattedText(printer, logoRes, sale, parameter)
+                printer.printFormattedText(formattedText)
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("The printer is not connected !!"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 
     private fun createFormattedText(
         printer: EscPosPrinter,
@@ -101,7 +122,7 @@ class Print(
             append("[L]\n")
 
             // Products list with header
-            append("[L]<b>"+ context.getString(R.string.qte_description) +
+            /*append("[L]<b>"+ context.getString(R.string.qte_description) +
                     "[C]"+ context.getString(R.string.price) +
                     "[R]"+ context.getString(R.string.amount) + "</b>\n"
             )
@@ -112,6 +133,23 @@ class Print(
                         "[C]"+ productItem.prix +
                         "[R]"+ productItem.prix.times(productItem.qte) + "\n"
                 )
+            }*/
+            append("[L]<b>"+ context.getString(R.string.description) + "</b>\n")
+            append("[C]<b>"+ context.getString(R.string.qte_price) +
+                    "[R]"+ context.getString(R.string.amount) + "</b>\n"
+            )
+            // Ligne separator
+            append("[C]--------------------------------\n")
+
+            sale.details.forEach { productItem ->
+                append("[L]"+ productItem.qte + " " + productItem.libelle +
+                        "[C]"+ productItem.prix +
+                        "[R]"+ productItem.prix.times(productItem.qte) + "\n"
+                )
+                append("[L]"+ productItem.libelle + "\n")
+                append("[C]"+ productItem.qte + "   " + productItem.prix +
+                       "[R]"+   (productItem.qte*productItem.prix).formatAmount() + "\n"
+                )
             }
 
             // Ligne separator
@@ -119,7 +157,8 @@ class Print(
             append("[C]--------------------------------\n")
 
             // Footer
-            append("[L]"+ context.getString(R.string.nb_product) + sale.details.size+ "\n")
+            append("[L]"+ context.getString(R.string.nb_product) + sale.details.size+
+                   "[R]"+ context.getString(R.string.tva, parameter.tva.toPercentFormat()) + "\n")
             append("[L]\n")
             append("[L]<b><font size='tall'>"+ context.getString(R.string.total_sale) +
                     sale.details.map { it.prix * it.qte }.reduce { acc, value -> acc + value }.formatAmount() + " " +

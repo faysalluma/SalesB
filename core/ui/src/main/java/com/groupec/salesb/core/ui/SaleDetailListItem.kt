@@ -14,10 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -31,12 +27,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.groupec.salesb.core.autoRound
-import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.component.IconMinus
 import com.groupec.salesb.core.designsystem.component.IconPlus
 import com.groupec.salesb.core.designsystem.component.TextNormal
 import com.groupec.salesb.core.designsystem.component.TitleSmall
-import com.groupec.salesb.core.designsystem.component.isValidEmail
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.normalizeDecimalSeparator

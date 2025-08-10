@@ -8,8 +8,6 @@ import org.apache.commons.net.ntp.TimeInfo
 import java.net.InetAddress
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Calendar.SUNDAY
 import java.util.Date
@@ -171,12 +169,12 @@ fun currentDate(pattern: String = "yyyy-MM-dd HH:mm:ss"): Date? {
     return formatter.parse(currentDateTimeString)
 }
 
-fun Date.convertToLocaleDateTimeFormat(): String {
+fun Date.convertToLocaleDateTimeFormat(excludeTime: Boolean = false): String {
     val locale = Locale.getDefault()
     val pattern = if (locale.language.equals("fr", ignoreCase = true)) {
-        "dd/MM/yyyy - HH:mm"
+       if (!excludeTime) "dd/MM/yyyy - HH:mm" else  "dd/MM/yyyy"
     } else {
-        "MM/dd/yyyy - HH:mm"
+        if (!excludeTime) "MM/dd/yyyy - HH:mm" else  "MM/dd/yyyy"
     }
     val formatter = SimpleDateFormat(pattern, locale)
     return formatter.format(this)

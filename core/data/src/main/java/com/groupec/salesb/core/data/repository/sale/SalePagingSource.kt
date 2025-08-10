@@ -26,7 +26,8 @@ class SalePagingSource(
             val response = api.getSales(currentPage, params.loadSize, searchParams)
             if (response.isSuccessful) {
                 val sales = response.body()?.toSaleList().orEmpty()
-                Log.d("Paging", "Loading page: $currentPage, items: ${sales.size}")
+                //Log.d("Paging", "Loading page: $currentPage, items: ${sales.size}")
+                Log.d("Paging", "Page=$currentPage, sales=${sales.map { it.id }}")
 
                 LoadResult.Page(
                     data = sales,

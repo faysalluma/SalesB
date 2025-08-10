@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.UserStore
 import dagger.hilt.android.qualifiers.ApplicationContext

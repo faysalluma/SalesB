@@ -161,18 +161,7 @@ fun SaleScreen(
                            Toast.makeText(context,"Permission denied for access bluetooth", Toast.LENGTH_SHORT).show()
                        }
                    }
-                   PrintAction.Normal -> {
-
-                   }
-                   PrintAction.SendByEmail -> {
-
-                   }
-                   PrintAction.Download -> {
-
-                   }
-                   PrintAction.None -> {
-
-                   }
+                   else -> {}
                }
                selectedProducts.clear()
                textFieldValues.clear()

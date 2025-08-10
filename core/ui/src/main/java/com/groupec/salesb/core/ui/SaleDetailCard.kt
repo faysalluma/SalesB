@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,10 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,18 +35,14 @@ import com.groupec.salesb.core.designsystem.component.AppCustomDialog
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.DefaultButton
 import com.groupec.salesb.core.designsystem.component.EmptyScreen
-import com.groupec.salesb.core.designsystem.component.IconTextButton
-import com.groupec.salesb.core.designsystem.component.Position
 import com.groupec.salesb.core.designsystem.component.TextNormal
 import com.groupec.salesb.core.designsystem.component.TitleHeader
 import com.groupec.salesb.core.designsystem.component.TitleLarge
 import com.groupec.salesb.core.designsystem.component.TitleMedium
-import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.LightGreen
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 import com.groupec.salesb.core.designsystem.theme.Silver
-import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.formatAmount
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.print.PrintAction
@@ -225,57 +216,12 @@ private fun BottomContentScreen(
                         focusManager.clearFocus()
                     }
 
-                    Box {
-                        val spacer = 10.dp
-                        IconTextButton(
-                            text = stringResource(R.string.validate_and_edit_invoice),
-                            position = Position.Right,
-                            contentPadding = PaddingValues(16.dp),
-                            icon = {
-                                Icon(imageVector = AppIcons.ChevronDown, contentDescription = "Arrow down")
-                            }
-                        ) {
-                            expanded = true
-                        }
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            modifier = Modifier.background(White)
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.validate_and_print_receipt)) },
-                                onClick = {
-                                    onSave(total.toDouble(), PrintAction.Thermal)
-                                    // expanded = false // Close DropdownMenuItem
-
-                                }
-                            )
-
-                            HorizontalDivider(modifier = Modifier.padding(vertical = spacer))
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.validate_and_print_invoice_a4)) },
-                                onClick = {
-                                    onSave(total.toDouble(), PrintAction.Normal)
-                                }
-                            )
-
-                            HorizontalDivider(modifier = Modifier.padding(vertical = spacer))
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.validate_and_send_invoice)) },
-                                onClick = {
-                                    onSave(total.toDouble(), PrintAction.SendByEmail)
-                                }
-                            )
-
-                            HorizontalDivider(modifier = Modifier.padding(vertical = spacer))
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.validate_and_download_invoice)) },
-                                onClick = {
-                                    onSave(total.toDouble(), PrintAction.Download)
-                                    expanded = false // Close DropdownMenuItem
-                                }
-                            )
-                        }
+                    DefaultButton(
+                        modifier = Modifier.wrapContentSize(),
+                        text = stringResource(R.string.validate_and_print_receipt)
+                    ) {
+                        onSave(total.toDouble(), PrintAction.Thermal)
+                        showDialog.value = false
                     }
 
                     DefaultButton(
