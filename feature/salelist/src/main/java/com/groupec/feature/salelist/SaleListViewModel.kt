@@ -26,6 +26,7 @@ import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.print.Print
+import com.groupec.salesb.core.sendEmailWithAttachment
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,6 +37,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
+import java.io.File
 
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -124,6 +126,22 @@ class SaleListViewModel @Inject constructor(
 
             val printManager = activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager
             printManager.print("MonPDF", printAdapter, null)
+        }
+    }
+
+    fun sendByEmail(activityContext: Context, sale: Sale, parameter: Parameter, invoicing: Invoicing) {
+        viewModelScope.launch {
+            val pdfBytes = generateInvoicePdfUseCase(activityContext, sale, parameter, invoicing)
+            val file = File(activityContext.cacheDir, "invoice.pdf")
+            file.outputStream().use { it.write(pdfBytes) }
+
+            // 3. Envoyer l'email avec pièce jointe
+            activityContext.sendEmailWithAttachment(
+                addresses = arrayOf(invoicing.email),
+                subject = activityContext.getString(R.string.your_invoice_object, parameter.raisonsociale),
+                body = activityContext.getString(R.string.your_invoice_body),
+                attachment = file
+            )
         }
     }
 

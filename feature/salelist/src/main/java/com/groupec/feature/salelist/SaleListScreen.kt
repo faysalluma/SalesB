@@ -94,6 +94,7 @@ fun SaleListScreen(
     var endDate by rememberSaveable { mutableStateOf(currentLocalDateString()) }
     val thermalPrintUiSate by viewModel.printUiState.collectAsState(FormUIState.Idle)
     var showInvoice by rememberSaveable { mutableStateOf(false) }
+    var sendByEmail by rememberSaveable { mutableStateOf(false) }
 
     val bluetoothPermissions =
         // Checks if the device has Android 12 or above
@@ -280,8 +281,9 @@ fun SaleListScreen(
                             onPrintOrShare = { sale, printAction ->
                                 saleGetValue = sale
                                 when (printAction) {
-                                    PrintAction.Normal, PrintAction.Download, PrintAction.SendByEmail -> {
+                                    PrintAction.Normal -> {
                                         showInvoiceDialog = true
+                                        sendByEmail = false
                                     }
                                     PrintAction.Thermal -> {
                                         if (bluetoothPermissions.allPermissionsGranted) {
@@ -301,6 +303,12 @@ fun SaleListScreen(
                                             Toast.makeText(context,"Permission denied for access bluetooth", Toast.LENGTH_SHORT).show()
                                         }
                                     }
+                                    PrintAction.SendByEmail -> {
+                                        showInvoiceDialog = true
+                                        sendByEmail = true // Notify to send by email operation (show email field)
+                                        showInvoice = false // Re-open form dialog
+                                    }
+
                                     else -> {}
                                 }
                             }
@@ -316,9 +324,19 @@ fun SaleListScreen(
                     if (showInvoiceDialog) {
                         AppCustomDialog(setShowDialog = { showInvoiceDialog = it} ) {
                             if (!showInvoice) {
-                                InvoicingInfoScreen { invoicingData ->
+                                InvoicingInfoScreen(sendByEmail = sendByEmail) { invoicingData ->
                                     invoicingGetValue = invoicingData
-                                    showInvoice = true
+                                    if (sendByEmail && saleGetValue != null) {
+                                        viewModel.sendByEmail(
+                                            activityContext = context,
+                                            sale = saleGetValue!!,
+                                            parameter = parameter,
+                                            invoicing = invoicingData
+                                        )
+                                        showInvoiceDialog = false
+                                    } else if (!sendByEmail) {
+                                        showInvoice = true // Show Invoice content that will be printed
+                                    }
                                 }
                             } else {
                                 Column(
@@ -336,7 +354,8 @@ fun SaleListScreen(
                                             onDownload = { /*TODO*/ },
                                             onPrint = {
                                                 viewModel.onPrint(context, saleGetValue!!, parameter, invoicingGetValue!!)
-                                            }
+                                                showInvoiceDialog = false
+                                            },
                                         )
 
                                         InvoiceContent(

@@ -54,4 +54,6 @@
     <string name="close">Fermer</string>
     <string name="full_name">Nom et prénoms *</string>
     <string name="address">Adresse de facturation *</string>
+    <string name="btn_edit">Editer</string>
+    <string name="btn_send_by_email">Envoyer par mail</string>
 </resources>

@@ -10,4 +10,6 @@
     <string name="view_chart">Voir le graphe</string>
     <string name="no_sales">Aucune vente</string>
     <string name="print_succesfully">Impression réussie !</string>
+    <string name="your_invoice_object">Votre achat chez %s</string>
+    <string name="your_invoice_body">Bonjour, veuillez trouver en pièce jointe la facture correspondant à votre achat.</string>
 </resources>

@@ -10,4 +10,6 @@
     <string name="view_chart">View Chart</string>
     <string name="no_sales">No sales</string>
     <string name="print_succesfully">Successful printing!</string>
+    <string name="your_invoice_object">Your purchase at %s</string>
+    <string name="your_invoice_body">Hello, please find attached the invoice for your purchase.</string>
 </resources>

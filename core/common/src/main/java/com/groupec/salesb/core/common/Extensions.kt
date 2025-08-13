@@ -1,12 +1,15 @@
 package com.groupec.salesb.core
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.ibm.icu.text.RuleBasedNumberFormat
+import java.io.File
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
@@ -157,4 +160,41 @@ fun Double.toWordsWithIcuRespectingLocaleAndCurrency(
 
     return mainPart + subPart
 }
+
+fun Context.sendEmailWithAttachment(
+    addresses: Array<String> = arrayOf(),
+    subject: String,
+    body: String = "",
+    attachment: File ? = null
+) {
+    val uri = attachment?.let {
+        FileProvider.getUriForFile(
+            this,
+            "${packageName}.fileprovider",
+            it
+        )
+    }
+
+    /*
+    val shareIntent = Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.parse("mailto:") // Only email apps handle this (and dont support file send).
+        putExtra(Intent.EXTRA_EMAIL, addresses)
+        putExtra(Intent.EXTRA_SUBJECT, subject)
+        putExtra(Intent.EXTRA_TEXT, body)
+    }*/
+
+    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+        type = "application/pdf"
+        putExtra(Intent.EXTRA_EMAIL, addresses)
+        putExtra(Intent.EXTRA_SUBJECT, subject)
+        putExtra(Intent.EXTRA_TEXT, body)
+        uri?.let {
+            putExtra(Intent.EXTRA_STREAM, it)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+    }
+
+    startActivity(Intent.createChooser(shareIntent , "Send with:"))
+}
+
 
