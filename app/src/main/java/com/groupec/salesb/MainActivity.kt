@@ -53,6 +53,19 @@ class MainActivity : ComponentActivity() {
             ActivityCompat.requestPermissions(this, bluetoothPermissions, 0)
         }
 
+        // Request notification permission on  Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    200
+                )
+            }
+        }
+
         enableEdgeToEdge()
         setContent {
             val connectionState by connectivityManagerUtils.connectionAsStateFlow.collectAsStateWithLifecycle()

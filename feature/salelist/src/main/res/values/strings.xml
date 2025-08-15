@@ -12,4 +12,6 @@
     <string name="print_succesfully">Successful printing!</string>
     <string name="your_invoice_object">Your purchase at %s</string>
     <string name="your_invoice_body">Hello, please find attached the invoice for your purchase.</string>
+    <string name="donwload_completed">Download completed</string>
+    <string name="donwload_completed_and_save">Download successful and saved</string>
 </resources>

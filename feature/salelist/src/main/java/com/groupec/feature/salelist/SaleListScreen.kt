@@ -68,6 +68,7 @@ import com.groupec.salesb.core.ui.InvoiceContent
 import com.groupec.salesb.core.ui.InvoicingInfoScreen
 import com.groupec.salesb.core.ui.SaleCardList
 import com.groupec.salesb.core.ui.SaleItemDetailProduct
+import java.io.File
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalComposeUiApi::class,
     ExperimentalComposeApi::class
@@ -95,6 +96,7 @@ fun SaleListScreen(
     val thermalPrintUiSate by viewModel.printUiState.collectAsState(FormUIState.Idle)
     var showInvoice by rememberSaveable { mutableStateOf(false) }
     var sendByEmail by rememberSaveable { mutableStateOf(false) }
+    val saveReceiptToDownloadsState by viewModel.saveReceiptToDownloads.collectAsState()
 
     val bluetoothPermissions =
         // Checks if the device has Android 12 or above
@@ -136,6 +138,41 @@ fun SaleListScreen(
     val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
     val bluetoothManager = remember { context.getSystemService(BluetoothManager::class.java) }
     val bluetoothAdapter: BluetoothAdapter? = remember { bluetoothManager.adapter }
+
+    // When save to Downloads notify user
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) {
+            viewModel.savePdfToDownloads(context, saleGetValue!!, parameter, invoicingGetValue!!)
+        } else {
+            Toast.makeText(context, "Permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    when (saveReceiptToDownloadsState) {
+        is FormUIState.Success -> {
+            LaunchedEffect(Unit) {
+                val file = (saveReceiptToDownloadsState as FormUIState.Success).data
+                viewModel.showDownloadNotification(context, file)
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = context.getString(R.string.donwload_completed_and_save)
+                    )
+                )
+            }
+        }
+        is FormUIState.Error -> {
+            LaunchedEffect(Unit) {
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message =(saveReceiptToDownloadsState as FormUIState.Error).message,
+                        isError = true
+                    )
+                )
+            }
+        }
+
+        else -> {}
+    }
 
     when (thermalPrintUiSate) {
         is FormUIState.Success -> {
@@ -351,10 +388,16 @@ fun SaleListScreen(
                                             onChangeInvoiceData = {
                                                 showInvoice = false
                                             },
-                                            onDownload = { /*TODO*/ },
+                                            onDownload = {
+                                                showInvoiceDialog = false
+                                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                                                    launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                                } else {
+                                                    viewModel.savePdfToDownloads(context, saleGetValue!!, parameter, invoicingGetValue!!)
+                                                }
+                                            },
                                             onPrint = {
                                                 viewModel.onPrint(context, saleGetValue!!, parameter, invoicingGetValue!!)
-                                                showInvoiceDialog = false
                                             },
                                         )
 
