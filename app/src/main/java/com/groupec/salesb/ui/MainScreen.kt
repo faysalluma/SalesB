@@ -184,6 +184,7 @@ fun getDropdownItemsWithActions(
 ): List<MenuItem> {
 
     return listOf(
+
         MenuItem.SubMenu(
             context.getString(R.string.menu_settings),
             listOf(
@@ -203,6 +204,14 @@ fun getDropdownItemsWithActions(
                 }
             )
         ),
+
+        MenuItem.Action(
+            context.getString(R.string.manage_your_account)
+        ) {
+            navController.navigate(NavigationItem.Account.route) {
+                launchSingleTop = true
+            }
+        },
 
         MenuItem.Action(
             context.getString(R.string.menu_update_password)

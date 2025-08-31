@@ -8,6 +8,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:common"))
+
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.coil.kt)
     implementation(libs.coil.kt.compose)

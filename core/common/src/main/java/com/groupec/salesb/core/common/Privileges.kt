@@ -2,56 +2,66 @@ package com.groupec.salesb.core
 
 import android.content.Context
 
-enum class Privileges(val values: Map<Int, Approval>) {
+enum class Privileges(val title: String? = null, val values: Map<String, Approval>) {
+    // Key coded as follows:
+    // First letter (Screen First letter)
+    // Second letter (If two screens have the same first letter,
+    // it is equal to 0 for the first screen in the order of insertion in Privileges and 1 for the second screen, and so on.)
+    // First letter (Approval order: 1 for AUTHORIZE_VIEW, and so on)
     Home(
-        mapOf(
-            1 to Approval.AUTHORIZE_VIEW,
-            2 to Approval.STAT_PERIODIC,
-            3 to Approval.STAT_NON_PERIODIC,
-            4 to Approval.STAT_CHART,
+        values = mapOf(
+            "H01" to Approval.AUTHORIZE_VIEW,
+            "H02" to Approval.STAT_PERIODIC,
+            "H03" to Approval.STAT_NON_PERIODIC,
+            "H04" to Approval.STAT_CHART
         )
     ),
     Sale(
-        mapOf(
-            5 to Approval.AUTHORIZE_VIEW,
-            6 to Approval.AUTHORIZE_ADD,
-            7 to Approval.AUTHORIZE_EDIT,
-            8 to Approval.AUTHORIZE_DELETE,
+        values = mapOf(
+            "S01" to Approval.AUTHORIZE_VIEW
+        )
+    ),
+    MySales(
+        values = mapOf(
+            "M01" to Approval.AUTHORIZE_VIEW,
+            "M02" to Approval.AUTHORIZE_ADD,
+            "M03" to Approval.AUTHORIZE_EDIT,
+            "M04" to Approval.AUTHORIZE_DELETE
         )
     ),
     Product(
-        mapOf(
-            9 to Approval.AUTHORIZE_VIEW,
-            10 to Approval.AUTHORIZE_ADD,
-            11 to Approval.AUTHORIZE_EDIT,
-            12 to Approval.AUTHORIZE_DELETE,
+        values = mapOf(
+            "P01" to Approval.AUTHORIZE_VIEW,
+            "P02" to Approval.AUTHORIZE_ADD,
+            "P03" to Approval.AUTHORIZE_EDIT,
+            "P04" to Approval.AUTHORIZE_DELETE,
         )
     ),
-    Statistic(
-        mapOf(
-            13 to Approval.AUTHORIZE_VIEW,
+    Outputs(
+        values = mapOf(
+            "O01" to Approval.AUTHORIZE_VIEW,
+            "O02" to Approval.AUTHORIZE_ADD,
+            "O03" to Approval.AUTHORIZE_EDIT,
+            "O04" to Approval.AUTHORIZE_DELETE
         )
     ),
-    Entrie(
-        mapOf(
-            14 to Approval.AUTHORIZE_VIEW,
-            15 to Approval.AUTHORIZE_ADD,
-            16 to Approval.AUTHORIZE_EDIT,
-            17 to Approval.AUTHORIZE_DELETE,
+    Parameters(
+        values = mapOf(
+            "P11" to Approval.AUTHORIZE_VIEW,
+            "P12" to Approval.AUTHORIZE_ADD,
+            "P13" to Approval.AUTHORIZE_EDIT,
+            "P14" to Approval.AUTHORIZE_DELETE
         )
     ),
     UserSettings(
-        mapOf(
-            18 to Approval.AUTHORIZE_VIEW,
-            19 to Approval.AUTHORIZE_ADD,
-            20 to Approval.AUTHORIZE_EDIT,
-            21 to Approval.AUTHORIZE_DELETE,
+        values = mapOf(
+            "U01" to Approval.AUTHORIZE_VIEW
         )
     );
 
     fun getKeyByApproval(approval : Approval) = values.entries.find { it.value == approval }?.key
 
-    fun getKeysByApprovals(approvals: List<Approval>): List<Int> {
+    fun getKeysByApprovals(approvals: List<Approval>): List<String> {
         return approvals.mapNotNull { approval ->
             values.entries.find { it.value == approval }?.key
         }

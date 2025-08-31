@@ -1,5 +1,6 @@
 package com.groupec.salesb.core.data.repository.user
 
+import androidx.paging.PagingData
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.model.data.UserStore
@@ -12,4 +13,7 @@ interface UserRepository{
     suspend fun changePassword(userId: Int, ancPassword: String, password: String) : Result<User>
     suspend fun logout() : Result<Unit>
     suspend fun forgotPassword(email: String) : Result<Unit>
+    fun getPagedUsers(searchQuery: String) : Flow<PagingData<User>>
+    suspend fun saveUser(user: User) : Result<Unit>
+    suspend fun deleteUser(userId: Int) : Result<Unit>
 }

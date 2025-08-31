@@ -4,13 +4,16 @@
     <string name="yesterday">Yesterday</string>
     <string name="week">This week</string>
     <string name="month">This month</string>
-    <string name="view_stat_periodic">View periodic statistics (total sales and top 3 best-selling products)</string>
-    <string name="view_stat_non_periodic">View non-periodic statistics (total products and low-stock products)</string>
-    <string name="stat_chart">See statitistics charts on home screen</string>
-    <string name="authorize_view">Authorize viewing</string>
-    <string name="authorize_add">Authorize add</string>
-    <string name="authorize_edit">Authorize edit</string>
-    <string name="authorize_delete">Authorize delete</string>
+    <string name="view_stat_periodic">Periodic statistics</string>
+    <string name="view_stat_non_periodic">Non-periodic statistics</string>
+    <string name="stat_chart">Statitistics charts</string>
+    <string name="view_stat_periodic_detail">View Periodic statistics (total sales and top 3 best-selling products)</string>
+    <string name="view_stat_non_periodic_detail">View Non-periodic statistics (total products and low-stock products)</string>
+    <string name="stat_chart_detail">View Statitistics charts on home screen</string>
+    <string name="authorize_view">View</string>
+    <string name="authorize_add">Add</string>
+    <string name="authorize_edit">Update</string>
+    <string name="authorize_delete">Delete</string>
 
     <!-- For generating pdf -->
     <string name="billing_address">Billing address</string>

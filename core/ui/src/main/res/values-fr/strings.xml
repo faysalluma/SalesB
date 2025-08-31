@@ -29,6 +29,7 @@
     <string name="quantity_greater">Quantité supérieur à celle en stock</string>
     <string name="send_invoice">Envoyer la facture par email</string>
     <string name="edit_invoice_a4">Editer une facture A4</string>
+    <string name="disable">Désactivé</string>
     <string name="success_title">Succès</string>
     <string name="error">Erreur !</string>
     <string name="retry">Réessayer</string>
@@ -43,4 +44,6 @@
     <string name="print_invoice_a4">Imprimer</string>
     <string name="change_invoice_info">Changer infos facturation</string>
     <string name="total_sales">@string/total_sale_view</string>
+    <string name="user_item_detail">Date : %1$s, Email : %2$s, Tel : %3$s, Compte : %4$s</string>
+    <string name="active">Actif</string>
 </resources>

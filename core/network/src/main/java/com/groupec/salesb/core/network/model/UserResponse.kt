@@ -1,14 +1,15 @@
 package com.groupec.salesb.core.network.model
 
 import com.google.gson.annotations.SerializedName
+import java.util.Date
 
 data class UserResponse(
-    @SerializedName("user")
-    val user : UserItemResponse
+    @SerializedName("users")
+    val users : ArrayList<UserItemResponse>
 )
 data class UserItemResponse(
-    @SerializedName("id")
-    val id: Int,
+    @SerializedName("userid")
+    val id: Int ? = null,
 
     @SerializedName("nomprenom")
     val nomprenom: String,
@@ -32,13 +33,19 @@ data class UserItemResponse(
     val tel: String,
 
     @SerializedName("privilege")
-    val privilege: String,
+    val privilege:  String ? = null,
 
     @SerializedName("actif")
     val actif: Int,
 
     @SerializedName("firstlogin")
-    val firstlogin: Int
+    val firstlogin: Int,
+
+    @SerializedName("datecreation")
+    val datecreation: Date? = null,
+
+    @SerializedName("datemodif")
+    val datemodif: Date ? = null,
 )
 
 data class UserReducedResponse(

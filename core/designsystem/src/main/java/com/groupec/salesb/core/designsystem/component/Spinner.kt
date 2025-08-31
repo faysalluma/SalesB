@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
@@ -21,10 +22,12 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,15 +46,17 @@ import com.groupec.salesb.core.designsystem.R
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun AppExposedDropdownMenu(
+    modifier: Modifier = Modifier,
     items: List<String>,
     label: String ? = null,
-    defaultText: String = "",
+    value: String = "",
+    onValueChange: ((String) -> Unit) ? = null,
     onItemSelected: (Int, String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf(defaultText) }
 
     ExposedDropdownMenuBox(
+        modifier = modifier,
         expanded = expanded,
         onExpandedChange = { expanded = it },
     ) {
@@ -59,8 +64,8 @@ fun AppExposedDropdownMenu(
             // The `menuAnchor` modifier must be passed to the text field to handle
             // expanding/collapsing the menu on click. A read-only text field has
             // the anchor type `PrimaryNotEditable`.
-            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
-            value = text,
+            modifier = modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
+            value = value,
             onValueChange = {},
             /* placeholder = {
                  Text(text = "Select a name")
@@ -87,7 +92,7 @@ fun AppExposedDropdownMenu(
                 DropdownMenuItem(
                     text = { Text(option, style = MaterialTheme.typography.bodyLarge) },
                     onClick = {
-                        text = option
+                        onValueChange?.let { it(option) }
                         onItemSelected(index, option)
                         expanded = false
                     },
@@ -303,7 +308,7 @@ fun SpinnersPreview() {
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AppExposedDropdownMenu(items) { index, item ->
+        AppExposedDropdownMenu(items = items) { index, item ->
 
         }
         AppEditableExposedDropdown(

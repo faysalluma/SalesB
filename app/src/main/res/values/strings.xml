@@ -11,6 +11,7 @@
     <string name="menu_category">Categories</string>
     <string name="menu_rayon">Sections</string>
     <string name="menu_update_password">Modify password</string>
+    <string name="manage_your_account">Account management</string>
     <string name="menu_log_out">Log out</string>
     <string name="menu_settings">Settings</string>
 </resources>

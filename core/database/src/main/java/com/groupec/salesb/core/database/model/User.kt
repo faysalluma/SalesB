@@ -23,15 +23,15 @@ data class User(
     @ColumnInfo(name = "tel")
     val tel: String,
     @ColumnInfo(name = "privilege")
-    val privilege: String,
+    val privilege: String ? = null,
     @ColumnInfo(name = "actif")
     val actif: Boolean,
     @ColumnInfo(name = "firstlogin")
     val firstlogin: Boolean,
     @ColumnInfo(name = "datecreation")
-    val datecreation: String,
+    val datecreation: String ? = null,
     @ColumnInfo(name = "datemodif")
-    val datemodif: String,
+    val datemodif: String ? = null,
     @ColumnInfo(name = "synchronised")
     val synchronised: Boolean,
 )

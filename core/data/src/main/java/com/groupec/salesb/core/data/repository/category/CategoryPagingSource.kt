@@ -30,7 +30,7 @@ class CategoryPagingSource(
 
                 LoadResult.Page(
                     data = categories,
-                    prevKey = null,  // pour la pagination vers le haut,  if (currentPage == 1) null else currentPage - 1
+                    prevKey = if (currentPage == 1) null else currentPage - 1, // null si pas de pagination vers le haut
                     nextKey = if (categories.isEmpty()) null else currentPage + 1
                 )
             } else {

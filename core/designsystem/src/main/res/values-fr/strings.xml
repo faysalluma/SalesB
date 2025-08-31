@@ -9,6 +9,8 @@
     <string name="title_loading">Configuration des données</string>
     <string name="desc_loading">Nous préparons vos données, cela ne prendra que quelques instants.</string>
     <string name="enter_your_email">Entrer votre email</string>
+    <string name="label_email_required">Email *</string>
+    <string name="enter_your_email_required">Entrer votre email *</string>
     <string name="label_password">Mot de passe</string>
     <string name="enter_your_password">Entrer votre mot de passe</string>
     <string name="enter_password_not_matching">Les mots de passe ne correspondent pas</string>
@@ -56,4 +58,16 @@
     <string name="address">Adresse de facturation *</string>
     <string name="btn_edit">Editer</string>
     <string name="btn_send_by_email">Envoyer par mail</string>
+    <string name="select_all">Sélectionner tout</string>
+    <string name="label_full_name">Nom et prénom(s) *</string>
+    <string name="label_address">Adresse</string>
+    <string name="label_tel">Téléphone</string>
+    <string name="screen_home">Ecran Accueil</string>
+    <string name="screen_save_sale">Ecran Enregistrer vente</string>
+    <string name="screen_my_sales">Ecran Mes ventes</string>
+    <string name="screen_products">Ecran Produits</string>
+    <string name="screen_outputs">Ecran Sorties</string>
+    <string name="screen_parameters">Ecran Paramètres (Catégories, Rayons)</string>
+    <string name="screen_privileges">Ecran Privilèges</string>
+    <string name="privileges">Privilèges</string>
 </resources>

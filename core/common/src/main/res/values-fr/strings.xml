@@ -4,13 +4,16 @@
     <string name="yesterday">Hier</string>
     <string name="week">Cette semaine</string>
     <string name="month">Ce mois</string>
-    <string name="view_stat_periodic">Voir les statistiques périodiques (total ventes et top 3 des produits les plus vendus)</string>
-    <string name="view_stat_non_periodic">Voir les statistiques non périodiques (total produits et produits avec faible stock)</string>
-    <string name="stat_chart">Voir les graphes de statistiques sur l\'écran d\'accueil</string>
-    <string name="authorize_add">"Autoriser l'ajout "</string>
-    <string name="authorize_edit">Autoriser la modification</string>
-    <string name="authorize_delete">Autoriser la suppression</string>
-    <string name="authorize_view">Autoriser la visualisation</string>
+    <string name="view_stat_periodic">Statistiques périodiques</string>
+    <string name="view_stat_non_periodic">Statistiques non périodiques</string>
+    <string name="stat_chart">Graphe de statistiques</string>
+    <string name="view_stat_periodic_detail">Voir les statistiques périodiques (total ventes et top 3 des produits les plus vendus)</string>
+    <string name="view_stat_non_periodic_detail">Voir les statistiques non périodiques (total produits et produits avec faible stock)</string>
+    <string name="stat_chart_detail">Voir les graphes de statistiques sur l\'écran d\'accueil</string>
+    <string name="authorize_add">Ajout</string>
+    <string name="authorize_edit">Modification</string>
+    <string name="authorize_delete">Suppression</string>
+    <string name="authorize_view">Voir</string>
 
     <!-- For generating pdf -->
     <string name="billing_address">Adresse de facturation</string>

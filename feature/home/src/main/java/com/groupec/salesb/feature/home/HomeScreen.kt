@@ -55,6 +55,7 @@ import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.core.ui.ProductsWithLowInventoryList
 import com.groupec.salesb.core.ui.StatisticCard
 import com.groupec.salesb.core.ui.StatisticChart
+import kotlin.collections.get
 
 @Composable
 fun HomeScreen(
@@ -88,13 +89,14 @@ fun HomeScreen(
     ) {
         // Check if show home content
         if (
-            !privileges.containsAll(Privileges.Home.getKeysByApprovals(
+           /* !privileges.containsAll(Privileges.Home.getKeysByApprovals(
                 listOf(
                     Approval.STAT_PERIODIC,
                     Approval.STAT_NON_PERIODIC,
                     Approval.STAT_CHART,
                 )
-            ))
+            ))*/
+            false
         ) {
             EmptyScreen(text = stringResource(R.string.no_visual_allowed))
         } else {
@@ -126,6 +128,7 @@ fun HeadLigne(context: Context, viewModel: HomeViewModel, navigateToSaleList: ()
     val totalAmountSalesState by viewModel.totalAmountSales.collectAsState()
     val profits by remember { derivedStateOf { totalAmountSalesState - totalAmountOutputState }}
     val periodList = Period.entries.map { it.getTitle(context) }
+    var periodValue by remember { mutableStateOf(periodList[1]) }
     val parameterState by viewModel.parameter.collectAsState()
 
     Row(
@@ -157,7 +160,10 @@ fun HeadLigne(context: Context, viewModel: HomeViewModel, navigateToSaleList: ()
             Box(modifier = Modifier.width(200.dp)) {
                 AppExposedDropdownMenu(
                     items = periodList,
-                    defaultText = periodList[1]
+                    value = periodValue,
+                    onValueChange = { newPeriod ->
+                        periodValue = newPeriod
+                    }
                 ) { index, item ->
                     val startDate = Period.entries[index].startDate
                     val endDate = Period.entries[index].endDate

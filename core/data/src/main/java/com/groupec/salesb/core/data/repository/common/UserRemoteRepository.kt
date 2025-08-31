@@ -107,7 +107,7 @@ class UserRemoteRepository @Inject constructor(
 
                 executeApiCall(
                     apiCall = {
-                        apiService.changePassword(user.id, updatedUser)
+                        apiService.changePassword(user.id ?: 0, updatedUser)
                     },
                     errorMessage = context.getString(R.string.error_updating_data)
                 )

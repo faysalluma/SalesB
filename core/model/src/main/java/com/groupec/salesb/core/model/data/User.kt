@@ -1,18 +1,21 @@
 package com.groupec.salesb.core.model.data
 
+import java.util.Date
+
 data class User(
-    val id: Int,
+    val id: Int? = null,
     val nomprenom: String,
     val email: String,
     val password: String,
     val reset_password: String ? = null,
     val reset_expires: String ? = null,
-    val adresse: String,
-    val tel: String,
-    val privilege: String,
+    val adresse: String ? = null,
+    val tel: String? = null,
+    val privilege: String ? = null,
     val actif: Boolean,
     val firstlogin: Boolean,
-    val datecreation: String ? = null,
-    val datemodif: String ? = null,
-    val synchronised: Boolean = false
+    val datecreation: Date ? = null,
+    val datemodif: Date ? = null,
+    val synchronised: Boolean = false,
+    val langMessageEn: Boolean = true
 )
