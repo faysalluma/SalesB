@@ -55,7 +55,7 @@ import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.core.ui.ProductsWithLowInventoryList
 import com.groupec.salesb.core.ui.StatisticCard
 import com.groupec.salesb.core.ui.StatisticChart
-import kotlin.collections.get
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
@@ -89,21 +89,25 @@ fun HomeScreen(
     ) {
         // Check if show home content
         if (
-           /* !privileges.containsAll(Privileges.Home.getKeysByApprovals(
-                listOf(
-                    Approval.STAT_PERIODIC,
-                    Approval.STAT_NON_PERIODIC,
-                    Approval.STAT_CHART,
+            privileges.any{
+                it in Privileges.Home.getKeysByApprovals(
+                    listOf(
+                        Approval.STAT_PERIODIC,
+                        Approval.STAT_NON_PERIODIC,
+                        Approval.STAT_CHART,
+                    )
                 )
-            ))*/
-            false
+            }
         ) {
-            EmptyScreen(text = stringResource(R.string.no_visual_allowed))
-        } else {
             val heigthModifier = Modifier.height(34.dp)
             HeadLigne(context, viewModel, navigateToSaleList)
-            StatisticPeriodic(context, viewModel, navigateToSaleList)
-            Spacer(modifier = heigthModifier)
+            if (privileges.contains(Privileges.Home.getKeyByApproval(
+                    Approval.STAT_PERIODIC
+            ))) {
+                StatisticPeriodic(context, viewModel, navigateToSaleList)
+                Spacer(modifier = heigthModifier)
+            }
+
             StatisticNonPeriodic(viewModel, navigateToProduct)
             Spacer(modifier = heigthModifier)
             Box(
@@ -137,7 +141,7 @@ fun HeadLigne(context: Context, viewModel: HomeViewModel, navigateToSaleList: ()
     ){
         // Left element
         Row(
-            Modifier.padding(top = 8.dp)
+            Modifier.padding(vertical = 8.dp)
         ) {
             TitleLarge(
                 modifier = Modifier.padding(end = 8.dp),

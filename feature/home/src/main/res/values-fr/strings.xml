@@ -3,7 +3,6 @@
     <string name="title_last_sales">Liste des 10 dernières ventes</string>
     <string name="label_select_period">Période</string>
     <string name="see_more">Voir plus</string>
-    <string name="no_visual_allowed">Aucun visuel autorisé pour votre profil</string>
     <string name="title_stat_period">Statistiques périodiques</string>
     <string name="title_stat_no_period">Statistiques non périodiques</string>
     <string name="statistic_label_sale">Total ventes</string>

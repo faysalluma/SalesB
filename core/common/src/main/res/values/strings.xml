@@ -14,6 +14,20 @@
     <string name="authorize_add">Add</string>
     <string name="authorize_edit">Update</string>
     <string name="authorize_delete">Delete</string>
+    <string name="no_visual_allowed">You are not authorized to view this page.</string>
+
+    <!-- For menu -->
+    <string name="menu_home_view">Home</string>
+    <string name="menu_save_sale_view">Cash in</string>
+    <string name="menu_my_sales_view">My sales</string>
+    <string name="menu_outputs_view">Outputs</string>
+    <string name="menu_product_view">Products</string>
+    <string name="menu_category_view">Categories</string>
+    <string name="menu_rayon_view">Sections</string>
+    <string name="menu_update_password_view">Modify password</string>
+    <string name="manage_your_account_view">Account management</string>
+    <string name="menu_log_out_view">Log out</string>
+    <string name="menu_settings_view">Settings</string>
 
     <!-- For generating pdf -->
     <string name="billing_address">Billing address</string>

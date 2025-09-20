@@ -54,7 +54,7 @@ fun AppNavHost(
     modifier: Modifier,
     snackbarHostState: SnackbarHostState,
     navController: NavHostController,
-    startDestination: String = NavigationItem.Loading.route
+    startDestination: String
 ) {
     /*LaunchedEffect(Unit) {
         val flipperPlugin = NavigationFlipperPlugin.getInstance()
@@ -73,6 +73,9 @@ fun AppNavHost(
             ExitTransition.None
         }
     ) {
+
+        // Create this screen loading component
+
         composable(NavigationItem.Loading.route) {
             LoadingScreen(
                 navigateToConfiguration = {

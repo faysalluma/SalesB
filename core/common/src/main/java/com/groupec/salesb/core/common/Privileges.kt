@@ -2,13 +2,14 @@ package com.groupec.salesb.core
 
 import android.content.Context
 
-enum class Privileges(val title: String? = null, val values: Map<String, Approval>) {
+enum class Privileges(val titleRes: Int? = null, val values: Map<String, Approval>) {
     // Key coded as follows:
     // First letter (Screen First letter)
     // Second letter (If two screens have the same first letter,
     // it is equal to 0 for the first screen in the order of insertion in Privileges and 1 for the second screen, and so on.)
     // First letter (Approval order: 1 for AUTHORIZE_VIEW, and so on)
     Home(
+        titleRes = R.string.menu_home_view,
         values = mapOf(
             "H01" to Approval.AUTHORIZE_VIEW,
             "H02" to Approval.STAT_PERIODIC,
@@ -17,11 +18,13 @@ enum class Privileges(val title: String? = null, val values: Map<String, Approva
         )
     ),
     Sale(
+        titleRes = R.string.menu_save_sale_view,
         values = mapOf(
             "S01" to Approval.AUTHORIZE_VIEW
         )
     ),
     MySales(
+        titleRes = R.string.menu_my_sales_view,
         values = mapOf(
             "M01" to Approval.AUTHORIZE_VIEW,
             "M02" to Approval.AUTHORIZE_ADD,
@@ -30,6 +33,7 @@ enum class Privileges(val title: String? = null, val values: Map<String, Approva
         )
     ),
     Product(
+        titleRes = R.string.menu_product_view,
         values = mapOf(
             "P01" to Approval.AUTHORIZE_VIEW,
             "P02" to Approval.AUTHORIZE_ADD,
@@ -38,6 +42,7 @@ enum class Privileges(val title: String? = null, val values: Map<String, Approva
         )
     ),
     Outputs(
+        titleRes = R.string.menu_outputs_view,
         values = mapOf(
             "O01" to Approval.AUTHORIZE_VIEW,
             "O02" to Approval.AUTHORIZE_ADD,
@@ -45,27 +50,46 @@ enum class Privileges(val title: String? = null, val values: Map<String, Approva
             "O04" to Approval.AUTHORIZE_DELETE
         )
     ),
-    Parameters(
-        values = mapOf(
-            "P11" to Approval.AUTHORIZE_VIEW,
-            "P12" to Approval.AUTHORIZE_ADD,
-            "P13" to Approval.AUTHORIZE_EDIT,
-            "P14" to Approval.AUTHORIZE_DELETE
-        )
-    ),
     UserSettings(
+        titleRes = R.string.manage_your_account_view,
         values = mapOf(
             "U01" to Approval.AUTHORIZE_VIEW
         )
+    ),
+    Category(
+        titleRes = R.string.menu_category_view,
+        values = mapOf(
+            "C01" to Approval.AUTHORIZE_VIEW,
+            "C02" to Approval.AUTHORIZE_ADD,
+            "C03" to Approval.AUTHORIZE_EDIT,
+            "C04" to Approval.AUTHORIZE_DELETE
+        )
+    ),
+    Rayon(
+        titleRes = R.string.menu_rayon_view,
+        values = mapOf(
+            "R01" to Approval.AUTHORIZE_VIEW,
+            "R02" to Approval.AUTHORIZE_ADD,
+            "R03" to Approval.AUTHORIZE_EDIT,
+            "R04" to Approval.AUTHORIZE_DELETE
+        )
     );
 
-    fun getKeyByApproval(approval : Approval) = values.entries.find { it.value == approval }?.key
+    fun getKeyByApproval(approval : Approval) : String? = values.entries.find { it.value == approval }?.key
 
     fun getKeysByApprovals(approvals: List<Approval>): List<String> {
         return approvals.mapNotNull { approval ->
             values.entries.find { it.value == approval }?.key
         }
     }
+
+    fun checkKeyByApprovals(approvals: List<Approval>): Boolean {
+        return approvals.any { approval ->
+            values.containsValue(approval)
+        }
+    }
+
+    fun getTitle(context: Context) = titleRes?.let { context.getString(it) } ?: this.name
 }
 enum class Approval(val titleRes: Int) {
 

@@ -10,6 +10,10 @@ import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -27,20 +31,15 @@ import com.groupec.salesb.navigation.NavigationIcon
 import com.groupec.salesb.navigation.NavigationItem
 
 @Composable
-fun MyNavigationRail(navController: NavController, modifier: Modifier = Modifier) {
+fun MyNavigationRail(
+    items: List<NavigationItem>,
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
 
     // Observer la destination actuelle
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route ?: NavigationItem.Home.route
-
-   // var selectedItem by remember { mutableStateOf(NavigationItem.Home.route) }
-    val items = listOf(
-        NavigationItem.Home,
-        NavigationItem.SaveSale,
-        NavigationItem.MySales,
-        NavigationItem.Product,
-        NavigationItem.Outputs
-    )
+    val currentRoute = navBackStackEntry?.destination?.route ?: items.firstOrNull()?.route
 
     NavigationRail(
         containerColor = Silver,
@@ -98,5 +97,14 @@ fun MyNavigationRail(navController: NavController, modifier: Modifier = Modifier
 @Preview
 @Composable
 fun MyNavigationRailPreview() {
-    MyNavigationRail(rememberNavController())
+    MyNavigationRail(
+        items = listOf(
+            NavigationItem.Home,
+            NavigationItem.SaveSale,
+            NavigationItem.MySales,
+            NavigationItem.Product,
+            NavigationItem.Outputs
+        ),
+        navController = rememberNavController()
+    )
 }

@@ -10,9 +10,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
 import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.ui.Credentials
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.firstOrNull
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(

@@ -31,8 +31,7 @@ fun LoginScreen(
     navigateToHome: (User) -> Unit,
     navigateToForgotPassword: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = hiltViewModel(),
-
+    viewModel: LoginViewModel = hiltViewModel()
     ) {
     val context = LocalContext.current
     val loginState by viewModel.loginUiState.collectAsState()

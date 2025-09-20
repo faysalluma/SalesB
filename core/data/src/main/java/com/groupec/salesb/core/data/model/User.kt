@@ -1,7 +1,5 @@
 package com.groupec.salesb.core.data.model
 
-import com.groupec.salesb.core.currentDateString
-import com.groupec.salesb.core.model.data.Category
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.network.model.UserItemResponse

@@ -46,7 +46,7 @@
     <string name="edit_invoice_a4">Edit an A4 invoice</string>
     <string name="change_invoice_info">Change Invoice Info</string>
     <string name="total_sales">@string/total_sale_view</string>
-    <string name="user_item_detail">Date: %1$s, Email: %2$s, Tel: %3$d, Account: %4$s</string>
+    <string name="user_item_detail">Date: %1$s, Email: %2$s, Tel: %3$s, Account: %4$s</string>
     <string name="active">Active</string>
     <string name="disable">Disable</string>
     <string name="success_title">Success</string>

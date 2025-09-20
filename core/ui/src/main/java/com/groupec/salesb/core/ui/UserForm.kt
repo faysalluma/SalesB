@@ -60,6 +60,7 @@ fun UserForm(
     onSubmitForm: (users: UserDataForm) -> Unit
 ) {
 
+    val context = LocalContext.current
     var isNomPrenomError by remember { mutableStateOf(false) }
     var isEmailError by remember { mutableStateOf(false) }
 
@@ -181,7 +182,7 @@ fun UserForm(
                val selectedChildren = privilegesState[privilege.name]?.toList() ?: emptyList()
                if (privilege.values.size == 1) {
                    AppCheckboxMinimal(
-                       label = privilege.title ?: privilege.name,
+                       label = privilege.getTitle(context),
                        child = privilege.values.entries.first().key,
                        selectedChildren = selectedChildren
                    ) { approval ->
@@ -200,7 +201,7 @@ fun UserForm(
                    }
                } else {
                    AppCheckboxParent(
-                       parentLabel = privilege.title ?: privilege.name,
+                       parentLabel = privilege.getTitle(context),
                        children = privilege.values.entries.drop(1).associate { it.toPair() },// Supprimer le premier élément du map
                        selectedChildren = selectedChildren
                    ) { checkedList ->
