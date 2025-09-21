@@ -124,11 +124,7 @@ fun MainScreen(
     }
 
     when (currentDestination.value) {
-        NavigationItem.Home.route -> {
-            viewModel.getUserStore()
-        }
-
-        NavigationItem.ChangePassword.route -> {
+        NavigationItem.Home.route, NavigationItem.ChangePassword.route -> {
             viewModel.getUserStore()
         }
 
@@ -165,24 +161,18 @@ fun MainScreen(
             )
         },
         topBar = {
-            if (
-                shouldShowBarAndRailApp(
-                    route = currentDestination.value,
-                    firstLogin = firstLogin,
-                    resetPassword = resetPassword
-                )
-            ) {
-                SampleTopAppBar(
-                    appBarTitle,
-                    onNavigationClick,
-                    dropDownItemsMenu
-                )
+            currentDestination.value?.let { route ->
+                if (shouldShowBarAndRailApp(route, firstLogin, resetPassword)) {
+                    SampleTopAppBar(
+                        appBarTitle,
+                        onNavigationClick,
+                        dropDownItemsMenu
+                    )
+                }
             }
         },
         floatingActionButton = {
-            if (
-                currentDestination.value == NavigationItem.Home.route
-            ) {
+            if (currentDestination.value == NavigationItem.Home.route) {
                 LargeFloatingActionButton(
                     onClick = {
                         navController.navigate(NavigationItem.SaveSale.route) {
