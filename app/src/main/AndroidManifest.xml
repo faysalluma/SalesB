@@ -33,7 +33,6 @@
             android:name="com.groupec.salesb.MainActivity"
             android:exported="true"
             android:screenOrientation="landscape"
-            android:label="@string/app_name"
             android:theme="@style/Theme.SalesB"
             tools:ignore="DiscouragedApi">
 
@@ -47,7 +46,7 @@
         <!-- For take and pick images -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="@string/fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

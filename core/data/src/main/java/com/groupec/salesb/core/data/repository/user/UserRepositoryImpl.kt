@@ -2,8 +2,12 @@ package com.groupec.salesb.core.data.repository.user
 
 
 import android.content.Context
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.data.model.toUserEntity
+import com.groupec.salesb.core.data.repository.category.CategoryPagingSource
 import com.groupec.salesb.core.data.repository.common.UserLocalRepository
 import com.groupec.salesb.core.data.repository.common.UserRemoteRepository
 import com.groupec.salesb.core.data.repository.common.UserSyncRepository
@@ -12,11 +16,14 @@ import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.network.retrofit.ApiService
 import com.groupec.salesb.core.network.retrofit.common.executeApiCall
+import com.groupec.salesb.core.network.retrofit.common.safeApiCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import org.mindrot.jbcrypt.BCrypt
 import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -39,7 +46,7 @@ class UserRepositoryImpl @Inject constructor(
         try {
             val response = apiService.getDefaultUser()
             if (response.isSuccessful) {
-                response.body()?.user?.toUserEntity()?.let {
+                response.body()?.toUserEntity()?.let {
                     emit(addUser(it))
                 }
             } else {
@@ -53,6 +60,36 @@ class UserRepositoryImpl @Inject constructor(
     override fun getUserStore(): Flow<UserStore> = dataStoreManager.userFlow
 
     private suspend fun addUser(user: UserEntity) = userLocalRepository.addUser(user)
+
+    override fun getPagedUsers(searchQuery: String): Flow<PagingData<User>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 15,
+                initialLoadSize = 15,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                UserPagingSource(apiService, searchQuery)
+            }
+        ).flow
+    }
+
+    override suspend fun saveUser(user: User): Result<Unit> {
+        val hashPassword = BCrypt.hashpw(user.password, BCrypt.gensalt())
+        val updatedUser = user.copy(password = hashPassword)
+        return executeApiCall(context) {
+            apiService.addUser(updatedUser)
+        }
+    }
+
+    override suspend fun deleteUser(userId: Int): Result<Unit> {
+        return safeApiCall(
+            apiCall = { apiService.deleteUser(userId) },
+            transform = {
+                Result.Success(Unit)
+            }
+        )
+    }
 
     /* Sync methods */
     /* Get methods */

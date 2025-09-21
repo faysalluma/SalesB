@@ -45,6 +45,7 @@ suspend fun <T> executeApiCall(
                     401 -> Result.Error(Exception(context.getString(R.string.error_401_unauthorized)))
                     403 -> Result.Error(Exception(context.getString(R.string.error_403_forbidden)))
                     404 -> Result.Error(Exception(context.getString(R.string.error_404_not_found)))
+                    409 -> Result.Error(Exception(context.getString(R.string.error_409_already_exists)))
                     500 -> Result.Error(Exception(context.getString(R.string.error_500_internal_server)))
                     502 -> Result.Error(Exception(context.getString(R.string.error_502_bad_gateway)))
                     else -> Result.Error(HttpException(response))

@@ -5,4 +5,5 @@
     <string name="error_502_bad_gateway">An unexpected error has occurred</string>
     <string name="error_401_unauthorized">The user is not authenticated.</string>
     <string name="error_404_not_found">The requested resource cannot be found.</string>
+    <string name="error_409_already_exists">The user already exists.</string>
 </resources>

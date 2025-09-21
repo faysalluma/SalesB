@@ -3,14 +3,16 @@
     <string name="no_internet_connexion">Erreur : Pas de connexion internet</string>
     <string name="error_tablet_desc">Nous sommes désolés, mais cette application fonctionne uniquement que sur tablette.</string>
     <string name="close_app">Fermer</string>
-    <string name="menu_home">Accueil</string>
-    <string name="menu_save_sale">Encaisser</string>
-    <string name="menu_outputs">Sorties</string>
-    <string name="menu_product">Produits</string>
-    <string name="menu_update_password">Modifier mon mot de passe</string>
-    <string name="menu_log_out">Se déconnecter</string>
-    <string name="menu_settings">Paramètres</string>
-    <string name="menu_category">Catégories</string>
-    <string name="menu_my_sales">Mes ventes</string>
-    <string name="menu_rayon">Rayons</string>
+    <string name="menu_home">@string/menu_home_view</string>
+    <string name="menu_save_sale">@string/menu_save_sale_view</string>
+    <string name="menu_my_sales">@string/menu_my_sales_view</string>
+    <string name="menu_outputs">@string/menu_outputs_view</string>
+    <string name="menu_product">@string/menu_product_view</string>
+    <string name="menu_category">@string/menu_category_view</string>
+    <string name="menu_rayon">@string/menu_rayon_view</string>
+    <string name="menu_update_password">@string/menu_update_password_view</string>
+    <string name="manage_your_account">@string/manage_your_account_view</string>
+    <string name="menu_log_out">@string/menu_log_out_view</string>
+    <string name="menu_settings">@string/menu_settings_view</string>
+    <string name="confirm_log_out">Êtes-vous sûr de vouloir vous déconnecter ?</string>
 </resources>

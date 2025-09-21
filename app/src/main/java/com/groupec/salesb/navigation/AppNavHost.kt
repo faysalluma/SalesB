@@ -22,6 +22,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.groupec.accountlist.AccountListScreen
+import com.groupec.feature.accountdetail.AccountDetailScreen
 import com.groupec.feature.categorydetail.CategoryDetailScreen
 import com.groupec.feature.categorylist.CategoryListScreen
 import com.groupec.feature.configuration.ConfigurationScreen
@@ -40,6 +42,7 @@ import com.groupec.salesb.core.model.data.Category
 import com.groupec.salesb.core.model.data.Output
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.Rayon
+import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
@@ -51,7 +54,7 @@ fun AppNavHost(
     modifier: Modifier,
     snackbarHostState: SnackbarHostState,
     navController: NavHostController,
-    startDestination: String = NavigationItem.Loading.route
+    startDestination: String
 ) {
     /*LaunchedEffect(Unit) {
         val flipperPlugin = NavigationFlipperPlugin.getInstance()
@@ -70,6 +73,9 @@ fun AppNavHost(
             ExitTransition.None
         }
     ) {
+
+        // Create this screen loading component
+
         composable(NavigationItem.Loading.route) {
             LoadingScreen(
                 navigateToConfiguration = {
@@ -405,6 +411,53 @@ fun AppNavHost(
         composable(NavigationItem.ForgotPassword.route) {
             ForgotPasswordScreen {
                 navController.popBackStack()
+            }
+        }
+
+        composable(NavigationItem.Account.route) {
+            var selectedAccount by remember { mutableStateOf<User?>(null) }
+            var refreshAccountList by remember { mutableStateOf(false) }
+            var removeSelectedBgColor by remember { mutableStateOf(false) }
+            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+
+            LaunchedEffect(isRefreshing) {
+                // Show refresh indicator during 1s
+                if (isRefreshing) {
+                    delay(1000)
+                    isRefreshing = false
+                }
+            }
+
+            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+                refreshAccountList  = !refreshAccountList
+                isRefreshing = true
+            }) {
+                Row {
+                    Row(Modifier.weight(0.4f)) {
+                        AccountListScreen(
+                            snackbarHostState = snackbarHostState,
+                            refreshAccountList = refreshAccountList,
+                            removeSelectedBgColor = removeSelectedBgColor,
+                            onViewDetail = { user ->
+                                selectedAccount = user
+                            }
+                        )
+                        VerticalDivider()
+                    }
+
+                    Box(Modifier.weight(0.6f)) {
+                        AccountDetailScreen(
+                            snackbarHostState = snackbarHostState,
+                            account = selectedAccount,
+                            removeSelectedBgColor = {
+                                removeSelectedBgColor = !removeSelectedBgColor
+                            },
+                            refreshAccounts = {
+                                refreshAccountList  = !refreshAccountList
+                            }
+                        )
+                    }
+                }
             }
         }
     }

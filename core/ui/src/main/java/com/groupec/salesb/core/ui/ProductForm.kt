@@ -43,13 +43,13 @@ fun ProductForm(
     rayonItems: List<Pair<String, String>>,
     fournisseurItems: List<Pair<String, String>>,
     products: ProductDataForm,
-    categorielibelleState: TextFieldValue,
+    categorielibelleState: TextFieldValue,  // Use TextField to better handle onchange on Spinner
     navigateToCategory: () -> Unit,
     navigateToRayon: () -> Unit,
     rayonlibelleState: TextFieldValue,
     fournisseurlibelleState: TextFieldValue,
-    onProductDataChanged: (ProductDataForm) -> Unit,
-    onCategorielibelleState: (TextFieldValue) -> Unit,
+    onProductDataChanged: (ProductDataForm) -> Unit, // We send it parent side to make operation like ResetForm
+    onCategorielibelleState: (TextFieldValue) -> Unit,  // Use TextField to better handle onchange on Spinner
     onRayonlibelleState: (TextFieldValue) -> Unit,
     onFournisseurlibelleState: (TextFieldValue) -> Unit,
     onSubmitForm: (product: ProductDataForm) -> Unit

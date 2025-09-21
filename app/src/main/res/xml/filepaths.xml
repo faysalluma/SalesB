@@ -4,4 +4,12 @@
     <cache-path
         name="temp_images"
         path="images/" />
+
+    <cache-path
+        name="cache_files"
+        path="." />
+
+    <external-path
+        name="external_files"
+        path="." />
 </paths>

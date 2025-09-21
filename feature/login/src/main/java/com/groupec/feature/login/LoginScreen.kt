@@ -31,8 +31,7 @@ fun LoginScreen(
     navigateToHome: (User) -> Unit,
     navigateToForgotPassword: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = hiltViewModel(),
-
+    viewModel: LoginViewModel = hiltViewModel()
     ) {
     val context = LocalContext.current
     val loginState by viewModel.loginUiState.collectAsState()
@@ -61,7 +60,7 @@ fun LoginScreen(
                             val (user, isMainPassword) = userInfo
                             LaunchedEffect(Unit) {
                                 if (user.firstlogin || (user.reset_password != null && !isMainPassword)) {
-                                    navigateToChangePassword(user.id, true)
+                                    navigateToChangePassword(user.id ?: 0, true)
                                 } else {
                                     navigateToHome(user)
                                 }

@@ -3,6 +3,8 @@ package com.groupec.salesb.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.groupec.salesb.core.FormUIState
+import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
@@ -57,8 +59,16 @@ class MainViewModel @Inject constructor(
     }
 
     fun logout() {
-        runBlocking {
-            logoutPasswordUseCase()
+        viewModelScope.launch {
+            when (val result = logoutPasswordUseCase()) {
+                is Result.Success -> _logoutUiState.value = UIState.Success(Unit)
+                is Result.Error -> _logoutUiState.value =  UIState.Error(result.exception.localizedMessage ?: "Error when logout")
+                else -> {}
+            }
         }
+    }
+
+    fun resetFlow() {
+        _logoutUiState.value = UIState.Loading
     }
 }

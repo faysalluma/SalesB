@@ -76,6 +76,8 @@ dependencies {
     implementation(project(":feature:rayondetail"))
     implementation(project(":feature:outputlist"))
     implementation(project(":feature:outputdetail"))
+    implementation(project(":feature:accountlist"))
+    implementation(project(":feature:accountdetail"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

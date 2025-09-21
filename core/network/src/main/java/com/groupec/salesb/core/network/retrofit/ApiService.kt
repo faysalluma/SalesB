@@ -38,7 +38,7 @@ interface ApiService {
     suspend fun getParameter() : Response<ParameterResponse>
 
     @GET(Constants.GET_DEFAULT_USER)
-    suspend fun getDefaultUser() : Response<UserResponse>
+    suspend fun getDefaultUser() : Response<UserItemResponse>
 
     @GET(Constants.GET_USER_BY_EMAIL)
     suspend fun getUserByEmail(@Path("email") email: String) : Response<ApiResult<UserItemResponse>>
@@ -96,6 +96,10 @@ interface ApiService {
     suspend fun getSales(@Query("page") page: Int, @Query("limit") limit: Int, @QueryMap searchParams: Map<String, String>
     ): Response<SaleResponse>
 
+    @GET(Constants.GET_USERS)
+    suspend fun getUsers(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
+    ): Response<UserResponse>
+
     /* POST API */
     @Multipart
     @POST(Constants.ADD_PRODUCT)
@@ -129,6 +133,9 @@ interface ApiService {
     @POST(Constants.ADD_RAYON)
     suspend fun addRayon(@Body rayon: Rayon): Response<Unit>
 
+    @POST(Constants.ADD_USER)
+    suspend fun addUser(@Body user: User): Response<Unit>
+
     @POST(Constants.FORGOT_PASSWORD)
     suspend fun forgotPassword(@Path("email") email: String): Response<Unit>
 
@@ -148,5 +155,8 @@ interface ApiService {
 
     @DELETE(Constants.DELETE_OUTPUT)
     suspend fun deleteOutput(@Path("outputid") outputid: Int): Response<ApiResult<Boolean>>
+
+    @DELETE(Constants.DELETE_USER)
+    suspend fun deleteUser(@Path("userid") userid: Int): Response<ApiResult<Boolean>>
 
 }

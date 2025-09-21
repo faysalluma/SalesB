@@ -29,7 +29,7 @@ class BitmapPrintAdapter(private val pdfData: ByteArray) : PrintDocumentAdapter(
         extras: Bundle?
     ) {
         callback?.onLayoutFinished(
-            PrintDocumentInfo.Builder("receipt.pdf")
+            PrintDocumentInfo.Builder("invoice.pdf")
                 .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
                 .build(), true)
     }
@@ -40,7 +40,7 @@ class BitmapPrintAdapter(private val pdfData: ByteArray) : PrintDocumentAdapter(
             val output = FileOutputStream(destination.fileDescriptor)
             output.write(pdfData)
             output.close()
-            callback.onWriteFinished(arrayOf(android.print.PageRange.ALL_PAGES))
+            callback.onWriteFinished(arrayOf(PageRange.ALL_PAGES))
         } catch (e: Exception) {
             callback.onWriteFailed(e.message)
         }

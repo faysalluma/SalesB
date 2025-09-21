@@ -5,7 +5,9 @@
     <string name="title_loading">Data configuration</string>
     <string name="desc_loading">We prepare your data, it will only take a few moments.</string>
     <string name="label_email" translatable="false">Email</string>
+    <string name="label_email_required">Email*</string>
     <string name="enter_your_email">Enter your email</string>
+    <string name="enter_your_email_required">Enter your email*</string>
     <string name="label_password">Password</string>
     <string name="enter_your_password">Enter your password</string>
     <string name="label_anc_password">Old Password</string>
@@ -44,6 +46,8 @@
     <string name="enter_your_value">"Enter the %s "</string>
     <string name="invalid_libelle">Invalid email address</string>
     <string name="btn_save">Save</string>
+    <string name="btn_edit">Edit</string>
+    <string name="btn_send_by_email">Send by email</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_confirm">Confirm</string>
     <string name="invalid_select"> Invalid selector</string>
@@ -61,4 +65,16 @@
     <!--  Invoicing Form -->
     <string name="full_name">Full name *</string>
     <string name="address">Billing address*</string>
+    <string name="select_all">Select all</string>
+    <string name="label_full_name">Full name*</string>
+    <string name="label_address">Address</string>
+    <string name="label_tel">Phone</string>
+    <string name="screen_home">Home Screen</string>
+    <string name="screen_save_sale">Save Sale Screen</string>
+    <string name="screen_my_sales">My Sales Screen</string>
+    <string name="screen_products">Products Screen</string>
+    <string name="screen_outputs">Outputs Screen</string>
+    <string name="screen_parameters">Settings Screen (Categories, Departments)</string>
+    <string name="screen_privileges">Privileges Screen</string>
+    <string name="privileges">Privileges</string>
 </resources>

@@ -5,4 +5,5 @@
     <string name="error_403_forbidden">L\'accès est interdit.</string>
     <string name="error_502_bad_gateway">Une erreur inattendue s\'est produite</string>
     <string name="error_404_not_found">Ce compte utilisateur est introuvable.</string>
+    <string name="error_409_already_exists">L\'utilisateur existe déjà.</string>
 </resources>
