@@ -26,6 +26,7 @@ import com.groupec.salesb.core.ui.LoginForm
 
 @Composable
 fun LoginScreen(
+    isLandscape: Boolean,
     raisonSociale: String,
     navigateToChangePassword: (Int, Boolean) -> Unit,
     navigateToHome: (User) -> Unit,

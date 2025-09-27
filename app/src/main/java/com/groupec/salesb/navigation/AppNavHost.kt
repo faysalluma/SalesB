@@ -6,6 +6,9 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.VerticalDivider
@@ -17,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -38,6 +42,8 @@ import com.groupec.feature.rayonlist.RayonListScreen
 import com.groupec.feature.sale.SaleScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
+import com.groupec.salesb.R
+import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.model.data.Category
 import com.groupec.salesb.core.model.data.Output
 import com.groupec.salesb.core.model.data.Product
@@ -53,6 +59,8 @@ import kotlinx.coroutines.delay
 fun AppNavHost(
     modifier: Modifier,
     snackbarHostState: SnackbarHostState,
+    isLandscape: Boolean,
+    shouldNotShowInPortraitMode: Boolean,
     navController: NavHostController,
     startDestination: String
 ) {
@@ -116,6 +124,7 @@ fun AppNavHost(
         ) { backStackEntry ->
             val raisonSociale = backStackEntry.arguments?.getString("raisonSociale") ?: ""
             LoginScreen(
+                isLandscape = isLandscape,
                 raisonSociale = raisonSociale,
                 navigateToChangePassword = { userId, firstLoginOrResetPwd ->
                     navController.navigate(NavigationItem.ChangePassword.route.plus("/${userId}/${firstLoginOrResetPwd}"))
@@ -190,200 +199,224 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.Product.route) {
-            var selectedProduct by remember { mutableStateOf<Product?>(null) }
-            var refreshProductList by remember { mutableStateOf(false) }
-            var removeSelectedBgColor by remember { mutableStateOf(false) }
-            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+            if (shouldNotShowInPortraitMode) {
+                ErrorScreen(
+                    error = stringResource(R.string.error_visible_only_landscape)
+                )
+            } else {
+                var selectedProduct by remember { mutableStateOf<Product?>(null) }
+                var refreshProductList by remember { mutableStateOf(false) }
+                var removeSelectedBgColor by remember { mutableStateOf(false) }
+                var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
 
-            LaunchedEffect(isRefreshing) {
-                // Show refresh indicator during 1s
-                if (isRefreshing) {
-                    delay(1000)
-                    isRefreshing = false
-                }
-            }
-
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                refreshProductList  = !refreshProductList
-                isRefreshing = true
-            }) {
-                Row {
-                    Row(Modifier.weight(0.4f)) {
-                        ProductListScreen(
-                            snackbarHostState = snackbarHostState,
-                            refreshProductList = refreshProductList,
-                            removeSelectedBgColor = removeSelectedBgColor,
-                            onViewDetail = { product ->
-                                selectedProduct = product
-                            }
-                        )
-                        VerticalDivider()
+                LaunchedEffect(isRefreshing) {
+                    // Show refresh indicator during 1s
+                    if (isRefreshing) {
+                        delay(1000)
+                        isRefreshing = false
                     }
+                }
 
-                    Box(Modifier.weight(0.6f)) {
-                        ProductDetailScreen(
-                            snackbarHostState = snackbarHostState,
-                            product = selectedProduct,
-                            navigateToCategory = {
-                                navController.navigate(NavigationItem.Category.route) {
-                                    popUpTo(navController.graph.startDestinationId)
-                                    launchSingleTop = true
+                PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+                    refreshProductList  = !refreshProductList
+                    isRefreshing = true
+                }) {
+                    Row {
+                        Row(Modifier.weight(0.4f)) {
+                            ProductListScreen(
+                                snackbarHostState = snackbarHostState,
+                                refreshProductList = refreshProductList,
+                                removeSelectedBgColor = removeSelectedBgColor,
+                                onViewDetail = { product ->
+                                    selectedProduct = product
                                 }
-                            },
-                            navigateToRayon = {
-                                navController.navigate(NavigationItem.Rayon.route) {
-                                    popUpTo(navController.graph.startDestinationId)
-                                    launchSingleTop = true
+                            )
+                            VerticalDivider()
+                        }
+
+                        Box(Modifier.weight(0.6f)) {
+                            ProductDetailScreen(
+                                snackbarHostState = snackbarHostState,
+                                product = selectedProduct,
+                                navigateToCategory = {
+                                    navController.navigate(NavigationItem.Category.route) {
+                                        popUpTo(navController.graph.startDestinationId)
+                                        launchSingleTop = true
+                                    }
+                                },
+                                navigateToRayon = {
+                                    navController.navigate(NavigationItem.Rayon.route) {
+                                        popUpTo(navController.graph.startDestinationId)
+                                        launchSingleTop = true
+                                    }
+                                },
+                                removeSelectedBgColor = {
+                                    removeSelectedBgColor = !removeSelectedBgColor
+                                },
+                                refreshProducts = {
+                                    refreshProductList  = !refreshProductList
                                 }
-                            },
-                            removeSelectedBgColor = {
-                                removeSelectedBgColor = !removeSelectedBgColor
-                            },
-                            refreshProducts = {
-                                refreshProductList  = !refreshProductList
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }
         }
 
         composable(NavigationItem.Category.route) {
-            var selectedCategory by remember { mutableStateOf<Category?>(null) }
-            var refreshCategoryList by remember { mutableStateOf(false) }
-            var removeSelectedBgColor by remember { mutableStateOf(false) }
-            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+            if (shouldNotShowInPortraitMode) {
+                ErrorScreen(
+                    error = stringResource(R.string.error_visible_only_landscape)
+                )
+            } else {
+                var selectedCategory by remember { mutableStateOf<Category?>(null) }
+                var refreshCategoryList by remember { mutableStateOf(false) }
+                var removeSelectedBgColor by remember { mutableStateOf(false) }
+                var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
 
-            LaunchedEffect(isRefreshing) {
-                // Show refresh indicator during 1s
-                if (isRefreshing) {
-                    delay(1000)
-                    isRefreshing = false
-                }
-            }
-
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                refreshCategoryList  = !refreshCategoryList
-                isRefreshing = true
-            }) {
-                Row {
-                    Row(Modifier.weight(0.4f)) {
-                        CategoryListScreen(
-                            snackbarHostState = snackbarHostState,
-                            refreshCategoryList = refreshCategoryList,
-                            removeSelectedBgColor = removeSelectedBgColor,
-                            onViewDetail = { category ->
-                                selectedCategory = category
-                            }
-                        )
-                        VerticalDivider()
+                LaunchedEffect(isRefreshing) {
+                    // Show refresh indicator during 1s
+                    if (isRefreshing) {
+                        delay(1000)
+                        isRefreshing = false
                     }
+                }
 
-                    Box(Modifier.weight(0.6f)) {
-                        CategoryDetailScreen(
-                            snackbarHostState = snackbarHostState,
-                            category = selectedCategory,
-                            removeSelectedBgColor = {
-                                removeSelectedBgColor = !removeSelectedBgColor
-                            },
-                            refreshCategories = {
-                                refreshCategoryList  = !refreshCategoryList
-                            }
-                        )
+                PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+                    refreshCategoryList  = !refreshCategoryList
+                    isRefreshing = true
+                }) {
+                    Row {
+                        Row(Modifier.weight(0.4f)) {
+                            CategoryListScreen(
+                                snackbarHostState = snackbarHostState,
+                                refreshCategoryList = refreshCategoryList,
+                                removeSelectedBgColor = removeSelectedBgColor,
+                                onViewDetail = { category ->
+                                    selectedCategory = category
+                                }
+                            )
+                            VerticalDivider()
+                        }
+
+                        Box(Modifier.weight(0.6f)) {
+                            CategoryDetailScreen(
+                                snackbarHostState = snackbarHostState,
+                                category = selectedCategory,
+                                removeSelectedBgColor = {
+                                    removeSelectedBgColor = !removeSelectedBgColor
+                                },
+                                refreshCategories = {
+                                    refreshCategoryList  = !refreshCategoryList
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
 
         composable(NavigationItem.Rayon.route) {
-            var selectedRayon by remember { mutableStateOf<Rayon?>(null) }
-            var refreshList by remember { mutableStateOf(false) }
-            var removeSelectedBgColor by remember { mutableStateOf(false) }
-            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+            if (shouldNotShowInPortraitMode) {
+                ErrorScreen(
+                    error = stringResource(R.string.error_visible_only_landscape)
+                )
+            } else {
+                var selectedRayon by remember { mutableStateOf<Rayon?>(null) }
+                var refreshList by remember { mutableStateOf(false) }
+                var removeSelectedBgColor by remember { mutableStateOf(false) }
+                var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
 
-            LaunchedEffect(isRefreshing) {
-                // Show refresh indicator during 1s
-                if (isRefreshing) {
-                    delay(1000)
-                    isRefreshing = false
-                }
-            }
-
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                refreshList  = !refreshList
-                isRefreshing = true
-            }) {
-                Row {
-                    Row(Modifier.weight(0.4f)) {
-                        RayonListScreen(
-                            snackbarHostState = snackbarHostState,
-                            refreshList = refreshList,
-                            removeSelectedBgColor = removeSelectedBgColor,
-                            onViewDetail = { rayon ->
-                                selectedRayon = rayon
-                            }
-                        )
-                        VerticalDivider()
+                LaunchedEffect(isRefreshing) {
+                    // Show refresh indicator during 1s
+                    if (isRefreshing) {
+                        delay(1000)
+                        isRefreshing = false
                     }
+                }
 
-                    Box(Modifier.weight(0.6f)) {
-                        RayonDetailScreen(
-                            snackbarHostState = snackbarHostState,
-                            rayon = selectedRayon,
-                            removeSelectedBgColor = {
-                                removeSelectedBgColor = !removeSelectedBgColor
-                            },
-                            refreshRayons = {
-                                refreshList  = !refreshList
-                            }
-                        )
+                PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+                    refreshList  = !refreshList
+                    isRefreshing = true
+                }) {
+                    Row {
+                        Row(Modifier.weight(0.4f)) {
+                            RayonListScreen(
+                                snackbarHostState = snackbarHostState,
+                                refreshList = refreshList,
+                                removeSelectedBgColor = removeSelectedBgColor,
+                                onViewDetail = { rayon ->
+                                    selectedRayon = rayon
+                                }
+                            )
+                            VerticalDivider()
+                        }
+
+                        Box(Modifier.weight(0.6f)) {
+                            RayonDetailScreen(
+                                snackbarHostState = snackbarHostState,
+                                rayon = selectedRayon,
+                                removeSelectedBgColor = {
+                                    removeSelectedBgColor = !removeSelectedBgColor
+                                },
+                                refreshRayons = {
+                                    refreshList  = !refreshList
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
 
         composable(NavigationItem.Outputs.route) {
-            var selectedOutput by remember { mutableStateOf<Output?>(null) }
-            var refreshList by remember { mutableStateOf(false) }
-            var removeSelectedBgColor by remember { mutableStateOf(false) }
-            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+            if (shouldNotShowInPortraitMode) {
+                ErrorScreen(
+                    error = stringResource(R.string.error_visible_only_landscape)
+                )
+            } else {
+                var selectedOutput by remember { mutableStateOf<Output?>(null) }
+                var refreshList by remember { mutableStateOf(false) }
+                var removeSelectedBgColor by remember { mutableStateOf(false) }
+                var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
 
-            LaunchedEffect(isRefreshing) {
-                // Show refresh indicator during 1s
-                if (isRefreshing) {
-                    delay(1000)
-                    isRefreshing = false
-                }
-            }
-
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                refreshList  = !refreshList
-                isRefreshing = true
-            }) {
-                Row {
-                    Row(Modifier.weight(0.4f)) {
-                        OutputListScreen(
-                            snackbarHostState = snackbarHostState,
-                            refreshList = refreshList,
-                            removeSelectedBgColor = removeSelectedBgColor,
-                            onViewDetail = { output ->
-                                selectedOutput = output
-                            }
-                        )
-                        VerticalDivider()
+                LaunchedEffect(isRefreshing) {
+                    // Show refresh indicator during 1s
+                    if (isRefreshing) {
+                        delay(1000)
+                        isRefreshing = false
                     }
+                }
 
-                    Box(Modifier.weight(0.6f)) {
-                        OutputDetailScreen(
-                            snackbarHostState = snackbarHostState,
-                            output = selectedOutput,
-                            removeSelectedBgColor = {
-                                removeSelectedBgColor = !removeSelectedBgColor
-                            },
-                            refreshList = {
-                                refreshList  = !refreshList
-                            }
-                        )
+                PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+                    refreshList  = !refreshList
+                    isRefreshing = true
+                }) {
+                    Row {
+                        Row(Modifier.weight(0.4f)) {
+                            OutputListScreen(
+                                snackbarHostState = snackbarHostState,
+                                refreshList = refreshList,
+                                removeSelectedBgColor = removeSelectedBgColor,
+                                onViewDetail = { output ->
+                                    selectedOutput = output
+                                }
+                            )
+                            VerticalDivider()
+                        }
+
+                        Box(Modifier.weight(0.6f)) {
+                            OutputDetailScreen(
+                                snackbarHostState = snackbarHostState,
+                                output = selectedOutput,
+                                removeSelectedBgColor = {
+                                    removeSelectedBgColor = !removeSelectedBgColor
+                                },
+                                refreshList = {
+                                    refreshList  = !refreshList
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -415,47 +448,53 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.Account.route) {
-            var selectedAccount by remember { mutableStateOf<User?>(null) }
-            var refreshAccountList by remember { mutableStateOf(false) }
-            var removeSelectedBgColor by remember { mutableStateOf(false) }
-            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+            if (shouldNotShowInPortraitMode) {
+                ErrorScreen(
+                    error = stringResource(R.string.error_visible_only_landscape)
+                )
+            } else {
+                var selectedAccount by remember { mutableStateOf<User?>(null) }
+                var refreshAccountList by remember { mutableStateOf(false) }
+                var removeSelectedBgColor by remember { mutableStateOf(false) }
+                var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
 
-            LaunchedEffect(isRefreshing) {
-                // Show refresh indicator during 1s
-                if (isRefreshing) {
-                    delay(1000)
-                    isRefreshing = false
-                }
-            }
-
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                refreshAccountList  = !refreshAccountList
-                isRefreshing = true
-            }) {
-                Row {
-                    Row(Modifier.weight(0.4f)) {
-                        AccountListScreen(
-                            snackbarHostState = snackbarHostState,
-                            refreshAccountList = refreshAccountList,
-                            removeSelectedBgColor = removeSelectedBgColor,
-                            onViewDetail = { user ->
-                                selectedAccount = user
-                            }
-                        )
-                        VerticalDivider()
+                LaunchedEffect(isRefreshing) {
+                    // Show refresh indicator during 1s
+                    if (isRefreshing) {
+                        delay(1000)
+                        isRefreshing = false
                     }
+                }
 
-                    Box(Modifier.weight(0.6f)) {
-                        AccountDetailScreen(
-                            snackbarHostState = snackbarHostState,
-                            account = selectedAccount,
-                            removeSelectedBgColor = {
-                                removeSelectedBgColor = !removeSelectedBgColor
-                            },
-                            refreshAccounts = {
-                                refreshAccountList  = !refreshAccountList
-                            }
-                        )
+                PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+                    refreshAccountList  = !refreshAccountList
+                    isRefreshing = true
+                }) {
+                    Row {
+                        Row(Modifier.weight(0.4f)) {
+                            AccountListScreen(
+                                snackbarHostState = snackbarHostState,
+                                refreshAccountList = refreshAccountList,
+                                removeSelectedBgColor = removeSelectedBgColor,
+                                onViewDetail = { user ->
+                                    selectedAccount = user
+                                }
+                            )
+                            VerticalDivider()
+                        }
+
+                        Box(Modifier.weight(0.6f)) {
+                            AccountDetailScreen(
+                                snackbarHostState = snackbarHostState,
+                                account = selectedAccount,
+                                removeSelectedBgColor = {
+                                    removeSelectedBgColor = !removeSelectedBgColor
+                                },
+                                refreshAccounts = {
+                                    refreshAccountList  = !refreshAccountList
+                                }
+                            )
+                        }
                     }
                 }
             }

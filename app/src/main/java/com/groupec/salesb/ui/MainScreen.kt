@@ -1,6 +1,10 @@
 package com.groupec.salesb.ui
 
 import android.content.Context
+import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,6 +16,7 @@ import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -22,15 +27,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.groupec.feature.login.LoginViewModel
 import com.groupec.salesb.R
 import com.groupec.salesb.core.Approval
 import com.groupec.salesb.core.Privileges
@@ -43,12 +47,12 @@ import com.groupec.salesb.core.designsystem.theme.Green
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Red
 import com.groupec.salesb.core.designsystem.theme.White
-import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.navigation.AppNavHost
 import com.groupec.salesb.navigation.NavigationItem
 
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun MainScreen(
     connectionState: Boolean,
@@ -57,6 +61,11 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val configuration = LocalConfiguration.current
+    val isLandscape by remember {
+        derivedStateOf { configuration.orientation == Configuration.ORIENTATION_LANDSCAPE }
+    }
 
     // Show title and user name on app bar
     val userStoreState by viewModel.userStore.collectAsState()
@@ -144,6 +153,14 @@ fun MainScreen(
         }
     }
 
+    val items by remember(privileges) {
+        derivedStateOf { getNavigationItemsList(privileges)  }
+    }
+
+    val shouldNotShowInPortraitMode by remember {
+        derivedStateOf { !isLandscape && !isPortaitScreenActive(currentDestination.value) }
+    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(
@@ -171,8 +188,37 @@ fun MainScreen(
                 }
             }
         },
+        bottomBar = {
+            currentDestination.value?.let { route ->
+                AnimatedVisibility(
+                    visible = !isLandscape,
+                    enter = slideInVertically(
+                        // Slide in from the bottom
+                        initialOffsetY = { fullHeight -> fullHeight }
+                    ),
+                    exit = slideOutVertically(
+                        // Slide out to the bottom
+                        targetOffsetY = { fullHeight -> fullHeight }
+                    )
+                ) {
+                    BottomNavigationBar(
+                        items = items,
+                        currentRoute = route,
+                        onItemClick = { currentNavigationItem ->
+                            navController.navigate(currentNavigationItem.route) {
+                                popUpTo(navController.graph.startDestinationRoute ?: "") {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    )
+                }
+            }
+        },
         floatingActionButton = {
-            if (currentDestination.value == NavigationItem.Home.route) {
+            if (connectionState && currentDestination.value == NavigationItem.Home.route) {
                 LargeFloatingActionButton(
                     onClick = {
                         navController.navigate(NavigationItem.SaveSale.route) {
@@ -195,9 +241,6 @@ fun MainScreen(
                     error = stringResource(R.string.no_internet_connexion)
                 )
             } else {
-                val items by remember(privileges) {
-                    derivedStateOf { getNavigationItemsList(privileges)  }
-                }
                 val startDestination by remember(items) {
                     derivedStateOf {
                         when {
@@ -207,15 +250,21 @@ fun MainScreen(
                     }
                 }
 
-                if (shouldShowBarAndRailApp(currentDestination.value, firstLogin, resetPassword)) {
+                if (
+                    shouldShowBarAndRailApp(currentDestination.value, firstLogin, resetPassword) &&
+                    isLandscape
+                ) {
                     MyNavigationRail(
                         items = items,
                         navController,
                         modifier = Modifier.weight(0.09f)
                     )
                 }
+
                 AppNavHost(
                     snackbarHostState = snackbarHostState,
+                    isLandscape = isLandscape,
+                    shouldNotShowInPortraitMode = shouldNotShowInPortraitMode,
                     modifier = Modifier
                         .weight(
                             if (shouldShowBarAndRailApp(
@@ -371,4 +420,18 @@ private fun shouldShowBarAndRailApp(
     }
 
     return route !in excludedRoutes
+}
+
+private fun isPortaitScreenActive(route: String?): Boolean {
+    val excludedRoutes =  mutableListOf(
+        NavigationItem.Loading.route,
+        NavigationItem.Configuration.route,
+        NavigationItem.Login.route,
+        NavigationItem.ForgotPassword.route,
+        NavigationItem.ChangePassword.route,
+        NavigationItem.Home.route,
+        NavigationItem.SaveSale.route,
+        NavigationItem.MySales.route
+    )
+    return route in excludedRoutes
 }

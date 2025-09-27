@@ -70,18 +70,19 @@ class MainActivity : ComponentActivity() {
         setContent {
             val connectionState by connectivityManagerUtils.connectionAsStateFlow.collectAsStateWithLifecycle()
             SalesBAppTheme {
-                if (!isTablet()) {
+                /*if (!isTablet()) {
                     AppAlertInfoDialog(
                         title = stringResource(id = R.string.app_name),
                         titleColor = Primary,
                         message = stringResource(id = R.string.error_tablet_desc),
                         confirmButtonText = stringResource(id = R.string.close_app),
-                        onConfirmButton = { /* Call default onConfirmButton action */ },
+                        onConfirmButton = { *//* Call default onConfirmButton action *//* },
                         closing = this
                     )
                 } else {
                     MainScreen(connectionState)
-                }
+                }*/
+                MainScreen(connectionState)
             }
         }
     }

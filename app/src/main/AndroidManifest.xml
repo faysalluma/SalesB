@@ -32,7 +32,6 @@
         <activity
             android:name="com.groupec.salesb.MainActivity"
             android:exported="true"
-            android:screenOrientation="landscape"
             android:theme="@style/Theme.SalesB"
             tools:ignore="DiscouragedApi">
 
