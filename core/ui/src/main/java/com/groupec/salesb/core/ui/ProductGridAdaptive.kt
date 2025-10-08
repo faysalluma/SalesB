@@ -24,10 +24,10 @@ fun ProductGridAdaptive(
     isSearching: Boolean
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 124.dp), // Taille minimale pour chaque élément
-        contentPadding = PaddingValues(bottom = 8.dp), // espace autour de l'ensemble de la grille
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        columns = GridCells.Adaptive(minSize = 124.dp), // Taille minimale pour chaque élément (calcule le nombre de colonnes selon la largeur disponible)
+        contentPadding = PaddingValues(bottom = 8.dp), // marge interieur autour de l'ensemble de la grille
+        horizontalArrangement = Arrangement.spacedBy(16.dp), // espace entre les lignes de la grille (verticalement)
+        verticalArrangement = Arrangement.spacedBy(16.dp), //  espace entre les colonnes de la grille (horizontalement)
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 24.dp)

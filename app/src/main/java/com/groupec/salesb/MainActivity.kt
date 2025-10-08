@@ -9,10 +9,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -20,8 +24,6 @@ import androidx.lifecycle.lifecycleScope
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 import com.groupec.salesb.ui.MainScreen
 import com.groupec.salesb.core.ConnectivityManagerUtils
-import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
-import com.groupec.salesb.core.designsystem.theme.Primary
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,6 +44,7 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -69,6 +72,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val connectionState by connectivityManagerUtils.connectionAsStateFlow.collectAsStateWithLifecycle()
+            val windowSizeClass = calculateWindowSizeClass(this)
+            val isExpandedWidth by remember(windowSizeClass) {
+                derivedStateOf {
+                    windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
+                }
+            }
             SalesBAppTheme {
                 /*if (!isTablet()) {
                     AppAlertInfoDialog(
@@ -82,13 +91,19 @@ class MainActivity : ComponentActivity() {
                 } else {
                     MainScreen(connectionState)
                 }*/
-                MainScreen(connectionState)
+                MainScreen(connectionState, isExpandedWidth)
             }
         }
     }
 
     @Composable
     fun isTablet(): Boolean {
+        /*
+        WidthSizeClass
+        Compact → largeur < 600 dp // Smartphone portrait
+        Medium → largeur entre 600 dp et 840 dp // Tablette petite ou téléphone en paysage
+        Expanded → largeur ≥ 840 dp // Grande tablette ou desktop
+         */
         val configuration = LocalConfiguration.current
         return if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             configuration.screenWidthDp > 840

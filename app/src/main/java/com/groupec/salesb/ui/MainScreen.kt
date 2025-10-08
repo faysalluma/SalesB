@@ -56,16 +56,12 @@ import com.groupec.salesb.navigation.NavigationItem
 @Composable
 fun MainScreen(
     connectionState: Boolean,
+    isExpandedWidth: Boolean,
     navController: NavHostController = rememberNavController(),
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-
-    val configuration = LocalConfiguration.current
-    val isLandscape by remember {
-        derivedStateOf { configuration.orientation == Configuration.ORIENTATION_LANDSCAPE }
-    }
 
     // Show title and user name on app bar
     val userStoreState by viewModel.userStore.collectAsState()
@@ -158,7 +154,7 @@ fun MainScreen(
     }
 
     val shouldNotShowInPortraitMode by remember {
-        derivedStateOf { !isLandscape && !isPortaitScreenActive(currentDestination.value) }
+        derivedStateOf { !isExpandedWidth && !isPortaitScreenActive(currentDestination.value) }
     }
 
     Scaffold(
@@ -191,7 +187,7 @@ fun MainScreen(
         bottomBar = {
             currentDestination.value?.let { route ->
                 AnimatedVisibility(
-                    visible = !isLandscape,
+                    visible = !isExpandedWidth,
                     enter = slideInVertically(
                         // Slide in from the bottom
                         initialOffsetY = { fullHeight -> fullHeight }
@@ -230,7 +226,7 @@ fun MainScreen(
                     containerColor = Primary,
                     contentColor = White,
                 ) {
-                    Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(32.dp))
+                    Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(30.dp))
                 }
             }
         }
@@ -244,7 +240,8 @@ fun MainScreen(
                 val startDestination by remember(items) {
                     derivedStateOf {
                         when {
-                            items.isEmpty() -> NavigationItem.Loading.route
+                            items.isEmpty() || (items.isNotEmpty() && firstLogin) || (items.isNotEmpty() && resetPassword.isNotEmpty())
+                                 -> NavigationItem.Loading.route
                             else -> items.first().route
                         }
                     }
@@ -252,7 +249,7 @@ fun MainScreen(
 
                 if (
                     shouldShowBarAndRailApp(currentDestination.value, firstLogin, resetPassword) &&
-                    isLandscape
+                    isExpandedWidth
                 ) {
                     MyNavigationRail(
                         items = items,
@@ -263,7 +260,7 @@ fun MainScreen(
 
                 AppNavHost(
                     snackbarHostState = snackbarHostState,
-                    isLandscape = isLandscape,
+                    isExpandedWidth = isExpandedWidth,
                     shouldNotShowInPortraitMode = shouldNotShowInPortraitMode,
                     modifier = Modifier
                         .weight(
@@ -430,8 +427,8 @@ private fun isPortaitScreenActive(route: String?): Boolean {
         NavigationItem.ForgotPassword.route,
         NavigationItem.ChangePassword.route,
         NavigationItem.Home.route,
-        NavigationItem.SaveSale.route,
-        NavigationItem.MySales.route
+        NavigationItem.MySales.route,
+        NavigationItem.Account.route,
     )
     return route in excludedRoutes
 }

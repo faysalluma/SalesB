@@ -46,7 +46,7 @@ fun SalesBImage(modifier: Modifier = Modifier) {
 
         ) {
         Image(
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Fit,
             painter = painterResource(id = R.drawable.salesb),
             contentDescription = "SalesB logo",
             modifier = Modifier.scale(0.8f)

@@ -6,9 +6,6 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.VerticalDivider
@@ -43,7 +40,7 @@ import com.groupec.feature.sale.SaleScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
 import com.groupec.salesb.R
-import com.groupec.salesb.core.designsystem.component.ErrorScreen
+import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.model.data.Category
 import com.groupec.salesb.core.model.data.Output
 import com.groupec.salesb.core.model.data.Product
@@ -59,7 +56,7 @@ import kotlinx.coroutines.delay
 fun AppNavHost(
     modifier: Modifier,
     snackbarHostState: SnackbarHostState,
-    isLandscape: Boolean,
+    isExpandedWidth: Boolean,
     shouldNotShowInPortraitMode: Boolean,
     navController: NavHostController,
     startDestination: String
@@ -124,7 +121,7 @@ fun AppNavHost(
         ) { backStackEntry ->
             val raisonSociale = backStackEntry.arguments?.getString("raisonSociale") ?: ""
             LoginScreen(
-                isLandscape = isLandscape,
+                isExpandedWidth = isExpandedWidth,
                 raisonSociale = raisonSociale,
                 navigateToChangePassword = { userId, firstLoginOrResetPwd ->
                     navController.navigate(NavigationItem.ChangePassword.route.plus("/${userId}/${firstLoginOrResetPwd}"))
@@ -186,7 +183,13 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.SaveSale.route) {
-            SaleScreen(snackbarHostState = snackbarHostState)
+            if (shouldNotShowInPortraitMode) {
+                EmptyScreen(
+                    text = stringResource(R.string.error_visible_only_expanded)
+                )
+            } else {
+                SaleScreen(snackbarHostState = snackbarHostState)
+            }
         }
 
         composable(NavigationItem.MySales.route) {
@@ -200,8 +203,8 @@ fun AppNavHost(
 
         composable(NavigationItem.Product.route) {
             if (shouldNotShowInPortraitMode) {
-                ErrorScreen(
-                    error = stringResource(R.string.error_visible_only_landscape)
+                EmptyScreen(
+                    text = stringResource(R.string.error_visible_only_expanded)
                 )
             } else {
                 var selectedProduct by remember { mutableStateOf<Product?>(null) }
@@ -265,8 +268,8 @@ fun AppNavHost(
 
         composable(NavigationItem.Category.route) {
             if (shouldNotShowInPortraitMode) {
-                ErrorScreen(
-                    error = stringResource(R.string.error_visible_only_landscape)
+                EmptyScreen(
+                    text = stringResource(R.string.error_visible_only_expanded)
                 )
             } else {
                 var selectedCategory by remember { mutableStateOf<Category?>(null) }
@@ -318,8 +321,8 @@ fun AppNavHost(
 
         composable(NavigationItem.Rayon.route) {
             if (shouldNotShowInPortraitMode) {
-                ErrorScreen(
-                    error = stringResource(R.string.error_visible_only_landscape)
+                EmptyScreen(
+                    text = stringResource(R.string.error_visible_only_expanded)
                 )
             } else {
                 var selectedRayon by remember { mutableStateOf<Rayon?>(null) }
@@ -371,8 +374,8 @@ fun AppNavHost(
 
         composable(NavigationItem.Outputs.route) {
             if (shouldNotShowInPortraitMode) {
-                ErrorScreen(
-                    error = stringResource(R.string.error_visible_only_landscape)
+                EmptyScreen(
+                    text = stringResource(R.string.error_visible_only_expanded)
                 )
             } else {
                 var selectedOutput by remember { mutableStateOf<Output?>(null) }
@@ -448,53 +451,47 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.Account.route) {
-            if (shouldNotShowInPortraitMode) {
-                ErrorScreen(
-                    error = stringResource(R.string.error_visible_only_landscape)
-                )
-            } else {
-                var selectedAccount by remember { mutableStateOf<User?>(null) }
-                var refreshAccountList by remember { mutableStateOf(false) }
-                var removeSelectedBgColor by remember { mutableStateOf(false) }
-                var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+            var selectedAccount by remember { mutableStateOf<User?>(null) }
+            var refreshAccountList by remember { mutableStateOf(false) }
+            var removeSelectedBgColor by remember { mutableStateOf(false) }
+            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
 
-                LaunchedEffect(isRefreshing) {
-                    // Show refresh indicator during 1s
-                    if (isRefreshing) {
-                        delay(1000)
-                        isRefreshing = false
-                    }
+            LaunchedEffect(isRefreshing) {
+                // Show refresh indicator during 1s
+                if (isRefreshing) {
+                    delay(1000)
+                    isRefreshing = false
                 }
+            }
 
-                PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                    refreshAccountList  = !refreshAccountList
-                    isRefreshing = true
-                }) {
-                    Row {
-                        Row(Modifier.weight(0.4f)) {
-                            AccountListScreen(
-                                snackbarHostState = snackbarHostState,
-                                refreshAccountList = refreshAccountList,
-                                removeSelectedBgColor = removeSelectedBgColor,
-                                onViewDetail = { user ->
-                                    selectedAccount = user
-                                }
-                            )
-                            VerticalDivider()
-                        }
+            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+                refreshAccountList  = !refreshAccountList
+                isRefreshing = true
+            }) {
+                Row {
+                    Row(Modifier.weight(0.4f)) {
+                        AccountListScreen(
+                            snackbarHostState = snackbarHostState,
+                            refreshAccountList = refreshAccountList,
+                            removeSelectedBgColor = removeSelectedBgColor,
+                            onViewDetail = { user ->
+                                selectedAccount = user
+                            }
+                        )
+                        VerticalDivider()
+                    }
 
-                        Box(Modifier.weight(0.6f)) {
-                            AccountDetailScreen(
-                                snackbarHostState = snackbarHostState,
-                                account = selectedAccount,
-                                removeSelectedBgColor = {
-                                    removeSelectedBgColor = !removeSelectedBgColor
-                                },
-                                refreshAccounts = {
-                                    refreshAccountList  = !refreshAccountList
-                                }
-                            )
-                        }
+                    Box(Modifier.weight(0.6f)) {
+                        AccountDetailScreen(
+                            snackbarHostState = snackbarHostState,
+                            account = selectedAccount,
+                            removeSelectedBgColor = {
+                                removeSelectedBgColor = !removeSelectedBgColor
+                            },
+                            refreshAccounts = {
+                                refreshAccountList  = !refreshAccountList
+                            }
+                        )
                     }
                 }
             }
