@@ -1,5 +1,6 @@
 package com.groupec.feature.accountdetail
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,11 +38,14 @@ import com.groupec.salesb.core.ui.UserForm
 
 @Composable
 fun AccountDetailScreen(
+    modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     account: User?,
-    refreshAccounts: () -> Unit,
-    removeSelectedBgColor: () -> Unit,
-    modifier: Modifier = Modifier,
+    refreshAccounts: (() -> Unit) ? = null,
+    removeSelectedBgColor: (() -> Unit) ? = null,
+    navigateToHome: (() -> Unit) ? = null,
+    onPopBack: (() -> Unit) ? = null,
+    isExpandedWidth: Boolean,
     viewModel: AccountDetailViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -66,6 +69,11 @@ fun AccountDetailScreen(
         }
         actifState = activeList[0]
         userDataForm = userDataForm.copy(actif=1, privilege = emptyList())
+    }
+
+    // When on detail and popBackStack : avoid show toast message
+    BackHandler {
+        onPopBack?.invoke()
     }
 
     LaunchedEffect(account) {
@@ -110,14 +118,18 @@ fun AccountDetailScreen(
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
                 resetUserForm()
-                removeSelectedBgColor()
-                refreshAccounts() // Notify list to refresh
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithState(
-                        message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                if (isExpandedWidth) {
+                    removeSelectedBgColor?.invoke()
+                    refreshAccounts?.invoke() // Notify list to refresh
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithState(
+                            message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                        )
                     )
-                )
-                viewModel.resetFlow()
+                    viewModel.resetFlow()
+                } else {
+                    navigateToHome?.invoke()
+                }
             }
         }
 
@@ -146,7 +158,7 @@ fun AccountDetailScreen(
                     color = Primary,
                     modifier = Modifier.clickable {
                         resetUserForm()
-                        removeSelectedBgColor()
+                        removeSelectedBgColor?.invoke()
                     }
                 )
 

@@ -97,7 +97,7 @@ fun MainScreen(
                 viewModel.getUserStore()
                 navController.navigate(NavigationItem.Loading.route) {
                     // Delete the entire background stack
-                    popUpTo(0) { inclusive = true }
+                    popUpTo(0) { inclusive = true } // la pile est complètement vidée, donc l’écran actuel devient le seul dans la stack.
                 }
                 viewModel.resetFlow()
             }
@@ -202,6 +202,7 @@ fun MainScreen(
                         currentRoute = route,
                         onItemClick = { currentNavigationItem ->
                             navController.navigate(currentNavigationItem.route) {
+                                // Supprime toutes les destinations jusqu’à la destination de départ du graphe de navigation
                                 popUpTo(navController.graph.startDestinationRoute ?: "") {
                                     saveState = true
                                 }
@@ -214,12 +215,20 @@ fun MainScreen(
             }
         },
         floatingActionButton = {
-            if (connectionState && currentDestination.value == NavigationItem.Home.route) {
+            if (connectionState &&
+                (
+                   currentDestination.value == NavigationItem.Home.route ||
+                   (currentDestination.value == NavigationItem.Account.route && !isExpandedWidth)
+                )
+            ) {
                 LargeFloatingActionButton(
                     onClick = {
-                        navController.navigate(NavigationItem.SaveSale.route) {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
+                        when (currentDestination.value) {
+                            NavigationItem.Home.route -> navController.navigate(NavigationItem.SaveSale.route) {
+                                popUpTo(navController.graph.startDestinationId)
+                                launchSingleTop = true
+                            }
+                            NavigationItem.Account.route -> navController.navigate(NavigationItem.AccountDetail.route)
                         }
                     },
                     shape = CircleShape,
@@ -228,7 +237,7 @@ fun MainScreen(
                 ) {
                     Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(30.dp))
                 }
-            }
+           }
         }
     ) {
         Row(modifier = Modifier.padding(it)) {

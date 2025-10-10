@@ -6,6 +6,8 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.VerticalDivider
@@ -18,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -195,6 +198,7 @@ fun AppNavHost(
         composable(NavigationItem.MySales.route) {
             SaleListScreen(
                 snackbarHostState = snackbarHostState,
+                isExpandedWidth = isExpandedWidth,
                 navigateToSaleChart = { startDate, endDate ->
                     navController.navigate(NavigationItem.SaleChart.route.plus("/${startDate}/${endDate}"))
                 }
@@ -450,52 +454,154 @@ fun AppNavHost(
             }
         }
 
-        composable(NavigationItem.Account.route) {
-            var selectedAccount by remember { mutableStateOf<User?>(null) }
-            var refreshAccountList by remember { mutableStateOf(false) }
-            var removeSelectedBgColor by remember { mutableStateOf(false) }
-            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
-
-            LaunchedEffect(isRefreshing) {
-                // Show refresh indicator during 1s
-                if (isRefreshing) {
-                    delay(1000)
-                    isRefreshing = false
+        composable(
+            route = NavigationItem.Account.route.plus("?fromDetail={fromDetail}"),
+            arguments = listOf(
+                navArgument("fromDetail") {
+                    type = NavType.BoolType
+                    defaultValue = false
                 }
-            }
+            )
+        ) { backStackEntry ->
+            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
 
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                refreshAccountList  = !refreshAccountList
-                isRefreshing = true
-            }) {
-                Row {
-                    Row(Modifier.weight(0.4f)) {
-                        AccountListScreen(
-                            snackbarHostState = snackbarHostState,
-                            refreshAccountList = refreshAccountList,
-                            removeSelectedBgColor = removeSelectedBgColor,
-                            onViewDetail = { user ->
-                                selectedAccount = user
-                            }
-                        )
-                        VerticalDivider()
-                    }
-
-                    Box(Modifier.weight(0.6f)) {
-                        AccountDetailScreen(
-                            snackbarHostState = snackbarHostState,
-                            account = selectedAccount,
-                            removeSelectedBgColor = {
-                                removeSelectedBgColor = !removeSelectedBgColor
-                            },
-                            refreshAccounts = {
-                                refreshAccountList  = !refreshAccountList
-                            }
-                        )
+            AccountNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                fromDetail = fromDetail,
+                onNavigateToDetail = { user ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("account", user)
+                    navController.navigate(NavigationItem.AccountDetail.route)
+                },
+                onPopBack = {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
                     }
                 }
+            )
+        }
+
+        composable(NavigationItem.AccountDetail.route) {
+            val account = navController.previousBackStackEntry?.savedStateHandle?.get<User>("account")
+
+            AccountNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                account = account,
+                onNavigateToHome = {
+                    navController.navigate(NavigationItem.Account.route.plus("?fromDetail=true")) {
+                        popUpTo(NavigationItem.Account.route) { inclusive = true }
+                    }
+                },
+                onPopBack = {
+                    navController.navigate(NavigationItem.Account.route.plus("?fromDetail=false")) {
+                        popUpTo(NavigationItem.Account.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AccountNavContent(
+    isExpandedWidth: Boolean,
+    snackbarHostState: SnackbarHostState,
+    fromDetail: Boolean = false,
+    account: User? = null,
+    onNavigateToDetail: ((User) -> Unit)? = null,
+    onNavigateToHome: (() -> Unit)? = null,
+    onPopBack: (() -> Unit)? = null
+) {
+    var selectedAccount by remember { mutableStateOf<User?>(account) }
+    var refreshAccountList by remember { mutableStateOf(false) }
+    var removeSelectedBgColor by remember { mutableStateOf(false) }
+    var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+
+    LaunchedEffect(isRefreshing) {
+        if (isRefreshing) {
+            delay(1000)
+            isRefreshing = false
+        }
+    }
+
+    PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+        refreshAccountList = !refreshAccountList
+        isRefreshing = true
+    }) {
+        if (isExpandedWidth) {
+            ExpandedAccountScreen(
+                snackbarHostState = snackbarHostState,
+                refreshAccountList = refreshAccountList,
+                removeSelectedBgColor = removeSelectedBgColor,
+                onViewDetail = { user -> selectedAccount = user },
+                onRemoveSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor },
+                onRefreshAccounts = { refreshAccountList = !refreshAccountList },
+                onPopBack = onPopBack
+            )
+        } else {
+            if (onNavigateToDetail != null) {
+                AccountListScreen(
+                    snackbarHostState = snackbarHostState,
+                    refreshAccountList = refreshAccountList,
+                    removeSelectedBgColor = removeSelectedBgColor,
+                    fromDetail = fromDetail,
+                    onViewDetail = { user ->
+                        onNavigateToDetail(user)
+                    }
+                )
+            } else if (onNavigateToHome != null) {
+                AccountDetailScreen(
+                    snackbarHostState = snackbarHostState,
+                    account = account,
+                    isExpandedWidth = false,
+                    navigateToHome = onNavigateToHome,
+                    onPopBack = onPopBack
+                )
             }
         }
     }
 }
+
+@Composable
+fun ExpandedAccountScreen(
+    snackbarHostState: SnackbarHostState,
+    refreshAccountList: Boolean,
+    removeSelectedBgColor: Boolean,
+    onViewDetail: (User) -> Unit,
+    onRemoveSelectedBgColor: () -> Unit,
+    onRefreshAccounts: () -> Unit,
+    onPopBack: (() -> Unit)? = null
+) {
+    var selectedAccount by remember { mutableStateOf<User?>(null) }
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Box(Modifier.weight(0.4f)) {
+            AccountListScreen(
+                snackbarHostState = snackbarHostState,
+                refreshAccountList = refreshAccountList,
+                removeSelectedBgColor = removeSelectedBgColor,
+                onViewDetail = { user ->
+                    selectedAccount = user
+                }
+            )
+        }
+        Box(Modifier.weight(0.6f)) {
+            AccountDetailScreen(
+                snackbarHostState = snackbarHostState,
+                account = selectedAccount,
+                isExpandedWidth = true,
+                removeSelectedBgColor = onRemoveSelectedBgColor,
+                refreshAccounts = onRefreshAccounts,
+                onPopBack = onPopBack
+            )
+        }
+    }
+}
+
 

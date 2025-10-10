@@ -14,4 +14,6 @@
     <string name="your_invoice_body">Bonjour, veuillez trouver en pièce jointe la facture correspondant à votre achat.</string>
     <string name="donwload_completed">Téléchargement terminé</string>
     <string name="donwload_completed_and_save">"Téléchargement réussi et sauvegardé "</string>
+    <string name="filter">Filtrer la liste</string>
+    <string name="select">Select</string>
 </resources>

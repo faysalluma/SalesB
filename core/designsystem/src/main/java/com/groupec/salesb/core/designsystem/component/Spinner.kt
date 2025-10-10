@@ -110,7 +110,7 @@ fun AppEditableExposedDropdown(
     isError: Boolean = false,
     value: TextFieldValue = TextFieldValue(""),
     onValueChange: ((TextFieldValue) -> Unit) ? = null,
-    supportingText: @Composable() (() -> Unit)? = null,
+    supportingText: @Composable (() -> Unit)? = null,
     onItemSelected: (Pair<String, String>) -> Unit,
 )  {
 
