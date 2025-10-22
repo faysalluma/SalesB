@@ -91,7 +91,7 @@ class MainActivity : ComponentActivity() {
                 } else {
                     MainScreen(connectionState)
                 }*/
-                MainScreen(connectionState, isExpandedWidth)
+                MainScreen(connectionState, isExpandedWidth, isTablet())
             }
         }
     }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.Scaffold
@@ -57,6 +58,7 @@ import com.groupec.salesb.navigation.NavigationItem
 fun MainScreen(
     connectionState: Boolean,
     isExpandedWidth: Boolean,
+    isTablet: Boolean,
     navController: NavHostController = rememberNavController(),
     viewModel: MainViewModel = hiltViewModel()
 ) {
@@ -221,23 +223,42 @@ fun MainScreen(
                    (currentDestination.value == NavigationItem.Account.route && !isExpandedWidth)
                 )
             ) {
-                LargeFloatingActionButton(
-                    onClick = {
-                        when (currentDestination.value) {
-                            NavigationItem.Home.route -> navController.navigate(NavigationItem.SaveSale.route) {
-                                popUpTo(navController.graph.startDestinationId)
-                                launchSingleTop = true
-                            }
-                            NavigationItem.Account.route -> navController.navigate(NavigationItem.AccountDetail.route)
+                val onFabClick = {
+                    when (currentDestination.value) {
+                        NavigationItem.Home.route -> navController.navigate(NavigationItem.SaveSale.route) {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
                         }
-                    },
-                    shape = CircleShape,
-                    containerColor = Primary,
-                    contentColor = White,
-                ) {
-                    Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(30.dp))
+                        NavigationItem.Account.route -> navController.navigate(NavigationItem.AccountDetail.route)
+                    }
                 }
-           }
+
+
+
+                val fabShape = CircleShape
+                val fabContainerColor = Primary
+                val fabContentColor = White
+
+                if (isTablet) {
+                    LargeFloatingActionButton(
+                        onClick = onFabClick,
+                        shape = fabShape,
+                        containerColor = fabContainerColor,
+                        contentColor = fabContentColor,
+                    ) {
+                        Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(32.dp))
+                    }
+                } else {
+                    FloatingActionButton(
+                        onClick = onFabClick,
+                        shape = fabShape,
+                        containerColor = fabContainerColor,
+                        contentColor = fabContentColor,
+                    ) {
+                        Icon(Icons.Filled.Add, "Add")
+                    }
+                }
+            }
         }
     ) {
         Row(modifier = Modifier.padding(it)) {
