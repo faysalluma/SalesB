@@ -21,9 +21,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.groupec.salesb.core.ConnectivityManagerUtils
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 import com.groupec.salesb.ui.MainScreen
-import com.groupec.salesb.core.ConnectivityManagerUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -111,7 +111,6 @@ class MainActivity : ComponentActivity() {
             configuration.screenWidthDp > 600
         }
     }
-
 }
 
 

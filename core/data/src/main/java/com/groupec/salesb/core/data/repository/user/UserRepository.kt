@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface UserRepository{
     fun saveDefaultUser() : Flow<Result<Unit>>
     suspend fun checkLogin(email: String, password: String) : Result<Pair<User, Boolean>>
+    suspend fun isSubscriptionExpired(): Boolean?
     fun getUserStore() : Flow<UserStore>
     suspend fun changePassword(userId: Int, ancPassword: String, password: String) : Result<User>
     suspend fun logout() : Result<Unit>

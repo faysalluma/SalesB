@@ -49,6 +49,7 @@ import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Red
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.UserStore
+import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.navigation.AppNavHost
 import com.groupec.salesb.navigation.NavigationItem
 
@@ -158,6 +159,15 @@ fun MainScreen(
     val shouldNotShowInPortraitMode by remember {
         derivedStateOf { !isExpandedWidth && !isPortaitScreenActive(currentDestination.value) }
     }
+
+    // Log out customers when subscription expire
+    ComposableLifecycle(
+        onResume = {
+            if (currentDestination.value!= null && currentDestination.value != NavigationItem.Login.route) {
+                viewModel.checkSubscriptionExpiration()
+            }
+        }
+    )
 
     Scaffold(
         snackbarHost = {

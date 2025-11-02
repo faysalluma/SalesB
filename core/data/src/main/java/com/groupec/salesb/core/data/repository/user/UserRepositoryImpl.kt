@@ -6,14 +6,16 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.data.R
 import com.groupec.salesb.core.data.model.toUserEntity
-import com.groupec.salesb.core.data.repository.category.CategoryPagingSource
 import com.groupec.salesb.core.data.repository.common.UserLocalRepository
 import com.groupec.salesb.core.data.repository.common.UserRemoteRepository
 import com.groupec.salesb.core.data.repository.common.UserSyncRepository
 import com.groupec.salesb.core.datastore.DataStoreManager
+import com.groupec.salesb.core.getDateTimeByNtp
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.model.data.UserStore
+import com.groupec.salesb.core.model.data.others.Subscription
 import com.groupec.salesb.core.network.retrofit.ApiService
 import com.groupec.salesb.core.network.retrofit.common.executeApiCall
 import com.groupec.salesb.core.network.retrofit.common.safeApiCall
@@ -93,10 +95,56 @@ class UserRepositoryImpl @Inject constructor(
 
     /* Sync methods */
     /* Get methods */
-    override suspend fun checkLogin(email: String, password: String): Result<Pair<User, Boolean>> = if (getOfflineMode() == true) {
-        userLocalRepository.checkLogin(email, password)
-    } else {
-        userRemoteRepository.checkLogin(email, password)
+    override suspend fun checkLogin(email: String, password: String): Result<Pair<User, Boolean>> {
+        return if (getOfflineMode() == true) {
+            userLocalRepository.checkLogin(email, password)
+        } else {
+            isExpired()?.let { isExpired ->
+                if (!isExpired) {
+                    userRemoteRepository.checkLogin(email, password)
+                } else {
+                    Result.Error(Exception(context.getString(R.string.subscription_expired)))
+                }
+            } ?: Result.Error(Exception(context.getString(R.string.error_subscription_expired)))
+        }
+    }
+
+    override suspend fun isSubscriptionExpired(): Boolean? {
+        val now = System.currentTimeMillis()
+        val subscription = dataStoreManager.subscriptionFlow.first()
+        val lastCheck = subscription.last_sub_check
+
+        // Si la dernière vérification date de moins de 24h → renvoyer le statut stocké
+        if (now - lastCheck < 24 * 60 * 60 * 1000L) {
+            return subscription.last_sub_status
+        }
+
+        // Sinon faire un nouveau check
+        val expired = isExpired()
+
+        // Mettre à jour le cache seulement si on a une réponse valide
+        if (expired != null) {
+            dataStoreManager.setSubscriptionConfig(
+                Subscription(
+                    last_sub_check = now,
+                    last_sub_status = expired
+                )
+            )
+        }
+
+        return expired
+    }
+
+    suspend fun isExpired(): Boolean? {
+        return try {
+            val response = apiService.getParameter()
+            if (!response.isSuccessful) return null
+
+            val expirationDate = response.body()?.parameter?.expirationdate
+            expirationDate?.let { it < getDateTimeByNtp() } ?: true
+        } catch (e: Exception) {
+            null
+        }
     }
 
     /* Set methods */

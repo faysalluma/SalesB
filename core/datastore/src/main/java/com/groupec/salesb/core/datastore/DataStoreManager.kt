@@ -6,9 +6,11 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.UserStore
+import com.groupec.salesb.core.model.data.others.Subscription
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -39,6 +41,10 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         private val USER_PRIVILEGES_KEY = stringPreferencesKey("privileges")
         private val USER_FIRST_LOGIN_KEY = booleanPreferencesKey("firstlogin")
         private val USER_RESET_PASSWORD_KEY = stringPreferencesKey("resetpassword")
+
+        // Subscriptions
+        private val SUBSCRIPTION_LAST_CHECK = longPreferencesKey("last_sub_check")
+        private val SUBSCRIPTION_LAST_STATUS = booleanPreferencesKey("last_sub_status")
     }
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -58,7 +64,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
                 preferences[OFFLINE_KEY] ?: false,
                 preferences[PRIMARY_COLOR_KEY] ?: "",
                 preferences[SECONDARY_COLOR_KEY] ?: "",
-                preferences[LOAD_PRODUCT_KEY] ?: false
+                preferences[LOAD_PRODUCT_KEY] ?: false,
             )
         }
 
@@ -72,6 +78,14 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
                 preferences[USER_FIRST_LOGIN_KEY] ?: false,
                 preferences[USER_RESET_PASSWORD_KEY] ?: ""
 
+            )
+        }
+
+    val subscriptionFlow: Flow<Subscription> = context.dataStore.data
+        .map { preferences ->
+            Subscription(
+                preferences[SUBSCRIPTION_LAST_CHECK] ?: 0L,
+                preferences[SUBSCRIPTION_LAST_STATUS] ?: true
             )
         }
 
@@ -99,6 +113,13 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             datastore[USER_PRIVILEGES_KEY] = user.privilege
             datastore[USER_FIRST_LOGIN_KEY] = user.firstLogin
             datastore[USER_RESET_PASSWORD_KEY] = user.reset_password
+        }
+    }
+
+    suspend fun setSubscriptionConfig(subscription: Subscription) {
+        context.dataStore.edit { datastore ->
+            datastore[SUBSCRIPTION_LAST_CHECK] = subscription.last_sub_check
+            datastore[SUBSCRIPTION_LAST_STATUS] = subscription.last_sub_status
         }
     }
 

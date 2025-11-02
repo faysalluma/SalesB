@@ -7,6 +7,7 @@ import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
+import com.groupec.salesb.core.domain.user.CheckSubscriptionExpirationUseCase
 import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
 import com.groupec.salesb.core.domain.user.LogoutPasswordUseCase
 import com.groupec.salesb.core.model.data.Parameter
@@ -28,7 +29,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getUserStoreUseCase: GetUserStoreUseCase,
     private val getParameterUseCase: GetParameterUseCase,
-    private val logoutPasswordUseCase: LogoutPasswordUseCase
+    private val logoutPasswordUseCase: LogoutPasswordUseCase,
+    private val checkSubscriptionExpirationUseCase: CheckSubscriptionExpirationUseCase
 ) : ViewModel() {
 
     private val _userStore = MutableStateFlow(UserStore())
@@ -64,6 +66,15 @@ class MainViewModel @Inject constructor(
                 is Result.Success -> _logoutUiState.value = UIState.Success(Unit)
                 is Result.Error -> _logoutUiState.value =  UIState.Error(result.exception.localizedMessage ?: "Error when logout")
                 else -> {}
+            }
+        }
+    }
+
+    fun checkSubscriptionExpiration() {
+        viewModelScope.launch {
+            val isExpired = checkSubscriptionExpirationUseCase()
+            if (isExpired == true) {
+                logout()
             }
         }
     }
