@@ -191,7 +191,12 @@ fun AppNavHost(
                     text = stringResource(R.string.error_visible_only_expanded)
                 )
             } else {
-                SaleScreen(snackbarHostState = snackbarHostState)
+                SaleScreen(
+                    snackbarHostState = snackbarHostState,
+                    navigateToProduct = {
+                        navController.navigate(NavigationItem.Product.route)
+                    }
+                )
             }
         }
 

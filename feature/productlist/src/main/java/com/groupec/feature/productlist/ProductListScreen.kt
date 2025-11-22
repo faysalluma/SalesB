@@ -1,6 +1,7 @@
 package com.groupec.feature.productlist
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,6 +35,7 @@ import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DefaultButton
+import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
@@ -181,16 +183,21 @@ fun ProductListScreen(
                 )
 
                 // Liste paginée
-                ProductCardList(
-                    products = products,
-                    isSearching = isSearching,
-                    onViewDetail = onViewDetail,
-                    onDelete = { id, libelle ->
-                        showDialog = true
-                        productIdLibelle = Pair(id, libelle)
-                    },
-                    removeSelectedBgColor = removeSelectedBgColor
-                )
+                if (products.itemCount == 0) {
+                    EmptyScreen()
+                } else {
+                    ProductCardList(
+                        products = products,
+                        isSearching = isSearching,
+                        onViewDetail = onViewDetail,
+                        onDelete = { id, libelle ->
+                            showDialog = true
+                            productIdLibelle = Pair(id, libelle)
+                        },
+                        removeSelectedBgColor = removeSelectedBgColor
+                    )
+                }
+
                 if (showDialog) {
                     AppAlertInfoDialog(
                         setShowDialog = {
