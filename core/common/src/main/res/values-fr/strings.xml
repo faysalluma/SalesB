@@ -19,7 +19,7 @@
     <!-- For menu -->
     <string name="menu_home_view">Accueil</string>
     <string name="menu_save_sale_view">Encaisser</string>
-    <string name="menu_outputs_view">Sorties</string>
+    <string name="menu_outputs_view">Décaisser</string>
     <string name="menu_product_view">Produits</string>
     <string name="menu_update_password_view">Modifier mon mot de passe</string>
     <string name="manage_your_account_view">Gestion de comptes</string>

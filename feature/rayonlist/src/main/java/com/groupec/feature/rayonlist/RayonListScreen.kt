@@ -94,10 +94,7 @@ fun RayonListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title_section),
-            leadingContent = {
-                Icon(imageVector = AppIcons.FilterList, contentDescription = "Filter List")
-            }
+            text = stringResource(R.string.head_title_section)
         )
 
         // Barre de recherche

@@ -115,10 +115,7 @@ fun AccountListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title_users),
-            leadingContent = {
-                Icon(imageVector = AppIcons.FilterList, contentDescription = "Filter List")
-            }
+            text = stringResource(R.string.head_title_users)
         )
 
         // if get error when fetching users
