@@ -216,10 +216,11 @@ fun MainScreen(
                             navController.navigate(currentNavigationItem.route) {
                                 // Supprime toutes les destinations jusqu’à la destination de départ du graphe de navigation
                                 popUpTo(navController.graph.startDestinationRoute ?: "") {
-                                    saveState = true
+                                    // saveState = true (A utiliser dans le cas ou les ecrans des items menus
+                                    // se trouvent dans le même graphe de navigation
                                 }
                                 launchSingleTop = true
-                                restoreState = true
+                                // restoreState = true
                             }
                         }
                     )
