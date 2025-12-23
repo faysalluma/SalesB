@@ -11,12 +11,15 @@ import com.groupec.salesb.core.asResult
 import com.groupec.salesb.core.domain.category.GetCategoryUseCase
 import com.groupec.salesb.core.domain.product.SaveProductUseCase
 import com.groupec.salesb.core.domain.rayon.GetRayonUseCase
+import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
 import com.groupec.salesb.core.model.data.Product
+import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.ui.ProductDataForm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +27,8 @@ import javax.inject.Inject
 class ProductDetailViewModel @Inject constructor(
     private val saveProductUseCase: SaveProductUseCase,
     private val getCategorieUsecase: GetCategoryUseCase,
-    private val getRayonUseCase: GetRayonUseCase
+    private val getRayonUseCase: GetRayonUseCase,
+    private val getUserStoreUseCase: GetUserStoreUseCase
 ) : ViewModel() {
 
     private val _addProductUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
@@ -36,6 +40,14 @@ class ProductDetailViewModel @Inject constructor(
     private val _rayonsUiPairState = MutableStateFlow<List<Pair<String, String>>>(emptyList())
     val rayonsUiPairState = _rayonsUiPairState.asStateFlow()
 
+    private val _userStoreState = MutableStateFlow(UserStore())
+    val userStoreState: StateFlow<UserStore> = _userStoreState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _userStoreState.value = getUserStoreUseCase().first()
+        }
+    }
     fun getCategories() {
         viewModelScope.launch {
             getCategorieUsecase()

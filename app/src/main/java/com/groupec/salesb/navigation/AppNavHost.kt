@@ -251,16 +251,10 @@ fun AppNavHost(
                                 snackbarHostState = snackbarHostState,
                                 product = selectedProduct,
                                 navigateToCategory = {
-                                    navController.navigate(NavigationItem.Category.route) {
-                                        popUpTo(navController.graph.startDestinationId)
-                                        launchSingleTop = true
-                                    }
+                                    navController.navigate(NavigationItem.Category.route)
                                 },
                                 navigateToRayon = {
-                                    navController.navigate(NavigationItem.Rayon.route) {
-                                        popUpTo(navController.graph.startDestinationId)
-                                        launchSingleTop = true
-                                    }
+                                    navController.navigate(NavigationItem.Rayon.route)
                                 },
                                 removeSelectedBgColor = {
                                     removeSelectedBgColor = !removeSelectedBgColor

@@ -14,7 +14,7 @@
     <string name="authorize_edit">Modification</string>
     <string name="authorize_delete">Suppression</string>
     <string name="authorize_view">Voir</string>
-    <string name="no_visual_allowed">Vous n\'êtes pas autorisé à votre cette page</string>
+    <string name="no_visual_allowed">Vous n\'êtes pas autorisé à voir cette page.</string>
 
     <!-- For menu -->
     <string name="menu_home_view">Accueil</string>

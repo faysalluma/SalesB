@@ -93,7 +93,8 @@ fun HomeScreen(
     )
 
     Column (
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
             .padding(horizontal = 8.dp)
             .verticalScroll(rememberScrollState()),
     ) {
@@ -123,14 +124,14 @@ fun HomeScreen(
                     )
                 }
             ) {
-                HeadLigne(context, viewModel, navigateToSaleList)
+                HeadLigne(context, viewModel,privileges, navigateToSaleList)
             }
 
             // Periodic statistic
             if (privileges.contains(Privileges.Home.getKeyByApproval(
                     Approval.STAT_PERIODIC
                 ))) {
-                StatisticPeriodic(context, viewModel, navigateToSaleList)
+                StatisticPeriodic(context, viewModel,privileges, navigateToSaleList)
                 Spacer(modifier = heigthModifier)
             }
 
@@ -138,7 +139,7 @@ fun HomeScreen(
             if (privileges.contains(Privileges.Home.getKeyByApproval(
                     Approval.STAT_NON_PERIODIC
                 ))) {
-                StatisticNonPeriodic(viewModel, navigateToProduct)
+                StatisticNonPeriodic(viewModel,privileges, navigateToProduct)
                 Spacer(modifier = heigthModifier)
             }
 
@@ -171,6 +172,7 @@ fun HomeScreen(
 fun HeadLigne(
     context: Context,
     viewModel: HomeViewModel,
+    privileges: List<String>,
     navigateToSaleList: () -> Unit
 ) {
     val totalAmountOutputState by viewModel.totalAmountOutputs.collectAsStateWithLifecycle()
@@ -192,6 +194,7 @@ fun HeadLigne(
         periodValue = periodValue,
         onPeriodChange = { periodValue = it },
         viewModel = viewModel,
+        privileges = privileges,
         navigateToSaleList = navigateToSaleList
     )
 }
@@ -208,6 +211,7 @@ private fun ExpandedLayout(
     periodValue: String,
     onPeriodChange: (String) -> Unit,
     viewModel: HomeViewModel,
+    privileges: List<String>,
     navigateToSaleList: () -> Unit
 ) {
     FlowRow(
@@ -271,12 +275,26 @@ private fun ExpandedLayout(
                     }
                 }
             }
-            IconTextButton(
-                contentPadding = PaddingValues(19.dp),
-                text = stringResource(R.string.see_more),
-                colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Primary),
-                onClick = navigateToSaleList
+
+            if (
+                privileges.any{
+                    it in Privileges.MySales.getKeysByApprovals(
+                        listOf(
+                            Approval.AUTHORIZE_ADD,
+                            Approval.AUTHORIZE_EDIT,
+                            Approval.AUTHORIZE_DELETE,
+                        )
+                    )
+                }
             )
+            {
+                IconTextButton(
+                    contentPadding = PaddingValues(19.dp),
+                    text = stringResource(R.string.see_more),
+                    colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Primary),
+                    onClick = navigateToSaleList
+                )
+            }
         }
     }
 }
@@ -285,8 +303,10 @@ private fun ExpandedLayout(
 fun StatisticPeriodic(
     context: Context,
     viewModel: HomeViewModel,
+    privileges: List<String>,
     navigateToSaleList: () -> Unit
 ) {
+    val context = LocalContext.current
     val parameterState by viewModel.parameter.collectAsStateWithLifecycle()
     val totalSalesState by viewModel.totalSales.collectAsStateWithLifecycle()
     val totalAmountSalesState by viewModel.totalAmountSales.collectAsStateWithLifecycle()
@@ -309,7 +329,24 @@ fun StatisticPeriodic(
                 numberTitle = totalSalesState,
                 dataValue = totalAmountSalesState.formatAmount(),
                 devise = parameterState.devise,
-                navigateToSaleList = navigateToSaleList
+                navigateToSaleList = {
+                    if (
+                        privileges.any{
+                            it in Privileges.MySales.getKeysByApprovals(
+                                listOf(
+                                    Approval.AUTHORIZE_ADD,
+                                    Approval.AUTHORIZE_EDIT,
+                                    Approval.AUTHORIZE_DELETE,
+                                )
+                            )
+                        }
+                    ) {
+                        navigateToSaleList()
+                    } else {
+                        Toast.makeText(context, context.getString(com.groupec.salesb.core.R.string.no_visual_allowed),
+                            Toast.LENGTH_SHORT).show()
+                    }
+                }
             )
             TopSaleStatisticCard(
                 modifier = cardModifier,
@@ -325,8 +362,10 @@ fun StatisticPeriodic(
 @Composable
 fun StatisticNonPeriodic(
     viewModel: HomeViewModel,
+    privileges: List<String>,
     navigateToProduct: () -> Unit
 ) {
+    val context = LocalContext.current
     val totalProductsState by viewModel.totalProducts.collectAsStateWithLifecycle()
     val totalAlertSeuilState by viewModel.totalAlertSeuilProducts.collectAsStateWithLifecycle()
     val productsWithLowInventoryState by viewModel.productsWithLowInventoryUiState.collectAsStateWithLifecycle()
@@ -346,7 +385,24 @@ fun StatisticNonPeriodic(
         ProductStatisticCard(
             modifier = cardModifier,
             dataValue = totalProductsState.toString(),
-            navigateToProduct = navigateToProduct
+            navigateToProduct = {
+                if (
+                    privileges.any{
+                        it in Privileges.Product.getKeysByApprovals(
+                            listOf(
+                                Approval.AUTHORIZE_ADD,
+                                Approval.AUTHORIZE_EDIT,
+                                Approval.AUTHORIZE_DELETE,
+                            )
+                        )
+                    }
+                ) {
+                    navigateToProduct()
+                } else {
+                    Toast.makeText(context, context.getString(com.groupec.salesb.core.R.string.no_visual_allowed),
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
         )
         AlertInventoryStatisticCard(
             modifier = cardModifier,

@@ -8,6 +8,7 @@ enum class Privileges(val titleRes: Int? = null, val values: Map<String, Approva
     // Second letter (If two screens have the same first letter,
     // it is equal to 0 for the first screen in the order of insertion in Privileges and 1 for the second screen, and so on.)
     // First letter (Approval order: 1 for AUTHORIZE_VIEW, and so on)
+    // Don't save the key of AUTHORIZE_VIEW into database when Privilige items contains order value like (AUTHORIZE_ADD, AUTHORIZE_EDI, etc.)
     Home(
         titleRes = R.string.menu_home_view,
         values = mapOf(

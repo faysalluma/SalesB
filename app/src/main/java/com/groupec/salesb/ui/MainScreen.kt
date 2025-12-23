@@ -244,29 +244,30 @@ fun MainScreen(
                     }
                 }
 
-
-
                 val fabShape = CircleShape
                 val fabContainerColor = Primary
                 val fabContentColor = White
 
-                if (isTablet) {
-                    LargeFloatingActionButton(
-                        onClick = onFabClick,
-                        shape = fabShape,
-                        containerColor = fabContainerColor,
-                        contentColor = fabContentColor,
-                    ) {
-                        Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(32.dp))
-                    }
-                } else {
-                    FloatingActionButton(
-                        onClick = onFabClick,
-                        shape = fabShape,
-                        containerColor = fabContainerColor,
-                        contentColor = fabContentColor,
-                    ) {
-                        Icon(Icons.Filled.Add, "Add")
+                if (privileges.contains(Privileges.Sale.getKeyByApproval(Approval.AUTHORIZE_VIEW)))
+                {
+                    if (isTablet) {
+                        LargeFloatingActionButton(
+                            onClick = onFabClick,
+                            shape = fabShape,
+                            containerColor = fabContainerColor,
+                            contentColor = fabContentColor,
+                        ) {
+                            Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(32.dp))
+                        }
+                    } else {
+                        FloatingActionButton(
+                            onClick = onFabClick,
+                            shape = fabShape,
+                            containerColor = fabContainerColor,
+                            contentColor = fabContentColor,
+                        ) {
+                            Icon(Icons.Filled.Add, "Add")
+                        }
                     }
                 }
             }
