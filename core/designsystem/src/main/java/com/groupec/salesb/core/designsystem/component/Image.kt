@@ -37,10 +37,9 @@ import com.groupec.salesb.core.designsystem.theme.Silver2
 import com.groupec.salesb.core.designsystem.theme.White
 
 @Composable
-fun SalesBImage(modifier: Modifier = Modifier) {
+fun SalesBImage(modifier: Modifier = Modifier.fillMaxSize()) {
     Box(
         modifier = modifier
-            .fillMaxSize()
             .padding(16.dp),
         contentAlignment = Alignment.Center,
 

@@ -1,42 +1,32 @@
 package com.groupec.salesb.core.designsystem.component
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.CheckboxColors
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.Approval
 import com.groupec.salesb.core.designsystem.R
-import com.groupec.salesb.core.designsystem.theme.Black
+import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 
 
@@ -128,6 +118,37 @@ fun AppCheckboxMinimal(
             checked = isChecked,
             onCheckedChange = { checked ->
                 onChecked(if (checked) Approval.AUTHORIZE_VIEW else null)
+            }
+        )
+    }
+}
+
+@Composable
+fun StandardCheckbox(
+    label: String ?= null,
+    initialValue: Boolean = false,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    var checked by remember { mutableStateOf(initialValue) }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        label?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+        Checkbox(
+            checked = checked,
+            colors = CheckboxDefaults.colors(
+                checkedColor = Primary,
+                checkmarkColor = Color.White
+            ),
+            onCheckedChange = { isChecked ->
+                checked = isChecked
+                onCheckedChange(isChecked)
             }
         )
     }

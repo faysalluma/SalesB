@@ -46,4 +46,6 @@
     <string name="total_sales">@string/total_sale_view</string>
     <string name="user_item_detail">Date : %1$s, Email : %2$s, Tel : %3$s, Compte : %4$s</string>
     <string name="active">Actif</string>
+    <string name="please_read">Je reconnais avoir lu et accepté les</string>
+    <string name="terms_and_conditions_of_use">conditions générales d’utilisation.</string>
 </resources>
