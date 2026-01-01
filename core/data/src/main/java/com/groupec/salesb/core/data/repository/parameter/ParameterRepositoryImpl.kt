@@ -45,4 +45,15 @@ class ParameterRepositoryImpl @Inject constructor(private val apiService: ApiSer
             Result.Error(e)
         }
     }
+
+    override suspend fun acceptTermsAndConditions(): Result<Unit> {
+        return try {
+            withContext(Dispatchers.IO) {
+                dataStoreManager.acceptTermsAndConditions()
+                Result.Success(Unit)
+            }
+        } catch (e: Exception){
+            Result.Error(e)
+        }
+    }
 }

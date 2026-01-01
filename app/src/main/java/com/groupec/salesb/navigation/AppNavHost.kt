@@ -42,6 +42,7 @@ import com.groupec.feature.rayonlist.RayonListScreen
 import com.groupec.feature.sale.SaleScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
+import com.groupec.feature.termsandconditions.TermsAndConditionsScreen
 import com.groupec.salesb.R
 import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.model.data.Category
@@ -86,6 +87,11 @@ fun AppNavHost(
 
         composable(NavigationItem.Loading.route) {
             LoadingScreen(
+                navigateToTermsAndCoditions = {
+                    navController.navigate(NavigationItem.TermsAndConditions.route) {
+                        popUpTo(NavigationItem.Loading.route) { inclusive = true }
+                    }
+                },
                 navigateToConfiguration = {
                     navController.navigate(NavigationItem.Configuration.route) {
                         popUpTo(NavigationItem.Loading.route) { inclusive = true }
@@ -99,6 +105,16 @@ fun AppNavHost(
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
                         popUpTo(NavigationItem.Loading.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(NavigationItem.TermsAndConditions.route) {
+            TermsAndConditionsScreen(
+                navigateToConfiguration = {
+                    navController.navigate(NavigationItem.Configuration.route) {
+                        popUpTo(NavigationItem.TermsAndConditions.route) { inclusive = true }
                     }
                 }
             )

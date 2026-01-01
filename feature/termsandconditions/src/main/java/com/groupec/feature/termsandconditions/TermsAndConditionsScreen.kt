@@ -2,13 +2,17 @@ package com.groupec.feature.termsandconditions
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,7 +44,7 @@ fun TermsAndConditionsScreen(
     modifier: Modifier = Modifier,
     navigateToConfiguration: () -> Unit,
     viewModel: TermsAndConditionsViewModel = hiltViewModel()
-){
+) {
     val termsAndConditionsUiState by viewModel.termsAndConditionsUiState.collectAsState()
     val isLoading = termsAndConditionsUiState is TermsAndConditionsUiState.Loading
     var enabled by remember { mutableStateOf(false) }
@@ -52,6 +56,7 @@ fun TermsAndConditionsScreen(
                 navigateToConfiguration()
             }
         }
+
         is TermsAndConditionsUiState.Error -> {
             LaunchedEffect(Unit) {
                 Toast.makeText(
@@ -65,26 +70,20 @@ fun TermsAndConditionsScreen(
 
         else -> {}
     }
-    
-    Column (
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 28.dp, vertical = 6.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
+
+    Column (modifier = Modifier.fillMaxSize()) {
+
+        // Scrollable Content
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.weight(1f)
         ) {
-            SalesBImage(modifier = Modifier.wrapContentHeight())
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                SalesBImage(modifier = Modifier.height(100.dp))
                 Text(
+                    modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.manage_your_sales_with_ease),
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Light,
@@ -92,29 +91,42 @@ fun TermsAndConditionsScreen(
                     )
                 )
             }
-            Image(
-                painter = painterResource(id = R.drawable.termsandconditions),
-                contentScale = ContentScale.Fit,
-                contentDescription = "Terms And Conditions"
-            )
+
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(id = R.drawable.termsandconditions),
+                    contentDescription = "Terms And Conditions"
+                )
+            }
         }
 
+
+        // Fixed Bottom
         Column(
-            modifier =  Modifier
-                .fillMaxWidth()
-                .padding(bottom = 20.dp),
+            modifier =  Modifier.padding(vertical = 4.dp),
+            verticalArrangement = Arrangement.Bottom
         ) {
             TermsAndCondtionsUi { isEnabled ->
                 enabled = isEnabled
             }
-            DefaultButton(
-                text = stringResource(R.string.accept),
-                enabled = enabled,
-                isLoading = isLoading,
-                onClick = {
-                    viewModel.acceptTermsAndConditions()
-                }
-            )
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                DefaultButton(
+                    modifier = Modifier.fillMaxWidth(0.5f),
+                    text = stringResource(R.string.accept),
+                    enabled = enabled,
+                    isLoading = isLoading,
+                    onClick = {
+                        viewModel.acceptTermsAndConditions()
+                    }
+                )
+            }
         }
     }
 }

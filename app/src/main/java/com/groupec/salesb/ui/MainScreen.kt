@@ -198,32 +198,35 @@ fun MainScreen(
         },
         bottomBar = {
             currentDestination.value?.let { route ->
-                AnimatedVisibility(
-                    visible = !isExpandedWidth,
-                    enter = slideInVertically(
-                        // Slide in from the bottom
-                        initialOffsetY = { fullHeight -> fullHeight }
-                    ),
-                    exit = slideOutVertically(
-                        // Slide out to the bottom
-                        targetOffsetY = { fullHeight -> fullHeight }
-                    )
-                ) {
-                    BottomNavigationBar(
-                        items = items,
-                        currentRoute = route,
-                        onItemClick = { currentNavigationItem ->
-                            navController.navigate(currentNavigationItem.route) {
-                                // Supprime toutes les destinations jusqu’à la destination de départ du graphe de navigation
-                                popUpTo(navController.graph.startDestinationRoute ?: "") {
-                                    // saveState = true (A utiliser dans le cas ou les ecrans des items menus
-                                    // se trouvent dans le même graphe de navigation
+                // Avoid blank space reserved on the screen
+                if (items.isNotEmpty()) {
+                    AnimatedVisibility(
+                        visible = !isExpandedWidth,
+                        enter = slideInVertically(
+                            // Slide in from the bottom
+                            initialOffsetY = { fullHeight -> fullHeight }
+                        ),
+                        exit = slideOutVertically(
+                            // Slide out to the bottom
+                            targetOffsetY = { fullHeight -> fullHeight }
+                        )
+                    ) {
+                        BottomNavigationBar(
+                            items = items,
+                            currentRoute = route,
+                            onItemClick = { currentNavigationItem ->
+                                navController.navigate(currentNavigationItem.route) {
+                                    // Supprime toutes les destinations jusqu’à la destination de départ du graphe de navigation
+                                    popUpTo(navController.graph.startDestinationRoute ?: "") {
+                                        // saveState = true (A utiliser dans le cas ou les ecrans des items menus
+                                        // se trouvent dans le même graphe de navigation
+                                    }
+                                    launchSingleTop = true
+                                    // restoreState = true
                                 }
-                                launchSingleTop = true
-                                // restoreState = true
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         },
@@ -449,7 +452,8 @@ private fun shouldShowBarAndRailApp(
         NavigationItem.Loading.route,
         NavigationItem.Configuration.route,
         NavigationItem.Login.route,
-        NavigationItem.ForgotPassword.route
+        NavigationItem.ForgotPassword.route,
+        NavigationItem.TermsAndConditions.route
     )
 
     if (firstLogin || resetPassword.isNotEmpty()) {
@@ -470,7 +474,7 @@ private fun isPortaitScreenActive(route: String?): Boolean {
         NavigationItem.ChangePassword.route,
         NavigationItem.Home.route,
         NavigationItem.MySales.route,
-        NavigationItem.Account.route,
+        NavigationItem.Account.route
     )
     return route in excludedRoutes
 }

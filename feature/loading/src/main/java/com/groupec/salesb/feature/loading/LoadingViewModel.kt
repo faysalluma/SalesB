@@ -28,7 +28,9 @@ class LoadingViewModel @Inject constructor(
     fun loadScreen() {
         viewModelScope.launch {
             val parameter = getParameterUseCase().firstOrNull() ?: Parameter()
-            if (parameter.raisonsociale.isEmpty()) {
+            if (parameter.termsandconditions) {
+                _configUiState.value = ConfigUiState.TermsAndConditions
+            } else if (parameter.raisonsociale.isEmpty()) {
                 // Mettre à jour _userUiState
                 _configUiState.value = ConfigUiState.Configuration
             } else {
@@ -46,6 +48,7 @@ class LoadingViewModel @Inject constructor(
 
 sealed class ConfigUiState {
     data object Loading : ConfigUiState()
+    data object TermsAndConditions : ConfigUiState()
     data object Configuration : ConfigUiState()
     data class Login(val raisonSociale: String) : ConfigUiState()
     data object Home : ConfigUiState()

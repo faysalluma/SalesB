@@ -34,6 +34,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         private val PRIMARY_COLOR_KEY = stringPreferencesKey("primarycolor")
         private val SECONDARY_COLOR_KEY = stringPreferencesKey("secondarycolor")
         private val LOAD_PRODUCT_KEY = booleanPreferencesKey("loadproducts")
+        private val SHOW_TERMS_AND_CONDITIONS_KEY = booleanPreferencesKey("termsandconditions")
 
         // Login key
         private val USER_ID_KEY = stringPreferencesKey("userid")
@@ -53,18 +54,19 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         .map { preferences ->
             // No type safety.
             Parameter(
-                preferences[DEVISE_KEY] ?: "",
-                preferences[RAISON_SOCIAL_KEY] ?: "",
-                preferences[ADRESSE_KEY] ?: "",
-                preferences[TELEPHONE_KEY] ?: "",
-                preferences[EMAIL_KEY] ?: "",
-                preferences[IFU_KEY] ?: "",
-                preferences[WEBSITE_KEY] ?: "",
-                preferences[TYPE_ENTREPRISE_KEY] ?: "",
-                preferences[OFFLINE_KEY] ?: false,
-                preferences[PRIMARY_COLOR_KEY] ?: "",
-                preferences[SECONDARY_COLOR_KEY] ?: "",
-                preferences[LOAD_PRODUCT_KEY] ?: false,
+                devise = preferences[DEVISE_KEY] ?: "",
+                raisonsociale = preferences[RAISON_SOCIAL_KEY] ?: "",
+                adresse = preferences[ADRESSE_KEY] ?: "",
+                telephone = preferences[TELEPHONE_KEY] ?: "",
+                email = preferences[EMAIL_KEY] ?: "",
+                ifu = preferences[IFU_KEY] ?: "",
+                website = preferences[WEBSITE_KEY] ?: "",
+                typeentreprise = preferences[TYPE_ENTREPRISE_KEY] ?: "",
+                offline = preferences[OFFLINE_KEY] ?: false,
+                primarycolor = preferences[PRIMARY_COLOR_KEY] ?: "",
+                secondarycolor = preferences[SECONDARY_COLOR_KEY] ?: "",
+                loadproducts = preferences[LOAD_PRODUCT_KEY] ?: false,
+                termsandconditions = preferences[SHOW_TERMS_AND_CONDITIONS_KEY] ?: true
             )
         }
 
@@ -139,6 +141,12 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
     suspend fun updateFirstLogin() {
         context.dataStore.edit { preferences ->
             preferences [USER_FIRST_LOGIN_KEY] = false
+        }
+    }
+
+    suspend fun acceptTermsAndConditions() {
+        context.dataStore.edit { datastore ->
+            datastore [SHOW_TERMS_AND_CONDITIONS_KEY] = false
         }
     }
 }

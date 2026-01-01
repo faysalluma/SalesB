@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Request bluetooth permission
+        /*// Request bluetooth permission
         if (bluetoothPermissions.all {
                 ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
             }.not()
@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                     200
                 )
             }
-        }
+        }*/
 
         enableEdgeToEdge()
         setContent {

@@ -80,7 +80,7 @@ fun LoginScreen(
         Row(
             modifier = modifier.fillMaxSize()
         ) {
-            SalesBImage(Modifier.weight(1f))
+            SalesBImage(Modifier.fillMaxSize().weight(1f))
             Column(Modifier.weight(1f)) {
                 FormScreen(modifier, raisonSociale, viewModel, isLoading, navigateToForgotPassword)
             }
@@ -90,7 +90,7 @@ fun LoginScreen(
             modifier = modifier
                 .fillMaxSize()
         ) {
-            SalesBImage(Modifier.weight(.3f))
+            SalesBImage(Modifier.fillMaxSize().weight(.3f))
             Column(Modifier.weight(.7f).verticalScroll(rememberScrollState())) {
                 FormScreen(modifier, raisonSociale, viewModel, isLoading, navigateToForgotPassword)
             }

@@ -21,7 +21,8 @@ enum class Screen {
     ForgotPassword,
     Outputs,
     Account,
-    AccountDetail
+    AccountDetail,
+    TermsAndConditions
 
 }
 sealed class NavigationItem(val route: String,val title: Int = 0, val icon: NavigationIcon ? = null) {
@@ -41,6 +42,7 @@ sealed class NavigationItem(val route: String,val title: Int = 0, val icon: Navi
     data object ForgotPassword : NavigationItem(Screen.ForgotPassword.name)
     data object Account : NavigationItem(Screen.Account.name)
     data object AccountDetail : NavigationItem(Screen.AccountDetail.name)
+    data object TermsAndConditions : NavigationItem(Screen.TermsAndConditions.name)
 }
 
 sealed class NavigationIcon {
