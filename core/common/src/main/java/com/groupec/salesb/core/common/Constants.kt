@@ -6,7 +6,7 @@ class Constants {
         const val SERVER_URL = "http://192.168.1.25/SalesBApi/"
         // const val SERVER_URL = "https://salesbapi.groupec.net/"
         const val BASE_URL = SERVER_URL.plus("public/")
-        const val UPLOAD_URL = SERVER_URL.plus("uploads/")
+        const val UPLOAD_URL = SERVER_URL.plus("includes/config/default/uploads/")
         const val APP_LINK = "https://www.salesb.groupec.net/resetapppassword"
     }
 }

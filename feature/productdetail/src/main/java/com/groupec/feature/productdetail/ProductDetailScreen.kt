@@ -179,13 +179,13 @@ fun ProductDetailScreen(
                 uri = uri.value,
                 onSetUri = {
                     uri.value = it
+                    if (it == null) productDataForm = productDataForm.copy(image = "") // Notify image delete for external api
                 },
                 /*  upload = {
                       viewModel.uploadImage(it)
                   },*/
                 deleteFile = { filename ->
                     viewModel.deleteImageFromCache(context, filename)
-                    productDataForm = productDataForm.copy(image = "") // Notify image delete for external api
                 }
             )
 
