@@ -154,10 +154,11 @@ fun AppHeadLine(
 @Composable
 fun HtmlText(
     html: String,
-    linkColor: Color = Blue, // Default link color
+    linkColor: Color = Primary, // Default link color
     textColor: Color = Color.Unspecified,
     fontSize: TextUnit = 14.sp,
-    fontWeight: FontWeight = FontWeight.Normal
+    fontWeight: FontWeight = FontWeight.Normal,
+    modifier: Modifier = Modifier
 ) {
     val uriHandler = LocalUriHandler.current
     val annotatedText = remember(html) {
@@ -199,7 +200,8 @@ fun HtmlText(
             color = textColor,
             fontSize = fontSize,
             fontWeight = fontWeight
-        )
+        ),
+        modifier = modifier
     )
 }
 

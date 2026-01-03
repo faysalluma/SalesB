@@ -2,7 +2,8 @@ package com.groupec.salesb.core.ui
 
 import androidx.compose.animation.core.EaseInOutCubic
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,7 +25,8 @@ fun StatisticChart(modifier: Modifier = Modifier, values: List<Pair<String, Doub
     val  context = LocalContext.current
     LineChart(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .height(300.dp)
             .padding(horizontal = 22.dp),
         data = listOf(
             Line(

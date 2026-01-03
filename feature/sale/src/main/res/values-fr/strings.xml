@@ -4,4 +4,6 @@
     <string name="loading_products">Chargement de produits …</string>
     <string name="search_product_place_holder">Rechercher ici</string>
     <string name="my_products">Mes produits</string>
+    <string name="no_products">Aucun produit</string>
+    <string name="add_product">Ajouter un produit</string>
 </resources>

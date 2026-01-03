@@ -33,6 +33,7 @@ import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DefaultButton
+import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
@@ -98,10 +99,7 @@ fun OutputListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title_output),
-            leadingContent = {
-                Icon(imageVector = AppIcons.FilterList, contentDescription = "Filter List")
-            }
+            text = stringResource(R.string.head_title_output)
         )
 
         // if get error when fetching outputs
@@ -161,16 +159,21 @@ fun OutputListScreen(
                 )
 
                 // Liste paginée
-                OutputCardList(
-                    outputs = outputs,
-                    isSearching = isSearching,
-                    onViewDetail = onViewDetail,
-                    onDelete = { id, libelle ->
-                        showDialog = true
-                        outputIdLibelle = Pair(id, libelle)
-                    },
-                    removeSelectedBgColor = removeSelectedBgColor
-                )
+                if (outputs.itemCount == 0) {
+                    EmptyScreen()
+                } else {
+                    OutputCardList(
+                        outputs = outputs,
+                        isSearching = isSearching,
+                        onViewDetail = onViewDetail,
+                        onDelete = { id, libelle ->
+                            showDialog = true
+                            outputIdLibelle = Pair(id, libelle)
+                        },
+                        removeSelectedBgColor = removeSelectedBgColor
+                    )
+                }
+
                 if (showDialog) {
                     AppAlertInfoDialog(
                         setShowDialog = {

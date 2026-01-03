@@ -15,4 +15,5 @@
     <string name="menu_log_out">@string/menu_log_out_view</string>
     <string name="menu_settings">@string/menu_settings_view</string>
     <string name="confirm_log_out">Are you sure you want to log out?</string>
+    <string name="error_visible_only_expanded">This page is only visible in landscape mode on tablets.</string>
 </resources>

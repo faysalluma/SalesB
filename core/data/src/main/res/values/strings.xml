@@ -9,4 +9,6 @@
     <string name="error_deleting_data" translatable="false">Error when deleting data</string>
     <string name="error_tempory_password_expire">The temporary password has expired.</string>
     <string name="error_incorrect_tempory_password">Temporary password is incorrect.</string>
+    <string name="error_subscription_expired" translatable="false">Error while retrieving the validity period of your subscription.</string>
+    <string name="subscription_expired">Your subscription has expired. Please contact support.</string>
 </resources>

@@ -10,4 +10,5 @@ interface ParameterRepository{
     fun saveParameters() : Flow<Result<String>>
     fun getParameters() : Flow<Parameter>
     suspend fun updateFirstLogin(): Result<Unit>
+    suspend fun acceptTermsAndConditions(): Result<Unit>
 }

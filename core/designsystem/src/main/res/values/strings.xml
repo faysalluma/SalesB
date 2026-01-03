@@ -77,4 +77,6 @@
     <string name="screen_parameters">Settings Screen (Categories, Departments)</string>
     <string name="screen_privileges">Privileges Screen</string>
     <string name="privileges">Privileges</string>
+    <string name="filter">Filter</string>
+    <string name="select">Select</string>
 </resources>

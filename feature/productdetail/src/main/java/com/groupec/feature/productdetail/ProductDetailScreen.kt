@@ -1,6 +1,7 @@
 package com.groupec.feature.productdetail
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,7 +27,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.groupec.salesb.core.Approval
 import com.groupec.salesb.core.FormUIState
+import com.groupec.salesb.core.Privileges
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.theme.Primary
@@ -60,6 +63,9 @@ fun ProductDetailScreen(
     var rayonlibelleState by remember { mutableStateOf(TextFieldValue(productDataForm.rayonlibelle)) }
     var fournisseurlibelleState by remember { mutableStateOf(TextFieldValue(productDataForm.fournisseurlibelle)) }
     val uri = remember { mutableStateOf<Uri?>(null) }
+
+    val userStoreState by viewModel.userStoreState.collectAsState()
+    val privileges = userStoreState.getPrivileges()
 
     ComposableLifecycle(
         onResume = {
@@ -173,13 +179,13 @@ fun ProductDetailScreen(
                 uri = uri.value,
                 onSetUri = {
                     uri.value = it
+                    if (it == null) productDataForm = productDataForm.copy(image = "") // Notify image delete for external api
                 },
                 /*  upload = {
                       viewModel.uploadImage(it)
                   },*/
                 deleteFile = { filename ->
                     viewModel.deleteImageFromCache(context, filename)
-                    productDataForm = productDataForm.copy(image = "") // Notify image delete for external api
                 }
             )
 
@@ -191,8 +197,38 @@ fun ProductDetailScreen(
                 fournisseurItems = listOf(),
                 products = productDataForm,
                 categorielibelleState = categorielibelleState,
-                navigateToCategory = navigateToCategory,
-                navigateToRayon = navigateToRayon,
+                navigateToCategory = {
+                    if (privileges.any {
+                        it in Privileges.Category.getKeysByApprovals(
+                            listOf(
+                                Approval.AUTHORIZE_ADD,
+                                Approval.AUTHORIZE_EDIT,
+                                Approval.AUTHORIZE_DELETE,
+                            )
+                        )
+                    }) {
+                        navigateToCategory()
+                    } else {
+                        Toast.makeText(context, context.getString(com.groupec.salesb.core.R.string.no_visual_allowed),
+                            Toast.LENGTH_SHORT).show()
+                    }
+                },
+                navigateToRayon = {
+                    if (privileges.any {
+                            it in Privileges.Rayon.getKeysByApprovals(
+                                listOf(
+                                    Approval.AUTHORIZE_ADD,
+                                    Approval.AUTHORIZE_EDIT,
+                                    Approval.AUTHORIZE_DELETE,
+                                )
+                            )
+                        }) {
+                        navigateToRayon()
+                    } else {
+                        Toast.makeText(context, context.getString(com.groupec.salesb.core.R.string.no_visual_allowed),
+                            Toast.LENGTH_SHORT).show()
+                    }
+                },
                 rayonlibelleState = rayonlibelleState,
                 fournisseurlibelleState = fournisseurlibelleState,
                 onProductDataChanged = { newProduct ->

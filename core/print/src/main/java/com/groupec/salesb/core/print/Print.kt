@@ -142,10 +142,6 @@ class Print(
             append("[C]--------------------------------\n")
 
             sale.details.forEach { productItem ->
-                append("[L]"+ productItem.qte + " " + productItem.libelle +
-                        "[C]"+ productItem.prix +
-                        "[R]"+ productItem.prix.times(productItem.qte) + "\n"
-                )
                 append("[L]"+ productItem.libelle + "\n")
                 append("[C]"+ productItem.qte + "   " + productItem.prix +
                        "[R]"+   (productItem.qte*productItem.prix).formatAmount() + "\n"

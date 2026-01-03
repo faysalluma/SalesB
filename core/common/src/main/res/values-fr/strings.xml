@@ -14,12 +14,12 @@
     <string name="authorize_edit">Modification</string>
     <string name="authorize_delete">Suppression</string>
     <string name="authorize_view">Voir</string>
-    <string name="no_visual_allowed">Vous n\'êtes pas autorisé à votre cette page</string>
+    <string name="no_visual_allowed">Vous n\'êtes pas autorisé à voir cette page.</string>
 
     <!-- For menu -->
     <string name="menu_home_view">Accueil</string>
     <string name="menu_save_sale_view">Encaisser</string>
-    <string name="menu_outputs_view">Sorties</string>
+    <string name="menu_outputs_view">Décaisser</string>
     <string name="menu_product_view">Produits</string>
     <string name="menu_update_password_view">Modifier mon mot de passe</string>
     <string name="manage_your_account_view">Gestion de comptes</string>

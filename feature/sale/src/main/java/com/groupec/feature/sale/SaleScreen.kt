@@ -14,15 +14,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -48,6 +51,7 @@ import com.groupec.salesb.core.print.PrintAction
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DefaultButton
+import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
@@ -70,6 +74,7 @@ fun SaleScreen(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     viewModel: SaleViewModel = hiltViewModel(),
+    navigateToProduct: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -257,13 +262,26 @@ fun SaleScreen(
                        HorizontalDivider(modifier = Modifier.padding(top = 12.dp))
 
                        // Paginated list
-                       ProductGridAdaptive(
-                           products = products,
-                           selectedProducts = selectedProducts,
-                           textFieldValues = textFieldValues,
-                           quantityCheck = quantityCheck,
-                           isSearching = isSearching
-                       )
+                       if (products.itemCount == 0) {
+                           Box(
+                               modifier = Modifier.fillMaxSize(),
+                               contentAlignment = Alignment.Center
+                           ) {
+                               DefaultButton(
+                                   modifier = Modifier.wrapContentWidth(),
+                                   text = stringResource(R.string.add_product),
+                                   onClick = navigateToProduct
+                               )
+                           }
+                       } else {
+                           ProductGridAdaptive(
+                               products = products,
+                               selectedProducts = selectedProducts,
+                               textFieldValues = textFieldValues,
+                               quantityCheck = quantityCheck,
+                               isSearching = isSearching
+                           )
+                       }
                    }
                }
            }
