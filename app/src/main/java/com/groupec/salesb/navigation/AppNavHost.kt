@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -478,12 +479,19 @@ fun AppNavHost(
                 }
             )
         ) { backStackEntry ->
-            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
+
+            LaunchedEffect(isExpandedWidth) {
+                if (isExpandedWidth && fromDetailValue) {
+                    fromDetailValue = false
+                }
+            }
 
             AccountNavContent(
                 isExpandedWidth = isExpandedWidth,
                 snackbarHostState = snackbarHostState,
-                fromDetail = fromDetail,
+                fromDetail = fromDetailValue,
                 onNavigateToDetail = { user ->
                     navController.currentBackStackEntry?.savedStateHandle?.set("account", user)
                     navController.navigate(NavigationItem.AccountDetail.route)
