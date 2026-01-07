@@ -32,8 +32,11 @@ import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Privileges
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
+import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.model.data.Product
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import com.groupec.salesb.core.ui.AddImage
 import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.core.ui.ProductDataForm
@@ -50,6 +53,9 @@ fun ProductDetailScreen(
     removeSelectedBgColor: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductDetailViewModel = hiltViewModel(),
+    isExpandedWidth: Boolean = false,
+    navigateToHome: (() -> Unit)? = null,
+    onPopBack: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -121,14 +127,19 @@ fun ProductDetailScreen(
     when (addProductState) {
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
-                resetProductForm()
-                removeSelectedBgColor()
-                refreshProducts() // Notify list to refresh
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithState(
-                        message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                if (isExpandedWidth) {
+                    resetProductForm()
+                    removeSelectedBgColor()
+                    refreshProducts() // Notify list to refresh
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithState(
+                            message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                        )
                     )
-                )
+                } else {
+                    navigateToHome?.invoke()
+                }
+
                 viewModel.resetFlow()
             }
         }
@@ -152,6 +163,18 @@ fun ProductDetailScreen(
         AppHeadLine(
             modifier = Modifier.padding(bottom = 28.dp),
             text = stringResource(R.string.detail_title),
+            navigationIcon = {
+                if (!isExpandedWidth) {
+                    IconButton(onClick = {
+                        onPopBack?.invoke()
+                    }) {
+                        Icon(
+                            imageVector = AppIcons.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+            },
             trailingContent = {
                 Text(
                     stringResource(com.groupec.salesb.core.ui.R.string.btn_cancel),

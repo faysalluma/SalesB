@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -227,63 +226,70 @@ fun AppNavHost(
             )
         }
 
-        composable(NavigationItem.Product.route) {
-            if (shouldNotShowInPortraitMode) {
-                EmptyScreen(
-                    text = stringResource(R.string.error_visible_only_expanded)
-                )
-            } else {
-                var selectedProduct by remember { mutableStateOf<Product?>(null) }
-                var refreshProductList by remember { mutableStateOf(false) }
-                var removeSelectedBgColor by remember { mutableStateOf(false) }
-                var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
-
-                LaunchedEffect(isRefreshing) {
-                    // Show refresh indicator during 1s
-                    if (isRefreshing) {
-                        delay(1000)
-                        isRefreshing = false
-                    }
+        composable(
+            route = NavigationItem.Product.route.plus("?fromDetail={fromDetail}"),
+            arguments = listOf(
+                navArgument("fromDetail") {
+                    type = NavType.BoolType
+                    defaultValue = false
                 }
+            )
+        ) { backStackEntry ->
+            var fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
 
-                PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                    refreshProductList  = !refreshProductList
-                    isRefreshing = true
-                }) {
-                    Row {
-                        Row(Modifier.weight(0.4f)) {
-                            ProductListScreen(
-                                snackbarHostState = snackbarHostState,
-                                refreshProductList = refreshProductList,
-                                removeSelectedBgColor = removeSelectedBgColor,
-                                onViewDetail = { product ->
-                                    selectedProduct = product
-                                }
-                            )
-                            VerticalDivider()
-                        }
-
-                        Box(Modifier.weight(0.6f)) {
-                            ProductDetailScreen(
-                                snackbarHostState = snackbarHostState,
-                                product = selectedProduct,
-                                navigateToCategory = {
-                                    navController.navigate(NavigationItem.Category.route)
-                                },
-                                navigateToRayon = {
-                                    navController.navigate(NavigationItem.Rayon.route)
-                                },
-                                removeSelectedBgColor = {
-                                    removeSelectedBgColor = !removeSelectedBgColor
-                                },
-                                refreshProducts = {
-                                    refreshProductList  = !refreshProductList
-                                }
-                            )
-                        }
-                    }
+            LaunchedEffect(isExpandedWidth) {
+                if (isExpandedWidth && fromDetailValue) {
+                    fromDetailValue = false
                 }
             }
+            ProductNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                fromDetail = fromDetailValue,
+                onNavigateToDetail = { product ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("product", product)
+                    navController.navigate(NavigationItem.ProductDetail.route)
+                },
+                onNavigateToCategory = {
+                    navController.navigate(NavigationItem.Category.route)
+                },
+                onNavigateToRayon = {
+                    navController.navigate(NavigationItem.Rayon.route)
+                },
+                onPopBack = {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(NavigationItem.ProductDetail.route) {
+            val product = navController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
+
+            ProductNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                product = product,
+                onNavigateToHome = {
+                    navController.navigate(NavigationItem.Product.route.plus("?fromDetail=true")) {
+                        popUpTo(NavigationItem.Product.route) { inclusive = true }
+                    }
+                },
+                onPopBack = {
+                    navController.navigate(NavigationItem.Product.route.plus("?fromDetail=false")) {
+                        popUpTo(NavigationItem.Product.route) { inclusive = true }
+                    }
+                },
+                onNavigateToCategory = {
+                    navController.navigate(NavigationItem.Category.route)
+                },
+                onNavigateToRayon = {
+                    navController.navigate(NavigationItem.Rayon.route)
+                }
+            )
         }
 
         composable(NavigationItem.Category.route) {
@@ -523,6 +529,114 @@ fun AppNavHost(
                     }
                 }
             )
+        }
+    }
+}
+
+@Composable
+fun ExpandedProductScreen(
+    snackbarHostState: SnackbarHostState,
+    refreshProductList: Boolean,
+    removeSelectedBgColor: Boolean,
+    onViewDetail: (Product) -> Unit,
+    onRemoveSelectedBgColor: () -> Unit,
+    onRefreshProducts: () -> Unit,
+    onNavigateToCategory: () -> Unit,
+    onNavigateToRayon: () -> Unit,
+) {
+    var selectedProduct by remember { mutableStateOf<Product?>(null) }
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Box(Modifier.weight(0.4f)) {
+            ProductListScreen(
+                snackbarHostState = snackbarHostState,
+                refreshProductList = refreshProductList,
+                removeSelectedBgColor = removeSelectedBgColor,
+                onViewDetail = { product ->
+                    selectedProduct = product
+                }
+            )
+        }
+        Box(Modifier.weight(0.6f)) {
+            ProductDetailScreen(
+                snackbarHostState = snackbarHostState,
+                product = selectedProduct,
+                isExpandedWidth = true,
+                removeSelectedBgColor = onRemoveSelectedBgColor,
+                refreshProducts = onRefreshProducts,
+                navigateToCategory = onNavigateToCategory,
+                navigateToRayon = onNavigateToRayon
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProductNavContent(
+    isExpandedWidth: Boolean,
+    snackbarHostState: SnackbarHostState,
+    fromDetail: Boolean = false,
+    product: Product? = null,
+    onNavigateToDetail: ((Product) -> Unit)? = null,
+    onNavigateToHome: (() -> Unit)? = null,
+    onPopBack: (() -> Unit)? = null,
+    onNavigateToCategory: () -> Unit,
+    onNavigateToRayon: () -> Unit,
+) {
+    var refreshProductList by remember { mutableStateOf(false) }
+    var removeSelectedBgColor by remember { mutableStateOf(false) }
+    var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+
+    LaunchedEffect(isRefreshing) {
+        if (isRefreshing) {
+            delay(1000)
+            isRefreshing = false
+        }
+    }
+
+    PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+        refreshProductList = !refreshProductList
+        isRefreshing = true
+    }) {
+        if (isExpandedWidth) {
+            ExpandedProductScreen(
+                snackbarHostState = snackbarHostState,
+                refreshProductList = refreshProductList,
+                removeSelectedBgColor = removeSelectedBgColor,
+                onViewDetail = { },
+                onRemoveSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor },
+                onRefreshProducts = { refreshProductList = !refreshProductList },
+                onNavigateToCategory = onNavigateToCategory,
+                onNavigateToRayon = onNavigateToRayon
+            )
+        } else {
+            if (onNavigateToDetail != null) {
+                ProductListScreen(
+                    snackbarHostState = snackbarHostState,
+                    refreshProductList = refreshProductList,
+                    removeSelectedBgColor = removeSelectedBgColor,
+                    fromDetail = fromDetail,
+                    onViewDetail = { selectedProduct ->
+                        onNavigateToDetail(selectedProduct)
+                    }
+                )
+            } else if (onNavigateToHome != null) {
+                ProductDetailScreen(
+                    snackbarHostState = snackbarHostState,
+                    product = product,
+                    isExpandedWidth = false,
+                    navigateToHome = onNavigateToHome,
+                    onPopBack = onPopBack,
+                    navigateToCategory = onNavigateToCategory,
+                    navigateToRayon = onNavigateToRayon,
+                    refreshProducts = { refreshProductList = !refreshProductList },
+                    removeSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor }
+                )
+            }
         }
     }
 }
