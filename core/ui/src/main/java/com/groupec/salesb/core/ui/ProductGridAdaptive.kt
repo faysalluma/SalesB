@@ -34,19 +34,20 @@ fun ProductGridAdaptive(
     ) {
         items(products.itemCount) { index ->
             products[index]?.let { product ->
-                val isChecked = selectedProducts.contains(Pair(index, product))
+                val isChecked = selectedProducts.contains(Pair(product.id, product))
                 ProductGridItem(
                     product = product,
                     isChecked = isChecked,
                     onclick = {
                         if (isChecked) {
-                            selectedProducts.remove(Pair(index, product))
-                            textFieldValues.remove(index)
-                            quantityCheck.remove(index)
+                            selectedProducts.remove(Pair(product.id, product))
+                            textFieldValues.remove(product.id)
+                            quantityCheck.remove(product.id)
                         } else {
-                            selectedProducts.add(index to product)
-                            textFieldValues[index] = "1.0"
-                            quantityCheck[index] = false
+                            val productId = product.id ?:0
+                            selectedProducts.add(productId to product)
+                            textFieldValues[productId] = "1.0"
+                            quantityCheck[productId] = false
                         }
                     }
                 )

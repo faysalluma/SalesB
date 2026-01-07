@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -34,6 +35,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         private val PRIMARY_COLOR_KEY = stringPreferencesKey("primarycolor")
         private val SECONDARY_COLOR_KEY = stringPreferencesKey("secondarycolor")
         private val LOAD_PRODUCT_KEY = booleanPreferencesKey("loadproducts")
+        private val TVA_KEY = doublePreferencesKey("tva")
         private val SHOW_TERMS_AND_CONDITIONS_KEY = booleanPreferencesKey("termsandconditions")
 
         // Login key
@@ -66,6 +68,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
                 primarycolor = preferences[PRIMARY_COLOR_KEY] ?: "",
                 secondarycolor = preferences[SECONDARY_COLOR_KEY] ?: "",
                 loadproducts = preferences[LOAD_PRODUCT_KEY] ?: false,
+                tva = preferences[TVA_KEY] ?: 0.0,
                 termsandconditions = preferences[SHOW_TERMS_AND_CONDITIONS_KEY] ?: true
             )
         }
@@ -105,6 +108,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             datastore[PRIMARY_COLOR_KEY] = parameter.primarycolor
             datastore[SECONDARY_COLOR_KEY] = parameter.secondarycolor
             datastore[LOAD_PRODUCT_KEY] = parameter.loadproducts
+            datastore[TVA_KEY] = parameter.tva
         }
     }
 
