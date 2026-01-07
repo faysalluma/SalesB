@@ -50,6 +50,9 @@ fun ProductDetailScreen(
     removeSelectedBgColor: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductDetailViewModel = hiltViewModel(),
+    isExpandedWidth: Boolean = false,
+    navigateToHome: (() -> Unit)? = null,
+    onPopBack: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -121,14 +124,19 @@ fun ProductDetailScreen(
     when (addProductState) {
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
-                resetProductForm()
-                removeSelectedBgColor()
-                refreshProducts() // Notify list to refresh
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithState(
-                        message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                if (isExpandedWidth) {
+                    resetProductForm()
+                    removeSelectedBgColor()
+                    refreshProducts() // Notify list to refresh
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithState(
+                            message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                        )
                     )
-                )
+                } else {
+                    navigateToHome?.invoke()
+                }
+
                 viewModel.resetFlow()
             }
         }
