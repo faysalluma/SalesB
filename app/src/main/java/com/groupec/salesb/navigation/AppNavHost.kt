@@ -16,9 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -235,14 +237,15 @@ fun AppNavHost(
                 }
             )
         ) { backStackEntry ->
-            var fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
             var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
-
-            LaunchedEffect(isExpandedWidth) {
-                if (isExpandedWidth && fromDetailValue) {
+            val configuration = LocalConfiguration.current
+            LaunchedEffect(configuration) {
+                if (fromDetailValue) {
                     fromDetailValue = false
                 }
             }
+
             ProductNavContent(
                 isExpandedWidth = isExpandedWidth,
                 snackbarHostState = snackbarHostState,
@@ -485,11 +488,11 @@ fun AppNavHost(
                 }
             )
         ) { backStackEntry ->
-            var fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
             var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
-
-            LaunchedEffect(isExpandedWidth) {
-                if (isExpandedWidth && fromDetailValue) {
+            val configuration = LocalConfiguration.current
+            LaunchedEffect(configuration) {
+                if (fromDetailValue) {
                     fromDetailValue = false
                 }
             }
@@ -543,6 +546,7 @@ fun ExpandedProductScreen(
     onRefreshProducts: () -> Unit,
     onNavigateToCategory: () -> Unit,
     onNavigateToRayon: () -> Unit,
+    onPopBack: (() -> Unit)? = null
 ) {
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
     Row(
@@ -568,7 +572,8 @@ fun ExpandedProductScreen(
                 removeSelectedBgColor = onRemoveSelectedBgColor,
                 refreshProducts = onRefreshProducts,
                 navigateToCategory = onNavigateToCategory,
-                navigateToRayon = onNavigateToRayon
+                navigateToRayon = onNavigateToRayon,
+                onPopBack = onPopBack
             )
         }
     }
@@ -587,6 +592,7 @@ fun ProductNavContent(
     onNavigateToCategory: () -> Unit,
     onNavigateToRayon: () -> Unit,
 ) {
+    var selectedProduct by remember { mutableStateOf<Product?>(product) }
     var refreshProductList by remember { mutableStateOf(false) }
     var removeSelectedBgColor by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
@@ -607,11 +613,12 @@ fun ProductNavContent(
                 snackbarHostState = snackbarHostState,
                 refreshProductList = refreshProductList,
                 removeSelectedBgColor = removeSelectedBgColor,
-                onViewDetail = { },
+                onViewDetail = { product -> selectedProduct = product },
                 onRemoveSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor },
                 onRefreshProducts = { refreshProductList = !refreshProductList },
                 onNavigateToCategory = onNavigateToCategory,
-                onNavigateToRayon = onNavigateToRayon
+                onNavigateToRayon = onNavigateToRayon,
+                onPopBack = onPopBack
             )
         } else {
             if (onNavigateToDetail != null) {
@@ -632,9 +639,7 @@ fun ProductNavContent(
                     navigateToHome = onNavigateToHome,
                     onPopBack = onPopBack,
                     navigateToCategory = onNavigateToCategory,
-                    navigateToRayon = onNavigateToRayon,
-                    refreshProducts = { refreshProductList = !refreshProductList },
-                    removeSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor }
+                    navigateToRayon = onNavigateToRayon
                 )
             }
         }
