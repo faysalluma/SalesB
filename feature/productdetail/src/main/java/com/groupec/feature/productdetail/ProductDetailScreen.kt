@@ -2,6 +2,7 @@ package com.groupec.feature.productdetail
 
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -69,6 +70,11 @@ fun ProductDetailScreen(
 
     val userStoreState by viewModel.userStoreState.collectAsState()
     val privileges = userStoreState.getPrivileges()
+
+    // When on detail and popBackStack : avoid show toast message
+    BackHandler {
+        onPopBack?.invoke()
+    }
 
     ComposableLifecycle(
         onResume = {

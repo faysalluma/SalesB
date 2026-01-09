@@ -543,6 +543,7 @@ fun ExpandedProductScreen(
     onRefreshProducts: () -> Unit,
     onNavigateToCategory: () -> Unit,
     onNavigateToRayon: () -> Unit,
+    onPopBack: (() -> Unit)? = null
 ) {
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
     Row(
@@ -568,7 +569,8 @@ fun ExpandedProductScreen(
                 removeSelectedBgColor = onRemoveSelectedBgColor,
                 refreshProducts = onRefreshProducts,
                 navigateToCategory = onNavigateToCategory,
-                navigateToRayon = onNavigateToRayon
+                navigateToRayon = onNavigateToRayon,
+                onPopBack = onPopBack
             )
         }
     }
@@ -585,8 +587,9 @@ fun ProductNavContent(
     onNavigateToHome: (() -> Unit)? = null,
     onPopBack: (() -> Unit)? = null,
     onNavigateToCategory: () -> Unit,
-    onNavigateToRayon: () -> Unit,
+    onNavigateToRayon: () -> Unit
 ) {
+    var selectedProduct by remember { mutableStateOf<Product?>(product) }
     var refreshProductList by remember { mutableStateOf(false) }
     var removeSelectedBgColor by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
@@ -607,11 +610,12 @@ fun ProductNavContent(
                 snackbarHostState = snackbarHostState,
                 refreshProductList = refreshProductList,
                 removeSelectedBgColor = removeSelectedBgColor,
-                onViewDetail = { },
+                onViewDetail = { prod -> selectedProduct = prod },
                 onRemoveSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor },
                 onRefreshProducts = { refreshProductList = !refreshProductList },
                 onNavigateToCategory = onNavigateToCategory,
-                onNavigateToRayon = onNavigateToRayon
+                onNavigateToRayon = onNavigateToRayon,
+                onPopBack = onPopBack
             )
         } else {
             if (onNavigateToDetail != null) {
