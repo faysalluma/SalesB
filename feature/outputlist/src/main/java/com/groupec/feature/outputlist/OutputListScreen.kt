@@ -49,6 +49,7 @@ fun OutputListScreen(
     viewModel: OutputListViewModel = hiltViewModel(),
     refreshList: Boolean,
     removeSelectedBgColor: Boolean,
+    fromDetail: Boolean = false,
     onViewDetail: (Output) -> Unit
 ) {
     val context = LocalContext.current
@@ -64,6 +65,17 @@ fun OutputListScreen(
     // Refresh list after insert, update or delete output
     LaunchedEffect(refreshList) {
         outputs.refresh() // Refresh the LazyPagingItems
+    }
+
+    // Refresh data from detail when we are on portrait/medium Mode
+    LaunchedEffect(Unit) {
+        if (fromDetail) {
+            snackbarHostState.showSnackbar(
+                SnackbarVisualsWithState(
+                    message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                )
+            )
+        }
     }
 
     when (deleteOutputState) {

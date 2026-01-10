@@ -235,7 +235,8 @@ fun MainScreen(
                 (
                    currentDestination.value == NavigationItem.Home.route ||
                    (currentDestination.value == NavigationItem.Account.route && !isExpandedWidth) ||
-                   (currentDestination.value == NavigationItem.Product.route && !isExpandedWidth)
+                   (currentDestination.value == NavigationItem.Product.route && !isExpandedWidth) ||
+                   (currentDestination.value == NavigationItem.Outputs.route && !isExpandedWidth)
                 )
             ) {
                 val onFabClick = {
@@ -246,6 +247,7 @@ fun MainScreen(
                         }
                         NavigationItem.Account.route -> navController.navigate(NavigationItem.AccountDetail.route)
                         NavigationItem.Product.route -> navController.navigate(NavigationItem.ProductDetail.route)
+                        NavigationItem.Outputs.route -> navController.navigate(NavigationItem.OutputDetail.route)
                     }
                 }
 

@@ -398,57 +398,58 @@ fun AppNavHost(
             }
         }
 
-        composable(NavigationItem.Outputs.route) {
-            if (shouldNotShowInPortraitMode) {
-                EmptyScreen(
-                    text = stringResource(R.string.error_visible_only_expanded)
-                )
-            } else {
-                var selectedOutput by remember { mutableStateOf<Output?>(null) }
-                var refreshList by remember { mutableStateOf(false) }
-                var removeSelectedBgColor by remember { mutableStateOf(false) }
-                var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
-
-                LaunchedEffect(isRefreshing) {
-                    // Show refresh indicator during 1s
-                    if (isRefreshing) {
-                        delay(1000)
-                        isRefreshing = false
-                    }
+        composable(
+            route = NavigationItem.Outputs.route.plus("?fromDetail={fromDetail}"),
+            arguments = listOf(
+                navArgument("fromDetail") {
+                    type = NavType.BoolType
+                    defaultValue = false
                 }
+            )
+        ) { backStackEntry ->
+            var fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
 
-                PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                    refreshList  = !refreshList
-                    isRefreshing = true
-                }) {
-                    Row {
-                        Row(Modifier.weight(0.4f)) {
-                            OutputListScreen(
-                                snackbarHostState = snackbarHostState,
-                                refreshList = refreshList,
-                                removeSelectedBgColor = removeSelectedBgColor,
-                                onViewDetail = { output ->
-                                    selectedOutput = output
-                                }
-                            )
-                            VerticalDivider()
-                        }
-
-                        Box(Modifier.weight(0.6f)) {
-                            OutputDetailScreen(
-                                snackbarHostState = snackbarHostState,
-                                output = selectedOutput,
-                                removeSelectedBgColor = {
-                                    removeSelectedBgColor = !removeSelectedBgColor
-                                },
-                                refreshList = {
-                                    refreshList  = !refreshList
-                                }
-                            )
-                        }
-                    }
+            LaunchedEffect(isExpandedWidth) {
+                if (isExpandedWidth && fromDetailValue) {
+                    fromDetailValue = false
                 }
             }
+            OutputNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                fromDetail = fromDetailValue,
+                onNavigateToDetail = { output ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("output", output)
+                    navController.navigate(NavigationItem.OutputDetail.route)
+                },
+                onPopBack = {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(NavigationItem.OutputDetail.route) {
+            val output = navController.previousBackStackEntry?.savedStateHandle?.get<Output>("output")
+
+            OutputNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                output = output,
+                onNavigateToHome = {
+                    navController.navigate(NavigationItem.Outputs.route.plus("?fromDetail=true")) {
+                        popUpTo(NavigationItem.Outputs.route) { inclusive = true }
+                    }
+                },
+                onPopBack = {
+                    navController.navigate(NavigationItem.Outputs.route.plus("?fromDetail=false")) {
+                        popUpTo(NavigationItem.Outputs.route) { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable(
@@ -529,6 +530,108 @@ fun AppNavHost(
                     }
                 }
             )
+        }
+    }
+}
+
+@Composable
+fun ExpandedOutputScreen(
+    snackbarHostState: SnackbarHostState,
+    refreshOutputList: Boolean,
+    removeSelectedBgColor: Boolean,
+    onViewDetail: (Output) -> Unit,
+    onRemoveSelectedBgColor: () -> Unit,
+    onRefreshOutputs: () -> Unit,
+    onPopBack: (() -> Unit)? = null
+) {
+    var selectedOutput by remember { mutableStateOf<Output?>(null) }
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Box(Modifier.weight(0.4f)) {
+            OutputListScreen(
+                snackbarHostState = snackbarHostState,
+                refreshList = refreshOutputList,
+                removeSelectedBgColor = removeSelectedBgColor,
+                onViewDetail = { output ->
+                    selectedOutput = output
+                }
+            )
+        }
+        Box(Modifier.weight(0.6f)) {
+            OutputDetailScreen(
+                snackbarHostState = snackbarHostState,
+                output = selectedOutput,
+                isExpandedWidth = true,
+                removeSelectedBgColor = onRemoveSelectedBgColor,
+                refreshList = onRefreshOutputs,
+                onPopBack = onPopBack
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun OutputNavContent(
+    isExpandedWidth: Boolean,
+    snackbarHostState: SnackbarHostState,
+    fromDetail: Boolean = false,
+    output: Output? = null,
+    onNavigateToDetail: ((Output) -> Unit)? = null,
+    onNavigateToHome: (() -> Unit)? = null,
+    onPopBack: (() -> Unit)? = null
+) {
+    var selectedOutput by remember { mutableStateOf<Output?>(output) }
+    var refreshOutputList by remember { mutableStateOf(false) }
+    var removeSelectedBgColor by remember { mutableStateOf(false) }
+    var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+
+    LaunchedEffect(isRefreshing) {
+        if (isRefreshing) {
+            delay(1000)
+            isRefreshing = false
+        }
+    }
+
+    PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+        refreshOutputList = !refreshOutputList
+        isRefreshing = true
+    }) {
+        if (isExpandedWidth) {
+            ExpandedOutputScreen(
+                snackbarHostState = snackbarHostState,
+                refreshOutputList = refreshOutputList,
+                removeSelectedBgColor = removeSelectedBgColor,
+                onViewDetail = { out -> selectedOutput = out },
+                onRemoveSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor },
+                onRefreshOutputs = { refreshOutputList = !refreshOutputList },
+                onPopBack = onPopBack
+            )
+        } else {
+            if (onNavigateToDetail != null) {
+                OutputListScreen(
+                    snackbarHostState = snackbarHostState,
+                    refreshList = refreshOutputList,
+                    removeSelectedBgColor = removeSelectedBgColor,
+                    fromDetail = fromDetail,
+                    onViewDetail = { selectedOutput ->
+                        onNavigateToDetail(selectedOutput)
+                    }
+                )
+            } else if (onNavigateToHome != null) {
+                OutputDetailScreen(
+                    snackbarHostState = snackbarHostState,
+                    output = output,
+                    isExpandedWidth = false,
+                    navigateToHome = onNavigateToHome,
+                    onPopBack = onPopBack,
+                    refreshList = { refreshOutputList = !refreshOutputList },
+                    removeSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor }
+                )
+            }
         }
     }
 }

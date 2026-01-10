@@ -1,5 +1,6 @@
 package com.groupec.feature.outputdetail
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,10 +28,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
+import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.model.data.Output
 import com.groupec.salesb.core.ui.OutputDataForm
 import com.groupec.salesb.core.ui.OutputForm
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 
 @Composable
 fun OutputDetailScreen(
@@ -40,6 +44,9 @@ fun OutputDetailScreen(
     removeSelectedBgColor: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: OutPutDetailViewModel = hiltViewModel(),
+    isExpandedWidth: Boolean = false,
+    navigateToHome: (() -> Unit)? = null,
+    onPopBack: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -47,6 +54,11 @@ fun OutputDetailScreen(
     val isLoading = addOutputState is FormUIState.Loading
 
     var outputDataForm by remember { mutableStateOf(OutputDataForm()) }
+
+    // When on detail and popBackStack : avoid show toast message
+    BackHandler {
+        onPopBack?.invoke()
+    }
 
     LaunchedEffect(output) {
         // Form Data and methods
@@ -70,14 +82,20 @@ fun OutputDetailScreen(
     when (addOutputState) {
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
-                resetOutputForm()
-                removeSelectedBgColor()
-                refreshList() // Notify list to refresh
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithState(
-                        message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                if (isExpandedWidth) {
+                    resetOutputForm()
+                    removeSelectedBgColor()
+                    refreshList() // Notify list to refresh
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithState(
+                            message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                        )
                     )
-                )
+                } else {
+                    navigateToHome?.invoke()
+                }
+
+                viewModel.resetFlow()
             }
         }
 
@@ -100,6 +118,18 @@ fun OutputDetailScreen(
         AppHeadLine(
             modifier = Modifier.padding(bottom = 28.dp),
             text = stringResource(R.string.detail_title_output),
+            navigationIcon = {
+                if (!isExpandedWidth) {
+                    IconButton(onClick = {
+                        onPopBack?.invoke()
+                    }) {
+                        Icon(
+                            imageVector = AppIcons.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+            },
             trailingContent = {
                 Text(
                     stringResource(com.groupec.salesb.core.ui.R.string.btn_cancel),
