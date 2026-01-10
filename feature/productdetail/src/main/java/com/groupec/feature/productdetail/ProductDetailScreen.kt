@@ -2,7 +2,6 @@ package com.groupec.feature.productdetail
 
 import android.net.Uri
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,9 +50,6 @@ fun ProductDetailScreen(
     removeSelectedBgColor: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductDetailViewModel = hiltViewModel(),
-    isExpandedWidth: Boolean = false,
-    navigateToHome: (() -> Unit)? = null,
-    onPopBack: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -70,11 +66,6 @@ fun ProductDetailScreen(
 
     val userStoreState by viewModel.userStoreState.collectAsState()
     val privileges = userStoreState.getPrivileges()
-
-    // When on detail and popBackStack : avoid show toast message
-    BackHandler {
-        onPopBack?.invoke()
-    }
 
     ComposableLifecycle(
         onResume = {
@@ -130,19 +121,14 @@ fun ProductDetailScreen(
     when (addProductState) {
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
-                if (isExpandedWidth) {
-                    resetProductForm()
-                    removeSelectedBgColor()
-                    refreshProducts() // Notify list to refresh
-                    snackbarHostState.showSnackbar(
-                        SnackbarVisualsWithState(
-                            message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
-                        )
+                resetProductForm()
+                removeSelectedBgColor()
+                refreshProducts() // Notify list to refresh
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
                     )
-                } else {
-                    navigateToHome?.invoke()
-                }
-
+                )
                 viewModel.resetFlow()
             }
         }
