@@ -28,13 +28,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
-import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.model.data.Output
 import com.groupec.salesb.core.ui.OutputDataForm
 import com.groupec.salesb.core.ui.OutputForm
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 
 @Composable
 fun OutputDetailScreen(
@@ -118,18 +115,6 @@ fun OutputDetailScreen(
         AppHeadLine(
             modifier = Modifier.padding(bottom = 28.dp),
             text = stringResource(R.string.detail_title_output),
-            navigationIcon = {
-                if (!isExpandedWidth) {
-                    IconButton(onClick = {
-                        onPopBack?.invoke()
-                    }) {
-                        Icon(
-                            imageVector = AppIcons.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                }
-            },
             trailingContent = {
                 Text(
                     stringResource(com.groupec.salesb.core.ui.R.string.btn_cancel),
