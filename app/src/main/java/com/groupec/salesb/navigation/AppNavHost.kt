@@ -6,8 +6,6 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.VerticalDivider
@@ -22,14 +20,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.groupec.accountlist.AccountListScreen
-import com.groupec.feature.accountdetail.AccountDetailScreen
 import com.groupec.feature.categorydetail.CategoryDetailScreen
 import com.groupec.feature.categorylist.CategoryListScreen
 import com.groupec.feature.configuration.ConfigurationScreen
@@ -37,8 +32,6 @@ import com.groupec.feature.forgotpassword.ForgotPasswordScreen
 import com.groupec.feature.login.LoginScreen
 import com.groupec.feature.outputdetail.OutputDetailScreen
 import com.groupec.feature.outputlist.OutputListScreen
-import com.groupec.feature.productdetail.ProductDetailScreen
-import com.groupec.feature.productlist.ProductListScreen
 import com.groupec.feature.rayondetail.RayonDetailScreen
 import com.groupec.feature.rayonlist.RayonListScreen
 import com.groupec.feature.sale.SaleScreen
@@ -55,6 +48,8 @@ import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
+import com.groupec.salesb.ui.customlistdetailpane.AccountNavContent
+import com.groupec.salesb.ui.customlistdetailpane.ProductNavContent
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -535,215 +530,3 @@ fun AppNavHost(
         }
     }
 }
-
-@Composable
-fun ExpandedProductScreen(
-    snackbarHostState: SnackbarHostState,
-    refreshProductList: Boolean,
-    removeSelectedBgColor: Boolean,
-    onViewDetail: (Product) -> Unit,
-    onRemoveSelectedBgColor: () -> Unit,
-    onRefreshProducts: () -> Unit,
-    onPopBack: (() -> Unit)? = null,
-    onNavigateToCategory: () -> Unit,
-    onNavigateToRayon: () -> Unit
-) {
-    var selectedProduct by remember { mutableStateOf<Product?>(null) }
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Box(Modifier.weight(0.4f)) {
-            ProductListScreen(
-                snackbarHostState = snackbarHostState,
-                refreshProductList = refreshProductList,
-                removeSelectedBgColor = removeSelectedBgColor,
-                onViewDetail = { product ->
-                    selectedProduct = product
-                }
-            )
-        }
-        Box(Modifier.weight(0.6f)) {
-            ProductDetailScreen(
-                snackbarHostState = snackbarHostState,
-                product = selectedProduct,
-                isExpandedWidth = true,
-                removeSelectedBgColor = onRemoveSelectedBgColor,
-                refreshProducts = onRefreshProducts,
-                onPopBack = onPopBack,
-                navigateToCategory = onNavigateToCategory,
-                navigateToRayon = onNavigateToRayon
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ProductNavContent(
-    isExpandedWidth: Boolean,
-    snackbarHostState: SnackbarHostState,
-    fromDetail: Boolean = false,
-    product: Product? = null,
-    onNavigateToDetail: ((Product) -> Unit)? = null,
-    onNavigateToHome: (() -> Unit)? = null,
-    onPopBack: (() -> Unit)? = null,
-    onNavigateToCategory: () -> Unit,
-    onNavigateToRayon: () -> Unit,
-) {
-    var selectedProduct by remember { mutableStateOf<Product?>(product) }
-    var refreshProductList by remember { mutableStateOf(false) }
-    var removeSelectedBgColor by remember { mutableStateOf(false) }
-    var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
-
-    LaunchedEffect(isRefreshing) {
-        if (isRefreshing) {
-            delay(1000)
-            isRefreshing = false
-        }
-    }
-
-    PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-        refreshProductList = !refreshProductList
-        isRefreshing = true
-    }) {
-        if (isExpandedWidth) {
-            ExpandedProductScreen(
-                snackbarHostState = snackbarHostState,
-                refreshProductList = refreshProductList,
-                removeSelectedBgColor = removeSelectedBgColor,
-                onViewDetail = { product -> selectedProduct = product },
-                onRemoveSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor },
-                onRefreshProducts = { refreshProductList = !refreshProductList },
-                onNavigateToCategory = onNavigateToCategory,
-                onNavigateToRayon = onNavigateToRayon,
-                onPopBack = onPopBack
-            )
-        } else {
-            if (onNavigateToDetail != null) {
-                ProductListScreen(
-                    snackbarHostState = snackbarHostState,
-                    refreshProductList = refreshProductList,
-                    removeSelectedBgColor = removeSelectedBgColor,
-                    fromDetail = fromDetail,
-                    onViewDetail = { selectedProduct ->
-                        onNavigateToDetail(selectedProduct)
-                    }
-                )
-            } else if (onNavigateToHome != null) {
-                ProductDetailScreen(
-                    snackbarHostState = snackbarHostState,
-                    product = product,
-                    isExpandedWidth = false,
-                    navigateToHome = onNavigateToHome,
-                    onPopBack = onPopBack,
-                    navigateToCategory = onNavigateToCategory,
-                    navigateToRayon = onNavigateToRayon
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AccountNavContent(
-    isExpandedWidth: Boolean,
-    snackbarHostState: SnackbarHostState,
-    fromDetail: Boolean = false,
-    account: User? = null,
-    onNavigateToDetail: ((User) -> Unit)? = null,
-    onNavigateToHome: (() -> Unit)? = null,
-    onPopBack: (() -> Unit)? = null
-) {
-    var selectedAccount by remember { mutableStateOf<User?>(account) }
-    var refreshAccountList by remember { mutableStateOf(false) }
-    var removeSelectedBgColor by remember { mutableStateOf(false) }
-    var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
-
-    LaunchedEffect(isRefreshing) {
-        if (isRefreshing) {
-            delay(1000)
-            isRefreshing = false
-        }
-    }
-
-    PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-        refreshAccountList = !refreshAccountList
-        isRefreshing = true
-    }) {
-        if (isExpandedWidth) {
-            ExpandedAccountScreen(
-                snackbarHostState = snackbarHostState,
-                refreshAccountList = refreshAccountList,
-                removeSelectedBgColor = removeSelectedBgColor,
-                onViewDetail = { user -> selectedAccount = user },
-                onRemoveSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor },
-                onRefreshAccounts = { refreshAccountList = !refreshAccountList },
-                onPopBack = onPopBack
-            )
-        } else {
-            if (onNavigateToDetail != null) {
-                AccountListScreen(
-                    snackbarHostState = snackbarHostState,
-                    refreshAccountList = refreshAccountList,
-                    removeSelectedBgColor = removeSelectedBgColor,
-                    fromDetail = fromDetail,
-                    onViewDetail = { user ->
-                        onNavigateToDetail(user)
-                    }
-                )
-            } else if (onNavigateToHome != null) {
-                AccountDetailScreen(
-                    snackbarHostState = snackbarHostState,
-                    account = account,
-                    isExpandedWidth = false,
-                    navigateToHome = onNavigateToHome,
-                    onPopBack = onPopBack
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ExpandedAccountScreen(
-    snackbarHostState: SnackbarHostState,
-    refreshAccountList: Boolean,
-    removeSelectedBgColor: Boolean,
-    onViewDetail: (User) -> Unit,
-    onRemoveSelectedBgColor: () -> Unit,
-    onRefreshAccounts: () -> Unit,
-    onPopBack: (() -> Unit)? = null
-) {
-    var selectedAccount by remember { mutableStateOf<User?>(null) }
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Box(Modifier.weight(0.4f)) {
-            AccountListScreen(
-                snackbarHostState = snackbarHostState,
-                refreshAccountList = refreshAccountList,
-                removeSelectedBgColor = removeSelectedBgColor,
-                onViewDetail = { user ->
-                    selectedAccount = user
-                }
-            )
-        }
-        Box(Modifier.weight(0.6f)) {
-            AccountDetailScreen(
-                snackbarHostState = snackbarHostState,
-                account = selectedAccount,
-                isExpandedWidth = true,
-                removeSelectedBgColor = onRemoveSelectedBgColor,
-                refreshAccounts = onRefreshAccounts,
-                onPopBack = onPopBack
-            )
-        }
-    }
-}
-
-
