@@ -228,63 +228,71 @@ fun AppNavHost(
             )
         }
 
-        composable(NavigationItem.Product.route) {
-            if (shouldNotShowInPortraitMode) {
-                EmptyScreen(
-                    text = stringResource(R.string.error_visible_only_expanded)
-                )
-            } else {
-                var selectedProduct by remember { mutableStateOf<Product?>(null) }
-                var refreshProductList by remember { mutableStateOf(false) }
-                var removeSelectedBgColor by remember { mutableStateOf(false) }
-                var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
-
-                LaunchedEffect(isRefreshing) {
-                    // Show refresh indicator during 1s
-                    if (isRefreshing) {
-                        delay(1000)
-                        isRefreshing = false
-                    }
+        composable(
+            route = NavigationItem.Product.route.plus("?fromDetail={fromDetail}"),
+            arguments = listOf(
+                navArgument("fromDetail") {
+                    type = NavType.BoolType
+                    defaultValue = false
                 }
-
-                PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                    refreshProductList  = !refreshProductList
-                    isRefreshing = true
-                }) {
-                    Row {
-                        Row(Modifier.weight(0.4f)) {
-                            ProductListScreen(
-                                snackbarHostState = snackbarHostState,
-                                refreshProductList = refreshProductList,
-                                removeSelectedBgColor = removeSelectedBgColor,
-                                onViewDetail = { product ->
-                                    selectedProduct = product
-                                }
-                            )
-                            VerticalDivider()
-                        }
-
-                        Box(Modifier.weight(0.6f)) {
-                            ProductDetailScreen(
-                                snackbarHostState = snackbarHostState,
-                                product = selectedProduct,
-                                navigateToCategory = {
-                                    navController.navigate(NavigationItem.Category.route)
-                                },
-                                navigateToRayon = {
-                                    navController.navigate(NavigationItem.Rayon.route)
-                                },
-                                removeSelectedBgColor = {
-                                    removeSelectedBgColor = !removeSelectedBgColor
-                                },
-                                refreshProducts = {
-                                    refreshProductList  = !refreshProductList
-                                }
-                            )
-                        }
-                    }
+            )
+        ) { backStackEntry ->
+            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
+            val configuration = LocalConfiguration.current
+            LaunchedEffect(configuration) {
+                if (fromDetailValue) {
+                    fromDetailValue = false
                 }
             }
+
+            ProductNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                fromDetail = fromDetailValue,
+                onNavigateToDetail = { product ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("product", product)
+                    navController.navigate(NavigationItem.ProductDetail.route)
+                },
+                onPopBack = {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCategory = {
+                    navController.navigate(NavigationItem.Category.route)
+                },
+                navigateToRayon = {
+                    navController.navigate(NavigationItem.Rayon.route)
+                }
+            )
+        }
+
+        composable(NavigationItem.ProductDetail.route) {
+            val product = navController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
+
+            ProductNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                product = product,
+                onNavigateToHome = {
+                    navController.navigate(NavigationItem.Product.route.plus("?fromDetail=true")) {
+                        popUpTo(NavigationItem.Product.route) { inclusive = true }
+                    }
+                },
+                onPopBack = {
+                    navController.navigate(NavigationItem.Product.route.plus("?fromDetail=false")) {
+                        popUpTo(NavigationItem.Product.route) { inclusive = true }
+                    }
+                },
+                navigateToCategory = {
+                    navController.navigate(NavigationItem.Category.route)
+                },
+                navigateToRayon = {
+                    navController.navigate(NavigationItem.Rayon.route)
+                }
+            )
         }
 
         composable(NavigationItem.Category.route) {
@@ -530,6 +538,114 @@ fun AppNavHost(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun ProductNavContent(
+    isExpandedWidth: Boolean,
+    snackbarHostState: SnackbarHostState,
+    fromDetail: Boolean = false,
+    product: Product? = null,
+    onNavigateToDetail: ((Product) -> Unit)? = null,
+    onNavigateToHome: (() -> Unit)? = null,
+    onPopBack: (() -> Unit)? = null,
+    navigateToCategory: () -> Unit,
+    navigateToRayon: () -> Unit
+) {
+    var refreshProductList by remember { mutableStateOf(false) }
+    var removeSelectedBgColor by remember { mutableStateOf(false) }
+    var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+
+    LaunchedEffect(isRefreshing) {
+        if (isRefreshing) {
+            delay(1000)
+            isRefreshing = false
+        }
+    }
+
+    PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
+        refreshProductList = !refreshProductList
+        isRefreshing = true
+    }) {
+        if (isExpandedWidth) {
+            ExpandedProductScreen(
+                snackbarHostState = snackbarHostState,
+                refreshProductList = refreshProductList,
+                removeSelectedBgColor = removeSelectedBgColor,
+                onRemoveSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor },
+                onRefreshProducts = { refreshProductList = !refreshProductList },
+                navigateToCategory = navigateToCategory,
+                navigateToRayon = navigateToRayon,
+                onPopBack = onPopBack
+            )
+        } else {
+            if (onNavigateToDetail != null) {
+                ProductListScreen(
+                    snackbarHostState = snackbarHostState,
+                    refreshProductList = refreshProductList,
+                    removeSelectedBgColor = removeSelectedBgColor,
+                    fromDetail = fromDetail,
+                    onViewDetail = { selectedProduct ->
+                        onNavigateToDetail(selectedProduct)
+                    }
+                )
+            } else if (onNavigateToHome != null) {
+                ProductDetailScreen(
+                    snackbarHostState = snackbarHostState,
+                    product = product,
+                    isExpandedWidth = false,
+                    navigateToHome = onNavigateToHome,
+                    onPopBack = onPopBack,
+                    navigateToCategory = navigateToCategory,
+                    navigateToRayon = navigateToRayon
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ExpandedProductScreen(
+    snackbarHostState: SnackbarHostState,
+    refreshProductList: Boolean,
+    removeSelectedBgColor: Boolean,
+    onRemoveSelectedBgColor: () -> Unit,
+    onRefreshProducts: () -> Unit,
+    navigateToCategory: () -> Unit,
+    navigateToRayon: () -> Unit,
+    onPopBack: (() -> Unit)? = null
+) {
+    var selectedProduct by remember { mutableStateOf<Product?>(null) }
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Box(Modifier.weight(0.4f)) {
+            ProductListScreen(
+                snackbarHostState = snackbarHostState,
+                refreshProductList = refreshProductList,
+                removeSelectedBgColor = removeSelectedBgColor,
+                onViewDetail = { product ->
+                    selectedProduct = product
+                }
+            )
+        }
+        VerticalDivider()
+        Box(Modifier.weight(0.6f)) {
+            ProductDetailScreen(
+                snackbarHostState = snackbarHostState,
+                product = selectedProduct,
+                isExpandedWidth = true,
+                navigateToCategory = navigateToCategory,
+                navigateToRayon = navigateToRayon,
+                removeSelectedBgColor = onRemoveSelectedBgColor,
+                refreshProducts = onRefreshProducts,
+                onPopBack = onPopBack
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun AccountNavContent(
     isExpandedWidth: Boolean,
     snackbarHostState: SnackbarHostState,
@@ -627,5 +743,3 @@ fun ExpandedAccountScreen(
         }
     }
 }
-
-

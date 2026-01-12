@@ -474,7 +474,9 @@ private fun isPortaitScreenActive(route: String?): Boolean {
         NavigationItem.ChangePassword.route,
         NavigationItem.Home.route,
         NavigationItem.MySales.route,
-        NavigationItem.Account.route
+        NavigationItem.Account.route,
+        NavigationItem.Product.route,
+        NavigationItem.ProductDetail.route
     )
     return route in excludedRoutes
 }
