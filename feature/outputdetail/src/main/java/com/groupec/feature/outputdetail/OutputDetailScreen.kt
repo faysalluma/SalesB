@@ -1,5 +1,6 @@
 package com.groupec.feature.outputdetail
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,8 +37,11 @@ import com.groupec.salesb.core.ui.OutputForm
 fun OutputDetailScreen(
     snackbarHostState: SnackbarHostState,
     output: Output?,
-    refreshList: () -> Unit,
-    removeSelectedBgColor: () -> Unit,
+    refreshList: (() -> Unit)? = null,
+    removeSelectedBgColor: (() -> Unit)? = null,
+    isExpandedWidth: Boolean,
+    navigateToHome: (() -> Unit)? = null,
+    onPopBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     viewModel: OutPutDetailViewModel = hiltViewModel(),
 ) {
@@ -67,17 +71,25 @@ fun OutputDetailScreen(
         focusManager.clearFocus()
     }
 
+    BackHandler {
+        onPopBack?.invoke()
+    }
+
     when (addOutputState) {
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
                 resetOutputForm()
-                removeSelectedBgColor()
-                refreshList() // Notify list to refresh
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithState(
-                        message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                if (isExpandedWidth) {
+                    removeSelectedBgColor?.invoke()
+                    refreshList?.invoke() // Notify list to refresh
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithState(
+                            message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                        )
                     )
-                )
+                } else {
+                    navigateToHome?.invoke()
+                }
             }
         }
 
@@ -106,7 +118,7 @@ fun OutputDetailScreen(
                     color = Primary,
                     modifier = Modifier.clickable {
                         resetOutputForm()
-                        removeSelectedBgColor()
+                        removeSelectedBgColor?.invoke()
                     }
                 )
 

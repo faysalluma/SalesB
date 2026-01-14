@@ -235,6 +235,7 @@ fun MainScreen(
                 (
                    currentDestination.value == NavigationItem.Home.route ||
                    (currentDestination.value == NavigationItem.Account.route && !isExpandedWidth) ||
+                   (currentDestination.value == NavigationItem.Outputs.route && !isExpandedWidth) ||
                    (currentDestination.value == NavigationItem.Product.route && !isExpandedWidth)
                 )
             ) {
@@ -245,6 +246,7 @@ fun MainScreen(
                             launchSingleTop = true
                         }
                         NavigationItem.Account.route -> navController.navigate(NavigationItem.AccountDetail.route)
+                        NavigationItem.Outputs.route -> navController.navigate(NavigationItem.OutputDetail.route)
                         NavigationItem.Product.route -> navController.navigate(NavigationItem.ProductDetail.route)
                     }
                 }
@@ -476,7 +478,8 @@ private fun isPortaitScreenActive(route: String?): Boolean {
         NavigationItem.ChangePassword.route,
         NavigationItem.Home.route,
         NavigationItem.MySales.route,
-        NavigationItem.Account.route
+        NavigationItem.Account.route,
+        NavigationItem.Outputs.route
     )
     return route in excludedRoutes
 }
