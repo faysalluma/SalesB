@@ -4,12 +4,8 @@ package com.groupec.salesb.navigation
 // import com.groupec.salesb.utils.FlipperNavigationLogger
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,8 +24,6 @@ import androidx.navigation.navArgument
 import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.forgotpassword.ForgotPasswordScreen
 import com.groupec.feature.login.LoginScreen
-import com.groupec.feature.rayondetail.RayonDetailScreen
-import com.groupec.feature.rayonlist.RayonListScreen
 import com.groupec.feature.sale.SaleScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
@@ -48,7 +42,7 @@ import com.groupec.salesb.ui.customlistdetailpane.AccountNavContent
 import com.groupec.salesb.ui.customlistdetailpane.CategoryNavContent
 import com.groupec.salesb.ui.customlistdetailpane.OutputNavContent
 import com.groupec.salesb.ui.customlistdetailpane.ProductNavContent
-import kotlinx.coroutines.delay
+import com.groupec.salesb.ui.customlistdetailpane.RayonNavContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -343,57 +337,59 @@ fun AppNavHost(
             )
         }
 
-        composable(NavigationItem.Rayon.route) {
-            if (shouldNotShowInPortraitMode) {
-                EmptyScreen(
-                    text = stringResource(R.string.error_visible_only_expanded)
-                )
-            } else {
-                var selectedRayon by remember { mutableStateOf<Rayon?>(null) }
-                var refreshList by remember { mutableStateOf(false) }
-                var removeSelectedBgColor by remember { mutableStateOf(false) }
-                var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
-
-                LaunchedEffect(isRefreshing) {
-                    // Show refresh indicator during 1s
-                    if (isRefreshing) {
-                        delay(1000)
-                        isRefreshing = false
-                    }
+        composable(
+            route = NavigationItem.Rayon.route.plus("?fromDetail={fromDetail}"),
+            arguments = listOf(
+                navArgument("fromDetail") {
+                    type = NavType.BoolType
+                    defaultValue = false
                 }
-
-                PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                    refreshList  = !refreshList
-                    isRefreshing = true
-                }) {
-                    Row {
-                        Row(Modifier.weight(0.4f)) {
-                            RayonListScreen(
-                                snackbarHostState = snackbarHostState,
-                                refreshList = refreshList,
-                                removeSelectedBgColor = removeSelectedBgColor,
-                                onViewDetail = { rayon ->
-                                    selectedRayon = rayon
-                                }
-                            )
-                            VerticalDivider()
-                        }
-
-                        Box(Modifier.weight(0.6f)) {
-                            RayonDetailScreen(
-                                snackbarHostState = snackbarHostState,
-                                rayon = selectedRayon,
-                                removeSelectedBgColor = {
-                                    removeSelectedBgColor = !removeSelectedBgColor
-                                },
-                                refreshRayons = {
-                                    refreshList  = !refreshList
-                                }
-                            )
-                        }
-                    }
+            )
+        ) { backStackEntry ->
+            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
+            val configuration = LocalConfiguration.current
+            LaunchedEffect(configuration) {
+                if (fromDetailValue) {
+                    fromDetailValue = false
                 }
             }
+
+            RayonNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                fromDetail = fromDetailValue,
+                onNavigateToDetail = { rayon ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("rayon", rayon)
+                    navController.navigate(NavigationItem.RayonDetail.route)
+                },
+                onPopBack = {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(NavigationItem.RayonDetail.route) {
+            val rayon = navController.previousBackStackEntry?.savedStateHandle?.get<Rayon>("rayon")
+
+            RayonNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                rayon = rayon,
+                onNavigateToHome = {
+                    navController.navigate(NavigationItem.Rayon.route.plus("?fromDetail=true")) {
+                        popUpTo(NavigationItem.Rayon.route) { inclusive = true }
+                    }
+                },
+                onPopBack = {
+                    navController.navigate(NavigationItem.Rayon.route.plus("?fromDetail=false")) {
+                        popUpTo(NavigationItem.Rayon.route) { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable(

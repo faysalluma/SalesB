@@ -1,5 +1,6 @@
 package com.groupec.feature.rayondetail
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,8 +37,11 @@ import com.groupec.salesb.core.ui.RayonForm
 fun RayonDetailScreen(
     snackbarHostState: SnackbarHostState,
     rayon: Rayon?,
-    refreshRayons: () -> Unit,
-    removeSelectedBgColor: () -> Unit,
+    refreshRayons: (() -> Unit)? = null,
+    removeSelectedBgColor: (() -> Unit)? = null,
+    isExpandedWidth: Boolean,
+    navigateToHome: (() -> Unit)? = null,
+    onPopBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     viewModel: RayonDetailViewModel = hiltViewModel(),
 ) {
@@ -67,17 +71,26 @@ fun RayonDetailScreen(
         focusManager.clearFocus()
     }
 
+    BackHandler {
+        onPopBack?.invoke()
+    }
+
     when (addRayonState) {
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
                 resetRayonForm()
-                removeSelectedBgColor()
-                refreshRayons() // Notify list to refresh
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithState(
-                        message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                if (isExpandedWidth) {
+                    removeSelectedBgColor?.invoke()
+                    refreshRayons?.invoke() // Notify list to refresh
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithState(
+                            message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                        )
                     )
-                )
+                    viewModel.resetFlow()
+                } else {
+                    navigateToHome?.invoke()
+                }
             }
         }
 
@@ -106,7 +119,7 @@ fun RayonDetailScreen(
                     color = Primary,
                     modifier = Modifier.clickable {
                         resetRayonForm()
-                        removeSelectedBgColor()
+                        removeSelectedBgColor?.invoke()
                     }
                 )
 

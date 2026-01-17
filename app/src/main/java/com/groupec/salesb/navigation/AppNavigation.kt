@@ -18,6 +18,7 @@ enum class Screen {
     Category,
     CategoryDetail,
     Rayon,
+    RayonDetail,
     SaleChart,
     ForgotPassword,
     Outputs,
@@ -42,6 +43,7 @@ sealed class NavigationItem(val route: String,val title: Int = 0, val icon: Navi
     data object Category : NavigationItem(Screen.Category.name)
     data object CategoryDetail : NavigationItem(Screen.CategoryDetail.name)
     data object Rayon : NavigationItem(Screen.Rayon.name, R.string.menu_rayon)
+    data object RayonDetail : NavigationItem(Screen.RayonDetail.name)
     data object SaleChart : NavigationItem(Screen.SaleChart.name)
     data object ForgotPassword : NavigationItem(Screen.ForgotPassword.name)
     data object Account : NavigationItem(Screen.Account.name)

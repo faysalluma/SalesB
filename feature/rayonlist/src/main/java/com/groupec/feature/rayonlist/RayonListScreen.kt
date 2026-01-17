@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.groupec.salesb.core.UIState
+import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
@@ -46,6 +46,7 @@ fun RayonListScreen(
     viewModel: RayonListViewModel = hiltViewModel(),
     refreshList: Boolean,
     removeSelectedBgColor: Boolean,
+    fromDetail: Boolean = false,
     onViewDetail: (Rayon) -> Unit
 ) {
     val context = LocalContext.current
@@ -61,8 +62,19 @@ fun RayonListScreen(
         viewModel.getRayons() // Refresh rayon list
     }
 
+    // Refresh data from detail when we are on portrait/medium Mode
+    LaunchedEffect(Unit) {
+        if (fromDetail) {
+            snackbarHostState.showSnackbar(
+                SnackbarVisualsWithState(
+                    message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                )
+            )
+        }
+    }
+
     when (deleteRayonState) {
-        is UIState.Success -> {
+        is FormUIState.Success -> {
             LaunchedEffect(Unit) {
                 focusManager.clearFocus()
                 snackbarHostState.currentSnackbarData?.dismiss()
@@ -72,18 +84,20 @@ fun RayonListScreen(
                         message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
                     )
                 )
+                viewModel.resetFlow()
             }
         }
 
-        is UIState.Error -> {
+        is FormUIState.Error -> {
             LaunchedEffect(Unit) {
                 snackbarHostState.currentSnackbarData?.dismiss()
                 snackbarHostState.showSnackbar(
                     SnackbarVisualsWithState(
-                        message =(deleteRayonState as UIState.Error).message,
+                        message = (deleteRayonState as FormUIState.Error).message,
                         isError = true
                     )
                 )
+                viewModel.resetFlow()
             }
         }
         else -> {}
