@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.groupec.salesb.core.UIState
+import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
@@ -49,6 +49,7 @@ fun OutputListScreen(
     viewModel: OutputListViewModel = hiltViewModel(),
     refreshList: Boolean,
     removeSelectedBgColor: Boolean,
+    fromDetail: Boolean = false,
     onViewDetail: (Output) -> Unit
 ) {
     val context = LocalContext.current
@@ -66,8 +67,19 @@ fun OutputListScreen(
         outputs.refresh() // Refresh the LazyPagingItems
     }
 
+    // Refresh data from detail when we are on portrait/medium Mode
+    LaunchedEffect(Unit) {
+        if (fromDetail) {
+            snackbarHostState.showSnackbar(
+                SnackbarVisualsWithState(
+                    message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                )
+            )
+        }
+    }
+
     when (deleteOutputState) {
-        is UIState.Success -> {
+        is FormUIState.Success -> {
             LaunchedEffect(Unit) {
                 focusManager.clearFocus()
                 snackbarHostState.currentSnackbarData?.dismiss()
@@ -77,18 +89,20 @@ fun OutputListScreen(
                         message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
                     )
                 )
+                viewModel.resetFlow()
             }
         }
 
-        is UIState.Error -> {
+        is FormUIState.Error -> {
             LaunchedEffect(Unit) {
                 snackbarHostState.currentSnackbarData?.dismiss()
                 snackbarHostState.showSnackbar(
                     SnackbarVisualsWithState(
-                        message =(deleteOutputState as UIState.Error).message,
+                        message =(deleteOutputState as FormUIState.Error).message,
                         isError = true
                     )
                 )
+                viewModel.resetFlow()
             }
         }
         else -> {}

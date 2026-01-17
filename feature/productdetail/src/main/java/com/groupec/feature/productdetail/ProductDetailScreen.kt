@@ -2,6 +2,7 @@ package com.groupec.feature.productdetail
 
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,14 +43,17 @@ import java.io.File
 
 @Composable
 fun ProductDetailScreen(
+    modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     product: Product?,
+    refreshProducts: (() -> Unit) ? = null,
+    removeSelectedBgColor: (() -> Unit) ? = null,
+    navigateToHome: (() -> Unit)? = null,
+    onPopBack: (() -> Unit)? = null,
+    isExpandedWidth: Boolean,
+    viewModel: ProductDetailViewModel = hiltViewModel(),
     navigateToCategory: () -> Unit,
     navigateToRayon: () -> Unit,
-    refreshProducts: () -> Unit,
-    removeSelectedBgColor: () -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: ProductDetailViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -73,6 +77,11 @@ fun ProductDetailScreen(
             viewModel.getRayons()
         }
     )
+
+    // When on detail and popBackStack : avoid show toast message
+    BackHandler {
+        onPopBack?.invoke()
+    }
 
     LaunchedEffect(product) {
         // Form Data and methods
@@ -122,14 +131,18 @@ fun ProductDetailScreen(
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
                 resetProductForm()
-                removeSelectedBgColor()
-                refreshProducts() // Notify list to refresh
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithState(
-                        message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                if (isExpandedWidth) {
+                    removeSelectedBgColor?.invoke()
+                    refreshProducts?.invoke() // Notify list to refresh
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithState(
+                            message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                        )
                     )
-                )
-                viewModel.resetFlow()
+                    viewModel.resetFlow()
+                } else {
+                    navigateToHome?.invoke()
+                }
             }
         }
 
@@ -158,7 +171,7 @@ fun ProductDetailScreen(
                     color = Primary,
                     modifier = Modifier.clickable {
                         resetProductForm()
-                        removeSelectedBgColor()
+                        removeSelectedBgColor?.invoke()
                     }
                 )
 

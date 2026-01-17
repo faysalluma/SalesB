@@ -2,8 +2,8 @@ package com.groupec.feature.rayonlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.asResult
 import com.groupec.salesb.core.domain.rayon.DeleteRayonUseCase
 import com.groupec.salesb.core.domain.rayon.GetRayonUseCase
@@ -30,8 +30,8 @@ class RayonListViewModel @Inject constructor(
     private val _rayonUiState = MutableStateFlow<RayonUiState>(RayonUiState.Loading)
     val rayonUiState: StateFlow<RayonUiState> = _rayonUiState.asStateFlow()
 
-    private val _deleteRayonUiState = MutableStateFlow<UIState<*>>(UIState.Loading)
-    val deleteRayonUiState: StateFlow<UIState<*>> = _deleteRayonUiState.asStateFlow()
+    private val _deleteRayonUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
+    val deleteRayonUiState: StateFlow<FormUIState<*>> = _deleteRayonUiState.asStateFlow()
 
     init {
         getRayons()
@@ -64,21 +64,25 @@ class RayonListViewModel @Inject constructor(
     }
 
     fun deleteRayon(id: Int) {
-        _deleteRayonUiState.value = UIState.Loading
+        _deleteRayonUiState.value = FormUIState.Loading
         viewModelScope.launch {
             when (val result = deleteRayonUseCase(id)) {
                 is Result.Success -> {
-                    _deleteRayonUiState.value = UIState.Success(Unit)
+                    _deleteRayonUiState.value = FormUIState.Success(Unit)
                 }
 
                 is Result.Error -> {
                     _deleteRayonUiState.value =
-                        UIState.Error(result.exception.message ?: "Error when deleting category")
+                        FormUIState.Error(result.exception.message ?: "Error when deleting category")
                 }
 
                 else -> {}
             }
         }
+    }
+
+    fun resetFlow() {
+        _deleteRayonUiState.value = FormUIState.Idle
     }
 }
 

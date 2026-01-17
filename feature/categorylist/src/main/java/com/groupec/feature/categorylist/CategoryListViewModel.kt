@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.domain.category.DeleteCategoryUseCase
 import com.groupec.salesb.core.domain.category.GetPagedCategoryUsecase
 import com.groupec.salesb.core.model.data.Category
@@ -33,8 +33,8 @@ class CategoryListViewModel @Inject constructor(
     private val _isSearching = MutableStateFlow(false) // État de recherche
     val isSearching: StateFlow<Boolean> = _isSearching
 
-    private val _deleteCategoryUiState = MutableStateFlow<UIState<*>>(UIState.Loading)
-    val deleteCategoryUiState: StateFlow<UIState<*>> = _deleteCategoryUiState.asStateFlow()
+    private val _deleteCategoryUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
+    val deleteCategoryUiState: StateFlow<FormUIState<*>> = _deleteCategoryUiState.asStateFlow()
 
     val pagedCategories: Flow<PagingData<Category>> = _searchQuery
         .flatMapLatest { query ->
@@ -51,20 +51,24 @@ class CategoryListViewModel @Inject constructor(
     }
 
     fun deleteCategory(id: Int) {
-        _deleteCategoryUiState.value = UIState.Loading
+        _deleteCategoryUiState.value = FormUIState.Loading
         viewModelScope.launch {
             when (val result = deleteCategoryUseCase(id)) {
                 is Result.Success -> {
-                    _deleteCategoryUiState.value = UIState.Success(Unit)
+                    _deleteCategoryUiState.value = FormUIState.Success(Unit)
                 }
 
                 is Result.Error -> {
                     _deleteCategoryUiState.value =
-                        UIState.Error(result.exception.message ?: "Error when deleting category")
+                        FormUIState.Error(result.exception.message ?: "Error when deleting category")
                 }
 
                 else -> {}
             }
         }
+    }
+
+    fun resetFlow() {
+        _deleteCategoryUiState.value = FormUIState.Idle
     }
 }
