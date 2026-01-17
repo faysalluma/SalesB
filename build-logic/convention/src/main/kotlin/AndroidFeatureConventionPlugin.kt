@@ -10,7 +10,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 apply("gradlePlugins.android.library")
                 apply("gradlePlugins.android.hilt")
             }
-
             dependencies {
                 add("implementation", project(":core:designsystem"))
                 add("implementation", project(":core:ui"))

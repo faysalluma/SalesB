@@ -1,6 +1,7 @@
 package com.groupec.feature.productlist
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,6 +35,7 @@ import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DefaultButton
+import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
@@ -49,6 +51,7 @@ fun ProductListScreen(
     viewModel: ProductListViewModel = hiltViewModel(),
     refreshProductList: Boolean,
     removeSelectedBgColor: Boolean,
+    fromDetail: Boolean = false,
     onViewDetail: (Product) -> Unit
 ) {
     val context = LocalContext.current
@@ -66,6 +69,17 @@ fun ProductListScreen(
     // Refresh list after insert, update or delete product
     LaunchedEffect(refreshProductList) {
         products.refresh() // Refresh the LazyPagingItems
+    }
+
+    // Refresh data from detail when we are on portrait/medium Mode
+    LaunchedEffect(Unit) {
+        if (fromDetail) {
+            snackbarHostState.showSnackbar(
+                SnackbarVisualsWithState(
+                    message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                )
+            )
+        }
     }
 
     /* // Update isManualRefreshing when products.refresh for the SwipeToRefresh
@@ -118,10 +132,7 @@ fun ProductListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title),
-            leadingContent = {
-                Icon(imageVector = AppIcons.FilterList, contentDescription = "Filter List")
-            }
+            text = stringResource(R.string.head_title)
         )
 
         // if get error when fetching products
@@ -181,16 +192,21 @@ fun ProductListScreen(
                 )
 
                 // Liste paginée
-                ProductCardList(
-                    products = products,
-                    isSearching = isSearching,
-                    onViewDetail = onViewDetail,
-                    onDelete = { id, libelle ->
-                        showDialog = true
-                        productIdLibelle = Pair(id, libelle)
-                    },
-                    removeSelectedBgColor = removeSelectedBgColor
-                )
+                if (products.itemCount == 0) {
+                    EmptyScreen()
+                } else {
+                    ProductCardList(
+                        products = products,
+                        isSearching = isSearching,
+                        onViewDetail = onViewDetail,
+                        onDelete = { id, libelle ->
+                            showDialog = true
+                            productIdLibelle = Pair(id, libelle)
+                        },
+                        removeSelectedBgColor = removeSelectedBgColor
+                    )
+                }
+
                 if (showDialog) {
                     AppAlertInfoDialog(
                         setShowDialog = {

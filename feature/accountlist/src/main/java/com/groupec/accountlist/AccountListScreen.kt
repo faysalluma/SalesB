@@ -43,11 +43,12 @@ import com.groupec.salesb.core.ui.UserCardList
 
 @Composable
 fun AccountListScreen(
-    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     viewModel: AccountListViewModel = hiltViewModel(),
     refreshAccountList: Boolean,
     removeSelectedBgColor: Boolean,
+    fromDetail: Boolean = false,
     onViewDetail: (User) -> Unit
 ) {
     val context = LocalContext.current
@@ -65,6 +66,17 @@ fun AccountListScreen(
     // Refresh list after insert, update or delete product
     LaunchedEffect(refreshAccountList) {
         users.refresh() // Refresh the LazyPagingItems
+    }
+
+    // Refresh data from detail when we are on portrait/medium Mode
+    LaunchedEffect(Unit) {
+        if (fromDetail) {
+            snackbarHostState.showSnackbar(
+                SnackbarVisualsWithState(
+                    message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                )
+            )
+        }
     }
 
     when (deleteUserState) {
@@ -103,10 +115,7 @@ fun AccountListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title_users),
-            leadingContent = {
-                Icon(imageVector = AppIcons.FilterList, contentDescription = "Filter List")
-            }
+            text = stringResource(R.string.head_title_users)
         )
 
         // if get error when fetching users
@@ -197,5 +206,4 @@ fun AccountListScreen(
             }
         }
     }
-
 }

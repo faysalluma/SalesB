@@ -1,17 +1,23 @@
 package com.groupec.salesb.ui
 
 import android.content.Context
+import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -22,15 +28,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.groupec.feature.login.LoginViewModel
 import com.groupec.salesb.R
 import com.groupec.salesb.core.Approval
 import com.groupec.salesb.core.Privileges
@@ -43,15 +48,18 @@ import com.groupec.salesb.core.designsystem.theme.Green
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Red
 import com.groupec.salesb.core.designsystem.theme.White
-import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.model.data.UserStore
+import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.navigation.AppNavHost
 import com.groupec.salesb.navigation.NavigationItem
 
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun MainScreen(
     connectionState: Boolean,
+    isExpandedWidth: Boolean,
+    isTablet: Boolean,
     navController: NavHostController = rememberNavController(),
     viewModel: MainViewModel = hiltViewModel()
 ) {
@@ -92,7 +100,7 @@ fun MainScreen(
                 viewModel.getUserStore()
                 navController.navigate(NavigationItem.Loading.route) {
                     // Delete the entire background stack
-                    popUpTo(0) { inclusive = true }
+                    popUpTo(0) { inclusive = true } // la pile est complètement vidée, donc l’écran actuel devient le seul dans la stack.
                 }
                 viewModel.resetFlow()
             }
@@ -144,6 +152,23 @@ fun MainScreen(
         }
     }
 
+    val items by remember(privileges) {
+        derivedStateOf { getNavigationItemsList(privileges)  }
+    }
+
+    val shouldNotShowInPortraitMode by remember {
+        derivedStateOf { !isExpandedWidth && !isPortaitScreenActive(currentDestination.value) }
+    }
+
+    // Log out customers when subscription expire
+    ComposableLifecycle(
+        onResume = {
+            if (currentDestination.value!= null && currentDestination.value != NavigationItem.Login.route) {
+                viewModel.checkSubscriptionExpiration()
+            }
+        }
+    )
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(
@@ -171,20 +196,90 @@ fun MainScreen(
                 }
             }
         },
+        bottomBar = {
+            currentDestination.value?.let { route ->
+                // Avoid blank space reserved on the screen
+                if (items.isNotEmpty()) {
+                    AnimatedVisibility(
+                        visible = !isExpandedWidth,
+                        enter = slideInVertically(
+                            // Slide in from the bottom
+                            initialOffsetY = { fullHeight -> fullHeight }
+                        ),
+                        exit = slideOutVertically(
+                            // Slide out to the bottom
+                            targetOffsetY = { fullHeight -> fullHeight }
+                        )
+                    ) {
+                        BottomNavigationBar(
+                            items = items,
+                            currentRoute = route,
+                            onItemClick = { currentNavigationItem ->
+                                navController.navigate(currentNavigationItem.route) {
+                                    // Supprime toutes les destinations jusqu’à la destination de départ du graphe de navigation
+                                    popUpTo(navController.graph.startDestinationRoute ?: "") {
+                                        // saveState = true (A utiliser dans le cas ou les ecrans des items menus
+                                        // se trouvent dans le même graphe de navigation
+                                    }
+                                    launchSingleTop = true
+                                    // restoreState = true
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        },
         floatingActionButton = {
-            if (currentDestination.value == NavigationItem.Home.route) {
-                LargeFloatingActionButton(
-                    onClick = {
-                        navController.navigate(NavigationItem.SaveSale.route) {
+            if (connectionState &&
+                (
+                   currentDestination.value == NavigationItem.Home.route ||
+                   (currentDestination.value == NavigationItem.Account.route && !isExpandedWidth) ||
+                   (currentDestination.value == NavigationItem.Outputs.route && !isExpandedWidth) ||
+                   (currentDestination.value == NavigationItem.Category.route && !isExpandedWidth) ||
+                   (currentDestination.value == NavigationItem.Rayon.route && !isExpandedWidth) ||
+                   (currentDestination.value == NavigationItem.Product.route && !isExpandedWidth)
+                )
+            ) {
+                val onFabClick = {
+                    when (currentDestination.value) {
+                        NavigationItem.Home.route -> navController.navigate(NavigationItem.SaveSale.route) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
                         }
-                    },
-                    shape = CircleShape,
-                    containerColor = Primary,
-                    contentColor = White,
-                ) {
-                    Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(32.dp))
+                        NavigationItem.Account.route -> navController.navigate(NavigationItem.AccountDetail.route)
+                        NavigationItem.Outputs.route -> navController.navigate(NavigationItem.OutputDetail.route)
+                        NavigationItem.Product.route -> navController.navigate(NavigationItem.ProductDetail.route)
+                        NavigationItem.Category.route -> navController.navigate(NavigationItem.CategoryDetail.route)
+                        NavigationItem.Rayon.route -> navController.navigate(NavigationItem.RayonDetail.route)
+                    }
+                }
+
+                val fabShape = CircleShape
+                val fabContainerColor = Primary
+                val fabContentColor = White
+
+                if (privileges.contains(Privileges.Sale.getKeyByApproval(Approval.AUTHORIZE_VIEW)))
+                {
+                    if (isTablet) {
+                        LargeFloatingActionButton(
+                            onClick = onFabClick,
+                            shape = fabShape,
+                            containerColor = fabContainerColor,
+                            contentColor = fabContentColor,
+                        ) {
+                            Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(32.dp))
+                        }
+                    } else {
+                        FloatingActionButton(
+                            onClick = onFabClick,
+                            shape = fabShape,
+                            containerColor = fabContainerColor,
+                            contentColor = fabContentColor,
+                        ) {
+                            Icon(Icons.Filled.Add, "Add")
+                        }
+                    }
                 }
             }
         }
@@ -195,27 +290,31 @@ fun MainScreen(
                     error = stringResource(R.string.no_internet_connexion)
                 )
             } else {
-                val items by remember(privileges) {
-                    derivedStateOf { getNavigationItemsList(privileges)  }
-                }
                 val startDestination by remember(items) {
                     derivedStateOf {
                         when {
-                            items.isEmpty() -> NavigationItem.Loading.route
+                            items.isEmpty() || (items.isNotEmpty() && firstLogin) || (items.isNotEmpty() && resetPassword.isNotEmpty())
+                                 -> NavigationItem.Loading.route
                             else -> items.first().route
                         }
                     }
                 }
 
-                if (shouldShowBarAndRailApp(currentDestination.value, firstLogin, resetPassword)) {
+                if (
+                    shouldShowBarAndRailApp(currentDestination.value, firstLogin, resetPassword) &&
+                    isExpandedWidth
+                ) {
                     MyNavigationRail(
                         items = items,
                         navController,
                         modifier = Modifier.weight(0.09f)
                     )
                 }
+
                 AppNavHost(
                     snackbarHostState = snackbarHostState,
+                    isExpandedWidth = isExpandedWidth,
+                    shouldNotShowInPortraitMode = shouldNotShowInPortraitMode,
                     modifier = Modifier
                         .weight(
                             if (shouldShowBarAndRailApp(
@@ -361,7 +460,8 @@ private fun shouldShowBarAndRailApp(
         NavigationItem.Loading.route,
         NavigationItem.Configuration.route,
         NavigationItem.Login.route,
-        NavigationItem.ForgotPassword.route
+        NavigationItem.ForgotPassword.route,
+        NavigationItem.TermsAndConditions.route
     )
 
     if (firstLogin || resetPassword.isNotEmpty()) {
@@ -371,4 +471,21 @@ private fun shouldShowBarAndRailApp(
     }
 
     return route !in excludedRoutes
+}
+
+private fun isPortaitScreenActive(route: String?): Boolean {
+    val excludedRoutes =  mutableListOf(
+        NavigationItem.Loading.route,
+        NavigationItem.Configuration.route,
+        NavigationItem.Login.route,
+        NavigationItem.ForgotPassword.route,
+        NavigationItem.ChangePassword.route,
+        NavigationItem.Home.route,
+        NavigationItem.MySales.route,
+        NavigationItem.Account.route,
+        NavigationItem.Outputs.route,
+        NavigationItem.Category.route,
+        NavigationItem.Rayon.route
+    )
+    return route in excludedRoutes
 }

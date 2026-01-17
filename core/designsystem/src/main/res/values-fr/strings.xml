@@ -70,4 +70,6 @@
     <string name="screen_parameters">Ecran Paramètres (Catégories, Rayons)</string>
     <string name="screen_privileges">Ecran Privilèges</string>
     <string name="privileges">Privilèges</string>
+    <string name="filter">Filtrer</string>
+    <string name="select">Choisir</string>
 </resources>

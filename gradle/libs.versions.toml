@@ -40,7 +40,8 @@ compileSdk = "34"
 minSdk = "24"
 material = "1.12.0"
 escposThermalprinterAndroid = "3.2.0"
-versionName = "1.1.0-beta" # X.Y.Z; X = Major(Changement majeur, souvent incompatible avec les versions précédentes),
+versionName = "1.1.0-beta"
+# X.Y.Z; X = Major(Changement majeur, souvent incompatible avec les versions précédentes),
 # Y = Minor (Changement mineur, ajouts de fonctionnalités compatibles avec la version précédente),
 # Z = Patch level (Corrections de bugs ou améliorations mineures, sans changement de fonctionnalités.)
 

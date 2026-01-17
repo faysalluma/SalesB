@@ -27,12 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.groupec.salesb.core.UIState
+import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DefaultButton
+import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
@@ -48,6 +49,7 @@ fun OutputListScreen(
     viewModel: OutputListViewModel = hiltViewModel(),
     refreshList: Boolean,
     removeSelectedBgColor: Boolean,
+    fromDetail: Boolean = false,
     onViewDetail: (Output) -> Unit
 ) {
     val context = LocalContext.current
@@ -65,8 +67,19 @@ fun OutputListScreen(
         outputs.refresh() // Refresh the LazyPagingItems
     }
 
+    // Refresh data from detail when we are on portrait/medium Mode
+    LaunchedEffect(Unit) {
+        if (fromDetail) {
+            snackbarHostState.showSnackbar(
+                SnackbarVisualsWithState(
+                    message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                )
+            )
+        }
+    }
+
     when (deleteOutputState) {
-        is UIState.Success -> {
+        is FormUIState.Success -> {
             LaunchedEffect(Unit) {
                 focusManager.clearFocus()
                 snackbarHostState.currentSnackbarData?.dismiss()
@@ -76,18 +89,20 @@ fun OutputListScreen(
                         message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
                     )
                 )
+                viewModel.resetFlow()
             }
         }
 
-        is UIState.Error -> {
+        is FormUIState.Error -> {
             LaunchedEffect(Unit) {
                 snackbarHostState.currentSnackbarData?.dismiss()
                 snackbarHostState.showSnackbar(
                     SnackbarVisualsWithState(
-                        message =(deleteOutputState as UIState.Error).message,
+                        message =(deleteOutputState as FormUIState.Error).message,
                         isError = true
                     )
                 )
+                viewModel.resetFlow()
             }
         }
         else -> {}
@@ -98,10 +113,7 @@ fun OutputListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title_output),
-            leadingContent = {
-                Icon(imageVector = AppIcons.FilterList, contentDescription = "Filter List")
-            }
+            text = stringResource(R.string.head_title_output)
         )
 
         // if get error when fetching outputs
@@ -161,16 +173,21 @@ fun OutputListScreen(
                 )
 
                 // Liste paginée
-                OutputCardList(
-                    outputs = outputs,
-                    isSearching = isSearching,
-                    onViewDetail = onViewDetail,
-                    onDelete = { id, libelle ->
-                        showDialog = true
-                        outputIdLibelle = Pair(id, libelle)
-                    },
-                    removeSelectedBgColor = removeSelectedBgColor
-                )
+                if (outputs.itemCount == 0) {
+                    EmptyScreen()
+                } else {
+                    OutputCardList(
+                        outputs = outputs,
+                        isSearching = isSearching,
+                        onViewDetail = onViewDetail,
+                        onDelete = { id, libelle ->
+                            showDialog = true
+                            outputIdLibelle = Pair(id, libelle)
+                        },
+                        removeSelectedBgColor = removeSelectedBgColor
+                    )
+                }
+
                 if (showDialog) {
                     AppAlertInfoDialog(
                         setShowDialog = {

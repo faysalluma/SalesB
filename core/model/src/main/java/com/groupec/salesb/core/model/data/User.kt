@@ -1,7 +1,10 @@
 package com.groupec.salesb.core.model.data
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.util.Date
 
+@Parcelize
 data class User(
     val id: Int? = null,
     val nomprenom: String,
@@ -18,4 +21,4 @@ data class User(
     val datemodif: Date ? = null,
     val synchronised: Boolean = false,
     val langMessageEn: Boolean = true
-)
+): Parcelable

@@ -4,40 +4,32 @@ package com.groupec.salesb.navigation
 // import com.groupec.salesb.utils.FlipperNavigationLogger
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.groupec.accountlist.AccountListScreen
-import com.groupec.feature.accountdetail.AccountDetailScreen
-import com.groupec.feature.categorydetail.CategoryDetailScreen
-import com.groupec.feature.categorylist.CategoryListScreen
 import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.forgotpassword.ForgotPasswordScreen
 import com.groupec.feature.login.LoginScreen
-import com.groupec.feature.outputdetail.OutputDetailScreen
-import com.groupec.feature.outputlist.OutputListScreen
-import com.groupec.feature.productdetail.ProductDetailScreen
-import com.groupec.feature.productlist.ProductListScreen
-import com.groupec.feature.rayondetail.RayonDetailScreen
-import com.groupec.feature.rayonlist.RayonListScreen
 import com.groupec.feature.sale.SaleScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
+import com.groupec.feature.termsandconditions.TermsAndConditionsScreen
+import com.groupec.salesb.R
+import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.model.data.Category
 import com.groupec.salesb.core.model.data.Output
 import com.groupec.salesb.core.model.data.Product
@@ -46,13 +38,19 @@ import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
-import kotlinx.coroutines.delay
+import com.groupec.salesb.ui.customlistdetailpane.AccountNavContent
+import com.groupec.salesb.ui.customlistdetailpane.CategoryNavContent
+import com.groupec.salesb.ui.customlistdetailpane.OutputNavContent
+import com.groupec.salesb.ui.customlistdetailpane.ProductNavContent
+import com.groupec.salesb.ui.customlistdetailpane.RayonNavContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavHost(
     modifier: Modifier,
     snackbarHostState: SnackbarHostState,
+    isExpandedWidth: Boolean,
+    shouldNotShowInPortraitMode: Boolean,
     navController: NavHostController,
     startDestination: String
 ) {
@@ -78,6 +76,11 @@ fun AppNavHost(
 
         composable(NavigationItem.Loading.route) {
             LoadingScreen(
+                navigateToTermsAndCoditions = {
+                    navController.navigate(NavigationItem.TermsAndConditions.route) {
+                        popUpTo(NavigationItem.Loading.route) { inclusive = true }
+                    }
+                },
                 navigateToConfiguration = {
                     navController.navigate(NavigationItem.Configuration.route) {
                         popUpTo(NavigationItem.Loading.route) { inclusive = true }
@@ -91,6 +94,16 @@ fun AppNavHost(
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
                         popUpTo(NavigationItem.Loading.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(NavigationItem.TermsAndConditions.route) {
+            TermsAndConditionsScreen(
+                navigateToConfiguration = {
+                    navController.navigate(NavigationItem.Configuration.route) {
+                        popUpTo(NavigationItem.TermsAndConditions.route) { inclusive = true }
                     }
                 }
             )
@@ -116,6 +129,7 @@ fun AppNavHost(
         ) { backStackEntry ->
             val raisonSociale = backStackEntry.arguments?.getString("raisonSociale") ?: ""
             LoginScreen(
+                isExpandedWidth = isExpandedWidth,
                 raisonSociale = raisonSociale,
                 navigateToChangePassword = { userId, firstLoginOrResetPwd ->
                     navController.navigate(NavigationItem.ChangePassword.route.plus("/${userId}/${firstLoginOrResetPwd}"))
@@ -177,216 +191,260 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.SaveSale.route) {
-            SaleScreen(snackbarHostState = snackbarHostState)
+            if (shouldNotShowInPortraitMode) {
+                EmptyScreen(
+                    text = stringResource(R.string.error_visible_only_expanded)
+                )
+            } else {
+                SaleScreen(
+                    snackbarHostState = snackbarHostState,
+                    navigateToProduct = {
+                        navController.navigate(NavigationItem.Product.route)
+                    }
+                )
+            }
         }
 
         composable(NavigationItem.MySales.route) {
             SaleListScreen(
                 snackbarHostState = snackbarHostState,
+                isExpandedWidth = isExpandedWidth,
                 navigateToSaleChart = { startDate, endDate ->
                     navController.navigate(NavigationItem.SaleChart.route.plus("/${startDate}/${endDate}"))
                 }
             )
         }
 
-        composable(NavigationItem.Product.route) {
-            var selectedProduct by remember { mutableStateOf<Product?>(null) }
-            var refreshProductList by remember { mutableStateOf(false) }
-            var removeSelectedBgColor by remember { mutableStateOf(false) }
-            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
-
-            LaunchedEffect(isRefreshing) {
-                // Show refresh indicator during 1s
-                if (isRefreshing) {
-                    delay(1000)
-                    isRefreshing = false
+        composable(
+            route = NavigationItem.Product.route.plus("?fromDetail={fromDetail}"),
+            arguments = listOf(
+                navArgument("fromDetail") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
+        ) { backStackEntry ->
+            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
+            val configuration = LocalConfiguration.current
+            LaunchedEffect(configuration) {
+                if (fromDetailValue) {
+                    fromDetailValue = false
                 }
             }
 
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                refreshProductList  = !refreshProductList
-                isRefreshing = true
-            }) {
-                Row {
-                    Row(Modifier.weight(0.4f)) {
-                        ProductListScreen(
-                            snackbarHostState = snackbarHostState,
-                            refreshProductList = refreshProductList,
-                            removeSelectedBgColor = removeSelectedBgColor,
-                            onViewDetail = { product ->
-                                selectedProduct = product
-                            }
-                        )
-                        VerticalDivider()
+            ProductNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                fromDetail = fromDetailValue,
+                onNavigateToDetail = { product ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("product", product)
+                    navController.navigate(NavigationItem.ProductDetail.route)
+                },
+                onPopBack = {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
                     }
-
-                    Box(Modifier.weight(0.6f)) {
-                        ProductDetailScreen(
-                            snackbarHostState = snackbarHostState,
-                            product = selectedProduct,
-                            navigateToCategory = {
-                                navController.navigate(NavigationItem.Category.route) {
-                                    popUpTo(navController.graph.startDestinationId)
-                                    launchSingleTop = true
-                                }
-                            },
-                            navigateToRayon = {
-                                navController.navigate(NavigationItem.Rayon.route) {
-                                    popUpTo(navController.graph.startDestinationId)
-                                    launchSingleTop = true
-                                }
-                            },
-                            removeSelectedBgColor = {
-                                removeSelectedBgColor = !removeSelectedBgColor
-                            },
-                            refreshProducts = {
-                                refreshProductList  = !refreshProductList
-                            }
-                        )
-                    }
+                },
+                onNavigateToCategory = {
+                    navController.navigate(NavigationItem.Category.route)
+                },
+                onNavigateToRayon = {
+                    navController.navigate(NavigationItem.Rayon.route)
                 }
-            }
+            )
         }
 
-        composable(NavigationItem.Category.route) {
-            var selectedCategory by remember { mutableStateOf<Category?>(null) }
-            var refreshCategoryList by remember { mutableStateOf(false) }
-            var removeSelectedBgColor by remember { mutableStateOf(false) }
-            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+        composable(NavigationItem.ProductDetail.route) {
+            val product = navController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
 
-            LaunchedEffect(isRefreshing) {
-                // Show refresh indicator during 1s
-                if (isRefreshing) {
-                    delay(1000)
-                    isRefreshing = false
-                }
-            }
-
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                refreshCategoryList  = !refreshCategoryList
-                isRefreshing = true
-            }) {
-                Row {
-                    Row(Modifier.weight(0.4f)) {
-                        CategoryListScreen(
-                            snackbarHostState = snackbarHostState,
-                            refreshCategoryList = refreshCategoryList,
-                            removeSelectedBgColor = removeSelectedBgColor,
-                            onViewDetail = { category ->
-                                selectedCategory = category
-                            }
-                        )
-                        VerticalDivider()
+            ProductNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                product = product,
+                onNavigateToHome = {
+                    navController.navigate(NavigationItem.Product.route.plus("?fromDetail=true")) {
+                        popUpTo(NavigationItem.Product.route) { inclusive = true }
                     }
-
-                    Box(Modifier.weight(0.6f)) {
-                        CategoryDetailScreen(
-                            snackbarHostState = snackbarHostState,
-                            category = selectedCategory,
-                            removeSelectedBgColor = {
-                                removeSelectedBgColor = !removeSelectedBgColor
-                            },
-                            refreshCategories = {
-                                refreshCategoryList  = !refreshCategoryList
-                            }
-                        )
+                },
+                onPopBack = {
+                    navController.navigate(NavigationItem.Product.route.plus("?fromDetail=false")) {
+                        popUpTo(NavigationItem.Product.route) { inclusive = true }
                     }
+                },
+                onNavigateToCategory = {
+                    navController.navigate(NavigationItem.Category.route)
+                },
+                onNavigateToRayon = {
+                    navController.navigate(NavigationItem.Rayon.route)
                 }
-            }
+            )
         }
 
-        composable(NavigationItem.Rayon.route) {
-            var selectedRayon by remember { mutableStateOf<Rayon?>(null) }
-            var refreshList by remember { mutableStateOf(false) }
-            var removeSelectedBgColor by remember { mutableStateOf(false) }
-            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
-
-            LaunchedEffect(isRefreshing) {
-                // Show refresh indicator during 1s
-                if (isRefreshing) {
-                    delay(1000)
-                    isRefreshing = false
+        composable(
+            route = NavigationItem.Category.route.plus("?fromDetail={fromDetail}"),
+            arguments = listOf(
+                navArgument("fromDetail") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
+        ) { backStackEntry ->
+            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
+            val configuration = LocalConfiguration.current
+            LaunchedEffect(configuration) {
+                if (fromDetailValue) {
+                    fromDetailValue = false
                 }
             }
 
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                refreshList  = !refreshList
-                isRefreshing = true
-            }) {
-                Row {
-                    Row(Modifier.weight(0.4f)) {
-                        RayonListScreen(
-                            snackbarHostState = snackbarHostState,
-                            refreshList = refreshList,
-                            removeSelectedBgColor = removeSelectedBgColor,
-                            onViewDetail = { rayon ->
-                                selectedRayon = rayon
-                            }
-                        )
-                        VerticalDivider()
-                    }
-
-                    Box(Modifier.weight(0.6f)) {
-                        RayonDetailScreen(
-                            snackbarHostState = snackbarHostState,
-                            rayon = selectedRayon,
-                            removeSelectedBgColor = {
-                                removeSelectedBgColor = !removeSelectedBgColor
-                            },
-                            refreshRayons = {
-                                refreshList  = !refreshList
-                            }
-                        )
+            CategoryNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                fromDetail = fromDetailValue,
+                onNavigateToDetail = { category ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("category", category)
+                    navController.navigate(NavigationItem.CategoryDetail.route)
+                },
+                onPopBack = {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
                     }
                 }
-            }
+            )
         }
 
-        composable(NavigationItem.Outputs.route) {
-            var selectedOutput by remember { mutableStateOf<Output?>(null) }
-            var refreshList by remember { mutableStateOf(false) }
-            var removeSelectedBgColor by remember { mutableStateOf(false) }
-            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
+        composable(NavigationItem.CategoryDetail.route) {
+            val category = navController.previousBackStackEntry?.savedStateHandle?.get<Category>("category")
 
-            LaunchedEffect(isRefreshing) {
-                // Show refresh indicator during 1s
-                if (isRefreshing) {
-                    delay(1000)
-                    isRefreshing = false
+            CategoryNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                category = category,
+                onNavigateToHome = {
+                    navController.navigate(NavigationItem.Category.route.plus("?fromDetail=true")) {
+                        popUpTo(NavigationItem.Category.route) { inclusive = true }
+                    }
+                },
+                onPopBack = {
+                    navController.navigate(NavigationItem.Category.route.plus("?fromDetail=false")) {
+                        popUpTo(NavigationItem.Category.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = NavigationItem.Rayon.route.plus("?fromDetail={fromDetail}"),
+            arguments = listOf(
+                navArgument("fromDetail") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
+        ) { backStackEntry ->
+            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
+            val configuration = LocalConfiguration.current
+            LaunchedEffect(configuration) {
+                if (fromDetailValue) {
+                    fromDetailValue = false
                 }
             }
 
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                refreshList  = !refreshList
-                isRefreshing = true
-            }) {
-                Row {
-                    Row(Modifier.weight(0.4f)) {
-                        OutputListScreen(
-                            snackbarHostState = snackbarHostState,
-                            refreshList = refreshList,
-                            removeSelectedBgColor = removeSelectedBgColor,
-                            onViewDetail = { output ->
-                                selectedOutput = output
-                            }
-                        )
-                        VerticalDivider()
-                    }
-
-                    Box(Modifier.weight(0.6f)) {
-                        OutputDetailScreen(
-                            snackbarHostState = snackbarHostState,
-                            output = selectedOutput,
-                            removeSelectedBgColor = {
-                                removeSelectedBgColor = !removeSelectedBgColor
-                            },
-                            refreshList = {
-                                refreshList  = !refreshList
-                            }
-                        )
+            RayonNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                fromDetail = fromDetailValue,
+                onNavigateToDetail = { rayon ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("rayon", rayon)
+                    navController.navigate(NavigationItem.RayonDetail.route)
+                },
+                onPopBack = {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
                     }
                 }
+            )
+        }
+
+        composable(NavigationItem.RayonDetail.route) {
+            val rayon = navController.previousBackStackEntry?.savedStateHandle?.get<Rayon>("rayon")
+
+            RayonNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                rayon = rayon,
+                onNavigateToHome = {
+                    navController.navigate(NavigationItem.Rayon.route.plus("?fromDetail=true")) {
+                        popUpTo(NavigationItem.Rayon.route) { inclusive = true }
+                    }
+                },
+                onPopBack = {
+                    navController.navigate(NavigationItem.Rayon.route.plus("?fromDetail=false")) {
+                        popUpTo(NavigationItem.Rayon.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = NavigationItem.Outputs.route.plus("?fromDetail={fromDetail}"),
+            arguments = listOf(
+                navArgument("fromDetail") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
+        ) { backStackEntry ->
+            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
+            val configuration = LocalConfiguration.current
+            LaunchedEffect(configuration) {
+                if (fromDetailValue) {
+                    fromDetailValue = false
+                }
             }
+
+            OutputNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                fromDetail = fromDetailValue,
+                onNavigateToDetail = { output ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("output", output)
+                    navController.navigate(NavigationItem.OutputDetail.route)
+                },
+                onPopBack = {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(NavigationItem.OutputDetail.route) {
+            val output = navController.previousBackStackEntry?.savedStateHandle?.get<Output>("output")
+
+            OutputNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                output = output,
+                onNavigateToHome = {
+                    navController.navigate(NavigationItem.Outputs.route.plus("?fromDetail=true")) {
+                        popUpTo(NavigationItem.Outputs.route) { inclusive = true }
+                    }
+                },
+                onPopBack = {
+                    navController.navigate(NavigationItem.Outputs.route.plus("?fromDetail=false")) {
+                        popUpTo(NavigationItem.Outputs.route) { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable(
@@ -414,52 +472,59 @@ fun AppNavHost(
             }
         }
 
-        composable(NavigationItem.Account.route) {
-            var selectedAccount by remember { mutableStateOf<User?>(null) }
-            var refreshAccountList by remember { mutableStateOf(false) }
-            var removeSelectedBgColor by remember { mutableStateOf(false) }
-            var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
-
-            LaunchedEffect(isRefreshing) {
-                // Show refresh indicator during 1s
-                if (isRefreshing) {
-                    delay(1000)
-                    isRefreshing = false
+        composable(
+            route = NavigationItem.Account.route.plus("?fromDetail={fromDetail}"),
+            arguments = listOf(
+                navArgument("fromDetail") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
+        ) { backStackEntry ->
+            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
+            val configuration = LocalConfiguration.current
+            LaunchedEffect(configuration) {
+                if (fromDetailValue) {
+                    fromDetailValue = false
                 }
             }
 
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                refreshAccountList  = !refreshAccountList
-                isRefreshing = true
-            }) {
-                Row {
-                    Row(Modifier.weight(0.4f)) {
-                        AccountListScreen(
-                            snackbarHostState = snackbarHostState,
-                            refreshAccountList = refreshAccountList,
-                            removeSelectedBgColor = removeSelectedBgColor,
-                            onViewDetail = { user ->
-                                selectedAccount = user
-                            }
-                        )
-                        VerticalDivider()
-                    }
-
-                    Box(Modifier.weight(0.6f)) {
-                        AccountDetailScreen(
-                            snackbarHostState = snackbarHostState,
-                            account = selectedAccount,
-                            removeSelectedBgColor = {
-                                removeSelectedBgColor = !removeSelectedBgColor
-                            },
-                            refreshAccounts = {
-                                refreshAccountList  = !refreshAccountList
-                            }
-                        )
+            AccountNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                fromDetail = fromDetailValue,
+                onNavigateToDetail = { user ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("account", user)
+                    navController.navigate(NavigationItem.AccountDetail.route)
+                },
+                onPopBack = {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
                     }
                 }
-            }
+            )
+        }
+
+        composable(NavigationItem.AccountDetail.route) {
+            val account = navController.previousBackStackEntry?.savedStateHandle?.get<User>("account")
+
+            AccountNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                account = account,
+                onNavigateToHome = {
+                    navController.navigate(NavigationItem.Account.route.plus("?fromDetail=true")) {
+                        popUpTo(NavigationItem.Account.route) { inclusive = true }
+                    }
+                },
+                onPopBack = {
+                    navController.navigate(NavigationItem.Account.route.plus("?fromDetail=false")) {
+                        popUpTo(NavigationItem.Account.route) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }
-

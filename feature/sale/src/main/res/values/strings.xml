@@ -4,4 +4,6 @@
     <string name="loading_products">Loading products…</string>
     <string name="search_product_place_holder">Search here</string>
     <string name="my_products">My products</string>
+    <string name="no_products">No products</string>
+    <string name="add_product">Add product</string>
 </resources>

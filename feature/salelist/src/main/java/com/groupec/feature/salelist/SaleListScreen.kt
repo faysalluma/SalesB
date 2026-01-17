@@ -13,9 +13,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -31,7 +35,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -48,6 +52,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.convertToServerDateFormat
 import com.groupec.salesb.core.currentLocalDateString
+import com.groupec.salesb.core.designsystem.component.AppCustomBottomSheet
 import com.groupec.salesb.core.designsystem.component.AppCustomDialog
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.AppTextField
@@ -59,7 +64,10 @@ import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.component.TitleLarge
 import com.groupec.salesb.core.designsystem.icon.AppIcons
+import com.groupec.salesb.core.designsystem.theme.Green
+import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Silver
+import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.print.PrintAction
@@ -68,14 +76,14 @@ import com.groupec.salesb.core.ui.InvoiceContent
 import com.groupec.salesb.core.ui.InvoicingInfoScreen
 import com.groupec.salesb.core.ui.SaleCardList
 import com.groupec.salesb.core.ui.SaleItemDetailProduct
-import java.io.File
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalComposeUiApi::class,
-    ExperimentalComposeApi::class
+    ExperimentalComposeApi::class, ExperimentalLayoutApi::class
 )
 @Composable
 fun SaleListScreen(
     snackbarHostState: SnackbarHostState,
+    isExpandedWidth: Boolean,
     modifier: Modifier = Modifier,
     navigateToSaleChart: (String, String) -> Unit,
     viewModel: SaleListViewModel = hiltViewModel(),
@@ -86,17 +94,18 @@ fun SaleListScreen(
     val isSearching by viewModel.isSearching.collectAsState()
     val sales = viewModel.pagedProducts.collectAsLazyPagingItems()
     val error = (sales.loadState.refresh as? LoadState.Error)?.error?.message
-    val parameter by viewModel.parameter.collectAsState()
+    val parameter by viewModel.parameter.collectAsStateWithLifecycle()
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var showInvoiceDialog by rememberSaveable { mutableStateOf(false) }
-    var saleGetValue by remember { mutableStateOf<Sale?>(null) }
-    var invoicingGetValue by remember { mutableStateOf<Invoicing?>(null) }
+    var saleGetValue by rememberSaveable { mutableStateOf<Sale?>(null) }
+    var invoicingGetValue by rememberSaveable { mutableStateOf<Invoicing?>(null) }
     var startDate by rememberSaveable { mutableStateOf(currentLocalDateString()) }
     var endDate by rememberSaveable { mutableStateOf(currentLocalDateString()) }
     val thermalPrintUiSate by viewModel.printUiState.collectAsState(FormUIState.Idle)
     var showInvoice by rememberSaveable { mutableStateOf(false) }
     var sendByEmail by rememberSaveable { mutableStateOf(false) }
-    val saveReceiptToDownloadsState by viewModel.saveReceiptToDownloads.collectAsState()
+    val saveReceiptToDownloadsState by viewModel.saveReceiptToDownloads.collectAsStateWithLifecycle()
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     val bluetoothPermissions =
         // Checks if the device has Android 12 or above
@@ -227,82 +236,198 @@ fun SaleListScreen(
                 AppLoadingScreen(text = stringResource(R.string.loading_sales))
             } else {
                 Column {
-                    // Head
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        TitleLarge(
-                            title = stringResource(R.string.my_sales),
-                            modifier = Modifier.padding(top = 22.dp)
-                        )
+                    if (isExpandedWidth) {
+                        // Head
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(22.dp)
+                        ) {
 
-                        Row {
-                            // Barre de recherche
-                            AppTextField(
-                                value = searchQuery,
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = AppIcons.Search,
-                                        contentDescription = "Search icon"
-                                    )
+                            FlowRow(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(end = 16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                TitleLarge(
+                                    title = stringResource(R.string.my_sales),
+                                    modifier = Modifier.padding(top = 22.dp)
+                                )
+
+                                // Barre de recherche
+                                AppTextField(
+                                    value = searchQuery,
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = AppIcons.Search,
+                                            contentDescription = "Search icon"
+                                        )
+                                    },
+                                    trailingIcon = {
+                                        if (searchQuery.isNotEmpty()) {
+                                            IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                                                Icon(
+                                                    imageVector = AppIcons.Close,
+                                                    contentDescription = "Clear text"
+                                                )
+                                            }
+                                        }
+                                    },
+                                    onChange = { viewModel.updateSearchQuery(it) },
+                                    placeholder = stringResource(R.string.search_sale_place_holder),
+                                    fieldType = FieldType.Text,
+                                    fieldColor = Silver,
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    shape = RoundedCornerShape(26.dp)
+                                )
+                            }
+
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                                verticalArrangement = Arrangement.spacedBy(22.dp),
+                            ) {
+                                DatePickerFieldToModal(
+                                    modifier = Modifier
+                                        .width(230.dp),
+                                    label = stringResource(R.string.start_date),
+                                    defaultDate = startDate
+                                ) { dateValue ->
+                                    viewModel.updateStartDateQuery(dateValue.convertToServerDateFormat())
+                                    startDate = dateValue
+                                }
+
+                                DatePickerFieldToModal(
+                                    modifier = Modifier
+                                        .width(230.dp),
+                                    label = stringResource(R.string.end_date),
+                                    defaultDate = endDate
+                                ) { dateValue ->
+                                    viewModel.updateEndDateQuery(dateValue.convertToServerDateFormat())
+                                    endDate = dateValue
+                                }
+
+                                DefaultButton(
+                                    modifier = Modifier
+                                        .wrapContentWidth()
+                                        .padding(top = 10.dp),
+                                    text = stringResource(R.string.view_chart),
+                                    onClick = {
+                                        navigateToSaleChart(
+                                            startDate.convertToServerDateFormat(),
+                                            endDate.convertToServerDateFormat()
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                        HorizontalDivider(modifier = Modifier.padding(top = 30.dp))
+                    } else {
+                        FlowRow(
+                            modifier = modifier.fillMaxWidth().padding(vertical = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            TitleLarge(
+                                title = stringResource(R.string.my_sales),
+                                modifier = Modifier.padding(top = 16.dp)
+                            )
+
+                            Row {
+                                DefaultButton(
+                                    modifier = Modifier.wrapContentWidth().padding(end = 16.dp),
+                                    text = stringResource(R.string.filter),
+                                    containerColor = Green,
+                                    textcolor = White
+                                ) {
+                                    showBottomSheet = !showBottomSheet
+                                }
+
+                                DefaultButton(
+                                    modifier = Modifier.wrapContentWidth(),
+                                    text = stringResource(R.string.view_chart),
+                                    onClick = {
+                                        navigateToSaleChart(
+                                            startDate.convertToServerDateFormat(),
+                                            endDate.convertToServerDateFormat()
+                                        )
+                                    }
+                                )
+                            }
+                        }
+
+                        if (showBottomSheet) {
+                            AppCustomBottomSheet(
+                                onDismiss = {
+                                    showBottomSheet = false
                                 },
-                                trailingIcon = {
-                                    if (searchQuery.isNotEmpty()) {
-                                        IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                                header = stringResource(R.string.select)
+                            ) {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    // Barre de recherche
+                                    AppTextField(
+                                        value = searchQuery,
+                                        leadingIcon = {
                                             Icon(
-                                                imageVector = AppIcons.Close,
-                                                contentDescription = "Clear text"
+                                                imageVector = AppIcons.Search,
+                                                contentDescription = "Search icon"
                                             )
+                                        },
+                                        trailingIcon = {
+                                            if (searchQuery.isNotEmpty()) {
+                                                IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                                                    Icon(
+                                                        imageVector = AppIcons.Close,
+                                                        contentDescription = "Clear text"
+                                                    )
+                                                }
+                                            }
+                                        },
+                                        onChange = { viewModel.updateSearchQuery(it) },
+                                        placeholder = stringResource(R.string.search_sale_place_holder),
+                                        fieldType = FieldType.Text,
+                                        fieldColor = Silver,
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        shape = RoundedCornerShape(26.dp)
+                                    )
+
+                                    Spacer(Modifier.height(16.dp))
+
+                                    FlowRow(
+                                        horizontalArrangement = Arrangement.spacedBy(24.dp),
+                                        verticalArrangement = Arrangement.spacedBy(22.dp),
+                                    ) {
+                                        DatePickerFieldToModal(
+                                            modifier = Modifier
+                                               ,
+                                            label = stringResource(R.string.start_date),
+                                            defaultDate = startDate
+                                        ) { dateValue ->
+                                            viewModel.updateStartDateQuery(dateValue.convertToServerDateFormat())
+                                            startDate = dateValue
+                                        }
+
+                                        DatePickerFieldToModal(
+                                            modifier = Modifier
+                                                ,
+                                            label = stringResource(R.string.end_date),
+                                            defaultDate = endDate
+                                        ) { dateValue ->
+                                            viewModel.updateEndDateQuery(dateValue.convertToServerDateFormat())
+                                            endDate = dateValue
                                         }
                                     }
-                                },
-                                onChange = { viewModel.updateSearchQuery(it) },
-                                placeholder = stringResource(R.string.search_sale_place_holder),
-                                fieldType = FieldType.Text,
-                                fieldColor = Silver,
-                                modifier = Modifier.padding(top = 8.dp),
-                                shape = RoundedCornerShape(26.dp)
-                            )
 
-                            DatePickerFieldToModal(
-                                modifier = Modifier
-                                    .width(230.dp)
-                                    .padding(start = 20.dp),
-                                label = stringResource(R.string.start_date),
-                                defaultDate = startDate
-                            ) { dateValue ->
-                                viewModel.updateStartDateQuery(dateValue.convertToServerDateFormat())
-                                startDate = dateValue
-                            }
-
-                            DatePickerFieldToModal(
-                                modifier = Modifier
-                                    .width(230.dp)
-                                    .padding(horizontal = 20.dp),
-                                label = stringResource(R.string.end_date),
-                                defaultDate = endDate
-                            ) { dateValue ->
-                                viewModel.updateEndDateQuery(dateValue.convertToServerDateFormat())
-                                endDate = dateValue
-                            }
-
-                            DefaultButton(
-                                modifier = Modifier
-                                    .wrapContentWidth()
-                                    .padding(top = 10.dp),
-                                text = stringResource(R.string.view_chart),
-                                onClick = {
-                                    navigateToSaleChart(
-                                        startDate.convertToServerDateFormat(),
-                                        endDate.convertToServerDateFormat()
-                                    )
+                                    Spacer(Modifier.height(22.dp))
                                 }
-                            )
+                            }
                         }
                     }
 
-                    HorizontalDivider(modifier = Modifier.padding(top = 26.dp))
 
                     // Paginated list
                     if (sales.itemCount == 0) {

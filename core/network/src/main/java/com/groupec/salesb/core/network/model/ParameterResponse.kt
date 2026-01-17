@@ -1,6 +1,7 @@
 package com.groupec.salesb.core.network.model
 
 import com.google.gson.annotations.SerializedName
+import java.util.Date
 
 data class ParameterResponse(
     @SerializedName("parameter")
@@ -27,6 +28,9 @@ data class ParamItemResponse(
 
     @SerializedName("website")
     val website: String?,
+
+    @SerializedName("expirationdate")
+    val expirationdate: String ? = null,
 
     @SerializedName("typeentreprise")
     val typeentreprise: String,

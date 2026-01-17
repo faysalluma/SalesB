@@ -1,6 +1,8 @@
 package com.groupec.feature.productdetail
 
 import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,7 +28,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.groupec.salesb.core.Approval
 import com.groupec.salesb.core.FormUIState
+import com.groupec.salesb.core.Privileges
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.theme.Primary
@@ -39,14 +43,17 @@ import java.io.File
 
 @Composable
 fun ProductDetailScreen(
+    modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     product: Product?,
+    refreshProducts: (() -> Unit) ? = null,
+    removeSelectedBgColor: (() -> Unit) ? = null,
+    navigateToHome: (() -> Unit)? = null,
+    onPopBack: (() -> Unit)? = null,
+    isExpandedWidth: Boolean,
+    viewModel: ProductDetailViewModel = hiltViewModel(),
     navigateToCategory: () -> Unit,
     navigateToRayon: () -> Unit,
-    refreshProducts: () -> Unit,
-    removeSelectedBgColor: () -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: ProductDetailViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -61,12 +68,20 @@ fun ProductDetailScreen(
     var fournisseurlibelleState by remember { mutableStateOf(TextFieldValue(productDataForm.fournisseurlibelle)) }
     val uri = remember { mutableStateOf<Uri?>(null) }
 
+    val userStoreState by viewModel.userStoreState.collectAsState()
+    val privileges = userStoreState.getPrivileges()
+
     ComposableLifecycle(
         onResume = {
             viewModel.getCategories()
             viewModel.getRayons()
         }
     )
+
+    // When on detail and popBackStack : avoid show toast message
+    BackHandler {
+        onPopBack?.invoke()
+    }
 
     LaunchedEffect(product) {
         // Form Data and methods
@@ -116,14 +131,18 @@ fun ProductDetailScreen(
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
                 resetProductForm()
-                removeSelectedBgColor()
-                refreshProducts() // Notify list to refresh
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithState(
-                        message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                if (isExpandedWidth) {
+                    removeSelectedBgColor?.invoke()
+                    refreshProducts?.invoke() // Notify list to refresh
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithState(
+                            message = context.getString(com.groupec.salesb.core.ui.R.string.product_operate_succesfully)
+                        )
                     )
-                )
-                viewModel.resetFlow()
+                    viewModel.resetFlow()
+                } else {
+                    navigateToHome?.invoke()
+                }
             }
         }
 
@@ -152,7 +171,7 @@ fun ProductDetailScreen(
                     color = Primary,
                     modifier = Modifier.clickable {
                         resetProductForm()
-                        removeSelectedBgColor()
+                        removeSelectedBgColor?.invoke()
                     }
                 )
 
@@ -173,13 +192,13 @@ fun ProductDetailScreen(
                 uri = uri.value,
                 onSetUri = {
                     uri.value = it
+                    if (it == null) productDataForm = productDataForm.copy(image = "") // Notify image delete for external api
                 },
                 /*  upload = {
                       viewModel.uploadImage(it)
                   },*/
                 deleteFile = { filename ->
                     viewModel.deleteImageFromCache(context, filename)
-                    productDataForm = productDataForm.copy(image = "") // Notify image delete for external api
                 }
             )
 
@@ -191,8 +210,38 @@ fun ProductDetailScreen(
                 fournisseurItems = listOf(),
                 products = productDataForm,
                 categorielibelleState = categorielibelleState,
-                navigateToCategory = navigateToCategory,
-                navigateToRayon = navigateToRayon,
+                navigateToCategory = {
+                    if (privileges.any {
+                        it in Privileges.Category.getKeysByApprovals(
+                            listOf(
+                                Approval.AUTHORIZE_ADD,
+                                Approval.AUTHORIZE_EDIT,
+                                Approval.AUTHORIZE_DELETE,
+                            )
+                        )
+                    }) {
+                        navigateToCategory()
+                    } else {
+                        Toast.makeText(context, context.getString(com.groupec.salesb.core.R.string.no_visual_allowed),
+                            Toast.LENGTH_SHORT).show()
+                    }
+                },
+                navigateToRayon = {
+                    if (privileges.any {
+                            it in Privileges.Rayon.getKeysByApprovals(
+                                listOf(
+                                    Approval.AUTHORIZE_ADD,
+                                    Approval.AUTHORIZE_EDIT,
+                                    Approval.AUTHORIZE_DELETE,
+                                )
+                            )
+                        }) {
+                        navigateToRayon()
+                    } else {
+                        Toast.makeText(context, context.getString(com.groupec.salesb.core.R.string.no_visual_allowed),
+                            Toast.LENGTH_SHORT).show()
+                    }
+                },
                 rayonlibelleState = rayonlibelleState,
                 fournisseurlibelleState = fournisseurlibelleState,
                 onProductDataChanged = { newProduct ->

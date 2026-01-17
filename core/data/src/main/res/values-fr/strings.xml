@@ -6,4 +6,6 @@
     <string name="error_user_not_active">Cet utilisateur est désactivé, veuillez contacter l\'administrateur.</string>
     <string name="error_tempory_password_expire">Le mot de passe provisoire a expiré.</string>
     <string name="error_incorrect_tempory_password">Le mot de passe provisoire est incorrect.</string>
+    <string name="error_subscription_expired" translatable="false">Erreur lors de la récupération de la durée de validité de votre abonnement.</string>
+    <string name="subscription_expired">Votre abonnement a expiré, veuillez contacter le support.</string>
 </resources>

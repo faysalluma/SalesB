@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.domain.category.DeleteOutputUseCase
 import com.groupec.salesb.core.domain.output.GetOutputUseCase
 import com.groupec.salesb.core.model.data.Output
@@ -33,8 +33,8 @@ class OutputListViewModel @Inject constructor(
     private val _isSearching = MutableStateFlow(false) // État de recherche
     val isSearching: StateFlow<Boolean> = _isSearching
 
-    private val _deleteOutputUiState = MutableStateFlow<UIState<*>>(UIState.Loading)
-    val deleteOutputUiState: StateFlow<UIState<*>> = _deleteOutputUiState.asStateFlow()
+    private val _deleteOutputUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
+    val deleteOutputUiState: StateFlow<FormUIState<*>> = _deleteOutputUiState.asStateFlow()
 
     val pagedOutputs: Flow<PagingData<Output>> = _searchQuery
         .flatMapLatest { query ->
@@ -51,20 +51,24 @@ class OutputListViewModel @Inject constructor(
     }
 
     fun deleteOutput(id: Int) {
-        _deleteOutputUiState.value = UIState.Loading
+        _deleteOutputUiState.value = FormUIState.Loading
         viewModelScope.launch {
             when (val result = deleteOutputUseCase(id)) {
                 is Result.Success -> {
-                    _deleteOutputUiState.value = UIState.Success(Unit)
+                    _deleteOutputUiState.value = FormUIState.Success(Unit)
                 }
 
                 is Result.Error -> {
                     _deleteOutputUiState.value =
-                        UIState.Error(result.exception.message ?: "Error when deleting category")
+                        FormUIState.Error(result.exception.message ?: "Error when deleting category")
                 }
 
                 else -> {}
             }
         }
+    }
+
+    fun resetFlow() {
+        _deleteOutputUiState.value = FormUIState.Idle
     }
 }

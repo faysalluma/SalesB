@@ -17,5 +17,6 @@ data class Parameter(
     val primarycolor: String = "",
     val secondarycolor: String = "",
     val loadproducts: Boolean = false,
-    val tva: Double = 0.0
+    val tva: Double = 0.0,
+    val termsandconditions: Boolean = true
 ) : Parcelable

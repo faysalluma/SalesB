@@ -14,4 +14,6 @@
     <string name="your_invoice_body">Hello, please find attached the invoice for your purchase.</string>
     <string name="donwload_completed">Download completed</string>
     <string name="donwload_completed_and_save">Download successful and saved</string>
+    <string name="filter">Filter list</string>
+    <string name="select">Select</string>
 </resources>

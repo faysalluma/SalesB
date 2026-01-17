@@ -28,9 +28,9 @@ class NetworkModule {
     @Singleton
     fun provideHttpClient(@ApplicationContext context: Context) : OkHttpClient {
         return OkHttpClient.Builder()
-            //.connectTimeout(15, TimeUnit.SECONDS) // Increase connection timeout
-            .readTimeout(15, TimeUnit.SECONDS)    // Increase read timeout
-            .writeTimeout(15, TimeUnit.SECONDS)   // Increase write timeout
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)  // Increase write timeout
             .addInterceptor(TimeZoneInterceptor())
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             //.addNetworkInterceptor(FlipperOkhttpInterceptor(getNetworkFlipperPlugin(context)))

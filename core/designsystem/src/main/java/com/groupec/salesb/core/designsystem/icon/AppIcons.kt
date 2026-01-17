@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Money
 import androidx.compose.material.icons.rounded.Output
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PointOfSale
@@ -61,7 +62,7 @@ object AppIcons {
     val MoreInfo = Icons.Rounded.Info
     val ChevronRight = Icons.Default.ChevronRight
     val ChevronDown = Icons.Default.ArrowDropDown
-    val Output = Icons.Rounded.Output
+    val Output = Icons.Rounded.Money
     val Copy = Icons.Default.ContentCopy
     val Print = Icons.Filled.Print
     val Download = Icons.Filled.Download
