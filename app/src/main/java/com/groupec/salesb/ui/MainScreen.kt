@@ -236,6 +236,7 @@ fun MainScreen(
                    currentDestination.value == NavigationItem.Home.route ||
                    (currentDestination.value == NavigationItem.Account.route && !isExpandedWidth) ||
                    (currentDestination.value == NavigationItem.Outputs.route && !isExpandedWidth) ||
+                   (currentDestination.value == NavigationItem.Category.route && !isExpandedWidth) ||
                    (currentDestination.value == NavigationItem.Product.route && !isExpandedWidth)
                 )
             ) {
@@ -248,6 +249,7 @@ fun MainScreen(
                         NavigationItem.Account.route -> navController.navigate(NavigationItem.AccountDetail.route)
                         NavigationItem.Outputs.route -> navController.navigate(NavigationItem.OutputDetail.route)
                         NavigationItem.Product.route -> navController.navigate(NavigationItem.ProductDetail.route)
+                        NavigationItem.Category.route -> navController.navigate(NavigationItem.CategoryDetail.route)
                     }
                 }
 
@@ -479,7 +481,8 @@ private fun isPortaitScreenActive(route: String?): Boolean {
         NavigationItem.Home.route,
         NavigationItem.MySales.route,
         NavigationItem.Account.route,
-        NavigationItem.Outputs.route
+        NavigationItem.Outputs.route,
+        NavigationItem.Category.route
     )
     return route in excludedRoutes
 }

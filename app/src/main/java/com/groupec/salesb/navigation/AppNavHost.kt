@@ -25,8 +25,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.groupec.feature.categorydetail.CategoryDetailScreen
-import com.groupec.feature.categorylist.CategoryListScreen
 import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.forgotpassword.ForgotPasswordScreen
 import com.groupec.feature.login.LoginScreen
@@ -47,6 +45,7 @@ import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
 import com.groupec.salesb.ui.customlistdetailpane.AccountNavContent
+import com.groupec.salesb.ui.customlistdetailpane.CategoryNavContent
 import com.groupec.salesb.ui.customlistdetailpane.OutputNavContent
 import com.groupec.salesb.ui.customlistdetailpane.ProductNavContent
 import kotlinx.coroutines.delay
@@ -289,57 +288,59 @@ fun AppNavHost(
             )
         }
 
-        composable(NavigationItem.Category.route) {
-            if (shouldNotShowInPortraitMode) {
-                EmptyScreen(
-                    text = stringResource(R.string.error_visible_only_expanded)
-                )
-            } else {
-                var selectedCategory by remember { mutableStateOf<Category?>(null) }
-                var refreshCategoryList by remember { mutableStateOf(false) }
-                var removeSelectedBgColor by remember { mutableStateOf(false) }
-                var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
-
-                LaunchedEffect(isRefreshing) {
-                    // Show refresh indicator during 1s
-                    if (isRefreshing) {
-                        delay(1000)
-                        isRefreshing = false
-                    }
+        composable(
+            route = NavigationItem.Category.route.plus("?fromDetail={fromDetail}"),
+            arguments = listOf(
+                navArgument("fromDetail") {
+                    type = NavType.BoolType
+                    defaultValue = false
                 }
-
-                PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = {
-                    refreshCategoryList  = !refreshCategoryList
-                    isRefreshing = true
-                }) {
-                    Row {
-                        Row(Modifier.weight(0.4f)) {
-                            CategoryListScreen(
-                                snackbarHostState = snackbarHostState,
-                                refreshCategoryList = refreshCategoryList,
-                                removeSelectedBgColor = removeSelectedBgColor,
-                                onViewDetail = { category ->
-                                    selectedCategory = category
-                                }
-                            )
-                            VerticalDivider()
-                        }
-
-                        Box(Modifier.weight(0.6f)) {
-                            CategoryDetailScreen(
-                                snackbarHostState = snackbarHostState,
-                                category = selectedCategory,
-                                removeSelectedBgColor = {
-                                    removeSelectedBgColor = !removeSelectedBgColor
-                                },
-                                refreshCategories = {
-                                    refreshCategoryList  = !refreshCategoryList
-                                }
-                            )
-                        }
-                    }
+            )
+        ) { backStackEntry ->
+            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
+            val configuration = LocalConfiguration.current
+            LaunchedEffect(configuration) {
+                if (fromDetailValue) {
+                    fromDetailValue = false
                 }
             }
+
+            CategoryNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                fromDetail = fromDetailValue,
+                onNavigateToDetail = { category ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("category", category)
+                    navController.navigate(NavigationItem.CategoryDetail.route)
+                },
+                onPopBack = {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(NavigationItem.CategoryDetail.route) {
+            val category = navController.previousBackStackEntry?.savedStateHandle?.get<Category>("category")
+
+            CategoryNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                category = category,
+                onNavigateToHome = {
+                    navController.navigate(NavigationItem.Category.route.plus("?fromDetail=true")) {
+                        popUpTo(NavigationItem.Category.route) { inclusive = true }
+                    }
+                },
+                onPopBack = {
+                    navController.navigate(NavigationItem.Category.route.plus("?fromDetail=false")) {
+                        popUpTo(NavigationItem.Category.route) { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable(NavigationItem.Rayon.route) {
