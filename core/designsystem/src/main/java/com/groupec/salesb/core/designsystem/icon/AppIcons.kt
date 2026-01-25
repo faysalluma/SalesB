@@ -1,6 +1,7 @@
 package com.groupec.salesb.core.designsystem.icon
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.ForwardToInbox
 import androidx.compose.material.icons.automirrored.rounded.ReceiptLong
 import androidx.compose.material.icons.filled.AddCircleOutline
@@ -24,7 +25,6 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Money
-import androidx.compose.material.icons.rounded.Output
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PointOfSale
 import androidx.compose.material.icons.rounded.Search
@@ -68,4 +68,5 @@ object AppIcons {
     val Download = Icons.Filled.Download
     val EditInvoice = Icons.Filled.Description
     val ShareByEmail = Icons.AutoMirrored.Filled.ForwardToInbox
+    val Next = Icons.AutoMirrored.Filled.ArrowForward
 }

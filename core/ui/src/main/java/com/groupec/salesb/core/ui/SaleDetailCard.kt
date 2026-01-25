@@ -62,8 +62,7 @@ fun SaleDetailCard(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 30.dp),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
