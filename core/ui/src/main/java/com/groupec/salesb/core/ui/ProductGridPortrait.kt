@@ -1,6 +1,5 @@
 package com.groupec.salesb.core.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -31,7 +31,6 @@ import com.groupec.salesb.core.designsystem.component.ProductImage
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.icon.AppIcons.CheckCircle
 import com.groupec.salesb.core.designsystem.theme.Primary
-import com.groupec.salesb.core.designsystem.theme.Red
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.Product
@@ -65,6 +64,7 @@ fun ProductGridPortrait(
                     devise = devise,
                     onAdd = {
                         val nextQuantity = quantity + 1.0
+                        val stockLimit = product.qtestock?.let { nextQuantity > it } ?: false
                         if (selectedProducts.none { it.first == productId }) {
                             selectedProducts.add(productId to product)
                         }
@@ -105,7 +105,7 @@ fun ProductGridPortrait(
 private fun ProductGridPortraitItem(
     product: Product,
     quantity: Double,
-    devise: String? ,
+    devise: String?,
     onAdd: () -> Unit,
     onRemove: () -> Unit
 ) {
@@ -153,7 +153,7 @@ private fun ProductGridPortraitItem(
                     enabled = quantity > 0
                 ) {
                     Icon(
-                        imageVector = AppIcons.MinusCircle,
+                        imageVector = AppIcons.MinusCircleOutline,
                         contentDescription = "Minus quantity",
                         tint = if (quantity > 0) Primary else Silver
                     )
@@ -165,9 +165,20 @@ private fun ProductGridPortraitItem(
                 )
                 IconButton(onClick = onAdd) {
                     Icon(
-                        imageVector = AppIcons.AddCircle,
+                        imageVector = AppIcons.AddCircleOutline,
                         contentDescription = "Add quantity",
                         tint = Primary
+                    )
+                }
+            }
+            product.qtestock?.let {
+                if (quantity > it) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleSmall,
+                        text = stringResource(R.string.quantity_greater),
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
             }

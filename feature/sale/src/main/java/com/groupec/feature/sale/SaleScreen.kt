@@ -18,12 +18,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -265,6 +262,7 @@ fun SaleScreen(
                     .padding(12.dp)
             ) {
                 SaleDetailScreen(
+                    modifier = Modifier.fillMaxSize(),
                     selectedProducts = selectedProducts,
                     textFieldValues = textFieldValues,
                     quantityCheck = quantityCheck,
@@ -351,38 +349,39 @@ fun SaleScreen(
 
                     val itemLabel = itemsCount.autoRound()
                     val onShowSummary = { showSummary = true}
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                    ) {
-                        if (isTablet()) {
-                            LargeFloatingActionButton(
-                                onClick = onShowSummary,
-                                shape = CircleShape,
-                                containerColor = Primary,
-                                contentColor = White,
-                            ) {
-                                Text(
-                                    text = itemLabel,
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                            }
-                        } else {
-                            FloatingActionButton(
-                                onClick = onShowSummary,
-                                shape = CircleShape,
-                                containerColor = Primary,
-                                contentColor = White,
-                            ) {
-                                Text(
-                                    text = itemLabel,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
+                    val stockLimit = quantityCheck.values.any { it }
+                    if (!stockLimit) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                        ) {
+                            if (isTablet()) {
+                                LargeFloatingActionButton(
+                                    onClick = onShowSummary,
+                                    shape = CircleShape,
+                                    containerColor = Primary,
+                                    contentColor = White,
+                                ) {
+                                    Text(
+                                        text = itemLabel,
+                                        style = MaterialTheme.typography.titleMedium
+                                    )
+                                }
+                            } else {
+                                FloatingActionButton(
+                                    onClick = onShowSummary,
+                                    shape = CircleShape,
+                                    containerColor = Primary,
+                                    contentColor = White,
+                                ) {
+                                    Text(
+                                        text = itemLabel,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                }
                             }
                         }
                     }
-
-
                 }
             }
         }
@@ -409,6 +408,7 @@ fun SaleScreen(
 
             Box(modifier = Modifier.weight(0.4f)) {
                 SaleDetailScreen(
+                    modifier = Modifier.fillMaxSize().padding(start = 18.dp),
                     selectedProducts = selectedProducts,
                     textFieldValues = textFieldValues,
                     quantityCheck = quantityCheck,
@@ -439,6 +439,7 @@ fun SaleScreen(
 
 @Composable
 fun SaleDetailScreen(
+    modifier: Modifier,
     selectedProducts: MutableList<Pair<Int, Product>>,
     textFieldValues: MutableMap<Int, String>,
     quantityCheck: MutableMap<Int, Boolean>,
@@ -449,6 +450,7 @@ fun SaleDetailScreen(
     onQuantityChange: (Pair<Int, Product>) -> Unit
 ) {
     SaleDetailCard(
+        modifier = modifier,
         selectedProducts = selectedProducts,
         textFieldValues = textFieldValues,
         devise = devise,
@@ -563,7 +565,7 @@ private fun ProductSelectionSection(
                             textFieldValues = textFieldValues,
                             isSearching = isSearching,
                             onQuantityChange = onQuantityChange,
-                            devise = devise,
+                            devise = devise
                         )
                     } else {
                         ProductGridAdaptive(

@@ -50,6 +50,7 @@ import com.groupec.salesb.core.print.PrintAction
 
 @Composable
 fun SaleDetailCard(
+    modifier: Modifier = Modifier.fillMaxSize(),
     selectedProducts: List<Pair<Int, Product>>,
     textFieldValues: MutableMap<Int, String>,
     quantityCheck: Map<Int, Boolean>,
@@ -61,8 +62,7 @@ fun SaleDetailCard(
 ) {
 
     Column(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
