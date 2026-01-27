@@ -3,7 +3,10 @@ package com.groupec.salesb.core.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -70,7 +73,7 @@ fun InvoiceContent(
         // FooterNotice(parameter, totalSale)
     }
 }
-
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InvoiceAction(
     modifier: Modifier = Modifier,
@@ -78,36 +81,38 @@ fun InvoiceAction(
     onDownload: () -> Unit,
     onPrint: () -> Unit
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
+    Box(
+        modifier = modifier.fillMaxWidth().padding(top = 8.dp),
+        contentAlignment = Alignment.Center
     ) {
-        val spacer = 12.dp
-        DefaultButton(
-            modifier = Modifier
-                .wrapContentSize()
-                .padding(end = spacer),
-            containerColor = Silver,
-            border = BorderStroke(1.dp, Silver),
-            textcolor = Color.Black,
-            text = stringResource(R.string.change_invoice_info),
-            onClick = onChangeInvoiceData
-        )
-        DefaultButton(
-            modifier = Modifier
-                .wrapContentSize()
-                .padding(end = spacer),
-            text = stringResource(R.string.download_invoice),
-            onClick = onDownload
-        )
-        DefaultButton(
-            modifier = Modifier
-                .wrapContentSize()
-                .padding(end = spacer),
-            text = stringResource(R.string.print_invoice_a4),
-            onClick = onPrint
-        )
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            DefaultButton(
+                modifier = Modifier
+                    .wrapContentSize(),
+                containerColor = Silver,
+                border = BorderStroke(1.dp, Silver),
+                textcolor = Color.Black,
+                text = stringResource(R.string.change_invoice_info),
+                onClick = onChangeInvoiceData
+            )
+            DefaultButton(
+                modifier = Modifier
+                    .wrapContentSize(),
+                text = stringResource(R.string.download_invoice),
+                onClick = onDownload
+            )
+            DefaultButton(
+                modifier = Modifier
+                    .wrapContentSize(),
+                text = stringResource(R.string.print_invoice_a4),
+                onClick = onPrint
+            )
+        }
     }
+
 }
 
 @Composable
@@ -130,7 +135,7 @@ fun HeaderSection(parameter: Parameter, invoicing: Invoicing) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
-                modifier = Modifier.padding(end = 64.dp)
+                modifier = Modifier.weight(1f).padding(8.dp)
             ) {
                 Text(text = parameter.raisonsociale)
                 Text(
@@ -143,7 +148,10 @@ fun HeaderSection(parameter: Parameter, invoicing: Invoicing) {
                 }
                 Text(text = parameter.telephone)
             }
-            Column {
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.End
+            ) {
                 Text(
                     text = stringResource(com.groupec.salesb.core.R.string.billing_address),
                     fontStyle = FontStyle.Italic,

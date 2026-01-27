@@ -26,6 +26,7 @@ import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
+import com.itextpdf.layout.properties.HorizontalAlignment
 import com.itextpdf.layout.properties.TextAlignment
 import com.itextpdf.layout.properties.UnitValue
 import java.io.ByteArrayOutputStream
@@ -55,6 +56,12 @@ fun generateInvoicePdf(
     val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
     val normalFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
 
+    val pageSize = pdf.defaultPageSize
+    val availableWidth = pageSize.width - document.leftMargin - document.rightMargin
+    val rightZoneCellWidth = availableWidth * 0.5f
+    val rightZoneContentWidth = rightZoneCellWidth * 0.8f
+    val rightZoneSpacerWidth = rightZoneCellWidth * 0.2f
+
     /* Header */
 
     // Add logo
@@ -76,6 +83,7 @@ fun generateInvoicePdf(
     // Table 2 colonnes largeur égale (50% chacune)
     val headerInfoBusinessClient = Table(UnitValue.createPercentArray(floatArrayOf(50f, 50f)))
         .useAllAvailableWidth()
+        .setFixedLayout()
 
 
     // Left zone
@@ -92,10 +100,36 @@ fun generateInvoicePdf(
 
     // Right zone
     val rightZone = Cell()
-    rightZone.add(Paragraph(context.getString(com.groupec.salesb.core.R.string.billing_address)).setFont(boldFont))
-    rightZone.add(Paragraph(invoicing.fullName.uppercase()).setFont(normalFont).setMaxWidth(UnitValue.createPercentValue(40f))) // Pour le retour à la ligne
-    rightZone.add(Paragraph(invoicing.address.uppercase()).setFont(normalFont).setMaxWidth(UnitValue.createPercentValue(40f)))
-    //rightZone.setTextAlignment(TextAlignment.RIGHT)
+    val rightZoneTable = Table(
+        UnitValue.createPointArray(floatArrayOf(rightZoneSpacerWidth, rightZoneContentWidth))
+    )
+        .setWidth(UnitValue.createPointValue(rightZoneCellWidth))
+        .setHorizontalAlignment(HorizontalAlignment.RIGHT)
+        .setFixedLayout()
+        .setBorder(Border.NO_BORDER)
+    val rightSpacerCell = Cell()
+        .setBorder(Border.NO_BORDER)
+    val rightContentCell = Cell()
+        .setBorder(Border.NO_BORDER)
+        .setTextAlignment(TextAlignment.RIGHT)
+    rightContentCell.add(
+        Paragraph(context.getString(com.groupec.salesb.core.R.string.billing_address))
+            .setFont(boldFont)
+            .setTextAlignment(TextAlignment.RIGHT)
+    )
+    rightContentCell.add(
+        Paragraph(invoicing.fullName.uppercase())
+            .setFont(normalFont)
+            .setTextAlignment(TextAlignment.RIGHT)
+    )
+    rightContentCell.add(
+        Paragraph(invoicing.address.uppercase())
+            .setFont(normalFont)
+            .setTextAlignment(TextAlignment.RIGHT)
+    )
+    rightZoneTable.addCell(rightSpacerCell)
+    rightZoneTable.addCell(rightContentCell)
+    rightZone.add(rightZoneTable)
     rightZone.setBorder(Border.NO_BORDER)
     headerInfoBusinessClient.addCell(leftZone)
     headerInfoBusinessClient.addCell(rightZone)

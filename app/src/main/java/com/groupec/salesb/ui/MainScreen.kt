@@ -482,6 +482,7 @@ private fun isPortaitScreenActive(route: String?): Boolean {
         NavigationItem.ChangePassword.route,
         NavigationItem.Home.route,
         NavigationItem.MySales.route,
+        NavigationItem.SaveSale.route,
         NavigationItem.Account.route,
         NavigationItem.Outputs.route,
         NavigationItem.Category.route,
