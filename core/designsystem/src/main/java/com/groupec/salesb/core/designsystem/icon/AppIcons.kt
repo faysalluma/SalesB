@@ -1,8 +1,10 @@
 package com.groupec.salesb.core.designsystem.icon
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.ForwardToInbox
 import androidx.compose.material.icons.automirrored.rounded.ReceiptLong
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -18,13 +20,13 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Print
+import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Money
-import androidx.compose.material.icons.rounded.Output
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PointOfSale
 import androidx.compose.material.icons.rounded.Search
@@ -57,8 +59,11 @@ object AppIcons {
     val FilterList = Icons.Default.FilterList
     val Category = Icons.Filled.Category
     val NoImage = R.drawable.baseline_image_not_supported_64
-    val AddCircle = Icons.Filled.AddCircleOutline
-    val MinusCircle = Icons.Default.RemoveCircleOutline
+    val AddCircleOutline = Icons.Filled.AddCircleOutline
+    val MinusCircleOutline = Icons.Filled.RemoveCircleOutline
+
+    val AddCircle = Icons.Filled.AddCircle
+    val MinusCircle = Icons.Filled.RemoveCircle
     val MoreInfo = Icons.Rounded.Info
     val ChevronRight = Icons.Default.ChevronRight
     val ChevronDown = Icons.Default.ArrowDropDown
@@ -68,4 +73,5 @@ object AppIcons {
     val Download = Icons.Filled.Download
     val EditInvoice = Icons.Filled.Description
     val ShareByEmail = Icons.AutoMirrored.Filled.ForwardToInbox
+    val Next = Icons.AutoMirrored.Filled.ArrowForward
 }

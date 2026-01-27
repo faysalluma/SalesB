@@ -31,7 +31,7 @@
     <string name="registered_by">Registered by</string>
     <string name="actions" translatable="false">Actions</string>
     <string name="sale_item_dialog_title">Sale n° %1$d of %2$s, realized on  %3$s by  %4$s.</string>
-    <string name="quantity_greater">Quantity greater than stock</string>
+    <string name="quantity_greater">Stock limit</string>
     <string name="retry">Retry</string>
     <string name="search_place_holder">Search here</string>
     <string name="btn_close">Close</string>

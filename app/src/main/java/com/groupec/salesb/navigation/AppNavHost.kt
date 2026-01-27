@@ -191,18 +191,13 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.SaveSale.route) {
-            if (shouldNotShowInPortraitMode) {
-                EmptyScreen(
-                    text = stringResource(R.string.error_visible_only_expanded)
-                )
-            } else {
-                SaleScreen(
-                    snackbarHostState = snackbarHostState,
-                    navigateToProduct = {
-                        navController.navigate(NavigationItem.Product.route)
-                    }
-                )
-            }
+            SaleScreen(
+                snackbarHostState = snackbarHostState,
+                isExpandedWidth = isExpandedWidth,
+                navigateToProduct = {
+                    navController.navigate(NavigationItem.Product.route)
+                }
+            )
         }
 
         composable(NavigationItem.MySales.route) {

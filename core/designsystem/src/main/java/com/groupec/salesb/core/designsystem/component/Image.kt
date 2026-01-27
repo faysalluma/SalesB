@@ -122,25 +122,31 @@ fun ProductImage(url: String?) {
 }
 
 @Composable
-fun IconMinus(onclick: () -> Unit){
+fun IconMinus(
+    modifier: Modifier = Modifier.size(64.dp),
+    onclick: () -> Unit
+){
     IconButton(onClick = { onclick() }) {
         Icon(
-            imageVector = AppIcons.MinusCircle,
+            imageVector = AppIcons.MinusCircleOutline,
             contentDescription = "Remove value",
             tint = Silver2,
-            modifier = Modifier.size(64.dp)
+            modifier = modifier
         )
     }
 }
 
 @Composable
-fun IconPlus(onclick: () -> Unit){
+fun IconPlus(
+    modifier: Modifier = Modifier.size(64.dp),
+    onclick: () -> Unit
+){
     IconButton(onClick = { onclick() }) {
         Icon(
-            imageVector = AppIcons.AddCircle,
+            imageVector = AppIcons.AddCircleOutline,
             contentDescription = "Add value",
             tint = Silver2,
-            modifier = Modifier.size(64.dp)
+            modifier = modifier
         )
     }
 }
