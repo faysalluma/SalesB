@@ -1,16 +1,28 @@
 package com.groupec.feature.productlist
 
+import android.Manifest
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -23,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,6 +44,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.groupec.feature.product.R
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
+import com.groupec.salesb.core.designsystem.component.AppCustomDialog
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.AppTextField
@@ -40,8 +54,11 @@ import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.icon.AppIcons
+import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.Silver
+import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.Product
+import com.groupec.salesb.core.showDownloadNotification
 import com.groupec.salesb.core.ui.ProductCardList
 
 @Composable
@@ -61,10 +78,24 @@ fun ProductListScreen(
     val products = viewModel.pagedProducts.collectAsLazyPagingItems()
     val error = (products.loadState.refresh as? LoadState.Error)?.error?.message
     val deleteProductState by viewModel.deleteProductUiState.collectAsState()
+    val exportPdfState by viewModel.exportPdfUiState.collectAsState()
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var productIdLibelle by remember { mutableStateOf(Pair(0, "")) }
     val isRefreshing = products.loadState.refresh is LoadState.Loading
     var isManualRefreshing by remember { mutableStateOf(false) }
+    val isExporting = exportPdfState is FormUIState.Loading
+
+    var expanded by remember { mutableStateOf(false) }
+
+    val exportPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            viewModel.exportProductsToPdf(context)
+        } else {
+            Toast.makeText(context, context.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
+        }
+    }
 
     // Refresh list after insert, update or delete product
     LaunchedEffect(refreshProductList) {
@@ -120,6 +151,45 @@ fun ProductListScreen(
         else -> {}
     }
 
+    when (exportPdfState) {
+        is FormUIState.Loading -> {
+            AppCustomDialog(modifier = Modifier.wrapContentSize()) {
+                AppLoadingScreen(modifier = Modifier.wrapContentSize())
+            }
+        }
+        is FormUIState.Success -> {
+            LaunchedEffect(Unit) {
+                val file = (exportPdfState as FormUIState.Success).data
+                context.showDownloadNotification(
+                    file = file,
+                    channelId = "product_export_channel",
+                    channelName = context.getString(R.string.export_pdf_completed),
+                    notificationId = 2
+                )
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = context.getString(R.string.export_pdf_saved)
+                    )
+                )
+                viewModel.resetExportState()
+            }
+        }
+
+        is FormUIState.Error -> {
+            LaunchedEffect(Unit) {
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = (exportPdfState as FormUIState.Error).message,
+                        isError = true
+                    )
+                )
+                viewModel.resetExportState()
+            }
+        }
+
+        else -> {}
+    }
+
     /*PullToRefreshBox(isRefreshing = isRefreshing *//* isManualRefreshing *//*, onRefresh = {
         // isManualRefreshing = true
         products.refresh()
@@ -132,7 +202,40 @@ fun ProductListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title)
+            text = stringResource(R.string.head_title),
+            leadingContent = {
+                IconButton(onClick = { expanded = true }) {
+                    Icon(imageVector = AppIcons.Export, contentDescription = "Export product")
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.background(White)
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.export_to_pdf)) },
+                        enabled = !isExporting,
+                        onClick = {
+                            focusManager.clearFocus() // Close keyborad
+                            expanded = false
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                viewModel.exportProductsToPdf(context)
+                            } else {
+                                exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            }
+                        }
+                    )
+
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.exporter_en_excel)) },
+                        onClick = {
+                            expanded = false
+                            // exportExcel()
+                        }
+                    )
+                }
+            }
         )
 
         // if get error when fetching products

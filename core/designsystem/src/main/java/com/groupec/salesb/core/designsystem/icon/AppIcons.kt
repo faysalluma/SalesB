@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreHoriz
@@ -74,4 +75,5 @@ object AppIcons {
     val EditInvoice = Icons.Filled.Description
     val ShareByEmail = Icons.AutoMirrored.Filled.ForwardToInbox
     val Next = Icons.AutoMirrored.Filled.ArrowForward
+    val Export = Icons.Default.FileDownload
 }

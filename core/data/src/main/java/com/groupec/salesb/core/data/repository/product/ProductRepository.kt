@@ -8,6 +8,7 @@ import com.groupec.salesb.core.Result
 
 interface ProductRepository {
     fun getPagedProducts(searchQuery: String) : Flow<PagingData<Product>>
+    suspend fun getProducts(searchQuery: String) : Result<List<Product>>
     suspend fun saveProduct(product: Product, uriImage : Uri?) : Result<Unit>
     suspend fun deleteProduct(productId: Int) : Result<Unit>
 }

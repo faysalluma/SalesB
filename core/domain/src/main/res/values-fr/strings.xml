@@ -5,4 +5,23 @@
     <string name="price">@string/price_view</string>
     <string name="label">@string/label_view</string>
     <string name="total_sales">@string/total_sale_view</string>
+    <string name="product_list_title">Liste des produits</string>
+    <string name="export_date">Date d\'export :</string>
+    <string name="filter_data">Filtre :</string>
+    <string name="product_list_total">Total produits : %d</string>
+    <string name="details">Détails</string>
+    <string name="reference_label">Référence : %s</string>
+    <string name="description_label">Description : %s</string>
+    <string name="price_ht_label">Prix HT : %s</string>
+    <string name="price_ttc_label">Prix TTC : %s</string>
+    <string name="stock_label">Stock : %s</string>
+    <string name="stock_min_label">Stock min : %s</string>
+    <string name="category_label">Catégorie : %s</string>
+    <string name="rayon_label">Rayon : %s</string>
+    <string name="supplier_label">Fournisseur : %s</string>
+    <string name="image_label">Image : %s</string>
+    <string name="tva_label">TVA : %s</string>
+    <string name="created_at_label">Créé le : %s</string>
+    <string name="updated_at_label">Modifié le : %s</string>
+    <string name="created_by_label">Créé par : %s</string>
 </resources>

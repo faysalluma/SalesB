@@ -19,6 +19,7 @@ class Constants {
         const val GET_ALERT_SEUIL = "getAlertSeuil"
         const val GET_TOTAL_SALE_DAY = "getTotalSaleMorningEvening/{date}"
         const val GET_TOTAL_SALE_BY_DATE = "getTotalSalesByDate/{startDate}/{endDate}"
+        const val GET_PAGED_PRODUCTS = "getPagedProducts"
         const val GET_PRODUCTS = "getProducts"
         const val GET_PAGED_CATEGORIES = "getPagedCategories"
         const val GET_OUTPUTS = "getOutputs"
