@@ -132,5 +132,3 @@ common-android-feature = { id = "gradlePlugins.android.feature", version = "unsp
 common-android-hilt = { id = "gradlePlugins.android.hilt", version = "unspecified" }
 common-android-flipper = { id = "gradlePlugins.android.flipper", version = "unspecified" }
 
-
-

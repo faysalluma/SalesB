@@ -2,4 +2,15 @@
 <resources>
     <string name="head_title">Produits</string>
     <string name="loading_products">Chargement de produits …</string>
+    <string name="export_to_pdf">Exporter en PDF</string>
+    <string name="exporter_en_excel">Exporter en Excel</string>
+    <string name="export_pdf_saved">Export terminé et sauvegardé</string>
+    <string name="export_pdf_completed">Export terminé</string>
+    <string name="export_pdf_failed">Échec de l\'export</string>
+    <string name="export_excel_saved">Export terminé et sauvegardé</string>
+    <string name="export_excel_completed">Export terminé</string>
+    <string name="export_excel_failed">Échec de l\'export</string>
+    <string name="export_pdf_loading">Export en cours…</string>
+    <string name="no_products_to_export">Aucun produit à exporter</string>
+    <string name="permission_denied">Permission refusée</string>
 </resources>

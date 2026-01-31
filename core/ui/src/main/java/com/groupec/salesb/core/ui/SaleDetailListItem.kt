@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,6 +47,7 @@ fun SaleDetailListItem(
     quantityCheck: Map<Int, Boolean>
 ) {
     val (index, product) = productLine
+    val iconSizeModifier = if (isTablet())  Modifier.size(64.dp) else Modifier
     Row(
         Modifier
             .fillMaxWidth()
@@ -60,7 +62,7 @@ fun SaleDetailListItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            IconMinus {
+            IconMinus(modifier = iconSizeModifier) {
                 textFieldValues[index] = textFieldValues[index]!!.toDouble().minus(1.0).autoRound()
                 onQuantityChange(Pair(index, product))
             }
@@ -90,7 +92,7 @@ fun SaleDetailListItem(
                     .scale(0.9f)
                     .width(75.dp)
             )
-            IconPlus {
+            IconPlus(modifier = iconSizeModifier) {
                 textFieldValues[index] = textFieldValues[index]!!.toDouble().plus(1.0).autoRound()
                 onQuantityChange(Pair(index, product))
             }
