@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,7 +37,7 @@ fun AppAlertInfoDialog(
     setShowDialog: ((Boolean) -> Unit)? = null,
     title: String?,
     titleColor: Color = LocalContentColor.current,
-    icon: Painter? = null,
+    icon: ImageVector? = null,
     tintIcon: Color = LocalContentColor.current,
     message: String? = null,
     confirmButtonText: String? = null,
@@ -59,7 +60,7 @@ fun AppAlertInfoDialog(
         icon = {
             icon?.let {
                 Icon(
-                    it,
+                    imageVector = it,
                     contentDescription = null,
                     tint = tintIcon,
                     modifier = Modifier.size(70.dp)
@@ -132,14 +133,14 @@ fun AppAlertInfoDialog(
 
 @Composable
 fun AppCustomDialog(
+    modifier: Modifier = Modifier.fillMaxWidth(),
     setShowDialog: ((Boolean) -> Unit)? = null,
     customView: @Composable () -> Unit
 ) {
     Dialog(onDismissRequest = { setShowDialog?.let{ it(false) } }) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = modifier
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color.White)
                 .padding(14.dp)

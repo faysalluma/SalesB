@@ -71,9 +71,14 @@ interface ApiService {
     suspend fun getTotalSalesByDate(@Path("startDate") startDate: String, @Path("endDate") endDate: String
     ): Response<ChartDateResponse>
 
-    @GET(Constants.GET_PRODUCTS)
-    suspend fun getProducts(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
+    @GET(Constants.GET_PAGED_PRODUCTS)
+    suspend fun getPagedProducts(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
     ): Response<ProductResponse>
+
+    @GET(Constants.GET_PRODUCTS)
+    suspend fun getProducts(@Query("search") search: String
+    ): Response<ProductResponse>
+
 
     @GET(Constants.GET_PAGED_CATEGORIES)
     suspend fun getPagedCategories(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String

@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import com.groupec.salesb.core.UploadUtility.Companion.deleteDirectoryFromCache
 import com.groupec.salesb.core.UploadUtility.Companion.deleteImageFromCache
 import com.groupec.salesb.core.UploadUtility.Companion.getRealPathFromURI
+import com.groupec.salesb.core.data.model.toProductList
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.network.retrofit.ApiService
 import kotlinx.coroutines.flow.Flow
@@ -42,6 +43,18 @@ class ProductRepositoryImpl @Inject constructor(
                 ProductPagingSource(apiService, searchQuery)
             }
         ).flow
+    }
+
+    override suspend fun getProducts(searchQuery: String): Result<List<Product>> {
+        return try {
+            val response = apiService.getProducts(searchQuery)
+            if (!response.isSuccessful) {
+                throw HttpException(response)
+            }
+            Result.Success(response.body()?.toProductList().orEmpty())
+        } catch (exception: Exception) {
+            Result.Error(exception)
+        }
     }
 
     override suspend fun saveProduct(product: Product, uriImage: Uri?): Result<Unit> {

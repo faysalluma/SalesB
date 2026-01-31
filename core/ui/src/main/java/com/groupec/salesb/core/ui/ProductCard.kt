@@ -98,7 +98,6 @@ fun ProductCard(
                     }
                 )
             }
-
         }
     )
     HorizontalDivider()

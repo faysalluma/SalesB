@@ -71,6 +71,7 @@ import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.print.PrintAction
+import com.groupec.salesb.core.showDownloadNotification
 import com.groupec.salesb.core.ui.InvoiceAction
 import com.groupec.salesb.core.ui.InvoiceContent
 import com.groupec.salesb.core.ui.InvoicingInfoScreen
@@ -161,7 +162,12 @@ fun SaleListScreen(
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
                 val file = (saveReceiptToDownloadsState as FormUIState.Success).data
-                viewModel.showDownloadNotification(context, file)
+                context.showDownloadNotification(
+                    file = file,
+                    channelId = "download_channel",
+                    channelName = context.getString(R.string.donwload_completed),
+                    notificationId = 1
+                )
                 snackbarHostState.showSnackbar(
                     SnackbarVisualsWithState(
                         message = context.getString(R.string.donwload_completed_and_save)
