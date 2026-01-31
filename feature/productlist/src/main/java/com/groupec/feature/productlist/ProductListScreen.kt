@@ -7,7 +7,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,8 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -35,13 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.groupec.feature.product.R
+import com.groupec.salesb.core.ExportType
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.AppCustomDialog
@@ -54,12 +51,12 @@ import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.icon.AppIcons
-import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.showDownloadNotification
 import com.groupec.salesb.core.ui.ProductCardList
+
 
 @Composable
 fun ProductListScreen(
@@ -79,19 +76,25 @@ fun ProductListScreen(
     val error = (products.loadState.refresh as? LoadState.Error)?.error?.message
     val deleteProductState by viewModel.deleteProductUiState.collectAsState()
     val exportPdfState by viewModel.exportPdfUiState.collectAsState()
+    val exportExcelState by viewModel.exportExcelUiState.collectAsState()
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var productIdLibelle by remember { mutableStateOf(Pair(0, "")) }
     val isRefreshing = products.loadState.refresh is LoadState.Loading
     var isManualRefreshing by remember { mutableStateOf(false) }
-    val isExporting = exportPdfState is FormUIState.Loading
+    val isExporting = exportPdfState is FormUIState.Loading || exportExcelState is FormUIState.Loading
 
     var expanded by remember { mutableStateOf(false) }
+    var pendingExport by remember { mutableStateOf(ExportType.Pdf) }
+    var showLoadingExportDialog by rememberSaveable { mutableStateOf(true) }
 
     val exportPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) {
-            viewModel.exportProductsToPdf(context)
+            when (pendingExport) {
+                ExportType.Pdf -> viewModel.exportProductsToPdf(context)
+                ExportType.Excel -> viewModel.exportProductsToExcel(context)
+            }
         } else {
             Toast.makeText(context, context.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
         }
@@ -153,8 +156,12 @@ fun ProductListScreen(
 
     when (exportPdfState) {
         is FormUIState.Loading -> {
-            AppCustomDialog(modifier = Modifier.wrapContentSize()) {
-                AppLoadingScreen(modifier = Modifier.wrapContentSize())
+            if (showLoadingExportDialog) {
+                AppCustomDialog(modifier = Modifier.wrapContentSize(), setShowDialog = {
+                    showLoadingExportDialog = it
+                }) {
+                    AppLoadingScreen(modifier = Modifier.wrapContentSize())
+                }
             }
         }
         is FormUIState.Success -> {
@@ -190,6 +197,49 @@ fun ProductListScreen(
         else -> {}
     }
 
+    when (exportExcelState) {
+        is FormUIState.Loading -> {
+            if (showLoadingExportDialog) {
+                AppCustomDialog(modifier = Modifier.wrapContentSize(), setShowDialog = {
+                    showLoadingExportDialog = it
+                }) {
+                    AppLoadingScreen(modifier = Modifier.wrapContentSize())
+                }
+            }
+        }
+        is FormUIState.Success -> {
+            LaunchedEffect(Unit) {
+                val file = (exportExcelState as FormUIState.Success).data
+                context.showDownloadNotification(
+                    file = file,
+                    channelId = "product_export_excel_channel",
+                    channelName = context.getString(R.string.export_excel_completed),
+                    notificationId = 3
+                )
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = context.getString(R.string.export_excel_saved)
+                    )
+                )
+                viewModel.resetExportExcelState()
+            }
+        }
+
+        is FormUIState.Error -> {
+            LaunchedEffect(Unit) {
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = (exportExcelState as FormUIState.Error).message,
+                        isError = true
+                    )
+                )
+                viewModel.resetExportExcelState()
+            }
+        }
+
+        else -> {}
+    }
+
     /*PullToRefreshBox(isRefreshing = isRefreshing *//* isManualRefreshing *//*, onRefresh = {
         // isManualRefreshing = true
         products.refresh()
@@ -217,11 +267,13 @@ fun ProductListScreen(
                         text = { Text(stringResource(R.string.export_to_pdf)) },
                         enabled = !isExporting,
                         onClick = {
+                            showLoadingExportDialog = true // Show loading
                             focusManager.clearFocus() // Close keyborad
                             expanded = false
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 viewModel.exportProductsToPdf(context)
                             } else {
+                                pendingExport = ExportType.Pdf
                                 exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             }
                         }
@@ -229,9 +281,17 @@ fun ProductListScreen(
 
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.exporter_en_excel)) },
+                        enabled = !isExporting,
                         onClick = {
+                            showLoadingExportDialog = true // Show loading
                             expanded = false
-                            // exportExcel()
+                            focusManager.clearFocus()
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                viewModel.exportProductsToExcel(context)
+                            } else {
+                                pendingExport = ExportType.Excel
+                                exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            }
                         }
                     )
                 }

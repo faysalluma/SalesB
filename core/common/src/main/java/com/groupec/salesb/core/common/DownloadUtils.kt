@@ -45,6 +45,37 @@ fun Context.savePdfToDownloads(pdfBytes: ByteArray, fileName: String): File {
     }
 }
 
+fun Context.saveExcelToDownloads(excelBytes: ByteArray, fileName: String): File {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        val resolver = contentResolver
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+            put(
+                MediaStore.Downloads.MIME_TYPE,
+                "text/csv"
+            )
+            put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+        }
+        val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+        uri?.let {
+            resolver.openOutputStream(it)?.use { outputStream ->
+                outputStream.write(excelBytes)
+            }
+            contentValues.clear()
+            contentValues.put(MediaStore.Downloads.IS_PENDING, 0)
+            resolver.update(it, contentValues, null, null)
+        }
+        File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
+    } else {
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val file = File(downloadsDir, fileName)
+        FileOutputStream(file).use { outputStream ->
+            outputStream.write(excelBytes)
+        }
+        file
+    }
+}
+
 fun Context.showDownloadNotification(
     file: File,
     channelId: String,
@@ -82,4 +113,9 @@ fun Context.showDownloadNotification(
         .build()
 
     manager.notify(notificationId, notification)
+}
+
+enum class ExportType {
+    Pdf,
+    Excel
 }

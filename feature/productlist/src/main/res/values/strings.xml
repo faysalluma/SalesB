@@ -7,6 +7,9 @@
     <string name="export_pdf_saved">Export completed and saved</string>
     <string name="export_pdf_completed">Export completed</string>
     <string name="export_pdf_failed">Export failed</string>
+    <string name="export_excel_saved">Export completed and saved</string>
+    <string name="export_excel_completed">Export completed</string>
+    <string name="export_excel_failed">Export failed</string>
     <string name="export_pdf_loading">Exporting PDF…</string>
     <string name="no_products_to_export">No products to export</string>
     <string name="permission_denied">Permission denied</string>

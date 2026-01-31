@@ -8,11 +8,14 @@ import androidx.paging.cachedIn
 import com.groupec.feature.product.R
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.currentDateString
 import com.groupec.salesb.core.domain.product.DeleteProductUseCase
+import com.groupec.salesb.core.domain.product.GenerateProductListExcelUseCase
 import com.groupec.salesb.core.domain.product.GenerateProductListPdfUseCase
 import com.groupec.salesb.core.domain.product.GetAllProductsUseCase
 import com.groupec.salesb.core.domain.product.GetProductUseCase
 import com.groupec.salesb.core.model.data.Product
+import com.groupec.salesb.core.saveExcelToDownloads
 import com.groupec.salesb.core.savePdfToDownloads
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +37,8 @@ class ProductListViewModel @Inject constructor(
     private val getProductUseCase: GetProductUseCase,
     private val getAllProductsUseCase: GetAllProductsUseCase,
     private val deleteProductUseCase: DeleteProductUseCase,
-    private val generateProductListPdfUseCase: GenerateProductListPdfUseCase
+    private val generateProductListPdfUseCase: GenerateProductListPdfUseCase,
+    private val generateProductListExcelUseCase: GenerateProductListExcelUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -48,6 +52,9 @@ class ProductListViewModel @Inject constructor(
 
     private val _exportPdfUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportPdfUiState: StateFlow<FormUIState<File>> = _exportPdfUiState.asStateFlow()
+
+    private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
+    val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
 
     val pagedProducts: Flow<PagingData<Product>> = _searchQuery
         .flatMapLatest { query ->
@@ -102,7 +109,7 @@ class ProductListViewModel @Inject constructor(
                             )
                         }
                         val file = withContext(Dispatchers.IO) {
-                            activityContext.savePdfToDownloads(pdfBytes, "products.pdf")
+                            activityContext.savePdfToDownloads(pdfBytes, "products-${currentDateString("yyyy-MM-dd-HHmmss")}.pdf")
                         }
                         _exportPdfUiState.value = FormUIState.Success(file)
                     } catch (exception: Exception) {
@@ -123,8 +130,54 @@ class ProductListViewModel @Inject constructor(
         }
     }
 
+    fun exportProductsToExcel(activityContext: Context) {
+        viewModelScope.launch {
+            _exportExcelUiState.value = FormUIState.Loading
+            when (val result = getAllProductsUseCase(_searchQuery.value)) {
+                is Result.Success -> {
+                    val products = result.data
+                    if (products.isEmpty()) {
+                        _exportExcelUiState.value = FormUIState.Error(
+                            activityContext.getString(R.string.no_products_to_export)
+                        )
+                        return@launch
+                    }
+                    try {
+                        val excelBytes = withContext(Dispatchers.Default) {
+                            generateProductListExcelUseCase(
+                                activityContext,
+                                products,
+                                _searchQuery.value
+                            )
+                        }
+                        val file = withContext(Dispatchers.IO) {
+                            activityContext.saveExcelToDownloads(excelBytes, "products-${currentDateString("yyyy-MM-dd-HHmmss")}.csv")
+                        }
+                        _exportExcelUiState.value = FormUIState.Success(file)
+                    } catch (exception: Exception) {
+                        _exportExcelUiState.value = FormUIState.Error(
+                            exception.message ?: activityContext.getString(R.string.export_excel_failed)
+                        )
+                    }
+                }
+
+                is Result.Error -> {
+                    _exportExcelUiState.value = FormUIState.Error(
+                        result.exception.message ?: activityContext.getString(R.string.export_excel_failed)
+                    )
+                }
+
+                else -> {}
+            }
+        }
+    }
+
     fun resetExportState() {
         _exportPdfUiState.value = FormUIState.Idle
+    }
+
+    fun resetExportExcelState() {
+        _exportExcelUiState.value = FormUIState.Idle
     }
 
     fun resetFlow() {
