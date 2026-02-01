@@ -6,4 +6,14 @@
     <string name="search_product_place_holder">Search here</string>
     <string name="my_products">My products</string>
     <string name="head_title_user">Users</string>
+    <string name="export_to_pdf">Export to PDF</string>
+    <string name="exporter_en_excel">Export to Excel</string>
+    <string name="export_pdf_saved">Export completed and saved</string>
+    <string name="export_pdf_completed">Export completed</string>
+    <string name="export_pdf_failed">Export failed</string>
+    <string name="export_excel_saved">Export completed and saved</string>
+    <string name="export_excel_completed">Export completed</string>
+    <string name="export_excel_failed">Export failed</string>
+    <string name="no_users_to_export">No users to export</string>
+    <string name="permission_denied">Permission denied</string>
 </resources>

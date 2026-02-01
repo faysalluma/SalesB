@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CategoryRepository {
     fun getCategories(): Flow<List<Category>>
+    suspend fun getAllCategories(searchQuery: String): Result<List<Category>>
     fun getPagedCategories(searchQuery: String) : Flow<PagingData<Category>>
     suspend fun saveCategory(category: Category) : Result<Unit>
     suspend fun deleteCategory(categoryId: Int) : Result<Unit>
