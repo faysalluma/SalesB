@@ -25,6 +25,9 @@
     <string name="price">@string/price_view</string>
     <string name="label">@string/label_view</string>
     <string name="total" translatable="false">Total</string>
+    <string name="payment_type_label">Payment method</string>
+    <string name="cash_received">Cash received</string>
+    <string name="change_due">Change due: %s</string>
     <string name="confirm_sale_message">Confirm the sale of %s?</string>
     <string name="confirm_delete_message">Confirm deletion of: %s?</string>
     <string name="total_amount">Total amount</string>

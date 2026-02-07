@@ -47,6 +47,9 @@ data class ParamItemResponse(
     @SerializedName("loadproducts")
     val loadproducts: Int,
 
+    @SerializedName("defaultpaymenttype")
+    val defaultpaymenttype: String ? = null,
+
     @SerializedName("tva")
     val tva: Double
 )

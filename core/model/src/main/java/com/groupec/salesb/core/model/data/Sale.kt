@@ -11,6 +11,7 @@ data class Sale(
     val totalprix: Double,
     val datemodif: String ? = null,
     val userid: Int ? = null,
+    val paymenttype: String ? = null,
     val username: String ? = null,
     val details: List<SaleDetail>
 ) : Parcelable

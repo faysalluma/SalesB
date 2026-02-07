@@ -33,6 +33,7 @@ import com.groupec.salesb.core.designsystem.component.IconPlus
 import com.groupec.salesb.core.designsystem.component.TextNormal
 import com.groupec.salesb.core.designsystem.component.TitleSmall
 import com.groupec.salesb.core.designsystem.theme.Silver
+import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.normalizeDecimalSeparator
 
