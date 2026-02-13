@@ -56,4 +56,5 @@
     <string name="error">Error!</string>
     <string name="please_read">I acknowledge that I have read and accept the</string>
     <string name="terms_and_conditions_of_use">terms and conditions of use.</string>
+    <string name="paid_by">Payment method: %s</string>
 </resources>

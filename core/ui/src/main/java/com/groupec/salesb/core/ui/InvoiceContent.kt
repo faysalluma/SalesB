@@ -47,6 +47,7 @@ import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.SaleDetail
+import com.groupec.salesb.core.model.data.others.paymentTypeLibelleResFromValue
 import com.groupec.salesb.core.toDate
 import com.groupec.salesb.core.toPercentFormat
 import com.groupec.salesb.core.toWordsWithIcuRespectingLocaleAndCurrency
@@ -176,6 +177,13 @@ fun HeaderSection(parameter: Parameter, invoicing: Invoicing) {
 
 @Composable
 fun BillingInfo(parameter: Parameter, sale: Sale) {
+    val context = LocalContext.current
+    val paidByValue = sale.paymenttype
+        ?.takeIf { it.isNotBlank() }
+        ?.let { paymentType ->
+            paymentTypeLibelleResFromValue(paymentType)?.let(context::getString) ?: paymentType
+        }
+
     Column {
         // Head
         sale.datevente?.convertToLocaleDateTimeFormat()?.let {
@@ -207,6 +215,16 @@ fun BillingInfo(parameter: Parameter, sale: Sale) {
                 append(" ${currentLocalDateString()}")
             }
         )
+        paidByValue?.let {
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)) {
+                        append(stringResource(com.groupec.salesb.core.R.string.paid_by_no_param))
+                    }
+                    append( " $it")
+                }
+            )
+        }
 
         Spacer(modifier = Modifier.height(22.dp))
 
@@ -284,4 +302,3 @@ fun InvoiceContentPreview() {
         invoicing = Invoicing("SANDA Faysal", "147 rue basse, 14000 Caen")
     )
 }
-

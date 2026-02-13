@@ -11,6 +11,7 @@ import com.groupec.salesb.core.getDrawableResIdIfExists
 import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
+import com.groupec.salesb.core.model.data.others.paymentTypeLibelleResFromValue
 import com.groupec.salesb.core.toPercentFormat
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.io.image.ImageDataFactory
@@ -157,6 +158,18 @@ fun generateInvoicePdf(
             .add(Text(context.getString(com.groupec.salesb.core.R.string.invoice_date)).setFont(boldFont))
             .add(Text(" ${currentLocalDateString()}").setFont(normalFont))
     )
+    val paidByValue = sale.paymenttype
+        ?.takeIf { it.isNotBlank() }
+        ?.let { paymentType ->
+            paymentTypeLibelleResFromValue(paymentType)?.let(context::getString) ?: paymentType
+        }
+    paidByValue?.let {
+        document.add(
+            Paragraph()
+                .add(Text(context.getString(com.groupec.salesb.core.R.string.paid_by_no_param)).setFont(boldFont))
+                .add(Text(" $it").setFont(normalFont))
+        )
+    }
 
     document.add(Paragraph("\n"))
 

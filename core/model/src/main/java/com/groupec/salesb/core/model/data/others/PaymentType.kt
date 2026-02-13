@@ -20,3 +20,7 @@ fun paymentTypeValue(paymentType: PaymentType): String = paymentType.name.lowerc
 fun paymentTypeFromValue(value: String): PaymentType? {
     return PaymentType.entries.firstOrNull { it.name.equals(value, ignoreCase = true) }
 }
+
+fun paymentTypeLibelleResFromValue(value: String): Int? {
+    return paymentTypeFromValue(value)?.libelleRes
+}

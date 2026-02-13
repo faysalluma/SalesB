@@ -34,8 +34,10 @@
     <string name="date_of_checkout">Date of checkout:</string>
     <string name="invoice_no">Invoice no:</string>
     <string name="invoice_date">Invoice date:</string>
+    <string name="payment_method">Payment method: %s</string>
     <string name="invoice_summary">Invoice summary - %d item(s)</string>
     <string name="infos_tva">TVA: %s</string>
     <string name="total_sale_view">TOTAL: %s</string>
     <string name="etablish_invoice_message">Established the present invoice at the sum of: %s.</string>
+    <string name="paid_by_no_param">Payment method:</string>
 </resources>
