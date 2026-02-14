@@ -205,6 +205,8 @@ fun SaleScreen(
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
                 val (printAction, sale) = (addSaleUiState as FormUIState.Success).data
+                // Consume state immediately to avoid re-triggering on configuration change.
+                viewModel.resetFlow()
                 savedSale = sale // Set saved sale
                 when (printAction) {
                     PrintAction.Thermal -> {
@@ -234,28 +236,34 @@ fun SaleScreen(
                     }
                     else -> {}
                 }
+                // Close portrait summary immediately to avoid transient EmptyScreen flicker after save.
+                showSummary = false
                 selectedProducts.clear()
                 textFieldValues.clear()
                 products.refresh()
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithState(
-                        message = context.getString(
-                            com.groupec.salesb.core.ui.R.string.product_operate_succesfully
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithState(
+                            message = context.getString(
+                                com.groupec.salesb.core.ui.R.string.product_operate_succesfully
+                            )
                         )
                     )
-                )
-                viewModel.resetFlow()
+                }
             }
         }
         is FormUIState.Error -> {
             LaunchedEffect(Unit) {
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithState(
-                        message = (addSaleUiState as FormUIState.Error).message,
-                        isError = true
-                    )
-                )
+                // Consume state immediately to avoid re-triggering on configuration change.
                 viewModel.resetFlow()
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithState(
+                            message = (addSaleUiState as FormUIState.Error).message,
+                            isError = true
+                        )
+                    )
+                }
             }
         }
         else -> {}
@@ -297,7 +305,6 @@ fun SaleScreen(
                     onClear = {
                         selectedProducts.clear()
                         textFieldValues.clear()
-                        showSummary = false
                         paymentTypeState = firstPaymentTypeDefaultValue
                     },
                     onQuantityChange = onQuantityChange,
