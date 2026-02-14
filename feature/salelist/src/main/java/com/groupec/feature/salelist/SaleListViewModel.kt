@@ -8,15 +8,20 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.groupec.salesb.core.BitmapPrintAdapter
 import com.groupec.salesb.core.FormUIState
+import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.currentDateString
+import com.groupec.salesb.core.domain.sale.GenerateSaleListExcelUseCase
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
+import com.groupec.salesb.core.domain.sale.GenerateSaleListPdfUseCase
 import com.groupec.salesb.core.domain.sale.GenerateInvoicePdfUseCase
+import com.groupec.salesb.core.domain.sale.GetAllSalesUseCase
 import com.groupec.salesb.core.domain.sale.GetSaleUseCase
 import com.groupec.salesb.core.getDrawableResIdIfExists
 import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.print.Print
+import com.groupec.salesb.core.saveExcelToDownloads
 import com.groupec.salesb.core.savePdfToDownloads
 import com.groupec.salesb.core.sendEmailWithAttachment
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,8 +50,11 @@ import javax.inject.Inject
 class SaleListViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val getSaleUseCase:GetSaleUseCase,
+    private val getAllSalesUseCase: GetAllSalesUseCase,
     private val getParameterUseCase: GetParameterUseCase,
-    private val generateInvoicePdfUseCase: GenerateInvoicePdfUseCase
+    private val generateInvoicePdfUseCase: GenerateInvoicePdfUseCase,
+    private val generateSaleListPdfUseCase: GenerateSaleListPdfUseCase,
+    private val generateSaleListExcelUseCase: GenerateSaleListExcelUseCase
 ) : ViewModel() {
 
     private val defaultDate = currentDateString(pattern = "yyyy-MM-dd")
@@ -68,10 +76,15 @@ class SaleListViewModel @Inject constructor(
     val printUiState: SharedFlow<FormUIState<Unit>> = _printUiState.asSharedFlow()
 
     // Save pdf file
-    val fileName = "receipt.pdf"
+    val fileName = "receipt-${currentDateString("yyyy-MM-dd-HHmmss")}.pdf"
     private val _saveReceiptToDownloads = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val saveReceiptToDownloads: StateFlow<FormUIState<File>> = _saveReceiptToDownloads.asStateFlow()
 
+    private val _exportPdfUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
+    val exportPdfUiState: StateFlow<FormUIState<File>> = _exportPdfUiState.asStateFlow()
+
+    private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
+    val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -108,6 +121,106 @@ class SaleListViewModel @Inject constructor(
 
     fun updateEndDateQuery(newQuery: String) {
         _endDate.value = newQuery
+    }
+
+    fun exportSalesToPdf(activityContext: Context) {
+        viewModelScope.launch {
+            _exportPdfUiState.value = FormUIState.Loading
+            val searchParams = buildSaleSearchParams()
+            when (val result = getAllSalesUseCase(searchParams)) {
+                is Result.Success -> {
+                    val sales = result.data
+                    if (sales.isEmpty()) {
+                        _exportPdfUiState.value = FormUIState.Error(
+                            activityContext.getString(R.string.no_sales_to_export)
+                        )
+                        return@launch
+                    }
+                    try {
+                        val pdfBytes = withContext(Dispatchers.Default) {
+                            generateSaleListPdfUseCase(
+                                activityContext,
+                                sales,
+                                _searchQuery.value,
+                                _startDate.value,
+                                _endDate.value,
+                                _parameter.value.devise
+                            )
+                        }
+                        val file = withContext(Dispatchers.IO) {
+                            activityContext.savePdfToDownloads(
+                                pdfBytes,
+                                "sales-${currentDateString("yyyy-MM-dd-HHmmss")}.pdf"
+                            )
+                        }
+                        _exportPdfUiState.value = FormUIState.Success(file)
+                    } catch (e: Exception) {
+                        _exportPdfUiState.value = FormUIState.Error(
+                            e.message ?: activityContext.getString(R.string.export_pdf_failed)
+                        )
+                    }
+                }
+
+                is Result.Error -> {
+                    _exportPdfUiState.value = FormUIState.Error(
+                        result.exception.message
+                            ?: activityContext.getString(R.string.export_pdf_failed)
+                    )
+                }
+
+                else -> {}
+            }
+        }
+    }
+
+    fun exportSalesToExcel(activityContext: Context) {
+        viewModelScope.launch {
+            _exportExcelUiState.value = FormUIState.Loading
+            val searchParams = buildSaleSearchParams()
+            when (val result = getAllSalesUseCase(searchParams)) {
+                is Result.Success -> {
+                    val sales = result.data
+                    if (sales.isEmpty()) {
+                        _exportExcelUiState.value = FormUIState.Error(
+                            activityContext.getString(R.string.no_sales_to_export)
+                        )
+                        return@launch
+                    }
+                    try {
+                        val excelBytes = withContext(Dispatchers.Default) {
+                            generateSaleListExcelUseCase(
+                                activityContext,
+                                sales,
+                                _searchQuery.value,
+                                _startDate.value,
+                                _endDate.value,
+                                _parameter.value.devise
+                            )
+                        }
+                        val file = withContext(Dispatchers.IO) {
+                            activityContext.saveExcelToDownloads(
+                                excelBytes,
+                                "sales-${currentDateString("yyyy-MM-dd-HHmmss")}.csv"
+                            )
+                        }
+                        _exportExcelUiState.value = FormUIState.Success(file)
+                    } catch (e: Exception) {
+                        _exportExcelUiState.value = FormUIState.Error(
+                            e.message ?: activityContext.getString(R.string.export_excel_failed)
+                        )
+                    }
+                }
+
+                is Result.Error -> {
+                    _exportExcelUiState.value = FormUIState.Error(
+                        result.exception.message
+                            ?: activityContext.getString(R.string.export_excel_failed)
+                    )
+                }
+
+                else -> {}
+            }
+        }
     }
 
     fun printThermalReceipt(sale: Sale, parameter: Parameter) {
@@ -200,4 +313,19 @@ class SaleListViewModel @Inject constructor(
         }
     }
 
+    fun resetExportState() {
+        _exportPdfUiState.value = FormUIState.Idle
+    }
+
+    fun resetExportExcelState() {
+        _exportExcelUiState.value = FormUIState.Idle
+    }
+
+    private fun buildSaleSearchParams(): Map<String, String> {
+        return mapOf(
+            "totalprix" to _searchQuery.value,
+            "startDate" to _startDate.value,
+            "endDate" to _endDate.value
+        )
+    }
 }

@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,10 +25,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,6 +55,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.groupec.salesb.core.FormUIState
+import com.groupec.salesb.core.ExportType
 import com.groupec.salesb.core.convertToServerDateFormat
 import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.designsystem.component.AppCustomBottomSheet
@@ -65,7 +71,6 @@ import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.component.TitleLarge
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Green
-import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.Invoicing
@@ -90,6 +95,7 @@ fun SaleListScreen(
     viewModel: SaleListViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
 
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
@@ -106,7 +112,13 @@ fun SaleListScreen(
     var showInvoice by rememberSaveable { mutableStateOf(false) }
     var sendByEmail by rememberSaveable { mutableStateOf(false) }
     val saveReceiptToDownloadsState by viewModel.saveReceiptToDownloads.collectAsStateWithLifecycle()
+    val exportPdfState by viewModel.exportPdfUiState.collectAsState()
+    val exportExcelState by viewModel.exportExcelUiState.collectAsState()
+    val isExporting = exportPdfState is FormUIState.Loading || exportExcelState is FormUIState.Loading
+    var showLoadingExportDialog by rememberSaveable { mutableStateOf(true) }
     var showBottomSheet by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
+    var pendingExport by remember { mutableStateOf(ExportType.Pdf) }
 
     val bluetoothPermissions =
         // Checks if the device has Android 12 or above
@@ -155,6 +167,19 @@ fun SaleListScreen(
             viewModel.savePdfToDownloads(context, saleGetValue!!, parameter, invoicingGetValue!!)
         } else {
             Toast.makeText(context, "Permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val exportPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            when (pendingExport) {
+                ExportType.Pdf -> viewModel.exportSalesToPdf(context)
+                ExportType.Excel -> viewModel.exportSalesToExcel(context)
+            }
+        } else {
+            Toast.makeText(context, context.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -209,6 +234,88 @@ fun SaleListScreen(
         else -> {}
     }
 
+    when (exportPdfState) {
+        is FormUIState.Loading -> {
+            if (showLoadingExportDialog) {
+                AppCustomDialog(modifier = Modifier.wrapContentWidth(), setShowDialog = {
+                    showLoadingExportDialog = it
+                }) {
+                    AppLoadingScreen(modifier = Modifier.wrapContentWidth())
+                }
+            }
+        }
+        is FormUIState.Success -> {
+            LaunchedEffect(Unit) {
+                val file = (exportPdfState as FormUIState.Success).data
+                context.showDownloadNotification(
+                    file = file,
+                    channelId = "sale_export_pdf_channel",
+                    channelName = context.getString(R.string.export_pdf_completed),
+                    notificationId = 14
+                )
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = context.getString(R.string.export_pdf_saved)
+                    )
+                )
+                viewModel.resetExportState()
+            }
+        }
+        is FormUIState.Error -> {
+            LaunchedEffect(Unit) {
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = (exportPdfState as FormUIState.Error).message,
+                        isError = true
+                    )
+                )
+                viewModel.resetExportState()
+            }
+        }
+        else -> {}
+    }
+
+    when (exportExcelState) {
+        is FormUIState.Loading -> {
+            if (showLoadingExportDialog) {
+                AppCustomDialog(modifier = Modifier.wrapContentWidth(), setShowDialog = {
+                    showLoadingExportDialog = it
+                }) {
+                    AppLoadingScreen(modifier = Modifier.wrapContentWidth())
+                }
+            }
+        }
+        is FormUIState.Success -> {
+            LaunchedEffect(Unit) {
+                val file = (exportExcelState as FormUIState.Success).data
+                context.showDownloadNotification(
+                    file = file,
+                    channelId = "sale_export_excel_channel",
+                    channelName = context.getString(R.string.export_excel_completed),
+                    notificationId = 15
+                )
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = context.getString(R.string.export_excel_saved)
+                    )
+                )
+                viewModel.resetExportExcelState()
+            }
+        }
+        is FormUIState.Error -> {
+            LaunchedEffect(Unit) {
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = (exportExcelState as FormUIState.Error).message,
+                        isError = true
+                    )
+                )
+                viewModel.resetExportExcelState()
+            }
+        }
+        else -> {}
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -256,10 +363,63 @@ fun SaleListScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                TitleLarge(
-                                    title = stringResource(R.string.my_sales),
-                                    modifier = Modifier.padding(top = 22.dp)
-                                )
+                                Row {
+                                    Box(
+                                        modifier = Modifier.padding(top = 12.dp, end = 14.dp)
+                                    ) {
+                                        IconButton(
+                                            enabled = !isExporting,
+                                            onClick = { expanded = true }
+                                        ) {
+                                            Icon(
+                                                imageVector = AppIcons.Export,
+                                                contentDescription = "Export sales"
+                                            )
+                                        }
+
+                                        DropdownMenu(
+                                            expanded = expanded,
+                                            onDismissRequest = { expanded = false },
+                                            modifier = Modifier.background(White)
+                                        ) {
+                                            DropdownMenuItem(
+                                                text = { Text(stringResource(R.string.export_to_pdf)) },
+                                                enabled = !isExporting,
+                                        onClick = {
+                                            showLoadingExportDialog = true
+                                            focusManager.clearFocus()
+                                            expanded = false
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                                viewModel.exportSalesToPdf(context)
+                                            } else {
+                                                pendingExport = ExportType.Pdf
+                                                        exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                                    }
+                                                }
+                                            )
+
+                                            DropdownMenuItem(
+                                                text = { Text(stringResource(R.string.exporter_en_excel)) },
+                                                enabled = !isExporting,
+                                        onClick = {
+                                            showLoadingExportDialog = true
+                                            focusManager.clearFocus()
+                                            expanded = false
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                                viewModel.exportSalesToExcel(context)
+                                            } else {
+                                                pendingExport = ExportType.Excel
+                                                        exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                                    }
+                                                }
+                                            )
+                                        }
+                                    }
+                                    TitleLarge(
+                                        title = stringResource(R.string.my_sales),
+                                        modifier = Modifier.padding(top = 22.dp)
+                                    )
+                                }
 
                                 // Barre de recherche
                                 AppTextField(
@@ -295,7 +455,7 @@ fun SaleListScreen(
                             ) {
                                 DatePickerFieldToModal(
                                     modifier = Modifier
-                                        .width(230.dp),
+                                        .width(200.dp),
                                     label = stringResource(R.string.start_date),
                                     defaultDate = startDate
                                 ) { dateValue ->
@@ -305,7 +465,7 @@ fun SaleListScreen(
 
                                 DatePickerFieldToModal(
                                     modifier = Modifier
-                                        .width(230.dp),
+                                        .width(200.dp),
                                     label = stringResource(R.string.end_date),
                                     defaultDate = endDate
                                 ) { dateValue ->
@@ -334,10 +494,61 @@ fun SaleListScreen(
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            TitleLarge(
-                                title = stringResource(R.string.my_sales),
-                                modifier = Modifier.padding(top = 16.dp)
-                            )
+                            Row {
+                                Box(modifier = Modifier.padding(top = 8.dp, end = 14.dp)) {
+                                    IconButton(
+                                        enabled = !isExporting,
+                                        onClick = { expanded = true }
+                                    ) {
+                                        Icon(
+                                            imageVector = AppIcons.Export,
+                                            contentDescription = "Export sales"
+                                        )
+                                    }
+
+                                    DropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false },
+                                        modifier = Modifier.background(White)
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(R.string.export_to_pdf)) },
+                                            enabled = !isExporting,
+                                        onClick = {
+                                            showLoadingExportDialog = true
+                                            focusManager.clearFocus()
+                                            expanded = false
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                                viewModel.exportSalesToPdf(context)
+                                            } else {
+                                                pendingExport = ExportType.Pdf
+                                                    exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                                }
+                                            }
+                                        )
+
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(R.string.exporter_en_excel)) },
+                                            enabled = !isExporting,
+                                        onClick = {
+                                            showLoadingExportDialog = true
+                                            focusManager.clearFocus()
+                                            expanded = false
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                                viewModel.exportSalesToExcel(context)
+                                            } else {
+                                                pendingExport = ExportType.Excel
+                                                    exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                                TitleLarge(
+                                    title = stringResource(R.string.my_sales),
+                                    modifier = Modifier.padding(top = 16.dp)
+                                )
+                            }
 
                             Row {
                                 DefaultButton(
@@ -408,8 +619,7 @@ fun SaleListScreen(
                                         verticalArrangement = Arrangement.spacedBy(22.dp),
                                     ) {
                                         DatePickerFieldToModal(
-                                            modifier = Modifier
-                                               ,
+                                            modifier = Modifier,
                                             label = stringResource(R.string.start_date),
                                             defaultDate = startDate
                                         ) { dateValue ->
@@ -418,8 +628,7 @@ fun SaleListScreen(
                                         }
 
                                         DatePickerFieldToModal(
-                                            modifier = Modifier
-                                                ,
+                                            modifier = Modifier,
                                             label = stringResource(R.string.end_date),
                                             defaultDate = endDate
                                         ) { dateValue ->

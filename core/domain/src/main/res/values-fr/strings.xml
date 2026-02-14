@@ -9,6 +9,7 @@
     <string name="category_list_title">Liste des catégories</string>
     <string name="rayon_list_title">Liste des rayons</string>
     <string name="output_list_title">Liste des sorties</string>
+    <string name="sale_list_title">Liste des ventes</string>
     <string name="user_list_title">Liste des utilisateurs</string>
     <string name="export_date">Date d\'export :</string>
     <string name="filter_data">Filtre :</string>
@@ -16,6 +17,7 @@
     <string name="category_list_total">Total catégories : %d</string>
     <string name="rayon_list_total">Total rayons : %d</string>
     <string name="output_list_total">Total sorties : %d</string>
+    <string name="sale_list_total">Total ventes : %d</string>
     <string name="user_list_total">Total utilisateurs : %d</string>
     <string name="details">Détails</string>
     <string name="reference_label">Référence : %s</string>
@@ -36,6 +38,8 @@
     <string name="user_id_label">ID utilisateur : %s</string>
     <string name="username_label">Nom d\'utilisateur : %s</string>
     <string name="price_label">Prix : %s</string>
+    <string name="payment_type_label">Mode de paiement : %s</string>
+    <string name="products_label">Produits : %s</string>
     <string name="email_label">Email : %s</string>
     <string name="phone_label">Téléphone : %s</string>
     <string name="address_label">Adresse : %s</string>
@@ -56,12 +60,15 @@
     <string name="id_header">ID</string>
     <string name="product_id_header">ID</string>
     <string name="created_at_header">Créé le</string>
+    <string name="date_time_header">Date</string>
     <string name="updated_at_header">Modifié le</string>
     <string name="category_id_header">ID catégorie</string>
     <string name="rayon_id_header">ID rayon</string>
     <string name="supplier_id_header">ID fournisseur</string>
     <string name="tva_id_header">ID TVA</string>
     <string name="price_header">Prix</string>
+    <string name="payment_type_header">Mode de paiement</string>
+    <string name="products_header">Produits</string>
     <string name="name_header">Nom</string>
     <string name="email_header">Email</string>
     <string name="phone_header">Téléphone</string>
@@ -71,4 +78,7 @@
     <string name="first_login_header">Première connexion</string>
     <string name="user_id_header">ID utilisateur</string>
     <string name="username_header">Nom d\'utilisateur</string>
+    <string name="sale_filter_amount">Montant >= %s</string>
+    <string name="sale_filter_start_date">Date début : %s</string>
+    <string name="sale_filter_end_date">Date fin : %s</string>
 </resources>

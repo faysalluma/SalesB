@@ -9,6 +9,7 @@
     <string name="category_list_title">Category list</string>
     <string name="rayon_list_title">Section list</string>
     <string name="output_list_title">Output list</string>
+    <string name="sale_list_title">Sale list</string>
     <string name="user_list_title">User list</string>
     <string name="export_date">Export date:</string>
     <string name="filter_data">Filter:</string>
@@ -16,6 +17,7 @@
     <string name="category_list_total">Total categories: %d</string>
     <string name="rayon_list_total">Total sections: %d</string>
     <string name="output_list_total">Total outputs: %d</string>
+    <string name="sale_list_total">Total sales: %d</string>
     <string name="user_list_total">Total users: %d</string>
     <string name="details">Details</string>
     <string name="reference_label">Reference: %s</string>
@@ -36,6 +38,8 @@
     <string name="user_id_label">User ID: %s</string>
     <string name="username_label">Username: %s</string>
     <string name="price_label">Price: %s</string>
+    <string name="payment_type_label">Payment type: %s</string>
+    <string name="products_label">Products: %s</string>
     <string name="email_label">Email: %s</string>
     <string name="phone_label">Phone: %s</string>
     <string name="address_label">Address: %s</string>
@@ -60,6 +64,8 @@
     <string name="supplier_id_header">Supplier ID</string>
     <string name="tva_id_header">TVA ID</string>
     <string name="price_header">Price</string>
+    <string name="payment_type_header">Payment type</string>
+    <string name="products_header">Products</string>
     <string name="name_header">Name</string>
     <string name="email_header">Email</string>
     <string name="phone_header">Phone</string>
@@ -68,7 +74,11 @@
     <string name="active_header">Active</string>
     <string name="first_login_header">First login</string>
     <string name="created_at_header">Created at</string>
+    <string name="date_time_header">Date</string>
     <string name="updated_at_header">Updated at</string>
     <string name="user_id_header">User ID</string>
     <string name="username_header">Username</string>
+    <string name="sale_filter_amount">Amount >= %s</string>
+    <string name="sale_filter_start_date">Start date: %s</string>
+    <string name="sale_filter_end_date">End date: %s</string>
 </resources>
