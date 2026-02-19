@@ -34,6 +34,7 @@ import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
+import com.groupec.feature.handleservice.HandleServiceScreen
 import com.groupec.salesb.ui.customlistdetailpane.AccountNavContent
 import com.groupec.salesb.ui.customlistdetailpane.CategoryNavContent
 import com.groupec.salesb.ui.customlistdetailpane.OutputNavContent
@@ -461,6 +462,11 @@ fun AppNavHost(
             ForgotPasswordScreen {
                 navController.popBackStack()
             }
+        }
+
+
+        composable(NavigationItem.HandleService.route) {
+            HandleServiceScreen()
         }
 
         composable(

@@ -51,6 +51,12 @@ enum class Privileges(val titleRes: Int? = null, val values: Map<String, Approva
             "O04" to Approval.AUTHORIZE_DELETE
         )
     ),
+    HandleService(
+        titleRes = R.string.handle_services,
+        values = mapOf(
+            "H11" to Approval.AUTHORIZE_VIEW
+        )
+    ),
     UserSettings(
         titleRes = R.string.manage_your_account_view,
         values = mapOf(

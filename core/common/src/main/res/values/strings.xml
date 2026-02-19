@@ -26,6 +26,7 @@
     <string name="menu_rayon_view">Sections</string>
     <string name="menu_update_password_view">Modify password</string>
     <string name="manage_your_account_view">Account management</string>
+    <string name="handle_services">Service management</string>
     <string name="menu_log_out_view">Log out</string>
     <string name="menu_settings_view">Settings</string>
 
