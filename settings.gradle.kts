@@ -55,3 +55,5 @@ include(":feature:editinvoicing")
 include(":feature:accountlist")
 include(":feature:accountdetail")
 include(":feature:termsandconditions")
+
+include(":feature:handleservice")
