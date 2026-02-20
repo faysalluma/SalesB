@@ -39,6 +39,13 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         private val TVA_KEY = doublePreferencesKey("tva")
         private val SHOW_TERMS_AND_CONDITIONS_KEY = booleanPreferencesKey("termsandconditions")
 
+        // Local parameters
+        private val SERVICE_VIEW_KEY = booleanPreferencesKey("serviceview")
+        private val SHOW_IMAGE_ON_PRODUCT_KEY = booleanPreferencesKey("showimageonproduct")
+        private val USE_INT_FOR_PRICE_AND_AMOUNT_KEY = booleanPreferencesKey("useintforpriceandamout")
+        private val ACTIVE_PAYMENT_MODE = booleanPreferencesKey("activepaymentmode")
+        private val ACTIVE_PRINTER = booleanPreferencesKey("activeprinter")
+
         // Login key
         private val USER_ID_KEY = stringPreferencesKey("userid")
         private val USER_NAME_KEY = stringPreferencesKey("nomprenom")
@@ -71,7 +78,12 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
                 loadproducts = preferences[LOAD_PRODUCT_KEY] ?: false,
                 defaultpaymenttype = preferences[DEFAULT_PAYMENT_TYPE_KEY] ?: "",
                 tva = preferences[TVA_KEY] ?: 0.0,
-                termsandconditions = preferences[SHOW_TERMS_AND_CONDITIONS_KEY] ?: true
+                termsandconditions = preferences[SHOW_TERMS_AND_CONDITIONS_KEY] ?: true,
+                serviceview = preferences[SERVICE_VIEW_KEY] ?: false,
+                showimageonproduct = preferences[SHOW_IMAGE_ON_PRODUCT_KEY] ?: false,
+                useintforpriceandamout = preferences[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] ?: false,
+                activepaymentmode = preferences[ACTIVE_PAYMENT_MODE] ?: false,
+                activeprinter = preferences[ACTIVE_PRINTER] ?: false
             )
         }
 
@@ -154,6 +166,43 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
     suspend fun acceptTermsAndConditions() {
         context.dataStore.edit { datastore ->
             datastore [SHOW_TERMS_AND_CONDITIONS_KEY] = false
+        }
+    }
+
+    suspend fun updateServiceView(value: Boolean) {
+        context.dataStore.edit { datastore ->
+            datastore[SERVICE_VIEW_KEY] = value
+            if (value) {
+                datastore[SHOW_IMAGE_ON_PRODUCT_KEY] = false
+                datastore[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] = true
+            } else {
+                datastore[SHOW_IMAGE_ON_PRODUCT_KEY] = false
+                datastore[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] = false
+            }
+        }
+    }
+
+    suspend fun updateShowImageOnProduct(value: Boolean) {
+        context.dataStore.edit { datastore ->
+            datastore[SHOW_IMAGE_ON_PRODUCT_KEY] = value
+        }
+    }
+
+    suspend fun updateUseIntForPriceAndAmount(value: Boolean) {
+        context.dataStore.edit { datastore ->
+            datastore[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] = value
+        }
+    }
+
+    suspend fun updateActivePaymentMode(value: Boolean) {
+        context.dataStore.edit { datastore ->
+            datastore[ACTIVE_PAYMENT_MODE] = value
+        }
+    }
+
+    suspend fun updateActivePrinter(value: Boolean) {
+        context.dataStore.edit { datastore ->
+            datastore[ACTIVE_PRINTER] = value
         }
     }
 }

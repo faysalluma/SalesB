@@ -23,6 +23,7 @@
     <string name="menu_product_view">Produits</string>
     <string name="menu_update_password_view">Modifier mon mot de passe</string>
     <string name="manage_your_account_view">Gestion de comptes</string>
+    <string name="handle_services">Gestion des services</string>
     <string name="menu_log_out_view">Se déconnecter</string>
     <string name="menu_settings_view">Paramètres</string>
     <string name="menu_category_view">Catégories</string>
