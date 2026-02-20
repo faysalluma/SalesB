@@ -42,6 +42,7 @@ fun ProductForm(
     categorieItems: List<Pair<String, String>>,
     rayonItems: List<Pair<String, String>>,
     fournisseurItems: List<Pair<String, String>>,
+    isServiceView: Boolean = false,
     products: ProductDataForm,
     categorielibelleState: TextFieldValue,  // Use TextField to better handle onchange on Spinner
     navigateToCategory: () -> Unit,
@@ -65,7 +66,7 @@ fun ProductForm(
         isLibelleError = products.libelle.isEmpty()
         isPrixttcError = products.prixttc.isEmpty()
         isCategorieLibelleError = products.categorielibelle.isNotEmpty() && categorieItems.none { it.second == products.categorielibelle }
-        isRayonLibelleError = products.rayonlibelle.isNotEmpty() && rayonItems.none { it.second == products.rayonlibelle }
+        isRayonLibelleError = !isServiceView && products.rayonlibelle.isNotEmpty() && rayonItems.none { it.second == products.rayonlibelle }
         isFournisseurLibelleError =  products.fournisseurlibelle.isNotEmpty() && fournisseurItems.none { it.second == products.fournisseurlibelle }
         if (!isLibelleError && !isPrixttcError && !isCategorieLibelleError
             && !isRayonLibelleError && !isFournisseurLibelleError) {
@@ -143,35 +144,37 @@ fun ProductForm(
             modifier = Modifier.fillMaxWidth()
         )
 
-        AppTextField(
-            value = products.qtestock,
-            onChange = { data ->
-                onProductDataChanged(products.copy(qtestock = data.allowOnlyDigits()))
-            },
-            label = stringResource(id = R.string.label_qte_stock),
-            placeholder = stringResource(
-                R.string.enter_your_value,
-                stringResource(R.string.label_qte_stock)
-            ),
-            fieldType = FieldType.Number,
-            fieldColor = White,
-            modifier = Modifier.fillMaxWidth()
-        )
+        if (!isServiceView) {
+            AppTextField(
+                value = products.qtestock,
+                onChange = { data ->
+                    onProductDataChanged(products.copy(qtestock = data.allowOnlyDigits()))
+                },
+                label = stringResource(id = R.string.label_qte_stock),
+                placeholder = stringResource(
+                    R.string.enter_your_value,
+                    stringResource(R.string.label_qte_stock)
+                ),
+                fieldType = FieldType.Number,
+                fieldColor = White,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        AppTextField(
-            value = products.stockmini,
-            onChange = { data ->
-                onProductDataChanged(products.copy(stockmini = data.allowOnlyDigits()))
-            },
-            label = stringResource(id = R.string.label_stock_mini),
-            placeholder = stringResource(
-                R.string.enter_your_value,
-                stringResource(R.string.label_stock_mini)
-            ),
-            fieldType = FieldType.Number,
-            fieldColor = White,
-            modifier = Modifier.fillMaxWidth()
-        )
+            AppTextField(
+                value = products.stockmini,
+                onChange = { data ->
+                    onProductDataChanged(products.copy(stockmini = data.allowOnlyDigits()))
+                },
+                label = stringResource(id = R.string.label_stock_mini),
+                placeholder = stringResource(
+                    R.string.enter_your_value,
+                    stringResource(R.string.label_stock_mini)
+                ),
+                fieldType = FieldType.Number,
+                fieldColor = White,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
         Row(modifier = Modifier.fillMaxWidth()) {
             AppEditableExposedDropdown(
@@ -218,50 +221,52 @@ fun ProductForm(
 
         }
 
-        Row(modifier = Modifier.fillMaxWidth()) {
-            AppEditableExposedDropdown(
-                items = rayonItems,
-                modifier = Modifier.weight(1f),
-                label = stringResource(id = R.string.label_rayon),
-                isError = isRayonLibelleError,
-                supportingText = if (
-                    products.rayonlibelle.isNotEmpty() && rayonItems.none { it.second == products.rayonlibelle }
-                ) {
-                    {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = stringResource(R.string.invalid_select),
-                            color = MaterialTheme.colorScheme.error
-                        )
+        if (!isServiceView) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                AppEditableExposedDropdown(
+                    items = rayonItems,
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(id = R.string.label_rayon),
+                    isError = isRayonLibelleError,
+                    supportingText = if (
+                        products.rayonlibelle.isNotEmpty() && rayonItems.none { it.second == products.rayonlibelle }
+                    ) {
+                        {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = stringResource(R.string.invalid_select),
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                    value = rayonlibelleState,
+                    onValueChange = {
+                       onRayonlibelleState(it)
+                        if (isRayonLibelleError) isRayonLibelleError = false // Supprimer l'erreur
+                    },
+                    onItemSelected = { item ->
+                        onProductDataChanged(products.copy(rayonid = item.first, rayonlibelle = item.second))
+                        if (isRayonLibelleError) isRayonLibelleError = false // Supprimer l'erreur
                     }
-                } else {
-                    null
-                },
-                value = rayonlibelleState,
-                onValueChange = {
-                   onRayonlibelleState(it)
-                    if (isRayonLibelleError) isRayonLibelleError = false // Supprimer l'erreur
-                },
-                onItemSelected = { item ->
-                    onProductDataChanged(products.copy(rayonid = item.first, rayonlibelle = item.second))
-                    if (isRayonLibelleError) isRayonLibelleError = false // Supprimer l'erreur
+                )
+
+                IconTextButton(
+                    modifier = Modifier.padding(top = 4.dp, start = 12.dp),
+                    icon = {
+                        Icon(
+                            imageVector = AppIcons.Add,
+                            contentDescription = "Add more products",
+                            // modifier = Modifier.size(ButtonDefaults.IconSize)
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Color.Black)
+                ) {
+                    navigateToRayon()
                 }
-            )
 
-            IconTextButton(
-                modifier = Modifier.padding(top = 4.dp, start = 12.dp),
-                icon = {
-                    Icon(
-                        imageVector = AppIcons.Add,
-                        contentDescription = "Add more products",
-                        // modifier = Modifier.size(ButtonDefaults.IconSize)
-                    )
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Color.Black)
-            ) {
-                navigateToRayon()
             }
-
         }
 
        /* Row(modifier = Modifier.fillMaxWidth()) {

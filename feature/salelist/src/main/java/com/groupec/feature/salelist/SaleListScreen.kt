@@ -77,6 +77,7 @@ import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.print.PrintAction
 import com.groupec.salesb.core.showDownloadNotification
+import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.core.ui.InvoiceAction
 import com.groupec.salesb.core.ui.InvoiceContent
 import com.groupec.salesb.core.ui.InvoicingInfoScreen
@@ -182,6 +183,13 @@ fun SaleListScreen(
             Toast.makeText(context, context.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
         }
     }
+
+    // Update paramater when back to handle service
+    ComposableLifecycle(
+        onResume = {
+            viewModel.getParameter()
+        }
+    )
 
     when (saveReceiptToDownloadsState) {
         is FormUIState.Success -> {
@@ -651,6 +659,7 @@ fun SaleListScreen(
                         SaleCardList(
                             sales = sales,
                             isSearching = isSearching,
+                            parameter = parameter,
                             onViewDetail = { sale ->
                                 saleGetValue = sale
                                 showDialog = true

@@ -86,7 +86,7 @@ class SaleListViewModel @Inject constructor(
     private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
 
-    init {
+    fun getParameter() {
         viewModelScope.launch {
             _parameter.value = getParameterUseCase().first()
         }

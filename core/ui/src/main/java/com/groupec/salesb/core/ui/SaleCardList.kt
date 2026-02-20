@@ -8,6 +8,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
+import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.print.PrintAction
 
@@ -15,6 +16,7 @@ import com.groupec.salesb.core.print.PrintAction
 fun SaleCardList(
     sales: LazyPagingItems<Sale>,
     isSearching: Boolean,
+    parameter: Parameter,
     onViewDetail: (Sale) -> Unit,
     onPrintOrShare: (Sale, PrintAction) -> Unit,
 ) {
@@ -28,6 +30,7 @@ fun SaleCardList(
         itemsIndexed(sales) { index, sale ->
             sale?.let {
                 SaleCard(
+                    parameter = parameter,
                     sale = it,
                     onViewDetail = onViewDetail,
                     onPrintOrShare = onPrintOrShare

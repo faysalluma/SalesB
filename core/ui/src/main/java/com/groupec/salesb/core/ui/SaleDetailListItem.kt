@@ -44,10 +44,11 @@ fun SaleDetailListItem(
     productLine: Pair<Int, Product>,
     textFieldValues: MutableMap<Int, String>,
     onQuantityChange: (Pair<Int, Product>) -> Unit,
-    devise: String,
+    parameter: Parameter,
     quantityCheck: Map<Int, Boolean>
 ) {
     val (index, product) = productLine
+    val isIntegerQuantityMode = parameter.serviceview || parameter.useintforpriceandamout
     val iconSizeModifier = if (isTablet())  Modifier.size(64.dp) else Modifier
     Row(
         Modifier
@@ -64,37 +65,55 @@ fun SaleDetailListItem(
             horizontalArrangement = Arrangement.Center
         ) {
             IconMinus(modifier = iconSizeModifier) {
-                textFieldValues[index] = textFieldValues[index]!!.toDouble().minus(1.0).autoRound()
+                val currentValue = textFieldValues[index]?.toDoubleOrNull() ?: 0.0
+                textFieldValues[index] = if (isIntegerQuantityMode) {
+                    (currentValue.toInt() - 1).toString()
+                } else {
+                    currentValue.minus(1.0).autoRound()
+                }
                 onQuantityChange(Pair(index, product))
             }
-            TextField(
-                value = textFieldValues[index]!!,
-                onValueChange = {
-                    // textFieldQuantity = it.normalizeDecimalSeparator()
-                    textFieldValues[index] = it.normalizeDecimalSeparator()
-                    onQuantityChange(Pair(index, product))
-                },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                    focusedContainerColor = Silver,
-                    unfocusedContainerColor = Silver,
-                    focusedIndicatorColor = Color.Transparent, // Remove underline when focused
-                    unfocusedIndicatorColor = Color.Transparent // Remove underline when unfocused
-                ),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number
-                ),
-                isError = quantityCheck[index]!!,
-                singleLine = true,
-                textStyle = TextStyle(
+            if (isIntegerQuantityMode) {
+                Text(
+                    text = (textFieldValues[index]?.toDoubleOrNull()?.toInt() ?: 0).toString(),
                     textAlign = TextAlign.Center,
-                    fontSize = 16.sp // Optional: customize text size
-                ),
-                modifier = Modifier
-                    .scale(0.9f)
-                    .width(75.dp)
-            )
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.width(75.dp)
+                )
+            } else {
+                TextField(
+                    value = textFieldValues[index]!!,
+                    onValueChange = {
+                        textFieldValues[index] = it.normalizeDecimalSeparator()
+                        onQuantityChange(Pair(index, product))
+                    },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(
+                        focusedContainerColor = Silver,
+                        unfocusedContainerColor = Silver,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number
+                    ),
+                    isError = quantityCheck[index]!!,
+                    singleLine = true,
+                    textStyle = TextStyle(
+                        textAlign = TextAlign.Center,
+                        fontSize = 16.sp
+                    ),
+                    modifier = Modifier
+                        .scale(0.9f)
+                        .width(75.dp)
+                )
+            }
             IconPlus(modifier = iconSizeModifier) {
-                textFieldValues[index] = textFieldValues[index]!!.toDouble().plus(1.0).autoRound()
+                val currentValue = textFieldValues[index]?.toDoubleOrNull() ?: 0.0
+                textFieldValues[index] = if (isIntegerQuantityMode) {
+                    (currentValue.toInt() + 1).toString()
+                } else {
+                    currentValue.plus(1.0).autoRound()
+                }
                 onQuantityChange(Pair(index, product))
             }
         }
@@ -106,7 +125,7 @@ fun SaleDetailListItem(
                 overflow = TextOverflow.Ellipsis
             )
             TextNormal(
-                text = devise,
+                text = parameter.devise,
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.W300)
             )
         }

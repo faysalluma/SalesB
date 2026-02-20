@@ -77,6 +77,7 @@ fun ProductListScreen(
     val deleteProductState by viewModel.deleteProductUiState.collectAsState()
     val exportPdfState by viewModel.exportPdfUiState.collectAsState()
     val exportExcelState by viewModel.exportExcelUiState.collectAsState()
+    val parameterState by viewModel.parameterState.collectAsState()
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var productIdLibelle by remember { mutableStateOf(Pair(0, "")) }
     val isRefreshing = products.loadState.refresh is LoadState.Loading
@@ -361,6 +362,7 @@ fun ProductListScreen(
                     ProductCardList(
                         products = products,
                         isSearching = isSearching,
+                        showQuantity = !parameterState.serviceview,
                         onViewDetail = onViewDetail,
                         onDelete = { id, libelle ->
                             showDialog = true

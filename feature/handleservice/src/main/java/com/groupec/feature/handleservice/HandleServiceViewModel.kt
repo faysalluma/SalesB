@@ -23,7 +23,7 @@ data class HandleServiceUiState(
     val useIntForPriceAndAmount: Boolean = false,
     val activePaymentMode: Boolean = false,
     val activePrinter: Boolean = false,
-    val areServiceConstraintsEnabled: Boolean = false
+    val isUseIntForPriceAndAmountDisabled: Boolean = false
 )
 
 @HiltViewModel
@@ -48,7 +48,7 @@ class HandleServiceViewModel @Inject constructor(
                     useIntForPriceAndAmount = parameter.useintforpriceandamout,
                     activePaymentMode = parameter.activepaymentmode,
                     activePrinter = parameter.activeprinter,
-                    areServiceConstraintsEnabled = parameter.serviceview
+                    isUseIntForPriceAndAmountDisabled = parameter.serviceview
                 )
             }
         }
@@ -59,14 +59,13 @@ class HandleServiceViewModel @Inject constructor(
             if (value) {
                 current.copy(
                     serviceView = true,
-                    showImageOnProduct = false,
                     useIntForPriceAndAmount = true,
-                    areServiceConstraintsEnabled = true
+                    isUseIntForPriceAndAmountDisabled = true
                 )
             } else {
                 current.copy(
                     serviceView = false,
-                    areServiceConstraintsEnabled = false
+                    isUseIntForPriceAndAmountDisabled = false
                 )
             }
         }
@@ -77,8 +76,6 @@ class HandleServiceViewModel @Inject constructor(
     }
 
     fun updateShowImageOnProduct(value: Boolean) {
-        if (_uiState.value.areServiceConstraintsEnabled) return
-
         _uiState.update { it.copy(showImageOnProduct = value) }
 
         viewModelScope.launch {
@@ -87,7 +84,7 @@ class HandleServiceViewModel @Inject constructor(
     }
 
     fun updateUseIntForPriceAndAmount(value: Boolean) {
-        if (_uiState.value.areServiceConstraintsEnabled) return
+        if (_uiState.value.isUseIntForPriceAndAmountDisabled) return
 
         _uiState.update { it.copy(useIntForPriceAndAmount = value) }
 

@@ -14,6 +14,8 @@ import com.groupec.salesb.core.domain.product.GenerateProductListExcelUseCase
 import com.groupec.salesb.core.domain.product.GenerateProductListPdfUseCase
 import com.groupec.salesb.core.domain.product.GetAllProductsUseCase
 import com.groupec.salesb.core.domain.product.GetProductUseCase
+import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
+import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.saveExcelToDownloads
 import com.groupec.salesb.core.savePdfToDownloads
@@ -24,6 +26,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
@@ -38,7 +41,8 @@ class ProductListViewModel @Inject constructor(
     private val getAllProductsUseCase: GetAllProductsUseCase,
     private val deleteProductUseCase: DeleteProductUseCase,
     private val generateProductListPdfUseCase: GenerateProductListPdfUseCase,
-    private val generateProductListExcelUseCase: GenerateProductListExcelUseCase
+    private val generateProductListExcelUseCase: GenerateProductListExcelUseCase,
+    private val getParameterUseCase: GetParameterUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -55,6 +59,20 @@ class ProductListViewModel @Inject constructor(
 
     private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
+    private val _parameterState = MutableStateFlow(Parameter())
+    val parameterState: StateFlow<Parameter> = _parameterState.asStateFlow()
+
+    init {
+        observeParameters()
+    }
+
+    private fun observeParameters() {
+        viewModelScope.launch {
+            getParameterUseCase().collect { parameter ->
+                _parameterState.value = parameter
+            }
+        }
+    }
 
     val pagedProducts: Flow<PagingData<Product>> = _searchQuery
         .flatMapLatest { query ->
