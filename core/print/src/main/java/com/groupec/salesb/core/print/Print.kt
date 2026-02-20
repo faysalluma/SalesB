@@ -15,6 +15,7 @@ import com.groupec.salesb.core.convertToLocaleDateTimeFormat
 import com.groupec.salesb.core.formatAmount
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
+import com.groupec.salesb.core.model.data.others.paymentTypeLibelleResFromValue
 import com.groupec.salesb.core.toPercentFormat
 import java.util.Locale
 
@@ -116,6 +117,14 @@ class Print(
             // Date and Ticket Nimber
             append("[C]"+ context.getString(R.string.date) + " " + sale.datevente?.convertToLocaleDateTimeFormat() + "\n")
             append("[C]"+ context.getString(R.string.noticket) + " " + sale.id + "\n")
+            val paidByValue = sale.paymenttype
+                ?.takeIf { it.isNotBlank() }
+                ?.let { paymentType ->
+                    paymentTypeLibelleResFromValue(paymentType)?.let(context::getString) ?: paymentType
+                }
+            paidByValue?.let {
+                append("[C]"+ context.getString(com.groupec.salesb.core.R.string.payment_method, it) + "\n")
+            }
 
 
             // Add space

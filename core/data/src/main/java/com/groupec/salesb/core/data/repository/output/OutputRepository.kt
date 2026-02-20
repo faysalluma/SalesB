@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface OutputRepository {
     fun getOutputs(searchQuery: String) : Flow<PagingData<Output>>
+    suspend fun getAllOutputs(searchQuery: String) : Result<List<Output>>
     suspend fun saveOutput(output: Output) : Result<Unit>
     suspend fun deleteOutput(outputId: Int) : Result<Unit>
 }

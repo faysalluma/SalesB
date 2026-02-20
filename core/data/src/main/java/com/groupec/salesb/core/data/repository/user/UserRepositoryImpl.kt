@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.data.R
 import com.groupec.salesb.core.data.model.toUserEntity
+import com.groupec.salesb.core.data.model.toUserList
 import com.groupec.salesb.core.data.repository.common.UserLocalRepository
 import com.groupec.salesb.core.data.repository.common.UserRemoteRepository
 import com.groupec.salesb.core.data.repository.common.UserSyncRepository
@@ -74,6 +75,19 @@ class UserRepositoryImpl @Inject constructor(
                 UserPagingSource(apiService, searchQuery)
             }
         ).flow
+    }
+
+    override suspend fun getAllUsers(searchQuery: String): Result<List<User>> {
+        return try {
+            val response = apiService.getUsers(searchQuery)
+            if (!response.isSuccessful) {
+                return Result.Error(HttpException(response))
+            }
+            val users = response.body()?.toUserList().orEmpty()
+            Result.Success(users)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
     override suspend fun saveUser(user: User): Result<Unit> {

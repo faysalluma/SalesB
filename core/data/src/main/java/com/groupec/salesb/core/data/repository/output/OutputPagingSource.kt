@@ -23,7 +23,7 @@ class OutputPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Output> {
         return try {
             val currentPage = params.key ?: 1
-            val response = api.getOutputs(currentPage, params.loadSize, searchQuery)
+            val response = api.getPagedOutputs(currentPage, params.loadSize, searchQuery)
             if (response.isSuccessful) {
                 val outputs = response.body()?.toOutputList().orEmpty()
                 Log.d("Paging", "Loading page: $currentPage, items: ${outputs.size}")

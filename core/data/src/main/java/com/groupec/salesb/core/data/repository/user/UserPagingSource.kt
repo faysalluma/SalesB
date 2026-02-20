@@ -3,9 +3,7 @@ package com.groupec.salesb.core.data.repository.user
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.groupec.salesb.core.data.model.toCategorieList
 import com.groupec.salesb.core.data.model.toUserList
-import com.groupec.salesb.core.model.data.Category
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.network.retrofit.ApiService
 import retrofit2.HttpException
@@ -25,7 +23,7 @@ class UserPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, User> {
         return try {
             val currentPage = params.key ?: 1
-            val response = api.getUsers(currentPage, params.loadSize, searchQuery)
+            val response = api.getPagedUsers(currentPage, params.loadSize, searchQuery)
             if (response.isSuccessful) {
                 val users = response.body()?.toUserList().orEmpty()
                 Log.d("Paging", "Loading page: $currentPage, items: ${users.size}")

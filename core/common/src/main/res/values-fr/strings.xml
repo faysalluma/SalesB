@@ -23,6 +23,7 @@
     <string name="menu_product_view">Produits</string>
     <string name="menu_update_password_view">Modifier mon mot de passe</string>
     <string name="manage_your_account_view">Gestion de comptes</string>
+    <string name="handle_services">Gestion des services</string>
     <string name="menu_log_out_view">Se déconnecter</string>
     <string name="menu_settings_view">Paramètres</string>
     <string name="menu_category_view">Catégories</string>
@@ -34,8 +35,10 @@
     <string name="date_of_checkout">Date de passage en caisse :</string>
     <string name="invoice_no">N° de facture :</string>
     <string name="invoice_date">Date de facturation :</string>
+    <string name="payment_method">Moyen de paiement : %s</string>
     <string name="invoice_summary">Récapitulatif de votre facture - %d article(s)</string>
     <string name="infos_tva">TVA : %s</string>
     <string name="total_sale_view">TOTAL : %s</string>
     <string name="etablish_invoice_message">Arrêté la présente facture à la somme de : %s.</string>
+    <string name="paid_by_no_param">Moyen de paiement :</string>
 </resources>

@@ -31,6 +31,18 @@ class CategoryRepositoryImpl @Inject constructor(private val apiService: ApiServ
         emit(result)
     }.flowOn(Dispatchers.IO)
 
+    override suspend fun getAllCategories(searchQuery: String): Result<List<Category>> {
+        return try {
+            val response = apiService.getAllCategories(searchQuery)
+            if (!response.isSuccessful) {
+                return Result.Error(retrofit2.HttpException(response))
+            }
+            Result.Success(response.body()?.toCategorieList().orEmpty())
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override fun getPagedCategories(searchQuery: String): Flow<PagingData<Category>> {
         return Pager(
             config = PagingConfig(

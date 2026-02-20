@@ -13,6 +13,7 @@ fun SaleItemResponse.toSale() = Sale(
     id = id,
     datevente = datevente?.toDate(),
     totalprix = totalprix,
+    paymenttype = paymenttype,
     datemodif = datemodif,
     userid = user?.id,
     username = user?.nomprenom,

@@ -22,6 +22,9 @@ data class SaleItemResponse(
     @SerializedName("client")
     val client: ClientReducedResponse ? = null,
 
+    @SerializedName("paymenttype")
+    val paymenttype: String ? = null,
+
     @SerializedName("datemodif")
     val datemodif: String ? = null,
 

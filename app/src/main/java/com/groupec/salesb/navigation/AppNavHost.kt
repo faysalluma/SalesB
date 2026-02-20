@@ -10,12 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -28,8 +26,6 @@ import com.groupec.feature.sale.SaleScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
 import com.groupec.feature.termsandconditions.TermsAndConditionsScreen
-import com.groupec.salesb.R
-import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.model.data.Category
 import com.groupec.salesb.core.model.data.Output
 import com.groupec.salesb.core.model.data.Product
@@ -38,6 +34,7 @@ import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
+import com.groupec.feature.handleservice.HandleServiceScreen
 import com.groupec.salesb.ui.customlistdetailpane.AccountNavContent
 import com.groupec.salesb.ui.customlistdetailpane.CategoryNavContent
 import com.groupec.salesb.ui.customlistdetailpane.OutputNavContent
@@ -465,6 +462,11 @@ fun AppNavHost(
             ForgotPasswordScreen {
                 navController.popBackStack()
             }
+        }
+
+
+        composable(NavigationItem.HandleService.route) {
+            HandleServiceScreen()
         }
 
         composable(

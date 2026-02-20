@@ -17,6 +17,12 @@ data class Parameter(
     val primarycolor: String = "",
     val secondarycolor: String = "",
     val loadproducts: Boolean = false,
+    val defaultpaymenttype: String = "",
     val tva: Double = 0.0,
-    val termsandconditions: Boolean = true
+    val termsandconditions: Boolean = true,
+    val serviceview: Boolean = false,
+    val showimageonproduct: Boolean = false,
+    val useintforpriceandamout: Boolean = false,
+    val activepaymentmode: Boolean = false,
+    val activeprinter: Boolean = false
 ) : Parcelable

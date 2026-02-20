@@ -84,12 +84,17 @@ interface ApiService {
     suspend fun getPagedCategories(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
     ): Response<CategoryResponse>
 
-    @GET(Constants.GET_OUTPUTS)
-    suspend fun getOutputs(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
+    @GET(Constants.GET_PAGED_OUTPUTS)
+    suspend fun getPagedOutputs(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
     ): Response<OutputResponse>
+
+    @GET(Constants.GET_OUTPUTS) suspend fun getOutputs(@Query("search") search: String): Response<OutputResponse>
 
     @GET(Constants.GET_CATEGORIES)
     suspend fun getCategories(): Response<CategoryResponse>
+
+    @GET(Constants.GET_ALL_CATEGORIES)
+    suspend fun getAllCategories(@Query("search") search: String): Response<CategoryResponse>
 
     @GET(Constants.GET_RAYONS)
     suspend fun getRayons(@Query("search") search: String): Response<RayonResponse>
@@ -101,9 +106,12 @@ interface ApiService {
     suspend fun getSales(@Query("page") page: Int, @Query("limit") limit: Int, @QueryMap searchParams: Map<String, String>
     ): Response<SaleResponse>
 
-    @GET(Constants.GET_USERS)
-    suspend fun getUsers(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
+    @GET(Constants.GET_PAGED_USERS)
+    suspend fun getPagedUsers(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
     ): Response<UserResponse>
+
+    @GET(Constants.GET_USERS)
+    suspend fun getUsers(@Query("search") search: String): Response<UserResponse>
 
     /* POST API */
     @Multipart
