@@ -65,9 +65,14 @@ import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.getDrawableResIdIfExists
+import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.SaleDetail
+import com.groupec.salesb.core.model.data.others.paymentTypeFromLabel
+import com.groupec.salesb.core.model.data.others.paymentTypeFromValue
+import com.groupec.salesb.core.model.data.others.paymentTypeLabels
+import com.groupec.salesb.core.model.data.others.paymentTypeValue
 import com.groupec.salesb.core.print.Print
 import com.groupec.salesb.core.print.PrintAction
 import com.groupec.salesb.core.ui.ProductGridAdaptive
@@ -164,12 +169,6 @@ fun SaleScreen(
         }
     }
 
-    LaunchedEffect(selectedProducts.size) {
-        if (selectedProducts.isEmpty()) {
-            showSummary = false
-        }
-    }
-
     val totalAmount by remember {
         derivedStateOf {
             selectedProducts.fold(0.0) { acc, productLine ->
@@ -187,10 +186,27 @@ fun SaleScreen(
         }
     }
 
+    // For payment type selector
+    val paymentTypeList = paymentTypeLabels(context)
+    val firstPaymentTypeDefaultValue = paymentTypeFromValue(parameter.defaultpaymenttype)?.let { type ->
+        context.getString(type.libelleRes)
+    } ?: ""
+    var paymentTypeState by remember { mutableStateOf(firstPaymentTypeDefaultValue) }
+    val paymentTypeValueForSave = paymentTypeFromLabel(context, paymentTypeState)?.let(::paymentTypeValue)
+
+    LaunchedEffect(selectedProducts.size) {
+        if (selectedProducts.isEmpty()) {
+            showSummary = false
+            paymentTypeState = firstPaymentTypeDefaultValue
+        }
+    }
+
     when (addSaleUiState) {
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
                 val (printAction, sale) = (addSaleUiState as FormUIState.Success).data
+                // Consume state immediately to avoid re-triggering on configuration change.
+                viewModel.resetFlow()
                 savedSale = sale // Set saved sale
                 when (printAction) {
                     PrintAction.Thermal -> {
@@ -220,28 +236,34 @@ fun SaleScreen(
                     }
                     else -> {}
                 }
+                // Close portrait summary immediately to avoid transient EmptyScreen flicker after save.
+                showSummary = false
                 selectedProducts.clear()
                 textFieldValues.clear()
                 products.refresh()
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithState(
-                        message = context.getString(
-                            com.groupec.salesb.core.ui.R.string.product_operate_succesfully
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithState(
+                            message = context.getString(
+                                com.groupec.salesb.core.ui.R.string.product_operate_succesfully
+                            )
                         )
                     )
-                )
-                viewModel.resetFlow()
+                }
             }
         }
         is FormUIState.Error -> {
             LaunchedEffect(Unit) {
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithState(
-                        message = (addSaleUiState as FormUIState.Error).message,
-                        isError = true
-                    )
-                )
+                // Consume state immediately to avoid re-triggering on configuration change.
                 viewModel.resetFlow()
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithState(
+                            message = (addSaleUiState as FormUIState.Error).message,
+                            isError = true
+                        )
+                    )
+                }
             }
         }
         else -> {}
@@ -266,7 +288,7 @@ fun SaleScreen(
                     selectedProducts = selectedProducts,
                     textFieldValues = textFieldValues,
                     quantityCheck = quantityCheck,
-                    devise = parameter.devise,
+                    parameter = parameter,
                     isLoading = isLoading,
                     onSave = { total, printAction ->
                         val saleDetail = selectedProducts.map { productLine ->
@@ -278,14 +300,18 @@ fun SaleScreen(
                                 prix = productLine.second.prixttc
                             )
                         }
-                        viewModel.addSale(Sale(totalprix = total, details = saleDetail), printAction)
+                        viewModel.addSale(Sale(totalprix = total, paymenttype = paymentTypeValueForSave, details = saleDetail), printAction)
                     },
                     onClear = {
                         selectedProducts.clear()
                         textFieldValues.clear()
-                        showSummary = false
+                        paymentTypeState = firstPaymentTypeDefaultValue
                     },
-                    onQuantityChange = onQuantityChange
+                    onQuantityChange = onQuantityChange,
+                    paymentTypeState = paymentTypeState,
+                    onPaymenTypeSelected = {
+                        paymentTypeState = it
+                    }
                 )
             }
         } else {
@@ -408,11 +434,13 @@ fun SaleScreen(
 
             Box(modifier = Modifier.weight(0.4f)) {
                 SaleDetailScreen(
-                    modifier = Modifier.fillMaxSize().padding(start = 18.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 18.dp),
                     selectedProducts = selectedProducts,
                     textFieldValues = textFieldValues,
                     quantityCheck = quantityCheck,
-                    devise = parameter.devise,
+                    parameter = parameter,
                     isLoading = isLoading,
                     onSave = { total, printAction ->
                         val saleDetail = selectedProducts.map { productLine ->
@@ -424,13 +452,18 @@ fun SaleScreen(
                                 prix = productLine.second.prixttc
                             )
                         }
-                        viewModel.addSale(Sale(totalprix = total, details = saleDetail), printAction)
+                        viewModel.addSale(Sale(totalprix = total, paymenttype = paymentTypeValueForSave, details = saleDetail), printAction)
                     },
                     onClear = {
                         selectedProducts.clear()
                         textFieldValues.clear()
+                        paymentTypeState = firstPaymentTypeDefaultValue
                     },
-                    onQuantityChange = onQuantityChange
+                    onQuantityChange = onQuantityChange,
+                    paymentTypeState = paymentTypeState,
+                    onPaymenTypeSelected = {
+                        paymentTypeState = it
+                    }
                 )
             }
         }
@@ -443,22 +476,26 @@ fun SaleDetailScreen(
     selectedProducts: MutableList<Pair<Int, Product>>,
     textFieldValues: MutableMap<Int, String>,
     quantityCheck: MutableMap<Int, Boolean>,
-    devise: String,
+    parameter: Parameter,
     isLoading: Boolean,
     onSave: (Double, PrintAction) -> Unit,
     onClear: () -> Unit,
-    onQuantityChange: (Pair<Int, Product>) -> Unit
+    onQuantityChange: (Pair<Int, Product>) -> Unit,
+    paymentTypeState: String,
+    onPaymenTypeSelected: (String) -> Unit
 ) {
     SaleDetailCard(
         modifier = modifier,
         selectedProducts = selectedProducts,
         textFieldValues = textFieldValues,
-        devise = devise,
+        parameter = parameter,
         isLoading = isLoading,
         onQuantityChange = onQuantityChange,
         onSave = onSave,
         onClear = onClear,
-        quantityCheck = quantityCheck
+        quantityCheck = quantityCheck,
+        paymentTypeState = paymentTypeState,
+        onPaymenTypeSelected = onPaymenTypeSelected
     )
 }
 

@@ -485,7 +485,7 @@ fun SaleListScreen(
 
                     if (showDialog) {
                         AppCustomDialog(setShowDialog = { showDialog = it} ) {
-                            SaleItemDetailProduct(sale = saleGetValue, devise = parameter.devise)
+                            SaleItemDetailProduct(sale = saleGetValue, parameter = parameter)
                         }
                     }
 

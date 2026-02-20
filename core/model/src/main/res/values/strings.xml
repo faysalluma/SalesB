@@ -4,4 +4,7 @@
     <string name="amount_view">Amount</string>
     <string name="price_view">Price</string>
     <string name="label_view">Label</string>
+    <string name="card">Credit Card</string>
+    <string name="cash">Cash</string>
+    <string name="cheque">Cashier\'s check</string>
 </resources>

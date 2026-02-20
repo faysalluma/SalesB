@@ -15,6 +15,7 @@ interface UserRepository{
     suspend fun logout() : Result<Unit>
     suspend fun forgotPassword(email: String) : Result<Unit>
     fun getPagedUsers(searchQuery: String) : Flow<PagingData<User>>
+    suspend fun getAllUsers(searchQuery: String) : Result<List<User>>
     suspend fun saveUser(user: User) : Result<Unit>
     suspend fun deleteUser(userId: Int) : Result<Unit>
 }

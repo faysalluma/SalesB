@@ -46,8 +46,8 @@ fun AppExposedDropdownMenu(
     modifier: Modifier = Modifier,
     items: List<String>,
     label: String ? = null,
-    value: String = "",
-    onValueChange: ((String) -> Unit) ? = null,
+    value: String = "", // Selector value
+    onValueChange: ((String) -> Unit) ? = null, // For update selector value
     onItemSelected: (Int, String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }

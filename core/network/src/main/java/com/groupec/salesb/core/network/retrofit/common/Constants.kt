@@ -22,12 +22,15 @@ class Constants {
         const val GET_PAGED_PRODUCTS = "getPagedProducts"
         const val GET_PRODUCTS = "getProducts"
         const val GET_PAGED_CATEGORIES = "getPagedCategories"
+        const val GET_PAGED_OUTPUTS = "getPagedOutputs"
         const val GET_OUTPUTS = "getOutputs"
         const val GET_CATEGORIES = "getCategories"
+        const val GET_ALL_CATEGORIES = "getAllCategories"
         const val GET_PRODUCTS_LOW_INVENTORY = "getProductsWithLowInventory"
         const val GET_RAYONS = "getRayons"
         const val GET_SALES = "getSales"
         const val FORGOT_PASSWORD = "forgotPassword/{email}"
+        const val GET_PAGED_USERS= "getPagedUsers"
         const val GET_USERS= "getUsers"
 
         // Post endpoint

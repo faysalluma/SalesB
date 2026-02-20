@@ -26,6 +26,7 @@
     <string name="menu_rayon_view">Sections</string>
     <string name="menu_update_password_view">Modify password</string>
     <string name="manage_your_account_view">Account management</string>
+    <string name="handle_services">Service management</string>
     <string name="menu_log_out_view">Log out</string>
     <string name="menu_settings_view">Settings</string>
 
@@ -34,8 +35,10 @@
     <string name="date_of_checkout">Date of checkout:</string>
     <string name="invoice_no">Invoice no:</string>
     <string name="invoice_date">Invoice date:</string>
+    <string name="payment_method">Payment method: %s</string>
     <string name="invoice_summary">Invoice summary - %d item(s)</string>
     <string name="infos_tva">TVA: %s</string>
     <string name="total_sale_view">TOTAL: %s</string>
     <string name="etablish_invoice_message">Established the present invoice at the sum of: %s.</string>
+    <string name="paid_by_no_param">Payment method:</string>
 </resources>

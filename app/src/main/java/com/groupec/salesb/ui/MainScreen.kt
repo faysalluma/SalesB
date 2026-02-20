@@ -377,6 +377,9 @@ fun getDropdownItemsWithActions(
     // Add Parameters items
     val hasCategoryPrivilege = privileges.any { it in Privileges.Category.getKeysByApprovals(cudPrivileges) }
     val hasRayonPrivilege =  privileges.any { it in Privileges.Rayon.getKeysByApprovals(cudPrivileges) }
+    val hasHandleServicePrivilege = privileges.any { it in Privileges.HandleService.getKeysByApprovals(
+        listOf(Approval.AUTHORIZE_VIEW)
+    ) }
     val hasUserSettingsPrivilege =  privileges.any { it in Privileges.UserSettings.getKeysByApprovals(
         listOf(Approval.AUTHORIZE_VIEW)
     ) }
@@ -422,6 +425,18 @@ fun getDropdownItemsWithActions(
                 context.getString(R.string.manage_your_account)
             ) {
                 navController.navigate(NavigationItem.Account.route) {
+                    launchSingleTop = true
+                }
+            }
+        )
+    }
+
+    if (hasHandleServicePrivilege) {
+        items.add(
+            MenuItem.Action(
+                context.getString(R.string.menu_handle_service)
+            ) {
+                navController.navigate(NavigationItem.HandleService.route) {
                     launchSingleTop = true
                 }
             }
@@ -484,6 +499,7 @@ private fun isPortaitScreenActive(route: String?): Boolean {
         NavigationItem.MySales.route,
         NavigationItem.SaveSale.route,
         NavigationItem.Account.route,
+        NavigationItem.HandleService.route,
         NavigationItem.Outputs.route,
         NavigationItem.Category.route,
         NavigationItem.Rayon.route
