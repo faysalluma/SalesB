@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.convertToLocaleDateTimeFormat
 import com.groupec.salesb.core.designsystem.component.TitleLarge
 import com.groupec.salesb.core.designsystem.theme.Primary
+import com.groupec.salesb.core.formatAmount
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.others.paymentTypeLibelleResFromValue
@@ -33,7 +34,7 @@ fun SaleItemDetailProduct(
                 title = stringResource(
                     R.string.sale_item_dialog_title,
                     s.id ?: 0,
-                    "${s.totalprix} ${parameter.devise}",
+                    "${s.totalprix.formatAmount()} ${parameter.devise}",
                     s.datevente?.convertToLocaleDateTimeFormat(
                     )?:"",
                     s.username.toString()

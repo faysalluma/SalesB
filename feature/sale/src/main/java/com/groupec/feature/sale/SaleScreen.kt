@@ -75,6 +75,7 @@ import com.groupec.salesb.core.model.data.others.paymentTypeLabels
 import com.groupec.salesb.core.model.data.others.paymentTypeValue
 import com.groupec.salesb.core.print.Print
 import com.groupec.salesb.core.print.PrintAction
+import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.core.ui.ProductGridAdaptive
 import com.groupec.salesb.core.ui.ProductGridPortrait
 import com.groupec.salesb.core.ui.SaleDetailCard
@@ -157,15 +158,22 @@ fun SaleScreen(
 
     val onQuantityChange: (Pair<Int, Product>) -> Unit = { productLine ->
         val (index, product) = productLine
+        val isIntegerQuantityMode = parameter.serviceview || parameter.useintforpriceandamout
         val quantityValue = textFieldValues[index]?.takeIf { it.isNotEmpty() }?.toDoubleOrNull() ?: 1.0
         if (quantityValue <= 0) {
             selectedProducts.removeAll { it.first == index }
             textFieldValues.remove(index)
             quantityCheck.remove(index)
         } else {
-            textFieldValues[index] = quantityValue.toString()
+            val normalizedQuantity = if (isIntegerQuantityMode) {
+                quantityValue.toInt().toString()
+            } else {
+                quantityValue.toString()
+            }
+            textFieldValues[index] = normalizedQuantity
             // Check if quantityValue > product quantity
-            quantityCheck[index] = product.qtestock?.let { quantityValue > it } ?: false
+            val quantityForStock = if (isIntegerQuantityMode) quantityValue.toInt().toDouble() else quantityValue
+            quantityCheck[index] = product.qtestock?.let { quantityForStock > it } ?: false
         }
     }
 
@@ -201,6 +209,23 @@ fun SaleScreen(
         }
     }
 
+    LaunchedEffect(parameter.serviceview, parameter.useintforpriceandamout) {
+        if (parameter.serviceview || parameter.useintforpriceandamout) {
+            selectedProducts.forEach { productLine ->
+                val productId = productLine.first
+                val value = textFieldValues[productId]?.toDoubleOrNull() ?: return@forEach
+                textFieldValues[productId] = value.toInt().toString()
+                quantityCheck[productId] = productLine.second.qtestock?.let { value.toInt() > it } ?: false
+            }
+        }
+    }
+
+    // Update paramater when back to handle service
+    ComposableLifecycle(
+        onResume = {
+            viewModel.getParameter()
+        }
+    )
     when (addSaleUiState) {
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
@@ -332,13 +357,20 @@ fun SaleScreen(
                     textFieldValues = textFieldValues,
                     quantityCheck = quantityCheck,
                     isExpandedWidth = isExpandedWidth,
-                    devise = parameter.devise,
+                    parameter = parameter,
                     onQuantityChange = onQuantityChange
                 )
                 // Bottom floating card
                 if (selectedProducts.isNotEmpty()) {
                     /*val totalLabel = totalAmount.formatAmount().plus(" ${parameter.devise}")
-                    val itemLabel = itemsCount.autoRound()
+                    val isIntegerQuantityMode = parameter.serviceview || parameter.useintforpriceandamout
+                    val itemLabel = if (isIntegerQuantityMode) {
+                        selectedProducts.sumOf { productLine ->
+                            textFieldValues[productLine.first]?.toDoubleOrNull()?.toInt() ?: 0
+                        }.toString()
+                    } else {
+                        itemsCount.autoRound()
+                    }
                     Card(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
@@ -373,7 +405,14 @@ fun SaleScreen(
                         }
                     }*/
 
-                    val itemLabel = itemsCount.autoRound()
+                    val isIntegerQuantityMode = parameter.serviceview || parameter.useintforpriceandamout
+                    val itemLabel = if (isIntegerQuantityMode) {
+                        selectedProducts.sumOf { productLine ->
+                            textFieldValues[productLine.first]?.toDoubleOrNull()?.toInt() ?: 0
+                        }.toString()
+                    } else {
+                        itemsCount.autoRound()
+                    }
                     val onShowSummary = { showSummary = true}
                     val stockLimit = quantityCheck.values.any { it }
                     if (!stockLimit) {
@@ -428,7 +467,7 @@ fun SaleScreen(
                     quantityCheck = quantityCheck,
                     isExpandedWidth = isExpandedWidth,
                     onQuantityChange = onQuantityChange,
-                    devise = parameter.devise
+                    parameter = parameter
                 )
             }
 
@@ -512,7 +551,7 @@ private fun ProductSelectionSection(
     textFieldValues: MutableMap<Int, String>,
     quantityCheck: MutableMap<Int, Boolean>,
     isExpandedWidth:  Boolean,
-    devise: String?,
+    parameter: Parameter,
     onQuantityChange: (Pair<Int, Product>) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -602,7 +641,7 @@ private fun ProductSelectionSection(
                             textFieldValues = textFieldValues,
                             isSearching = isSearching,
                             onQuantityChange = onQuantityChange,
-                            devise = devise
+                            parameter = parameter
                         )
                     } else {
                         ProductGridAdaptive(
@@ -610,7 +649,8 @@ private fun ProductSelectionSection(
                             selectedProducts = selectedProducts,
                             textFieldValues = textFieldValues,
                             quantityCheck = quantityCheck,
-                            isSearching = isSearching
+                            isSearching = isSearching,
+                            parameter = parameter
                         )
                     }
                 }

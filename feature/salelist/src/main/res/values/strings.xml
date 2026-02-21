@@ -16,4 +16,14 @@
     <string name="donwload_completed_and_save">Download successful and saved</string>
     <string name="filter">Filter list</string>
     <string name="select">Select</string>
+    <string name="export_to_pdf">Export to PDF</string>
+    <string name="exporter_en_excel">Export to Excel</string>
+    <string name="export_pdf_saved">Export completed and saved</string>
+    <string name="export_pdf_completed">Export completed</string>
+    <string name="export_pdf_failed">Export failed</string>
+    <string name="export_excel_saved">Export completed and saved</string>
+    <string name="export_excel_completed">Export completed</string>
+    <string name="export_excel_failed">Export failed</string>
+    <string name="no_sales_to_export">No sales to export</string>
+    <string name="permission_denied">Permission denied</string>
 </resources>

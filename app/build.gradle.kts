@@ -4,6 +4,11 @@ plugins {
     alias(libs.plugins.common.android.application)
     alias(libs.plugins.common.android.application.compose)
     alias(libs.plugins.common.android.hilt)
+
+    // Make sure that you have the Google services Gradle plugin
+    alias(libs.plugins.google.services)
+    // Add the Crashlytics Gradle plugin
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 val vcode = (((System.currentTimeMillis() / 1000) - 1451606400) / 10).toInt()
@@ -58,7 +63,6 @@ android {
 }
 
 dependencies {
-
     implementation(project(":feature:home"))
     implementation(project(":feature:login"))
     implementation(project(":feature:configuration"))
@@ -107,4 +111,12 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(libs.hilt.android.testing)
+
+    // Import the BoM for the Firebase platform
+    implementation(platform(libs.firebase.bom))
+
+    // Add the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 }

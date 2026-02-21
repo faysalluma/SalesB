@@ -59,14 +59,14 @@ fun HandleServiceScreen(
             titleRes = R.string.handle_service_show_product_images,
             descriptionRes = R.string.handle_service_show_product_images_desc,
             checked = uiState.showImageOnProduct,
-            enabled = !uiState.areServiceConstraintsEnabled,
+            enabled = true,
             type = HandleServiceToggleType.SHOW_IMAGE_ON_PRODUCT
         ),
         HandleServiceOption(
             titleRes = R.string.handle_service_use_integer_price,
             descriptionRes = R.string.handle_service_use_integer_price_desc,
             checked = uiState.useIntForPriceAndAmount,
-            enabled = !uiState.areServiceConstraintsEnabled,
+            enabled = !uiState.isUseIntForPriceAndAmountDisabled,
             type = HandleServiceToggleType.USE_INT_FOR_PRICE_AND_AMOUNT
         ),
         HandleServiceOption(

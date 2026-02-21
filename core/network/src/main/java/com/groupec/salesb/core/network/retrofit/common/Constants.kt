@@ -28,6 +28,8 @@ class Constants {
         const val GET_ALL_CATEGORIES = "getAllCategories"
         const val GET_PRODUCTS_LOW_INVENTORY = "getProductsWithLowInventory"
         const val GET_RAYONS = "getRayons"
+        const val GET_PAGED_SALES = "getPagedSales"
+
         const val GET_SALES = "getSales"
         const val FORGOT_PASSWORD = "forgotPassword/{email}"
         const val GET_PAGED_USERS= "getPagedUsers"

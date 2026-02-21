@@ -93,6 +93,12 @@ fun String.convertToViewDateFormat(): String {
     return targetFormat.format(date)
 }
 
+fun Double.formatAmountNoTrailingZero(): String {
+    val formatted = formatAmount()
+    return formatted.replace(Regex("([.,])0+$"), "")
+}
+
+
 
 // Because of BCrypt in Java/Kotlin (for org.mindrot.BCrypt) don't accept $2y$ format
 fun String.fixBCryptHash(): String {

@@ -1,7 +1,6 @@
 package com.groupec.salesb.core.network.model
 
 import com.google.gson.annotations.SerializedName
-import java.util.Date
 
 data class ParameterResponse(
     @SerializedName("parameter")
@@ -44,8 +43,8 @@ data class ParamItemResponse(
     @SerializedName("secondarycolor")
     val secondarycolor: String,
 
-    @SerializedName("loadproducts")
-    val loadproducts: Int,
+    @SerializedName("showimageonproduct")
+    val showimageonproduct: Int,
 
     @SerializedName("defaultpaymenttype")
     val defaultpaymenttype: String ? = null,

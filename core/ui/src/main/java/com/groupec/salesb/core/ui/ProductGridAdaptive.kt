@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import com.groupec.salesb.core.model.data.Product
 import androidx.paging.compose.LazyPagingItems
+import com.groupec.salesb.core.model.data.Parameter
 
 @Composable
 fun ProductGridAdaptive(
@@ -21,10 +22,16 @@ fun ProductGridAdaptive(
     selectedProducts: MutableList<Pair<Int, Product>>,
     textFieldValues: MutableMap<Int, String>,
     quantityCheck: MutableMap<Int, Boolean>,
-    isSearching: Boolean
+    isSearching: Boolean,
+    parameter: Parameter
 ) {
+    val columns = if (parameter.serviceview) {
+        GridCells.Fixed(2)
+    } else {
+        GridCells.Adaptive(minSize = 124.dp)
+    }
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 124.dp), // Taille minimale pour chaque élément (calcule le nombre de colonnes selon la largeur disponible)
+        columns = columns, // Taille minimale pour chaque élément (calcule le nombre de colonnes selon la largeur disponible)
         contentPadding = PaddingValues(bottom = 8.dp), // marge interieur autour de l'ensemble de la grille
         horizontalArrangement = Arrangement.spacedBy(16.dp), // espace entre les lignes de la grille (verticalement)
         verticalArrangement = Arrangement.spacedBy(16.dp), //  espace entre les colonnes de la grille (horizontalement)
@@ -38,6 +45,7 @@ fun ProductGridAdaptive(
                 ProductGridItem(
                     product = product,
                     isChecked = isChecked,
+                    parameter = parameter,
                     onclick = {
                         if (isChecked) {
                             selectedProducts.remove(Pair(product.id, product))
