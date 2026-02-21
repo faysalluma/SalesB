@@ -1,6 +1,7 @@
 package com.groupec.salesb.core.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -168,20 +169,24 @@ private fun ProductGridMerchantPortraitItem(
                 .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row {
-                ProductImage(url = product.image?.let { Constants.UPLOAD_URL.plus(it) })
-                if (quantity > 0) {
-                    Icon(
-                        imageVector = CheckCircle,
-                        contentDescription = "Selected",
-                        tint = Primary
-                    )
+            if (parameter.showimageonproduct) {
+                Row {
+                    ProductImage(url = product.image?.let { Constants.UPLOAD_URL.plus(it) })
+                    if (quantity > 0) {
+                        Icon(
+                            imageVector = CheckCircle,
+                            contentDescription = "Selected",
+                            tint = Primary
+                        )
+                    }
                 }
+                Spacer(modifier = Modifier.height(8.dp))
             }
-            Spacer(modifier = Modifier.height(8.dp))
+
             Text(
                 text = product.libelle,
-                maxLines = 1,
+                minLines = if (parameter.showimageonproduct) 1 else 2,
+                maxLines =  if (parameter.showimageonproduct) 1 else 2,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -252,84 +257,89 @@ private fun ProductGridServicePortraitItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(14.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (parameter.showimageonproduct) {
-                    Row(
-                        modifier = Modifier.padding(end = 12.dp)
-                    ) {
-                        ProductImage(url = product.image?.let { Constants.UPLOAD_URL.plus(it) })
-                        if (quantity > 0) {
-                            Icon(
-                                imageVector = CheckCircle,
-                                contentDescription = "Selected",
-                                tint = Primary
-                            )
-                        }
-                    }
-                }
-
-                Column{
-                    Text(
-                        text = product.libelle,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "${product.prixttc} ${parameter.devise}",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            }
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            if (parameter.showimageonproduct) {
                 Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.padding(end = 12.dp)
                 ) {
-                    IconButton(
-                        onClick = onRemove,
-                        enabled = quantity > 0
-                    ) {
+                    ProductImage(url = product.image?.let { Constants.UPLOAD_URL.plus(it) })
+                    if (quantity > 0) {
                         Icon(
-                            imageVector = AppIcons.MinusCircleOutline,
-                            contentDescription = "Minus quantity",
-                            tint = if (quantity > 0) Primary else Silver
-                        )
-                    }
-                    Text(
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                        text = quantity.toString(),
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    IconButton(onClick = onAdd) {
-                        Icon(
-                            imageVector = AppIcons.AddCircleOutline,
-                            contentDescription = "Add quantity",
+                            imageVector = CheckCircle,
+                            contentDescription = "Selected",
                             tint = Primary
                         )
                     }
                 }
+            }
+
+            Column(
+                modifier = Modifier
+                    .weight(1f),
+            ) {
+                Text(
+                    text = product.libelle,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Medium
+                )
+                Row (
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.padding(end = 4.dp),
+                        text = "${product.prixttc} ${parameter.devise}",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(
+                                onClick = onRemove,
+                                enabled = quantity > 0
+                            ) {
+                                Icon(
+                                    imageVector = AppIcons.MinusCircleOutline,
+                                    contentDescription = "Minus quantity",
+                                    tint = if (quantity > 0) Primary else Silver
+                                )
+                            }
+                            Text(
+                                modifier = Modifier.align(Alignment.CenterVertically),
+                                text = quantity.toString(),
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                            IconButton(onClick = onAdd) {
+                                Icon(
+                                    imageVector = AppIcons.AddCircleOutline,
+                                    contentDescription = "Add quantity",
+                                    tint = Primary
+                                )
+                            }
+                        }
+                    }
+                }
                 product.qtestock?.let {
                     if (quantity > it) {
-                        Text(
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.titleSmall,
-                            text = stringResource(R.string.quantity_greater),
-                            color = MaterialTheme.colorScheme.error
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.titleSmall,
+                                text = stringResource(R.string.quantity_greater),
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
                     }
                 }
             }
