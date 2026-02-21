@@ -188,9 +188,9 @@ fun generateInvoicePdf(
         totalSale += montant
         productTable.addCell(createCell(detail.id.toString()))
         productTable.addCell(createCell(detail.libelle ?: ""))
-        productTable.addCell(createCell("%.2f".format(detail.prix)))
+        productTable.addCell(createCell(detail.prix.formatAmount(forceStyleFrenchUseDot = true)))
         productTable.addCell(createCell(detail.qte.toString()))
-        productTable.addCell(createCell("%.2f".format(montant)))
+        productTable.addCell(createCell(montant.formatAmount(forceStyleFrenchUseDot = true)))
     }
     document.add(productTable)
 
@@ -235,7 +235,7 @@ fun generateInvoicePdf(
         Paragraph(
             context.getString(
                 R.string.total_sales,
-                totalSale.formatAmount() + " " + parameter.devise
+                totalSale.formatAmount(forceStyleFrenchUseDot = true) + " " + parameter.devise
             )
         )
         .setFont(boldFont)

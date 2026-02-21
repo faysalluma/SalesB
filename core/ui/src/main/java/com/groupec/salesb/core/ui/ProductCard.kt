@@ -33,6 +33,7 @@ import com.groupec.salesb.core.toDate
 fun ProductCard(
     product: Product,
     isSelected: Boolean,
+    showQuantity: Boolean,
     onViewDetail: (Product) -> Unit,
     onDelete: (Int, String) -> Unit
 ) {
@@ -54,12 +55,22 @@ fun ProductCard(
         },
         supportingContent = {
             Text(
-                text = stringResource(
-                    R.string.product_item_detail,
-                    product.datecreation?.dayMonthYear() ?: stringResource(R.string.none),
-                    product.prixttc, product.qtestock ?: 0,
-                    product.username ?: ""
-                )
+                text = if (showQuantity) {
+                    stringResource(
+                        R.string.product_item_detail,
+                        product.datecreation?.dayMonthYear() ?: stringResource(R.string.none),
+                        product.prixttc,
+                        product.qtestock ?: 0,
+                        product.username ?: ""
+                    )
+                } else {
+                    stringResource(
+                        R.string.product_item_detail_without_quantity,
+                        product.datecreation?.dayMonthYear() ?: stringResource(R.string.none),
+                        product.prixttc,
+                        product.username ?: ""
+                    )
+                }
             )
         },
         trailingContent = {
@@ -117,6 +128,7 @@ fun ProductCardPreview() {
                 datemodif = "2022:10:12 16:51".toDate(),
             ),
             isSelected = false,
+            showQuantity = true,
             onViewDetail = {},
             onDelete = { id, libelle ->
             }

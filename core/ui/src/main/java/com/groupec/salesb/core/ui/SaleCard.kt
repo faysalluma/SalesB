@@ -26,12 +26,15 @@ import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 import com.groupec.salesb.core.designsystem.theme.White
+import com.groupec.salesb.core.formatAmount
+import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.SaleDetail
 import com.groupec.salesb.core.print.PrintAction
 
 @Composable
 fun SaleCard(
+    parameter: Parameter,
     sale: Sale,
     onViewDetail: (Sale) -> Unit,
     onPrintOrShare: (Sale, PrintAction) -> Unit
@@ -64,19 +67,21 @@ fun SaleCard(
                                 expanded = false // Close DropdownMenuItem
                             }
                         )
-                        DropdownMenuItem(
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = AppIcons.Print,
-                                    contentDescription = "Print a receipt"
-                                )
-                            },
-                            text = { Text(stringResource(R.string.print_receipt), color = Black) },
-                            onClick = {
-                                onPrintOrShare(sale, PrintAction.Thermal)
-                                expanded = false // Close DropdownMenuItem
-                            }
-                        )
+                        if (parameter.activeprinter) {
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = AppIcons.Print,
+                                        contentDescription = "Print a receipt"
+                                    )
+                                },
+                                text = { Text(stringResource(R.string.print_receipt), color = Black) },
+                                onClick = {
+                                    onPrintOrShare(sale, PrintAction.Thermal)
+                                    expanded = false // Close DropdownMenuItem
+                                }
+                            )
+                        }
                         DropdownMenuItem(
                             leadingIcon = {
                                 Icon(
@@ -140,7 +145,7 @@ fun TableRow(
                 isTitle = isTitle
             )
             TableCell(
-                text =  sale?.totalprix?.toString() ?: stringResource(R.string.total_amount),
+                text =  sale?.totalprix?.formatAmount() ?: stringResource(R.string.total_amount),
                 weight = column3Weight,
                 isTitle = isTitle
             )
@@ -172,6 +177,7 @@ fun SaleCardPreview() {
         Column {
             SaleHeaderCard()
             SaleCard(
+                parameter = Parameter(),
                 Sale(
                     id = 1,
                     totalprix = 3.0,

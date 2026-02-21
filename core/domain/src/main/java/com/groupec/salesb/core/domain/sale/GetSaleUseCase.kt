@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetSaleUseCase @Inject constructor(private val saleRepository: SaleRepository) {
-    operator fun invoke(searchParams : Map<String, String>) : Flow<PagingData<Sale>> = saleRepository.getPagedProducts(searchParams)
+    operator fun invoke(searchParams : Map<String, String>) : Flow<PagingData<Sale>> = saleRepository.getPagedSales(searchParams)
 }

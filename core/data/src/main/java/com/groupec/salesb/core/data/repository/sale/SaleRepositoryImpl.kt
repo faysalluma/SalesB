@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.data.R
 import com.groupec.salesb.core.data.model.toSale
+import com.groupec.salesb.core.data.model.toSaleList
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.network.retrofit.ApiService
@@ -41,7 +42,7 @@ class SaleRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getPagedProducts(searchParams: Map<String, String>): Flow<PagingData<Sale>> {
+    override fun getPagedSales(searchParams: Map<String, String>): Flow<PagingData<Sale>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 15,
@@ -52,5 +53,18 @@ class SaleRepositoryImpl @Inject constructor(
                 SalePagingSource(apiService, searchParams)
             }
         ).flow
+    }
+
+    override suspend fun getAllSales(searchParams: Map<String, String>): Result<List<Sale>> {
+        return try {
+            val response = apiService.getSales(searchParams)
+            if (!response.isSuccessful) {
+                return Result.Error(HttpException(response))
+            }
+            val sales = response.body()?.toSaleList().orEmpty()
+            Result.Success(sales)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 }

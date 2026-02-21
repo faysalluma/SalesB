@@ -10,6 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
+import com.groupec.salesb.core.formatAmount
 import com.groupec.salesb.core.model.data.SaleDetail
 import java.util.Locale
 import com.groupec.salesb.core.ui.R
@@ -65,7 +66,7 @@ fun ProductTableRow(
                 isTitle = isTitle
             )
             TableCell(
-                text = saleDetail?.prix?.toString() ?: stringResource(R.string.price),
+                text = saleDetail?.prix?.formatAmount() ?: stringResource(R.string.price),
                 weight = column3Weight,
                 isTitle = isTitle
             )

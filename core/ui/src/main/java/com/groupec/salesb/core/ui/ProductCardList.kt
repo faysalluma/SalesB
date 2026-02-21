@@ -19,6 +19,7 @@ import androidx.paging.compose.itemsIndexed
 fun ProductCardList(
     products: LazyPagingItems<Product>,
     isSearching: Boolean,
+    showQuantity: Boolean,
     onViewDetail: (Product) -> Unit,
     onDelete: (Int, String) -> Unit,
     removeSelectedBgColor: Boolean
@@ -39,6 +40,7 @@ fun ProductCardList(
                 ProductCard(
                     product = it,
                     isSelected = isSelected,
+                    showQuantity = showQuantity,
                     onViewDetail = {
                         selectedIndex = index
                         onViewDetail(it)

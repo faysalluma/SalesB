@@ -48,7 +48,7 @@ class SaleViewModel @Inject constructor(
     private val _addSaleUiState = MutableStateFlow<FormUIState<Pair<PrintAction, Sale>>>(FormUIState.Idle)
     val addSaleUiState : StateFlow<FormUIState<Pair<PrintAction, Sale>>> = _addSaleUiState.asStateFlow()
 
-    init {
+    fun getParameter() {
         viewModelScope.launch {
             _parameter.value = getParameterUseCase().first()
         }

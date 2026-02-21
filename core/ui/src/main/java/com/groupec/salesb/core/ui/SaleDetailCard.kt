@@ -117,7 +117,13 @@ fun SaleDetailCard(
                     )
                 }
 
-                SaleDetailList(selectedProducts, textFieldValues, onQuantityChange, parameter.devise, quantityCheck)
+                SaleDetailList(
+                    selectedProducts = selectedProducts,
+                    textFieldValues = textFieldValues,
+                    onQuantityChange = onQuantityChange,
+                    parameter = parameter,
+                    quantityCheck = quantityCheck
+                )
             }
 
             // Bottom section
@@ -172,7 +178,7 @@ private fun BottomContentScreen(
     val isCashSelected = selectedPaymentType == PaymentType.Cash
 
     // Dont show payment selector if paymentTypeDefaultValue empty
-    if (paymentTypeState.isNotEmpty()) {
+    if (paymentTypeState.isNotEmpty() && parameter.activepaymentmode) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -292,19 +298,21 @@ private fun BottomContentScreen(
                     }
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    DefaultButton(
-                        modifier = Modifier.wrapContentSize(),
-                        text = stringResource(R.string.validate_and_print_receipt)
-                    ) {
-                        onSave(total.toDouble(), PrintAction.Thermal)
-                        showDialog.value = false
+                    if (parameter.activeprinter) {
+                        DefaultButton(
+                            modifier = Modifier.wrapContentSize(),
+                            text = stringResource(R.string.validate_and_print_receipt),
+                            containerColor = LightGreen
+                        ) {
+                            onSave(total.toDouble(), PrintAction.Thermal)
+                            showDialog.value = false
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
                     }
-                    Spacer(modifier = Modifier.width(16.dp))
 
                     DefaultButton(
                         modifier = Modifier.wrapContentSize(),
                         text = stringResource(R.string.validate),
-                        containerColor = LightGreen
                     ) {
                         onSave(total.toDouble(), PrintAction.None)
                         showDialog.value = false
