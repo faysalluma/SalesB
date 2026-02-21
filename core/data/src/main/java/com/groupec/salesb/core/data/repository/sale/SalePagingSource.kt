@@ -23,7 +23,7 @@ class SalePagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Sale> {
         return try {
             val currentPage = params.key ?: 1
-            val response = api.getSales(currentPage, params.loadSize, searchParams)
+            val response = api.getPagedSales(currentPage, params.loadSize, searchParams)
             if (response.isSuccessful) {
                 val sales = response.body()?.toSaleList().orEmpty()
                 //Log.d("Paging", "Loading page: $currentPage, items: ${sales.size}")

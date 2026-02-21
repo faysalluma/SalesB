@@ -39,12 +39,13 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         private val TVA_KEY = doublePreferencesKey("tva")
         private val SHOW_TERMS_AND_CONDITIONS_KEY = booleanPreferencesKey("termsandconditions")
 
-        // Local parameters
         private val SERVICE_VIEW_KEY = booleanPreferencesKey("serviceview")
         private val SHOW_IMAGE_ON_PRODUCT_KEY = booleanPreferencesKey("showimageonproduct")
         private val USE_INT_FOR_PRICE_AND_AMOUNT_KEY = booleanPreferencesKey("useintforpriceandamout")
-        private val ACTIVE_PAYMENT_MODE = booleanPreferencesKey("activepaymentmode")
         private val ACTIVE_PRINTER = booleanPreferencesKey("activeprinter")
+
+        // Local parameters
+        private val ACTIVE_PAYMENT_MODE = booleanPreferencesKey("activepaymentmode")
 
         // Login key
         private val USER_ID_KEY = stringPreferencesKey("userid")
@@ -75,7 +76,6 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
                 offline = preferences[OFFLINE_KEY] ?: false,
                 primarycolor = preferences[PRIMARY_COLOR_KEY] ?: "",
                 secondarycolor = preferences[SECONDARY_COLOR_KEY] ?: "",
-                loadproducts = preferences[LOAD_PRODUCT_KEY] ?: false,
                 defaultpaymenttype = preferences[DEFAULT_PAYMENT_TYPE_KEY] ?: "",
                 tva = preferences[TVA_KEY] ?: 0.0,
                 termsandconditions = preferences[SHOW_TERMS_AND_CONDITIONS_KEY] ?: true,
@@ -121,7 +121,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             datastore[OFFLINE_KEY] = parameter.offline
             datastore[PRIMARY_COLOR_KEY] = parameter.primarycolor
             datastore[SECONDARY_COLOR_KEY] = parameter.secondarycolor
-            datastore[LOAD_PRODUCT_KEY] = parameter.loadproducts
+            datastore[SHOW_IMAGE_ON_PRODUCT_KEY] = parameter.showimageonproduct
             datastore[DEFAULT_PAYMENT_TYPE_KEY] = parameter.defaultpaymenttype
             datastore[TVA_KEY] = parameter.tva
         }
@@ -173,10 +173,8 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         context.dataStore.edit { datastore ->
             datastore[SERVICE_VIEW_KEY] = value
             if (value) {
-                datastore[SHOW_IMAGE_ON_PRODUCT_KEY] = false
                 datastore[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] = true
             } else {
-                datastore[SHOW_IMAGE_ON_PRODUCT_KEY] = false
                 datastore[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] = false
             }
         }

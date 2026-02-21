@@ -61,6 +61,7 @@ fun ProductDetailScreen(
     val isLoading = addProductState is FormUIState.Loading
     val categoriesPairState by viewModel.categoriesUiPairState.collectAsState()
     val rayonsPairState by viewModel.rayonsUiPairState.collectAsState()
+    val parameterState by viewModel.parameterState.collectAsState()
 
     var productDataForm by remember { mutableStateOf(ProductDataForm()) }
     var categorielibelleState by remember { mutableStateOf(TextFieldValue(productDataForm.categorielibelle)) }
@@ -73,6 +74,7 @@ fun ProductDetailScreen(
 
     ComposableLifecycle(
         onResume = {
+            viewModel.getParameter()
             viewModel.getCategories()
             viewModel.getRayons()
         }
@@ -208,6 +210,7 @@ fun ProductDetailScreen(
                 categorieItems = categoriesPairState,
                 rayonItems = rayonsPairState,
                 fournisseurItems = listOf(),
+                isServiceView = parameterState.serviceview,
                 products = productDataForm,
                 categorielibelleState = categorielibelleState,
                 navigateToCategory = {

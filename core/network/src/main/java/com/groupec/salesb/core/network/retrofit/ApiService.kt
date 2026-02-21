@@ -102,8 +102,12 @@ interface ApiService {
     @GET(Constants.GET_PRODUCTS_LOW_INVENTORY)
     suspend fun getProductsWithLowInventory(): Response<ProductResponse>
 
+    @GET(Constants.GET_PAGED_SALES)
+    suspend fun getPagedSales(@Query("page") page: Int, @Query("limit") limit: Int, @QueryMap searchParams: Map<String, String>
+    ): Response<SaleResponse>
+
     @GET(Constants.GET_SALES)
-    suspend fun getSales(@Query("page") page: Int, @Query("limit") limit: Int, @QueryMap searchParams: Map<String, String>
+    suspend fun getSales(@QueryMap searchParams: Map<String, String>
     ): Response<SaleResponse>
 
     @GET(Constants.GET_PAGED_USERS)

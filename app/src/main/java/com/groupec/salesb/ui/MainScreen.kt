@@ -68,6 +68,7 @@ fun MainScreen(
 
     // Show title and user name on app bar
     val userStoreState by viewModel.userStore.collectAsState()
+    val parameterState by viewModel.parameter.collectAsState()
     val appBarTitle = userStoreState.nomprenom
     val firstLogin = userStoreState.firstLogin
     val resetPassword = userStoreState.reset_password
@@ -77,7 +78,12 @@ fun MainScreen(
 
     // For TopAppBar
     val onNavigationClick: (() -> Unit)? = null
-    val dropDownItemsMenu = getDropdownItemsWithActions(context, navController, userStoreState) {
+    val dropDownItemsMenu = getDropdownItemsWithActions(
+        context = context,
+        navController = navController,
+        userStore = userStoreState,
+        isServiceView = parameterState.serviceview
+    ) {
         showLogoutDialog = true
     }
 
@@ -163,6 +169,7 @@ fun MainScreen(
     // Log out customers when subscription expire
     ComposableLifecycle(
         onResume = {
+            viewModel.getParameterStore()
             if (currentDestination.value!= null && currentDestination.value != NavigationItem.Login.route) {
                 viewModel.checkSubscriptionExpiration()
             }
@@ -367,6 +374,7 @@ fun getDropdownItemsWithActions(
     context: Context,
     navController: NavHostController,
     userStore: UserStore,
+    isServiceView: Boolean,
     onLogOut: () -> Unit
 ): List<MenuItem> {
 
@@ -376,7 +384,7 @@ fun getDropdownItemsWithActions(
 
     // Add Parameters items
     val hasCategoryPrivilege = privileges.any { it in Privileges.Category.getKeysByApprovals(cudPrivileges) }
-    val hasRayonPrivilege =  privileges.any { it in Privileges.Rayon.getKeysByApprovals(cudPrivileges) }
+    val hasRayonPrivilege =  privileges.any { it in Privileges.Rayon.getKeysByApprovals(cudPrivileges) } && !isServiceView
     val hasHandleServicePrivilege = privileges.any { it in Privileges.HandleService.getKeysByApprovals(
         listOf(Approval.AUTHORIZE_VIEW)
     ) }

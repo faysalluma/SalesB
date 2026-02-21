@@ -7,5 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface SaleRepository {
     suspend fun saveSale(sale: Sale) : Result<Sale>
-    fun getPagedProducts(searchParams: Map<String, String>) : Flow<PagingData<Sale>>
+    fun getPagedSales(searchParams: Map<String, String>) : Flow<PagingData<Sale>>
+    suspend fun getAllSales(searchParams: Map<String, String>) : Result<List<Sale>>
 }

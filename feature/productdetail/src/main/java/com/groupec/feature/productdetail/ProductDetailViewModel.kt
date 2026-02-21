@@ -9,9 +9,11 @@ import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.UploadUtility
 import com.groupec.salesb.core.asResult
 import com.groupec.salesb.core.domain.category.GetCategoryUseCase
+import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.domain.product.SaveProductUseCase
 import com.groupec.salesb.core.domain.rayon.GetRayonUseCase
 import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
+import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.ui.ProductDataForm
@@ -28,6 +30,7 @@ class ProductDetailViewModel @Inject constructor(
     private val saveProductUseCase: SaveProductUseCase,
     private val getCategorieUsecase: GetCategoryUseCase,
     private val getRayonUseCase: GetRayonUseCase,
+    private val getParameterUseCase: GetParameterUseCase,
     private val getUserStoreUseCase: GetUserStoreUseCase
 ) : ViewModel() {
 
@@ -42,10 +45,19 @@ class ProductDetailViewModel @Inject constructor(
 
     private val _userStoreState = MutableStateFlow(UserStore())
     val userStoreState: StateFlow<UserStore> = _userStoreState.asStateFlow()
+    private val _parameterState = MutableStateFlow(Parameter())
+    val parameterState: StateFlow<Parameter> = _parameterState.asStateFlow()
 
     init {
         viewModelScope.launch {
             _userStoreState.value = getUserStoreUseCase().first()
+        }
+        getParameter()
+    }
+
+    fun getParameter() {
+        viewModelScope.launch {
+            _parameterState.value = getParameterUseCase().first()
         }
     }
     fun getCategories() {

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "987823351680",
+    "project_id": "salesb-aad74",
+    "storage_bucket": "salesb-aad74.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:987823351680:android:e873f8361ec255b0200365",
+        "android_client_info": {
+          "package_name": "com.groupec.salesb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5pLPHqoMUFscqxm4Ii-_YL9EVFlX8XSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -19,6 +19,7 @@ import com.groupec.salesb.core.designsystem.component.ProductImage
 import com.groupec.salesb.core.designsystem.icon.AppIcons.CheckCircle
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.White
+import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.toDate
 
@@ -26,6 +27,7 @@ import com.groupec.salesb.core.toDate
 fun ProductGridItem(
     product: Product,
     isChecked: Boolean,
+    parameter: Parameter,
     modifier: Modifier = Modifier,
     onclick: () -> Unit
 ) {
@@ -44,22 +46,37 @@ fun ProductGridItem(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Row {
-                ProductImage(url = product.image?.let { Constants.UPLOAD_URL.plus(it) })
-                if (isChecked) {
-                    Icon(
-                        imageVector = CheckCircle,
-                        contentDescription = "Selected",
-                        tint = Primary
-                    )
+            if (parameter.showimageonproduct) {
+                Row {
+                    ProductImage(url = product.image?.let { Constants.UPLOAD_URL.plus(it) })
+                    if (isChecked) {
+                        Icon(
+                            imageVector = CheckCircle,
+                            contentDescription = "Selected",
+                            tint = Primary
+                        )
+                    }
                 }
             }
 
             Text(
                 text = product.libelle,
-                maxLines = 1,
+                maxLines = if (parameter.showimageonproduct) 1 else 3,
+                minLines = if (parameter.showimageonproduct) 1 else 3,
                 overflow = TextOverflow.Ellipsis
             )
+            /*
+            Text(
+                text = product.libelle,
+                maxLines = if (parameter.showimageonproduct) 1 else {
+                    if (parameter.serviceview) 1 else 3
+                },
+                minLines = if (parameter.showimageonproduct) 1 else {
+                    if (parameter.serviceview) 1 else 3
+                },
+                overflow = TextOverflow.Ellipsis
+            )
+            */
         }
     }
 }
@@ -75,6 +92,7 @@ fun ProductGridItemPreview() {
             datemodif = "2022:10:12 16:51".toDate(),
         ),
         isChecked = true,
+        parameter = Parameter(showimageonproduct = false),
         onclick = {}
     )
 }

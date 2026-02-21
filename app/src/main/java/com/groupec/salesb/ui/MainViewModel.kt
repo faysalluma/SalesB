@@ -17,11 +17,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -43,11 +43,21 @@ class MainViewModel @Inject constructor(
     val logoutUiState: StateFlow<UIState<*>> = _logoutUiState.asStateFlow()
 
     init {
-        getParameterStore()
+        observeParameterStore()
         getUserStore()
     }
 
-    private fun getParameterStore() {
+    private fun observeParameterStore() {
+        viewModelScope.launch {
+            getParameterUseCase()
+                .distinctUntilChanged()
+                .collectLatest { parameter ->
+                    _parameter.value = parameter
+                }
+        }
+    }
+
+    fun getParameterStore() {
         viewModelScope.launch {
             _parameter.value = getParameterUseCase().distinctUntilChanged().first()
         }
