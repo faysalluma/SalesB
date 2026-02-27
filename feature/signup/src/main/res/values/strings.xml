@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signup_title">Sign up</string>
+    <string name="signup_create_account">Create your account</string>
+    <string name="signup_step_1">Step 1 of 3: User details</string>
+    <string name="signup_step_2">Step 2 of 3: Your company</string>
+    <string name="signup_step_3">Step 3: Preferences</string>
+    <string name="signup_subtitle_preferences">Customize your SalesB selling experience.</string>
+    <string name="signup_company_title">Your Company</string>
+    <string name="signup_name">Name &amp; Surname</string>
+    <string name="signup_email">Email</string>
+    <string name="signup_password">Password</string>
+    <string name="signup_confirm_password">Confirm password</string>
+    <string name="signup_full_name_placeholder">Your full name</string>
+    <string name="signup_email_placeholder">example@mail.com</string>
+    <string name="signup_company_name_required">Company name (Required)</string>
+    <string name="signup_company_name_placeholder">Company name</string>
+    <string name="signup_company_type">Business type</string>
+    <string name="signup_company_type_placeholder">Choose a type</string>
+    <string name="signup_company_email_optional">Email (Optional)</string>
+    <string name="signup_address_optional">Address (Optional)</string>
+    <string name="signup_phone_optional">Phone (Optional)</string>
+    <string name="signup_ifu_optional">IFU (Optional)</string>
+    <string name="signup_website_optional">Website (Optional)</string>
+    <string name="signup_add_logo">Add a logo</string>
+    <string name="signup_click_to_upload">Click to upload</string>
+    <string name="signup_next">Next</string>
+    <string name="signup_previous">Previous</string>
+    <string name="signup_already_have_account">Already have an account? </string>
+    <string name="signup_login">Login</string>
+    <string name="signup_configurations">Configurations</string>
+    <string name="signup_currency">Currency</string>
+    <string name="signup_vat">VAT (%%)</string>
+    <string name="signup_display_options">DISPLAY OPTIONS</string>
+    <string name="signup_whole_quantities">Whole quantities</string>
+    <string name="signup_whole_quantities_desc">Disable decimals</string>
+    <string name="signup_product_images">Product images</string>
+    <string name="signup_product_images_desc">Show in catalog</string>
+    <string name="signup_show_payment_mode">Show payment mode</string>
+    <string name="signup_show_payment_mode_desc">Select at each sale</string>
+    <string name="signup_print_service">Printing service</string>
+    <string name="signup_print_service_desc">Auto print receipts</string>
+    <string name="signup_finish">Finish</string>
+    <string name="signup_print_service_info_title">Printing service</string>
+    <string name="signup_print_service_info_message">Enable this option to automatically print receipts after each sale.</string>
+    <string name="signup_welcome_title">Welcome to SalesB!</string>
+    <string name="signup_welcome_message">Your account has been created successfully.
+You can now start managing your sales and services.</string>
+    <string name="signup_start_experience">Start the experience</string>
+    <string name="signup_configuration_error_title">Configuration failed</string>
+    <string name="signup_back_content_desc">Back</string>
+    <string name="signup_info_content_desc">Information</string>
+</resources>

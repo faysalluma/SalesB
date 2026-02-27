@@ -84,6 +84,7 @@ dependencies {
     implementation(project(":feature:accountdetail"))
     implementation(project(":feature:termsandconditions"))
     implementation(project(":feature:handleservice"))
+    implementation(project(":feature:signup"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
