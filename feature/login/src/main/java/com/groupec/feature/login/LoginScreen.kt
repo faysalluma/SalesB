@@ -113,8 +113,8 @@ private fun FormScreen(
         Column(modifier = Modifier.padding(24.dp)) {
 
             TitleHeader(
-                title = stringResource(id = R.string.title_login, raisonSociale),
-                detail = stringResource(id = R.string.detail_login)
+                title = stringResource(id = R.string.title_login_without_raisoc),
+                detail = stringResource(id = R.string.detail_login_new)
             )
 
             Spacer(modifier = Modifier.padding(vertical = 16.dp))

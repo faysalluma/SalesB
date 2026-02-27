@@ -1,5 +1,6 @@
 package com.groupec.salesb.core.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,7 +29,11 @@ import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.KeyboardAction
 import com.groupec.salesb.core.designsystem.component.isValidEmail
 import com.groupec.salesb.core.designsystem.icon.AppIcons.Person
+import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.Primary
+import com.groupec.salesb.core.designsystem.theme.Silver
+import com.groupec.salesb.core.designsystem.theme.Silver2
+import com.groupec.salesb.core.designsystem.theme.White
 
 @Composable
 fun LoginForm(
@@ -114,7 +119,17 @@ fun LoginForm(
                 text = stringResource(id = R.string.btn_login),
                 isLoading = isLoading
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(14.dp))
+
+            DefaultButton(
+                onClick = {},
+                textcolor = Primary,
+                containerColor = White,
+                border = BorderStroke(1.dp, Silver2),
+                text = stringResource(R.string.create_an_account)
+            )
+            Spacer(modifier = Modifier.height(18.dp))
+
             TextButton(onClick = { onForgotPassword() }) {
                 Text(text = stringResource(id = R.string.forgot_password))
             }
