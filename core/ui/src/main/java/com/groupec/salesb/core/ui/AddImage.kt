@@ -40,6 +40,8 @@ fun AddImage(
     directory: File? = null, // stored directory
     onSetUri : (Uri?) -> Unit = {}, // selected / taken uri
     upload: (Uri) -> Unit = {},
+    textImageRes: Int? = null,
+    textDeleteImageRes: Int? = null,
     deleteFile: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -176,6 +178,7 @@ fun AddImage(
 
         CardImage(
             imageUri = uri,
+            textImageRes = textImageRes,
             onClick = {
                 showBottomSheet = true
             }
@@ -192,7 +195,7 @@ fun AddImage(
                 onSetUri.invoke(null)
             }
         ) {
-            Text(text = stringResource(R.string.delete_item))
+            Text(text = stringResource(textDeleteImageRes ?: R.string.delete_item))
         }
 
         /*Button(

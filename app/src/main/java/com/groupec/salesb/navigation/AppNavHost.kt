@@ -47,9 +47,8 @@ fun AppNavHost(
     modifier: Modifier,
     snackbarHostState: SnackbarHostState,
     isExpandedWidth: Boolean,
-    shouldNotShowInPortraitMode: Boolean,
     navController: NavHostController,
-    startDestination: String
+    startDestination: String = NavigationItem.Loading.route
 ) {
     /*LaunchedEffect(Unit) {
         val flipperPlugin = NavigationFlipperPlugin.getInstance()
@@ -78,7 +77,7 @@ fun AppNavHost(
                         popUpTo(NavigationItem.Loading.route) { inclusive = true }
                     }
                 },
-                navigateToConfiguration = {
+                navigateToSignUp = {
                     navController.navigate(NavigationItem.Signup.route) {
                         popUpTo(NavigationItem.Loading.route) { inclusive = true }
                     }
@@ -110,7 +109,7 @@ fun AppNavHost(
             SignupScreen(
                 navigateToLogin = {
                     navController.navigate(NavigationItem.Login.route.plus("/SalesB")) {
-                        popUpTo(NavigationItem.Signup.route) { inclusive = true }
+                        // popUpTo(NavigationItem.Signup.route) { inclusive = true }
                     }
                 },
                 navigateToHome = {

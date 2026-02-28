@@ -53,4 +53,41 @@
     <string name="please_read">Je reconnais avoir lu et accepté les</string>
     <string name="terms_and_conditions_of_use">conditions générales d’utilisation.</string>
     <string name="paid_by">Moyen de paiement : %s</string>
+    <string name="signup_create_account">Créer votre compte</string>
+    <string name="signup_step_1">Étape 1/3 : Détails de l\'utilisateur</string>
+    <string name="signup_name">Nom &amp; Prénom</string>
+    <string name="signup_email">Email</string>
+    <string name="signup_password">Mot de passe</string>
+    <string name="signup_confirm_password">Confirmer le mot de passe</string>
+    <string name="signup_full_name_placeholder">Votre nom complet</string>
+    <string name="signup_email_placeholder">exemple@mail.com</string>
+    <string name="signup_company_title">Votre Entreprise</string>
+    <string name="signup_company_name_required">Raison sociale</string>
+    <string name="signup_company_name_placeholder">Nom de l\'entreprise</string>
+    <string name="signup_company_type">Type d\'entreprise</string>
+    <string name="signup_company_type_placeholder">Choisir un type</string>
+    <string name="signup_company_email_optional">Email (Optionnel)</string>
+    <string name="signup_address_optional">Adresse (Optionnel)</string>
+    <string name="signup_phone_optional">Téléphone (Optionnel)</string>
+    <string name="signup_ifu_optional">IFU (Optionnel)</string>
+    <string name="signup_website_optional">Website (Optionnel)</string>
+    <string name="signup_add_logo">Ajouter un logo</string>
+    <string name="signup_click_to_upload">Cliquer pour uploader</string>
+    <string name="signup_already_have_account">Vous avez déjà un compte ? </string>
+    <string name="signup_login">Connexion</string>
+    <string name="signup_configurations">Configurations</string>
+    <string name="signup_currency">Devise</string>
+    <string name="signup_vat">TVA (%)</string>
+    <string name="signup_display_options">OPTIONS D\'AFFICHAGE</string>
+    <string name="signup_print_service">Service d\'impression</string>
+    <string name="signup_print_service_desc">Impression auto des reçus</string>
+    <string name="signup_step_2">Étape 2/3 : Vos données d\'entreprise</string>
+    <string name="signup_step_3">Préférences</string>
+    <string name="signup_subtitle_preferences">Etape 3/3 : Personnalisez votre expérience de vente.</string>
+    <string name="signup_welcome_title">Bienvenue sur SalesB !</string>
+    <string name="signup_welcome_message">Votre compte a été créé avec succès.
+Vous pouvez maintenant commencer à gérer vos ventes et services.</string>
+    <string name="add_logo">Ajouter logo</string>
+    <string name="adresse_placeholder">123 Rue des Affaires, Ville</string>
+
 </resources>

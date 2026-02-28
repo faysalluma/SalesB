@@ -75,7 +75,6 @@ fun ProductForm(
         }
     }
 
-
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,

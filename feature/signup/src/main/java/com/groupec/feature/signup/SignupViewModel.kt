@@ -1,8 +1,10 @@
 package com.groupec.feature.signup
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.UploadUtility
 import com.groupec.salesb.core.domain.parameter.SaveParameterUseCase
 import com.groupec.salesb.core.domain.user.SaveUserDefaultUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,6 +60,10 @@ class SignupViewModel @Inject constructor(
 
     fun consumeError() {
         _signupConfigurationUiState.value = SignupConfigurationUiState.Idle
+    }
+
+    fun deleteImageFromCache(context: Context, filename: String) {
+        UploadUtility.deleteImageFromCache(context, filename)
     }
 }
 

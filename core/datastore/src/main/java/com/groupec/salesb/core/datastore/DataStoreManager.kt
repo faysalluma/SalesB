@@ -94,7 +94,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
                 preferences[USER_ID_KEY] ?: "",
                 preferences[USER_NAME_KEY] ?: "",
                 preferences[USER_PRIVILEGES_KEY] ?: "",
-                preferences[USER_FIRST_LOGIN_KEY] ?: false,
+                preferences[USER_FIRST_LOGIN_KEY] ?: true,
                 preferences[USER_RESET_PASSWORD_KEY] ?: ""
 
             )

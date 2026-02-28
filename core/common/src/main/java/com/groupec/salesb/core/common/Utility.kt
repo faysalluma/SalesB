@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import java.util.Currency
+import java.util.Locale
 import java.util.UUID
 
 class Utility {
