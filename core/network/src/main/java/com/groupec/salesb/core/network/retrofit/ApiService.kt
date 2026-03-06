@@ -153,6 +153,28 @@ interface ApiService {
     @POST(Constants.ADD_USER)
     suspend fun addUser(@Body user: User): Response<Unit>
 
+    @Multipart
+    @POST(Constants.ADD_SIGNUP_CONFIGURATION)
+    suspend fun addSignupConfiguration(
+        @Part("fullName") fullName: RequestBody,
+        @Part("email") email: RequestBody,
+        @Part("password") password: RequestBody,
+        @Part("companyName") companyName: RequestBody,
+        @Part("companyType") companyType: RequestBody,
+        @Part("companyEmail") companyEmail: RequestBody?,
+        @Part("address") address: RequestBody?,
+        @Part("phone") phone: RequestBody?,
+        @Part("ifu") ifu: RequestBody?,
+        @Part("website") website: RequestBody?,
+        @Part("devise") devise: RequestBody,
+        @Part("tva") tva: RequestBody,
+        @Part("useIntForPriceAndAmount") useIntForPriceAndAmount: RequestBody,
+        @Part("showImageOnProduct") showImageOnProduct: RequestBody,
+        @Part("activePaymentMode") activePaymentMode: RequestBody,
+        @Part("activePrinter") activePrinter: RequestBody,
+        @Part logoPart: MultipartBody.Part?
+    ): Response<ApiResult<Unit>>
+
     @POST(Constants.FORGOT_PASSWORD)
     suspend fun forgotPassword(@Path("email") email: String): Response<Unit>
 

@@ -39,6 +39,7 @@ import com.groupec.salesb.core.designsystem.component.isValidEmail
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Silver2
 import com.groupec.salesb.core.designsystem.theme.White
+import com.groupec.salesb.core.model.data.SignupConfiguration
 import com.groupec.salesb.core.ui.signup.SignupStepOne
 import com.groupec.salesb.core.ui.signup.SignupStepOneFormState
 import com.groupec.salesb.core.ui.signup.SignupStepThree
@@ -173,6 +174,19 @@ fun SignupScreen(
                         val valid = stepTwo.isValid()
                         showStepTwoErrors = !valid
                         if (valid) {
+                            stepThree = when (stepTwo.companyType) {
+                                0 -> stepThree.copy(
+                                    showInt = 0,
+                                    showProductImage = 1,
+                                    showPaymentMode = 1
+                                )
+                                1 -> stepThree.copy(
+                                    showInt = 1,
+                                    showProductImage = 0,
+                                    showPaymentMode = 1
+                                )
+                                else -> stepThree
+                            }
                             currentStep = 3
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(0)
@@ -184,22 +198,42 @@ fun SignupScreen(
                         val valid = stepThree.isValid()
                         showStepThreeErrors = !valid
                         if (valid) {
+                            currentStep = 4
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(0)
                             }
-                            viewModel.saveInitialConfiguration()
                         }
                     }
                 }
             },
             navigateToLogin = navigateToLogin,
-            onStartExperience = {}
+            onStartExperience = {
+                val configuration = SignupConfiguration(
+                    fullName = stepOne.fullName,
+                    email = stepOne.email,
+                    password = stepOne.password,
+                    companyName = stepTwo.companyName,
+                    companyType = stepTwo.companyType,
+                    companyEmail = stepTwo.email,
+                    address = stepTwo.address,
+                    phone = stepTwo.phone,
+                    ifu = stepTwo.ifu,
+                    website = stepTwo.website,
+                    devise = stepThree.devise,
+                    tva = stepThree.tva.toDoubleOrNull() ?: 0.0,
+                    useIntForPriceAndAmount = stepThree.showInt,
+                    showImageOnProduct = stepThree.showProductImage,
+                    activePaymentMode = stepThree.showPaymentMode,
+                    activePrinter = stepThree.activePrinter
+                )
+                viewModel.saveInitialConfiguration(configuration, uri)
+            }
         )
     }
 
     LaunchedEffect(uiState, currentStep) {
-        if (uiState is SignupConfigurationUiState.Success && currentStep == 3) {
-            currentStep = 4
+        if (uiState is SignupConfigurationUiState.Success && currentStep == 4) {
+            navigateToHome()
         }
     }
 }
@@ -273,6 +307,7 @@ private fun SignupBottomActions(
                 DefaultButton(
                     text = stringResource(R.string.signup_start_experience),
                     onClick = onStartExperience,
+                    isLoading = isLoading,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

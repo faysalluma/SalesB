@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -24,6 +20,7 @@ import com.groupec.salesb.core.designsystem.component.HandleServiceOption
 import com.groupec.salesb.core.designsystem.component.HandleServiceToggleType
 import com.groupec.salesb.core.designsystem.component.SwitchRow
 import com.groupec.salesb.core.designsystem.theme.White
+import com.groupec.salesb.core.normalizeDecimalSeparator
 import com.groupec.salesb.core.ui.R
 import com.groupec.salesb.core.designsystem.R as Res
 
@@ -34,11 +31,6 @@ fun SignupStepThree(
     state: SignupStepThreeFormState,
     onValueChange: (SignupStepThreeFormState) -> Unit
 ) {
-    var wholeQuantities by rememberSaveable { mutableStateOf(true) }
-    var productImages by rememberSaveable { mutableStateOf(true) }
-    var showPaymentMode by rememberSaveable { mutableStateOf(false) }
-    var printService by rememberSaveable { mutableStateOf(true) }
-
     Text(
         stringResource(R.string.signup_step_3),
         style = MaterialTheme.typography.titleLarge,
@@ -67,7 +59,7 @@ fun SignupStepThree(
         Column(modifier = Modifier.weight(1f)) {
             AppTextField(
                 value = state.tva,
-                onChange = { onValueChange(state.copy(tva = it)) },
+                onChange = { onValueChange(state.copy(tva = it.normalizeDecimalSeparator())) },
                 label = stringResource(R.string.signup_vat),
                 placeholder = stringResource(R.string.signup_vat_placeholder),
                 isError = showErrors && state.tva.isBlank(),
@@ -92,45 +84,64 @@ fun SignupStepThree(
         option = HandleServiceOption(
             titleRes = Res.string.handle_service_use_integer_price,
             descriptionRes = Res.string.handle_service_use_integer_price_desc,
-            checked = wholeQuantities,
+            checked = state.showInt == 1,
             enabled = true,
             type = HandleServiceToggleType.USE_INT_FOR_PRICE_AND_AMOUNT
         ),
-        onCheckedChanged = { wholeQuantities = it }
+        onCheckedChanged = { checked ->
+            onValueChange(state.copy(showInt = if (checked) 1 else 0))
+        }
     )
     SwitchRow(
         verticalpadding = verticalpadding,
         option = HandleServiceOption(
             titleRes = Res.string.handle_service_show_product_images,
             descriptionRes = Res.string.handle_service_show_product_images_desc,
-            checked = productImages,
+            checked = state.showProductImage == 1,
             enabled = true,
             type = HandleServiceToggleType.SHOW_IMAGE_ON_PRODUCT
         ),
-        onCheckedChanged = { productImages = it }
+        onCheckedChanged = { checked ->
+            onValueChange(state.copy(showProductImage = if (checked) 1 else 0))
+        }
     )
     SwitchRow(
         verticalpadding = verticalpadding,
         option = HandleServiceOption(
             titleRes = Res.string.handle_service_payment_mode,
             descriptionRes = Res.string.handle_service_payment_mode_desc,
-            checked = showPaymentMode,
+            checked = state.showPaymentMode == 1,
             enabled = true,
             type = HandleServiceToggleType.ACTIVE_PAYMENT_MODE
         ),
-        onCheckedChanged = { showPaymentMode = it }
+        onCheckedChanged = { checked ->
+            onValueChange(state.copy(showPaymentMode = if (checked) 1 else 0))
+        }
     )
+    /*SwitchRow(
+        verticalpadding = verticalpadding,
+        option = HandleServiceOption(
+            titleRes = Res.string.handle_service_printer,
+            descriptionRes = Res.string.handle_service_printer_desc,
+            checked = state.activePrinter == 1,
+            enabled = true,
+            type = HandleServiceToggleType.ACTIVE_PRINTER
+        ),
+        onCheckedChanged = { checked ->
+            onValueChange(state.copy(activePrinter = if (checked) 1 else 0))
+        }
+    )*/
 }
 
 data class SignupStepThreeFormState(
     val devise: String = "",
     val tva: String = "",
     val showInt: Int = 0,
-    val showProductImage: Int = 0,
-    val showPaymentMode: Int = 0,
+    val showProductImage: Int = 1,
+    val showPaymentMode: Int = 1,
     val activePrinter: Int = 0
 ) {
     fun isValid(): Boolean {
-        return  devise.isNotBlank() &&  tva.isNotBlank()
+        return devise.isNotBlank() && tva.toDoubleOrNull() != null
     }
 }
