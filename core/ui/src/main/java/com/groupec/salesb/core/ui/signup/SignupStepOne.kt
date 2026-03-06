@@ -26,6 +26,7 @@ import com.groupec.salesb.core.ui.R
 fun SignupStepOne(
     state: SignupStepOneFormState,
     showErrors: Boolean,
+    emailErrorMessage: String?,
     onValueChange: (SignupStepOneFormState) -> Unit
 ) {
     Text(
@@ -39,18 +40,19 @@ fun SignupStepOne(
         style = MaterialTheme.typography.bodyLarge, color = Color.Gray,
         modifier = Modifier.padding(bottom = 18.dp)
     )
-    SignupStepOneForm(state, showErrors, onValueChange)
+    SignupStepOneForm(state, showErrors, emailErrorMessage, onValueChange)
 }
 
 @Composable
 private fun SignupStepOneForm(
     state: SignupStepOneFormState,
     showErrors: Boolean,
+    emailErrorMessage: String?,
     onValueChange: (SignupStepOneFormState) -> Unit
 ) {
     val isFullNameError = showErrors && state.fullName.isBlank()
     val isEmailError = showErrors &&
-        (state.email.isBlank() || !isValidEmail(state.email))
+        (state.email.isBlank() || !isValidEmail(state.email) || !emailErrorMessage.isNullOrBlank())
     val isPasswordError = showErrors && state.password.isBlank()
     val isConfirmationError = showErrors &&
         (state.confirmPassword.isBlank() || !state.arePasswordsMatching())
@@ -78,16 +80,26 @@ private fun SignupStepOneForm(
         fieldType = FieldType.Email,
         leadingIcon = { Icon(Icons.Default.Email, null) },
         isError = isEmailError,
-        supportingText = if (showErrors && state.email.isNotEmpty() && !isValidEmail(state.email)) {
-            {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(com.groupec.salesb.core.designsystem.R.string.invalid_email),
-                    color = MaterialTheme.colorScheme.error
-                )
+        supportingText = when {
+            showErrors && state.email.isNotEmpty() && !isValidEmail(state.email) -> {
+                {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(com.groupec.salesb.core.designsystem.R.string.invalid_email),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             }
-        } else {
-            null
+            showErrors && !emailErrorMessage.isNullOrBlank() -> {
+                {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = emailErrorMessage,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+            else -> null
         },
         fieldColor = White,
         modifier = Modifier.fillMaxWidth()

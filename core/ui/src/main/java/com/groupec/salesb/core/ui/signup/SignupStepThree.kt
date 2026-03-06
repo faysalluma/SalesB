@@ -10,16 +10,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.groupec.salesb.core.designsystem.component.AppExposedDropdownMenu
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.HandleServiceOption
 import com.groupec.salesb.core.designsystem.component.HandleServiceToggleType
 import com.groupec.salesb.core.designsystem.component.SwitchRow
 import com.groupec.salesb.core.designsystem.theme.White
+import com.groupec.salesb.core.model.data.others.paymentTypeLabels
 import com.groupec.salesb.core.normalizeDecimalSeparator
 import com.groupec.salesb.core.ui.R
 import com.groupec.salesb.core.designsystem.R as Res
@@ -29,8 +32,12 @@ import com.groupec.salesb.core.designsystem.R as Res
 fun SignupStepThree(
     showErrors: Boolean,
     state: SignupStepThreeFormState,
+    paymentTypeState: String,
+    onPaymenTypeSelected: (String) -> Unit,
     onValueChange: (SignupStepThreeFormState) -> Unit
 ) {
+    val context = LocalContext.current
+    val paymentTypeList = paymentTypeLabels(context)
     Text(
         stringResource(R.string.signup_step_3),
         style = MaterialTheme.typography.titleLarge,
@@ -115,9 +122,38 @@ fun SignupStepThree(
             type = HandleServiceToggleType.ACTIVE_PAYMENT_MODE
         ),
         onCheckedChanged = { checked ->
-            onValueChange(state.copy(showPaymentMode = if (checked) 1 else 0))
+            if (checked) {
+                onValueChange(
+                    state.copy(
+                        showPaymentMode = 1,
+                        defaultpayment = paymentTypeState
+                    )
+                )
+            } else {
+                onValueChange(
+                    state.copy(
+                        showPaymentMode = 0,
+                        defaultpayment = ""
+                    )
+                )
+            }
         }
     )
+
+    if (state.showPaymentMode == 1) {
+        AppExposedDropdownMenu(
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            items = paymentTypeList,
+            value = paymentTypeState,
+            label = stringResource(R.string.payment_type_label),
+            onValueChange = {
+                onPaymenTypeSelected(it)
+            }
+        ) { _, item ->
+            onValueChange(state.copy(defaultpayment = item))
+        }
+    }
+
     /*SwitchRow(
         verticalpadding = verticalpadding,
         option = HandleServiceOption(
@@ -139,6 +175,7 @@ data class SignupStepThreeFormState(
     val showInt: Int = 0,
     val showProductImage: Int = 1,
     val showPaymentMode: Int = 1,
+    val defaultpayment: String = "",
     val activePrinter: Int = 0
 ) {
     fun isValid(): Boolean {

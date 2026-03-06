@@ -344,78 +344,46 @@ fun getDropdownItemsWithActions(
     onLogOut: () -> Unit
 ): List<MenuItem> {
 
-    val privileges = userStore.getPrivileges()
     val items = mutableListOf<MenuItem>()
-    val cudPrivileges = listOf(Approval.AUTHORIZE_ADD, Approval.AUTHORIZE_EDIT, Approval.AUTHORIZE_DELETE)
 
     // Add Parameters items
-    val hasCategoryPrivilege = privileges.any { it in Privileges.Category.getKeysByApprovals(cudPrivileges) }
-    val hasRayonPrivilege =  privileges.any { it in Privileges.Rayon.getKeysByApprovals(cudPrivileges) } && !isServiceView
-    val hasHandleServicePrivilege = privileges.any { it in Privileges.HandleService.getKeysByApprovals(
-        listOf(Approval.AUTHORIZE_VIEW)
-    ) }
-    val hasUserSettingsPrivilege =  privileges.any { it in Privileges.UserSettings.getKeysByApprovals(
-        listOf(Approval.AUTHORIZE_VIEW)
-    ) }
-
-    if (hasCategoryPrivilege || hasRayonPrivilege) {
-        val childrenList = mutableListOf<MenuItem.Action>()
-        if (hasCategoryPrivilege) {
-            childrenList.add(
-                MenuItem.Action(
-                    context.getString(R.string.menu_category)
-                ) {
-                    navController.navigate(NavigationItem.Category.route) {
-                        launchSingleTop = true
-                    }
-                }
-            )
-        }
-
-        if (hasRayonPrivilege) {
-            childrenList.add(
-                MenuItem.Action(
-                    context.getString(R.string.menu_rayon)
-                ) {
-                    navController.navigate(NavigationItem.Rayon.route) {
-                        launchSingleTop = true
-                    }
-                }
-            )
-        }
-
-        items.add(
-            MenuItem.SubMenu(
-                context.getString(R.string.menu_settings),
-                childrenList
-            )
-        )
-    }
-
-    // Add UserManagement Account item
-    if (hasUserSettingsPrivilege) {
-        items.add(
-            MenuItem.Action(
-                context.getString(R.string.manage_your_account)
-            ) {
-                navController.navigate(NavigationItem.Account.route) {
-                    launchSingleTop = true
-                }
+    val childrenList = mutableListOf<MenuItem.Action>()
+    childrenList.add(
+        MenuItem.Action(
+            context.getString(R.string.menu_category)
+        ) {
+            navController.navigate(NavigationItem.Category.route) {
+                launchSingleTop = true
             }
-        )
-    }
+        }
+    )
 
-    if (hasHandleServicePrivilege) {
-        items.add(
-            MenuItem.Action(
-                context.getString(R.string.menu_handle_service)
-            ) {
-                navController.navigate(NavigationItem.HandleService.route) {
-                    launchSingleTop = true
-                }
+    /*childrenList.add(
+        MenuItem.Action(
+            context.getString(R.string.menu_rayon)
+        ) {
+            navController.navigate(NavigationItem.Rayon.route) {
+                launchSingleTop = true
             }
+        }
+    )*/
+
+    items.add(
+        MenuItem.SubMenu(
+            context.getString(R.string.menu_settings),
+            childrenList
         )
-    }
+    )
+
+    items.add(
+        MenuItem.Action(
+            context.getString(R.string.menu_handle_service)
+        ) {
+            navController.navigate(NavigationItem.HandleService.route) {
+                launchSingleTop = true
+            }
+        }
+    )
 
     // Add  remaining list
     items.addAll(

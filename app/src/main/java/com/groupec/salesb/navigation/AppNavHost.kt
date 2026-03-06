@@ -83,7 +83,7 @@ fun AppNavHost(
                     }
                 },
                 navigateToLogin = { raisonSociale ->
-                    navController.navigate(NavigationItem.Login.route.plus("/${raisonSociale}")) {
+                    navController.navigate(NavigationItem.Login.route) {
                         popUpTo(NavigationItem.Loading.route) { inclusive = true }
                     }
                 },
@@ -120,14 +120,7 @@ fun AppNavHost(
             )
         }
 
-        composable(
-            route = NavigationItem.Login.route.plus("/{raisonSociale}"),
-            arguments = listOf(
-                navArgument("raisonSociale") {
-                    type = NavType.StringType
-                }
-            )
-        ) { backStackEntry ->
+        composable(NavigationItem.Login.route) { backStackEntry ->
             val raisonSociale = backStackEntry.arguments?.getString("raisonSociale") ?: ""
             LoginScreen(
                 isExpandedWidth = isExpandedWidth,

@@ -99,70 +99,34 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState()),
     ) {
 
-        // Check if show home content
-        if (
-            privileges.any{
-                it in Privileges.Home.getKeysByApprovals(
-                    listOf(
-                        Approval.STAT_PERIODIC,
-                        Approval.STAT_NON_PERIODIC,
-                        Approval.STAT_CHART,
-                    )
-                )
-            }
+        val heigthModifier = Modifier.height(34.dp)
+
+        // Headline
+        HeadLigne(context, viewModel,privileges, navigateToSaleList)
+
+        // Periodic statistic
+        StatisticPeriodic(context, viewModel,privileges, navigateToSaleList)
+        Spacer(modifier = heigthModifier)
+
+        // Non-Periodic statistic
+        StatisticNonPeriodic(viewModel,privileges, navigateToProduct)
+        Spacer(modifier = heigthModifier)
+
+        // Chart statistic
+        Box(
+            modifier = Modifier
+                .padding(bottom = 16.dp),
+            contentAlignment = Alignment.Center
         ) {
-            val heigthModifier = Modifier.height(34.dp)
-
-            // Headline
-            if (
-                privileges.any{
-                    it in Privileges.Home.getKeysByApprovals(
-                        listOf(
-                            Approval.STAT_PERIODIC,
-                            Approval.STAT_CHART,
-                        )
-                    )
-                }
-            ) {
-                HeadLigne(context, viewModel,privileges, navigateToSaleList)
-            }
-
-            // Periodic statistic
-            if (privileges.contains(Privileges.Home.getKeyByApproval(
-                    Approval.STAT_PERIODIC
-                ))) {
-                StatisticPeriodic(context, viewModel,privileges, navigateToSaleList)
-                Spacer(modifier = heigthModifier)
-            }
-
-            // Non-Periodic statistic
-            if (privileges.contains(Privileges.Home.getKeyByApproval(
-                    Approval.STAT_NON_PERIODIC
-                ))) {
-                StatisticNonPeriodic(viewModel,privileges, navigateToProduct)
-                Spacer(modifier = heigthModifier)
-            }
-
-            // Chart statistic
-            if (privileges.contains(Privileges.Home.getKeyByApproval(
-                    Approval.STAT_CHART
-                ))) {
-                Box(
+            if (chartValuesState.isNotEmpty()) {
+                StatisticChart(
                     modifier = Modifier
-                        .padding(bottom = 16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (chartValuesState.isNotEmpty()) {
-                        StatisticChart(
-                            modifier = Modifier
-                                .fillMaxWidth(0.8f)
-                                .padding(16.dp),
-                            values = chartValuesState
-                        )
-                    } else {
-                        Text(stringResource(R.string.no_data))
-                    }
-                }
+                        .fillMaxWidth(0.8f)
+                        .padding(16.dp),
+                    values = chartValuesState
+                )
+            } else {
+                Text(stringResource(R.string.no_data))
             }
         }
     }
@@ -276,25 +240,12 @@ private fun ExpandedLayout(
                 }
             }
 
-            if (
-                privileges.any{
-                    it in Privileges.MySales.getKeysByApprovals(
-                        listOf(
-                            Approval.AUTHORIZE_ADD,
-                            Approval.AUTHORIZE_EDIT,
-                            Approval.AUTHORIZE_DELETE,
-                        )
-                    )
-                }
+            IconTextButton(
+                contentPadding = PaddingValues(19.dp),
+                text = stringResource(R.string.see_more),
+                colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Primary),
+                onClick = navigateToSaleList
             )
-            {
-                IconTextButton(
-                    contentPadding = PaddingValues(19.dp),
-                    text = stringResource(R.string.see_more),
-                    colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Primary),
-                    onClick = navigateToSaleList
-                )
-            }
         }
     }
 }
@@ -330,22 +281,7 @@ fun StatisticPeriodic(
                 dataValue = totalAmountSalesState.formatAmount(),
                 devise = parameterState.devise,
                 navigateToSaleList = {
-                    if (
-                        privileges.any{
-                            it in Privileges.MySales.getKeysByApprovals(
-                                listOf(
-                                    Approval.AUTHORIZE_ADD,
-                                    Approval.AUTHORIZE_EDIT,
-                                    Approval.AUTHORIZE_DELETE,
-                                )
-                            )
-                        }
-                    ) {
-                        navigateToSaleList()
-                    } else {
-                        Toast.makeText(context, context.getString(com.groupec.salesb.core.R.string.no_visual_allowed),
-                            Toast.LENGTH_SHORT).show()
-                    }
+                    navigateToSaleList()
                 }
             )
             TopSaleStatisticCard(
@@ -386,22 +322,7 @@ fun StatisticNonPeriodic(
             modifier = cardModifier,
             dataValue = totalProductsState.toString(),
             navigateToProduct = {
-                if (
-                    privileges.any{
-                        it in Privileges.Product.getKeysByApprovals(
-                            listOf(
-                                Approval.AUTHORIZE_ADD,
-                                Approval.AUTHORIZE_EDIT,
-                                Approval.AUTHORIZE_DELETE,
-                            )
-                        )
-                    }
-                ) {
-                    navigateToProduct()
-                } else {
-                    Toast.makeText(context, context.getString(com.groupec.salesb.core.R.string.no_visual_allowed),
-                        Toast.LENGTH_SHORT).show()
-                }
+                navigateToProduct()
             }
         )
         AlertInventoryStatisticCard(

@@ -57,6 +57,9 @@
     <string name="signup_step_1">Étape 1/3 : Détails de l\'utilisateur</string>
     <string name="signup_name">Nom &amp; Prénom</string>
     <string name="signup_email">Email</string>
+    <string name="signup_email_not_found_error">Aucun utilisateur trouvé avec cet email.</string>
+    <string name="signup_email_already_taken_error">Cette adresse email est déjà utilisée.</string>
+    <string name="signup_email_validation_error">Impossible de vérifier cet email pour le moment.</string>
     <string name="signup_password">Mot de passe</string>
     <string name="signup_confirm_password">Confirmer le mot de passe</string>
     <string name="signup_full_name_placeholder">Votre nom complet</string>

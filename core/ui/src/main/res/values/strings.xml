@@ -63,6 +63,9 @@
     <string name="signup_step_2">Step 2/3: Your company data</string>
     <string name="signup_name">Name &amp; Surname</string>
     <string name="signup_email">Email</string>
+    <string name="signup_email_not_found_error">No user found with this email.</string>
+    <string name="signup_email_already_taken_error">This email address is already in use.</string>
+    <string name="signup_email_validation_error">Unable to validate this email right now.</string>
     <string name="signup_password">Password</string>
     <string name="signup_confirm_password">Confirm password</string>
     <string name="signup_full_name_placeholder">Your full name</string>

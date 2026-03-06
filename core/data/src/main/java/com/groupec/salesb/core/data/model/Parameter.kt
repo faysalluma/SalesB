@@ -10,8 +10,24 @@ fun ParameterResponse.toParameter(): Parameter {
 }
 
 fun ParamItemResponse.toParameter(): Parameter {
-    return Parameter(devise = devise, raisonsociale = raisonsociale, adresse = adresse, email = email,
-        telephone = telephone, ifu = ifu, website = website, typeentreprise = typeentreprise, offline = (offline == 1),
-        primarycolor = primarycolor, secondarycolor = secondarycolor, showimageonproduct = (showimageonproduct == 1),
-        defaultpaymenttype = defaultpaymenttype ?: "", tva = tva)
+    return Parameter(
+        id = id,
+        logo = logo,
+        devise = devise,
+        raisonsociale = raisonsociale,
+        adresse = adresse,
+        email = email,
+        telephone = telephone,
+        ifu = ifu,
+        website = website,
+        entreprisetype = entreprisetype,
+        expirationdate = expirationdate,
+        offline = (offline == 1),
+        showimageonproduct = (showimageonproduct == 1),
+        defaultpaymenttype = defaultpayment ?: "",
+        tva = tva,
+        useintforpriceandamout = (useintforpriceandamout == 1),
+        activepaymentmode = (activepaymentmode == 1),
+        activeprinter = (activeprinter == 1)
+    )
 }

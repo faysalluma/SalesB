@@ -5,6 +5,8 @@ import android.net.Uri
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.UploadUtility.Companion.deleteImageFromCache
 import com.groupec.salesb.core.UploadUtility.Companion.getRealPathFromURI
+import com.groupec.salesb.core.data.model.toParameter
+import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.SignupConfiguration
 import com.groupec.salesb.core.network.retrofit.ApiService
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -12,8 +14,10 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.mindrot.jbcrypt.BCrypt
 import retrofit2.HttpException
 import java.io.File
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,14 +30,18 @@ class SignupRepositoryImpl @Inject constructor(
     override suspend fun saveSignupConfiguration(
         configuration: SignupConfiguration,
         uriLogo: Uri?
-    ): Result<Unit> {
+    ): Result<Parameter> {
         val logoPart = uriLogo?.let { prepareImageForUpload(context, it) }
+        val langMessageEn = if (Locale.getDefault().language.equals("fr", ignoreCase = true)) 0 else 1
+        // Hash pawword with salt generating
+        val hashPassword = BCrypt.hashpw(configuration.password, BCrypt.gensalt())
 
         val result = runCatching {
             val response = apiService.addSignupConfiguration(
                 fullName = configuration.fullName.toPlainTextBody(),
                 email = configuration.email.toPlainTextBody(),
-                password = configuration.password.toPlainTextBody(),
+                langMessageEn = langMessageEn.toString().toPlainTextBody(),
+                password = hashPassword.toPlainTextBody(),
                 companyName = configuration.companyName.toPlainTextBody(),
                 companyType = configuration.companyType.toString().toPlainTextBody(),
                 companyEmail = configuration.companyEmail?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
@@ -46,12 +54,18 @@ class SignupRepositoryImpl @Inject constructor(
                 useIntForPriceAndAmount = configuration.useIntForPriceAndAmount.toString().toPlainTextBody(),
                 showImageOnProduct = configuration.showImageOnProduct.toString().toPlainTextBody(),
                 activePaymentMode = configuration.activePaymentMode.toString().toPlainTextBody(),
+                defaultpayment = configuration.defaultpayment?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
                 activePrinter = configuration.activePrinter.toString().toPlainTextBody(),
                 logoPart = logoPart
             )
 
             if (response.isSuccessful) {
-                Result.Success(Unit)
+                val parameter = response.body()?.toParameter()
+                if (parameter != null) {
+                    Result.Success(parameter)
+                } else {
+                    Result.Error(IllegalStateException("Empty parameter response"))
+                }
             } else {
                 Result.Error(HttpException(response))
             }

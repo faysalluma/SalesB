@@ -16,5 +16,6 @@ data class SignupConfiguration(
     val useIntForPriceAndAmount: Int,
     val showImageOnProduct: Int,
     val activePaymentMode: Int,
+    val defaultpayment: String?,
     val activePrinter: Int
 )

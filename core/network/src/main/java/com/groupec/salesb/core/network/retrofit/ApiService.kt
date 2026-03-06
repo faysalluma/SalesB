@@ -158,6 +158,7 @@ interface ApiService {
     suspend fun addSignupConfiguration(
         @Part("fullName") fullName: RequestBody,
         @Part("email") email: RequestBody,
+        @Part("langMessageEn") langMessageEn: RequestBody,
         @Part("password") password: RequestBody,
         @Part("companyName") companyName: RequestBody,
         @Part("companyType") companyType: RequestBody,
@@ -171,9 +172,10 @@ interface ApiService {
         @Part("useIntForPriceAndAmount") useIntForPriceAndAmount: RequestBody,
         @Part("showImageOnProduct") showImageOnProduct: RequestBody,
         @Part("activePaymentMode") activePaymentMode: RequestBody,
+        @Part("defaultpayment") defaultpayment: RequestBody?,
         @Part("activePrinter") activePrinter: RequestBody,
         @Part logoPart: MultipartBody.Part?
-    ): Response<ApiResult<Unit>>
+    ): Response<ParameterResponse>
 
     @POST(Constants.FORGOT_PASSWORD)
     suspend fun forgotPassword(@Path("email") email: String): Response<Unit>

@@ -139,15 +139,22 @@ fun HeaderSection(parameter: Parameter, invoicing: Invoicing) {
                 modifier = Modifier.weight(1f).padding(8.dp)
             ) {
                 Text(text = parameter.raisonsociale)
-                Text(
-                    text = parameter.adresse,
-                    maxLines = 5,
-                    overflow = TextOverflow.Ellipsis
-                )
+
+                parameter.adresse?.takeIf { it.isNotEmpty() } ?.let {
+                    Text(
+                        text = it,
+                        maxLines = 5,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
                 parameter.email?.takeIf { it.isNotEmpty() } ?.let {
                     Text(text = it)
                 }
-                Text(text = parameter.telephone)
+
+                parameter.telephone?.takeIf { it.isNotEmpty() } ?.let {
+                    Text(text = it)
+                }
             }
             Column(
                 modifier = Modifier.weight(1f),
