@@ -38,6 +38,8 @@ fun SignupStepThree(
 ) {
     val context = LocalContext.current
     val paymentTypeList = paymentTypeLabels(context)
+    val maxLength = 5
+
     Text(
         stringResource(R.string.signup_step_3),
         style = MaterialTheme.typography.titleLarge,
@@ -54,7 +56,11 @@ fun SignupStepThree(
         Column(modifier = Modifier.weight(1f)) {
             AppTextField(
                 value = state.devise,
-                onChange = { onValueChange(state.copy(devise = it)) },
+                onChange = { newValue ->
+                    if (newValue.length <= maxLength) {
+                        onValueChange(state.copy(devise = newValue))
+                    }
+                },
                 label = stringResource(R.string.signup_currency),
                 placeholder = stringResource(R.string.signup_currency_placeholder),
                 isError = showErrors && state.devise.isBlank(),
@@ -66,7 +72,11 @@ fun SignupStepThree(
         Column(modifier = Modifier.weight(1f)) {
             AppTextField(
                 value = state.tva,
-                onChange = { onValueChange(state.copy(tva = it.normalizeDecimalSeparator())) },
+                onChange = {  newValue ->
+                    if (newValue.length <= maxLength) {
+                        onValueChange(state.copy(tva = newValue.normalizeDecimalSeparator()))
+                    }
+                },
                 label = stringResource(R.string.signup_vat),
                 placeholder = stringResource(R.string.signup_vat_placeholder),
                 isError = showErrors && state.tva.isBlank(),

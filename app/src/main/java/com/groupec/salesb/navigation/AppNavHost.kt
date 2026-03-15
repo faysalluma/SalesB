@@ -14,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -114,7 +115,7 @@ fun AppNavHost(
                 },
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
-                        popUpTo(NavigationItem.Signup.route) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                     }
                 }
             )
@@ -134,6 +135,9 @@ fun AppNavHost(
                             inclusive = true
                         }
                     }
+                },
+                onSignUp = {
+                    navController.navigate(NavigationItem.Signup.route)
                 },
                 navigateToForgotPassword = { navController.navigate(NavigationItem.ForgotPassword.route) }
             )

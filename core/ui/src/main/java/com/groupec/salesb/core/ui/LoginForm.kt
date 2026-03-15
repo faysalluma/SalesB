@@ -39,6 +39,7 @@ import com.groupec.salesb.core.designsystem.theme.White
 fun LoginForm(
     onSubmitForm: (credentials: Credentials) -> Unit,
     isLoading: Boolean = false,
+    onSignUp: () -> Unit,
     onForgotPassword : () -> Unit
 ) {
 
@@ -122,7 +123,7 @@ fun LoginForm(
             Spacer(modifier = Modifier.height(14.dp))
 
             DefaultButton(
-                onClick = {},
+                onClick = onSignUp,
                 textcolor = Primary,
                 containerColor = White,
                 border = BorderStroke(1.dp, Silver2),
