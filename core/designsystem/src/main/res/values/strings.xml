@@ -82,4 +82,14 @@
     <string name="privileges">Privileges</string>
     <string name="filter">Filter</string>
     <string name="select">Select</string>
+    <string name="handle_service_view_service">Service view</string>
+    <string name="handle_service_view_service_desc">Enable the specific display for service handling</string>
+    <string name="handle_service_show_product_images">Show product images</string>
+    <string name="handle_service_show_product_images_desc">Include images in the product list when registering a sale</string>
+    <string name="handle_service_use_integer_price">Use integers for quantities</string>
+    <string name="handle_service_use_integer_price_desc">Disable decimals</string>
+    <string name="handle_service_payment_mode">Enable payment mode</string>
+    <string name="handle_service_payment_mode_desc">Show payment mode when registering a sale</string>
+    <string name="handle_service_printer">Enable printing service</string>
+    <string name="handle_service_printer_desc">Show the button that prints a receipt when registering a sale</string>
 </resources>

@@ -16,6 +16,8 @@ import com.groupec.salesb.core.data.repository.product.ProductRepository
 import com.groupec.salesb.core.data.repository.product.ProductRepositoryImpl
 import com.groupec.salesb.core.data.repository.sale.SaleRepository
 import com.groupec.salesb.core.data.repository.sale.SaleRepositoryImpl
+import com.groupec.salesb.core.data.repository.signup.SignupRepository
+import com.groupec.salesb.core.data.repository.signup.SignupRepositoryImpl
 import com.groupec.salesb.core.data.repository.product.StatisticRepository
 import com.groupec.salesb.core.data.repository.product.StatisticRepositoryImpl
 import com.groupec.salesb.core.data.repository.common.UserLocalRepository
@@ -38,10 +40,9 @@ class RepositoryModule  {
     @Provides
     @Singleton
     fun providerParameterRepository(
-        apiService: ApiService,
         dataStoreManager: DataStoreManager
     ) : ParameterRepository {
-        return ParameterRepositoryImpl(apiService, dataStoreManager)
+        return ParameterRepositoryImpl(dataStoreManager)
     }
 
     @Provides
@@ -118,5 +119,14 @@ class RepositoryModule  {
         @ApplicationContext context: Context,
     ) : SaleRepository {
         return SaleRepositoryImpl(apiService, dataStoreManager, context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSignupRepository(
+        @ApplicationContext context: Context,
+        apiService: ApiService
+    ) : SignupRepository {
+        return SignupRepositoryImpl(context, apiService)
     }
 }

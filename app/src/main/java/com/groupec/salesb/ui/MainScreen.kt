@@ -36,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.groupec.feature.signup.SignupScreen
 import com.groupec.salesb.R
 import com.groupec.salesb.core.Approval
 import com.groupec.salesb.core.Privileges
@@ -77,7 +78,6 @@ fun MainScreen(
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     // For TopAppBar
-    val onNavigationClick: (() -> Unit)? = null
     val dropDownItemsMenu = getDropdownItemsWithActions(
         context = context,
         navController = navController,
@@ -158,12 +158,16 @@ fun MainScreen(
         }
     }
 
-    val items by remember(privileges) {
-        derivedStateOf { getNavigationItemsList(privileges)  }
-    }
-
-    val shouldNotShowInPortraitMode by remember {
-        derivedStateOf { !isExpandedWidth && !isPortaitScreenActive(currentDestination.value) }
+    val items by remember {
+        mutableStateOf(
+            listOf(
+                NavigationItem.Home,
+                NavigationItem.SaveSale,
+                NavigationItem.MySales,
+                NavigationItem.Product,
+                NavigationItem.Outputs
+            )
+        )
     }
 
     // Log out customers when subscription expire
@@ -195,44 +199,48 @@ fun MainScreen(
         topBar = {
             currentDestination.value?.let { route ->
                 if (shouldShowBarAndRailApp(route, firstLogin, resetPassword)) {
+                    val titleSignup =  if (route == NavigationItem.Signup.route) {
+                        stringResource(com.groupec.feature.signup.R.string.signup_title)
+                    } else null
                     SampleTopAppBar(
-                        appBarTitle,
-                        onNavigationClick,
-                        dropDownItemsMenu
+                        titleSignup ?: appBarTitle,
+                        dropDownItemsMenu = if (route != NavigationItem.Signup.route) dropDownItemsMenu else emptyList()
                     )
                 }
             }
         },
         bottomBar = {
             currentDestination.value?.let { route ->
-                // Avoid blank space reserved on the screen
-                if (items.isNotEmpty()) {
-                    AnimatedVisibility(
-                        visible = !isExpandedWidth,
-                        enter = slideInVertically(
-                            // Slide in from the bottom
-                            initialOffsetY = { fullHeight -> fullHeight }
-                        ),
-                        exit = slideOutVertically(
-                            // Slide out to the bottom
-                            targetOffsetY = { fullHeight -> fullHeight }
-                        )
-                    ) {
-                        BottomNavigationBar(
-                            items = items,
-                            currentRoute = route,
-                            onItemClick = { currentNavigationItem ->
-                                navController.navigate(currentNavigationItem.route) {
-                                    // Supprime toutes les destinations jusqu’à la destination de départ du graphe de navigation
-                                    popUpTo(navController.graph.startDestinationRoute ?: "") {
-                                        // saveState = true (A utiliser dans le cas ou les ecrans des items menus
-                                        // se trouvent dans le même graphe de navigation
+                if (shouldShowBarAndRailApp(route, firstLogin, resetPassword)) {
+                    // Don't show BottomBar for signup screen
+                    if (route != NavigationItem.Signup.route) {
+                        AnimatedVisibility(
+                            visible = !isExpandedWidth,
+                            enter = slideInVertically(
+                                // Slide in from the bottom
+                                initialOffsetY = { fullHeight -> fullHeight }
+                            ),
+                            exit = slideOutVertically(
+                                // Slide out to the bottom
+                                targetOffsetY = { fullHeight -> fullHeight }
+                            )
+                        ) {
+                            BottomNavigationBar(
+                                items = items,
+                                currentRoute = route,
+                                onItemClick = { currentNavigationItem ->
+                                    navController.navigate(currentNavigationItem.route) {
+                                        // Supprime toutes les destinations jusqu’à la destination de départ du graphe de navigation
+                                        popUpTo(navController.graph.startDestinationRoute ?: "") {
+                                            // saveState = true (A utiliser dans le cas ou les ecrans des items menus
+                                            // se trouvent dans le même graphe de navigation
+                                        }
+                                        launchSingleTop = true
+                                        // restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    // restoreState = true
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }
@@ -266,26 +274,23 @@ fun MainScreen(
                 val fabContainerColor = Primary
                 val fabContentColor = White
 
-                if (privileges.contains(Privileges.Sale.getKeyByApproval(Approval.AUTHORIZE_VIEW)))
-                {
-                    if (isTablet) {
-                        LargeFloatingActionButton(
-                            onClick = onFabClick,
-                            shape = fabShape,
-                            containerColor = fabContainerColor,
-                            contentColor = fabContentColor,
-                        ) {
-                            Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(32.dp))
-                        }
-                    } else {
-                        FloatingActionButton(
-                            onClick = onFabClick,
-                            shape = fabShape,
-                            containerColor = fabContainerColor,
-                            contentColor = fabContentColor,
-                        ) {
-                            Icon(Icons.Filled.Add, "Add")
-                        }
+                if (isTablet) {
+                    LargeFloatingActionButton(
+                        onClick = onFabClick,
+                        shape = fabShape,
+                        containerColor = fabContainerColor,
+                        contentColor = fabContentColor,
+                    ) {
+                        Icon(Icons.Filled.Add, "Add", modifier = Modifier.size(32.dp))
+                    }
+                } else {
+                    FloatingActionButton(
+                        onClick = onFabClick,
+                        shape = fabShape,
+                        containerColor = fabContainerColor,
+                        contentColor = fabContentColor,
+                    ) {
+                        Icon(Icons.Filled.Add, "Add")
                     }
                 }
             }
@@ -297,31 +302,23 @@ fun MainScreen(
                     error = stringResource(R.string.no_internet_connexion)
                 )
             } else {
-                val startDestination by remember(items) {
-                    derivedStateOf {
-                        when {
-                            items.isEmpty() || (items.isNotEmpty() && firstLogin) || (items.isNotEmpty() && resetPassword.isNotEmpty())
-                                 -> NavigationItem.Loading.route
-                            else -> items.first().route
-                        }
-                    }
-                }
-
                 if (
                     shouldShowBarAndRailApp(currentDestination.value, firstLogin, resetPassword) &&
                     isExpandedWidth
                 ) {
-                    MyNavigationRail(
-                        items = items,
-                        navController,
-                        modifier = Modifier.weight(0.09f)
-                    )
+                    // Don't show NavRail for signup screen
+                    if (currentDestination.value != NavigationItem.Signup.route) {
+                        MyNavigationRail(
+                            items = items,
+                            navController,
+                            modifier = Modifier.weight(0.09f)
+                        )
+                    }
                 }
 
                 AppNavHost(
                     snackbarHostState = snackbarHostState,
                     isExpandedWidth = isExpandedWidth,
-                    shouldNotShowInPortraitMode = shouldNotShowInPortraitMode,
                     modifier = Modifier
                         .weight(
                             if (shouldShowBarAndRailApp(
@@ -332,42 +329,11 @@ fun MainScreen(
                             ) 0.91f else 1f
                         )
                         .padding(16.dp),
-                    navController = navController,
-                    startDestination = startDestination
+                    navController = navController
                 )
             }
         }
     }
-}
-
-private fun getNavigationItemsList(privileges: List<String>): List<NavigationItem> {
-    val cudPrivileges = listOf(
-        Approval.AUTHORIZE_ADD,
-        Approval.AUTHORIZE_EDIT,
-        Approval.AUTHORIZE_DELETE
-    )
-
-    val mappings = listOf(
-        Privileges.Home.getKeysByApprovals(
-            listOf(
-                Approval.STAT_PERIODIC,
-                Approval.STAT_NON_PERIODIC,
-                Approval.STAT_CHART,
-            )
-        ) to NavigationItem.Home,
-
-        Privileges.Sale.getKeysByApprovals(listOf(Approval.AUTHORIZE_VIEW)) to NavigationItem.SaveSale,
-
-        Privileges.MySales.getKeysByApprovals(cudPrivileges) to NavigationItem.MySales,
-
-        Privileges.Product.getKeysByApprovals(cudPrivileges) to NavigationItem.Product,
-
-        Privileges.Outputs.getKeysByApprovals(cudPrivileges) to NavigationItem.Outputs
-    )
-
-    return mappings
-        .filter { (requiredKeys, _) -> privileges.any { it in requiredKeys } }
-        .map { it.second }
 }
 
 fun getDropdownItemsWithActions(
@@ -378,78 +344,46 @@ fun getDropdownItemsWithActions(
     onLogOut: () -> Unit
 ): List<MenuItem> {
 
-    val privileges = userStore.getPrivileges()
     val items = mutableListOf<MenuItem>()
-    val cudPrivileges = listOf(Approval.AUTHORIZE_ADD, Approval.AUTHORIZE_EDIT, Approval.AUTHORIZE_DELETE)
 
     // Add Parameters items
-    val hasCategoryPrivilege = privileges.any { it in Privileges.Category.getKeysByApprovals(cudPrivileges) }
-    val hasRayonPrivilege =  privileges.any { it in Privileges.Rayon.getKeysByApprovals(cudPrivileges) } && !isServiceView
-    val hasHandleServicePrivilege = privileges.any { it in Privileges.HandleService.getKeysByApprovals(
-        listOf(Approval.AUTHORIZE_VIEW)
-    ) }
-    val hasUserSettingsPrivilege =  privileges.any { it in Privileges.UserSettings.getKeysByApprovals(
-        listOf(Approval.AUTHORIZE_VIEW)
-    ) }
-
-    if (hasCategoryPrivilege || hasRayonPrivilege) {
-        val childrenList = mutableListOf<MenuItem.Action>()
-        if (hasCategoryPrivilege) {
-            childrenList.add(
-                MenuItem.Action(
-                    context.getString(R.string.menu_category)
-                ) {
-                    navController.navigate(NavigationItem.Category.route) {
-                        launchSingleTop = true
-                    }
-                }
-            )
-        }
-
-        if (hasRayonPrivilege) {
-            childrenList.add(
-                MenuItem.Action(
-                    context.getString(R.string.menu_rayon)
-                ) {
-                    navController.navigate(NavigationItem.Rayon.route) {
-                        launchSingleTop = true
-                    }
-                }
-            )
-        }
-
-        items.add(
-            MenuItem.SubMenu(
-                context.getString(R.string.menu_settings),
-                childrenList
-            )
-        )
-    }
-
-    // Add UserManagement Account item
-    if (hasUserSettingsPrivilege) {
-        items.add(
-            MenuItem.Action(
-                context.getString(R.string.manage_your_account)
-            ) {
-                navController.navigate(NavigationItem.Account.route) {
-                    launchSingleTop = true
-                }
+    val childrenList = mutableListOf<MenuItem.Action>()
+    childrenList.add(
+        MenuItem.Action(
+            context.getString(R.string.menu_category)
+        ) {
+            navController.navigate(NavigationItem.Category.route) {
+                launchSingleTop = true
             }
-        )
-    }
+        }
+    )
 
-    if (hasHandleServicePrivilege) {
-        items.add(
-            MenuItem.Action(
-                context.getString(R.string.menu_handle_service)
-            ) {
-                navController.navigate(NavigationItem.HandleService.route) {
-                    launchSingleTop = true
-                }
+    /*childrenList.add(
+        MenuItem.Action(
+            context.getString(R.string.menu_rayon)
+        ) {
+            navController.navigate(NavigationItem.Rayon.route) {
+                launchSingleTop = true
             }
+        }
+    )*/
+
+    items.add(
+        MenuItem.SubMenu(
+            context.getString(R.string.menu_settings),
+            childrenList
         )
-    }
+    )
+
+    items.add(
+        MenuItem.Action(
+            context.getString(R.string.menu_handle_service)
+        ) {
+            navController.navigate(NavigationItem.HandleService.route) {
+                launchSingleTop = true
+            }
+        }
+    )
 
     // Add  remaining list
     items.addAll(
@@ -494,23 +428,4 @@ private fun shouldShowBarAndRailApp(
     }
 
     return route !in excludedRoutes
-}
-
-private fun isPortaitScreenActive(route: String?): Boolean {
-    val excludedRoutes =  mutableListOf(
-        NavigationItem.Loading.route,
-        NavigationItem.Configuration.route,
-        NavigationItem.Login.route,
-        NavigationItem.ForgotPassword.route,
-        NavigationItem.ChangePassword.route,
-        NavigationItem.Home.route,
-        NavigationItem.MySales.route,
-        NavigationItem.SaveSale.route,
-        NavigationItem.Account.route,
-        NavigationItem.HandleService.route,
-        NavigationItem.Outputs.route,
-        NavigationItem.Category.route,
-        NavigationItem.Rayon.route
-    )
-    return route in excludedRoutes
 }

@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.designsystem.R
@@ -152,7 +153,7 @@ fun AppTextField(
                 }
             }
         ),
-        placeholder = { Text(placeholder) },
+        placeholder = { Text(placeholder, maxLines = maxLines, overflow = TextOverflow.Ellipsis) },
         label = label?.let { { Text(it) } },
         maxLines = maxLines,
         singleLine = singleLine,

@@ -75,7 +75,6 @@ fun ProductForm(
         }
     }
 
-
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -221,7 +220,7 @@ fun ProductForm(
 
         }
 
-        if (!isServiceView) {
+        /*if (!isServiceView) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 AppEditableExposedDropdown(
                     items = rayonItems,
@@ -267,7 +266,7 @@ fun ProductForm(
                 }
 
             }
-        }
+        }*/
 
        /* Row(modifier = Modifier.fillMaxWidth()) {
             AppEditableExposedDropdown(

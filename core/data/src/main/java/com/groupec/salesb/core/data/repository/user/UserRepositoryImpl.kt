@@ -9,6 +9,7 @@ import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.data.R
 import com.groupec.salesb.core.data.model.toUserEntity
 import com.groupec.salesb.core.data.model.toUserList
+import com.groupec.salesb.core.data.model.toUserStore
 import com.groupec.salesb.core.data.repository.common.UserLocalRepository
 import com.groupec.salesb.core.data.repository.common.UserRemoteRepository
 import com.groupec.salesb.core.data.repository.common.UserSyncRepository
@@ -63,6 +64,44 @@ class UserRepositoryImpl @Inject constructor(
     override fun getUserStore(): Flow<UserStore> = dataStoreManager.userFlow
 
     private suspend fun addUser(user: UserEntity) = userLocalRepository.addUser(user)
+
+    override suspend fun checkEmailExists(email: String): Result<Boolean> {
+        return try {
+            val response = apiService.getUserByEmail(email)
+            if (!response.isSuccessful) {
+                return Result.Error(HttpException(response))
+            }
+
+            val body = response.body()
+                ?: return Result.Error(Exception(context.getString(R.string.error_empty_response)))
+
+            Result.Success(!body.error && body.data != null)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun saveUserStoreById(id: Int): Result<Unit> {
+        return try {
+            val response = apiService.getUserById(id)
+            if (!response.isSuccessful) {
+                return Result.Error(HttpException(response))
+            }
+
+            val body = response.body()
+                ?: return Result.Error(Exception(context.getString(R.string.error_empty_response)))
+
+            val user = body.data
+            if (body.error || user == null) {
+                return Result.Error(Exception(context.getString(R.string.error_user_not_found)))
+            }
+
+            dataStoreManager.setUserConfig(user.toUserStore())
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
 
     override fun getPagedUsers(searchQuery: String): Flow<PagingData<User>> {
         return Pager(
@@ -150,7 +189,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     suspend fun isExpired(): Boolean? {
-        return try {
+       /* return try {
             val response = apiService.getParameter()
             if (!response.isSuccessful) return null
 
@@ -158,7 +197,8 @@ class UserRepositoryImpl @Inject constructor(
             expirationDate?.let { it < getDateTimeByNtp() } ?: true
         } catch (e: Exception) {
             null
-        }
+        }*/
+        return false
     }
 
     /* Set methods */

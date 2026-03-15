@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signup_title">Inscription</string>
+    <string name="signup_print_service_info_title">Service d\'impression</string>
+    <string name="signup_print_service_info_message">Activez cette option pour imprimer automatiquement les reçus après chaque vente.</string>
+    <string name="signup_start_experience">Commencer l\'expérience</string>
+    <string name="signup_configuration_error_title">Configuration impossible</string>
+    <string name="signup_back_content_desc">Retour</string>
+    <string name="signup_info_content_desc">Information</string>
+    <string name="signup_next">Suivant</string>
+    <string name="signup_previous">Précédent</string>
+    <string name="signup_finish">Terminer</string>
+    <string name="select">Sélectionner</string>
+    <string name="sales_and_retailers">Commerce</string>
+    <string name="professional_services">Service</string>
+</resources>

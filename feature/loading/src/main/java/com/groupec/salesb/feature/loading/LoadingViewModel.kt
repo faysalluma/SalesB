@@ -30,13 +30,12 @@ class LoadingViewModel @Inject constructor(
             val parameter = getParameterUseCase().firstOrNull() ?: Parameter()
             if (parameter.termsandconditions) {
                 _configUiState.value = ConfigUiState.TermsAndConditions
-            } else if (parameter.raisonsociale.isEmpty()) {
-                // Mettre à jour _userUiState
-                _configUiState.value = ConfigUiState.Configuration
             } else {
                 // Récupérer userStore avant de continuer
                 val userStore = getUserStoreUseCase().firstOrNull() ?: UserStore()
-                if (userStore.id.isEmpty()) {
+                if (userStore.firstLogin) {
+                    _configUiState.value = ConfigUiState.SignUp
+                } else if (userStore.id.isEmpty()) {
                     _configUiState.value = ConfigUiState.Login(parameter.raisonsociale)
                 } else {
                     _configUiState.value = ConfigUiState.Home
@@ -49,7 +48,7 @@ class LoadingViewModel @Inject constructor(
 sealed class ConfigUiState {
     data object Loading : ConfigUiState()
     data object TermsAndConditions : ConfigUiState()
-    data object Configuration : ConfigUiState()
+    data object SignUp : ConfigUiState()
     data class Login(val raisonSociale: String) : ConfigUiState()
     data object Home : ConfigUiState()
 }

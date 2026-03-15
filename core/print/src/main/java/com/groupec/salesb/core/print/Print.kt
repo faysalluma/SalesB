@@ -98,13 +98,13 @@ class Print(
             append("[L]\n")
 
             // Business Informations
-            parameter.adresse.takeIf { it.isNotEmpty() }?.let {
+            parameter.adresse?.takeIf { it.isNotEmpty() }?.let {
                 append("[C]"+ it.uppercase(Locale.getDefault()) +"\n")
             }
             parameter.ifu?.takeIf { it.isNotEmpty() }?.let {
                 append("[C]"+ context.getString(R.string.ifu) + " " + it.uppercase(Locale.getDefault()) +"\n")
             }
-            parameter.telephone.takeIf { it.isNotEmpty() }?.let {
+            parameter.telephone?.takeIf { it.isNotEmpty() }?.let {
                 append("[C]"+ context.getString(R.string.tel) + " " + it +"\n")
             }
             parameter.email?.takeIf { it.isNotEmpty() }?.let {

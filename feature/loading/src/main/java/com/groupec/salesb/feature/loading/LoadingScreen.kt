@@ -14,7 +14,7 @@ import com.groupec.salesb.core.ui.ComposableLifecycle
 @Composable
 fun LoadingScreen(
     navigateToTermsAndCoditions: () -> Unit,
-    navigateToConfiguration: () -> Unit,
+    navigateToSignUp: () -> Unit,
     navigateToLogin: (String) -> Unit,
     navigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
@@ -33,9 +33,9 @@ fun LoadingScreen(
                     navigateToTermsAndCoditions()
                 }
             }
-            is ConfigUiState.Configuration -> {
+            is ConfigUiState.SignUp -> {
                 LaunchedEffect(Unit) {
-                    navigateToConfiguration()
+                    navigateToSignUp()
                 }
             }
             is ConfigUiState.Login -> {

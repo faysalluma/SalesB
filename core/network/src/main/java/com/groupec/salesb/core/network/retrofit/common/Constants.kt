@@ -42,6 +42,7 @@ class Constants {
         const val ADD_RAYON = "addRayon"
         const val ADD_OUTPUT = "addOutput"
         const val ADD_USER = "addUser"
+        const val ADD_SIGNUP_CONFIGURATION = "addSignupConfiguration"
 
         // Put endpoint
         const val PUT_CHANGE_PASSWORD = "changePassword/{userid}"
