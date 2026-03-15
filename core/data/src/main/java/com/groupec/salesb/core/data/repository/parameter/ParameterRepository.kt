@@ -7,7 +7,7 @@ import com.groupec.salesb.core.model.data.Parameter
 import kotlinx.coroutines.flow.Flow
 
 interface ParameterRepository{
-    fun saveParameters() : Flow<Result<String>>
+    suspend fun saveParameters(parameter: Parameter) : Result<Unit>
     fun getParameters() : Flow<Parameter>
     suspend fun updateFirstLogin(): Result<Unit>
     suspend fun acceptTermsAndConditions(): Result<Unit>

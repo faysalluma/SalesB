@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signup_title">Sign up</string>
+    <string name="signup_step_2">Step 2 of 3: Your company</string>
+    <string name="signup_print_service_info_title">Printing service</string>
+    <string name="signup_print_service_info_message">Enable this option to automatically print receipts after each sale.</string>
+    <string name="signup_start_experience">Start the experience</string>
+    <string name="signup_configuration_error_title">Configuration failed</string>
+    <string name="signup_back_content_desc">Back</string>
+    <string name="signup_info_content_desc">Information</string>
+    <string name="signup_next">Next</string>
+    <string name="signup_previous">Previous</string>
+    <string name="signup_finish">Finish</string>
+    <string name="select">Select</string>
+    <string name="sales_and_retailers">Retail</string>
+    <string name="professional_services">Service</string>
+</resources>

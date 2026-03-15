@@ -60,58 +60,60 @@ fun SampleTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = { expanded = true }) {
-                Icon(AppIcons.MoreVert, contentDescription = "Menu")
-            }
+            if (dropDownItemsMenu.isNotEmpty()) {
+                IconButton(onClick = { expanded = true }) {
+                    Icon(AppIcons.MoreVert, contentDescription = "Menu")
+                }
 
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = {
-                    expanded = false
-                    subMenuExpandedIndex = null
-                },
-                modifier = Modifier.background(White)
-            ) {
-                dropDownItemsMenu.forEachIndexed { index, item ->
-                    when (item) {
-                        is MenuItem.Action -> DropdownMenuItem(
-                            text = { Text(item.label, color = Black) },
-                            onClick = {
-                                expanded = false
-                                item.onClick()
-                            }
-                        )
-
-                        is MenuItem.SubMenu -> {
-                            DropdownMenuItem(
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = {
+                        expanded = false
+                        subMenuExpandedIndex = null
+                    },
+                    modifier = Modifier.background(White)
+                ) {
+                    dropDownItemsMenu.forEachIndexed { index, item ->
+                        when (item) {
+                            is MenuItem.Action -> DropdownMenuItem(
                                 text = { Text(item.label, color = Black) },
-                                trailingIcon = {
-                                    Icon(
-                                        imageVector = AppIcons.ChevronRight,
-                                        contentDescription = "SubMenu"
-                                    )
-                                },
                                 onClick = {
-                                    subMenuExpandedIndex =
-                                        if (subMenuExpandedIndex == index) null else index
+                                    expanded = false
+                                    item.onClick()
                                 }
                             )
 
-                            if (subMenuExpandedIndex == index) {
-                                Column(
-                                    modifier = Modifier
-                                        .padding(start = 24.dp)
-                                        .background(White)
-                                ) {
-                                    item.children.forEach { action ->
-                                        DropdownMenuItem(
-                                            text = { Text(action.label, color = Black) },
-                                            onClick = {
-                                                expanded = false
-                                                subMenuExpandedIndex = null
-                                                action.onClick()
-                                            }
+                            is MenuItem.SubMenu -> {
+                                DropdownMenuItem(
+                                    text = { Text(item.label, color = Black) },
+                                    trailingIcon = {
+                                        Icon(
+                                            imageVector = AppIcons.ChevronRight,
+                                            contentDescription = "SubMenu"
                                         )
+                                    },
+                                    onClick = {
+                                        subMenuExpandedIndex =
+                                            if (subMenuExpandedIndex == index) null else index
+                                    }
+                                )
+
+                                if (subMenuExpandedIndex == index) {
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(start = 24.dp)
+                                            .background(White)
+                                    ) {
+                                        item.children.forEach { action ->
+                                            DropdownMenuItem(
+                                                text = { Text(action.label, color = Black) },
+                                                onClick = {
+                                                    expanded = false
+                                                    subMenuExpandedIndex = null
+                                                    action.onClick()
+                                                }
+                                            )
+                                        }
                                     }
                                 }
                             }

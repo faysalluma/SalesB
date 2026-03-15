@@ -65,7 +65,6 @@ android {
 dependencies {
     implementation(project(":feature:home"))
     implementation(project(":feature:login"))
-    implementation(project(":feature:configuration"))
     implementation(project(":feature:loading"))
     implementation(project(":feature:changepassword"))
     implementation(project(":feature:productlist"))
@@ -84,6 +83,7 @@ dependencies {
     implementation(project(":feature:accountdetail"))
     implementation(project(":feature:termsandconditions"))
     implementation(project(":feature:handleservice"))
+    implementation(project(":feature:signup"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

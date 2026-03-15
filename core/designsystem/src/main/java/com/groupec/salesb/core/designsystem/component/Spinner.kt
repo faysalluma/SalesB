@@ -100,6 +100,83 @@ fun AppExposedDropdownMenu(
     }
 }
 
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun AppExposedDropdownMenuWithError(
+    modifier: Modifier = Modifier,
+    items: List<String>,
+    label: String ? = null,
+    value: String = "", // Selector value
+    isError: Boolean = false,
+    supportingText: @Composable (() -> Unit)? = null,
+    onValueChange: ((String) -> Unit) ? = null, // For update selector value
+    onItemSelected: (Int, String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    val supportingTextValue: (@Composable () -> Unit)? = when {
+        isError -> supportingText ?: if (items[0] == value) {
+            {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.required_field),
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        } else null
+        else -> null
+    }
+
+    ExposedDropdownMenuBox(
+        modifier = modifier,
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+    ) {
+        TextField(
+            // The `menuAnchor` modifier must be passed to the text field to handle
+            // expanding/collapsing the menu on click. A read-only text field has
+            // the anchor type `PrimaryNotEditable`.
+            modifier = modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
+            value = value,
+            onValueChange = {},
+            /* placeholder = {
+                 Text(text = "Select a name")
+             },*/
+            readOnly = true,
+            singleLine = true,
+            label = if (!label.isNullOrEmpty()) {
+                { Text(label) }
+            } else null,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            // colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            colors = ExposedDropdownMenuDefaults.textFieldColors(
+                // unfocusedIndicatorColor = Primary,
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+            ),
+            isError = isError,
+            supportingText = supportingTextValue
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.background(Color.White)
+        ) {
+            items.forEachIndexed { index, option ->
+                DropdownMenuItem(
+                    text = { Text(option, style = MaterialTheme.typography.bodyLarge) },
+                    onClick = {
+                        onValueChange?.let { it(option) }
+                        onItemSelected(index, option)
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                )
+            }
+        }
+    }
+}
+
 /** EditableExposedDropdownMenu */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)

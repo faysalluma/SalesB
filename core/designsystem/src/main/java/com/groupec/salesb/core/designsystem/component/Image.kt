@@ -59,6 +59,7 @@ fun SalesBImage(modifier: Modifier = Modifier.fillMaxSize()) {
 fun CardImage(
     modifier: Modifier = Modifier,
     imageUri: Uri? = null,
+    textImageRes: Int? = null,
     onClick: () -> Unit
 ) {
     Card(
@@ -94,7 +95,7 @@ fun CardImage(
             )
             Text(
                 modifier = Modifier.padding(top = 10.dp),
-                text = stringResource(R.string.add_image),
+                text = stringResource(textImageRes ?: R.string.add_image),
                 style = MaterialTheme.typography.titleSmall
             )
         }

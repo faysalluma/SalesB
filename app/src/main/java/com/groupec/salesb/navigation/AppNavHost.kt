@@ -19,10 +19,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.groupec.feature.configuration.ConfigurationScreen
 import com.groupec.feature.forgotpassword.ForgotPasswordScreen
 import com.groupec.feature.login.LoginScreen
 import com.groupec.feature.sale.SaleScreen
+import com.groupec.feature.signup.SignupScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
 import com.groupec.feature.termsandconditions.TermsAndConditionsScreen
@@ -47,9 +47,8 @@ fun AppNavHost(
     modifier: Modifier,
     snackbarHostState: SnackbarHostState,
     isExpandedWidth: Boolean,
-    shouldNotShowInPortraitMode: Boolean,
     navController: NavHostController,
-    startDestination: String
+    startDestination: String = NavigationItem.Loading.route
 ) {
     /*LaunchedEffect(Unit) {
         val flipperPlugin = NavigationFlipperPlugin.getInstance()
@@ -78,13 +77,13 @@ fun AppNavHost(
                         popUpTo(NavigationItem.Loading.route) { inclusive = true }
                     }
                 },
-                navigateToConfiguration = {
-                    navController.navigate(NavigationItem.Configuration.route) {
+                navigateToSignUp = {
+                    navController.navigate(NavigationItem.Signup.route) {
                         popUpTo(NavigationItem.Loading.route) { inclusive = true }
                     }
                 },
                 navigateToLogin = { raisonSociale ->
-                    navController.navigate(NavigationItem.Login.route.plus("/${raisonSociale}")) {
+                    navController.navigate(NavigationItem.Login.route) {
                         popUpTo(NavigationItem.Loading.route) { inclusive = true }
                     }
                 },
@@ -99,31 +98,29 @@ fun AppNavHost(
         composable(NavigationItem.TermsAndConditions.route) {
             TermsAndConditionsScreen(
                 navigateToConfiguration = {
-                    navController.navigate(NavigationItem.Configuration.route) {
+                    navController.navigate(NavigationItem.Signup.route) {
                         popUpTo(NavigationItem.TermsAndConditions.route) { inclusive = true }
                     }
                 }
             )
         }
 
-        composable(NavigationItem.Configuration.route) {
-            ConfigurationScreen(
-                navigateToLogin = { raisonSociale ->
-                    navController.navigate(NavigationItem.Login.route.plus("/${raisonSociale}")) {
-                        popUpTo(NavigationItem.Configuration.route) { inclusive = true }
+        composable(NavigationItem.Signup.route) {
+            SignupScreen(
+                navigateToLogin = {
+                    navController.navigate(NavigationItem.Login.route.plus("/SalesB")) {
+                        // popUpTo(NavigationItem.Signup.route) { inclusive = true }
+                    }
+                },
+                navigateToHome = {
+                    navController.navigate(NavigationItem.Home.route) {
+                        popUpTo(NavigationItem.Signup.route) { inclusive = true }
                     }
                 }
             )
         }
 
-        composable(
-            route = NavigationItem.Login.route.plus("/{raisonSociale}"),
-            arguments = listOf(
-                navArgument("raisonSociale") {
-                    type = NavType.StringType
-                }
-            )
-        ) { backStackEntry ->
+        composable(NavigationItem.Login.route) { backStackEntry ->
             val raisonSociale = backStackEntry.arguments?.getString("raisonSociale") ?: ""
             LoginScreen(
                 isExpandedWidth = isExpandedWidth,

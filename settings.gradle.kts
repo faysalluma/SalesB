@@ -57,3 +57,5 @@ include(":feature:accountdetail")
 include(":feature:termsandconditions")
 
 include(":feature:handleservice")
+
+include(":feature:signup")

@@ -214,36 +214,10 @@ fun ProductDetailScreen(
                 products = productDataForm,
                 categorielibelleState = categorielibelleState,
                 navigateToCategory = {
-                    if (privileges.any {
-                        it in Privileges.Category.getKeysByApprovals(
-                            listOf(
-                                Approval.AUTHORIZE_ADD,
-                                Approval.AUTHORIZE_EDIT,
-                                Approval.AUTHORIZE_DELETE,
-                            )
-                        )
-                    }) {
-                        navigateToCategory()
-                    } else {
-                        Toast.makeText(context, context.getString(com.groupec.salesb.core.R.string.no_visual_allowed),
-                            Toast.LENGTH_SHORT).show()
-                    }
+                    navigateToCategory()
                 },
                 navigateToRayon = {
-                    if (privileges.any {
-                            it in Privileges.Rayon.getKeysByApprovals(
-                                listOf(
-                                    Approval.AUTHORIZE_ADD,
-                                    Approval.AUTHORIZE_EDIT,
-                                    Approval.AUTHORIZE_DELETE,
-                                )
-                            )
-                        }) {
-                        navigateToRayon()
-                    } else {
-                        Toast.makeText(context, context.getString(com.groupec.salesb.core.R.string.no_visual_allowed),
-                            Toast.LENGTH_SHORT).show()
-                    }
+                    navigateToRayon()
                 },
                 rayonlibelleState = rayonlibelleState,
                 fournisseurlibelleState = fournisseurlibelleState,
