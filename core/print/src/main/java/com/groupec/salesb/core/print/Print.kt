@@ -1,18 +1,15 @@
 package com.groupec.salesb.core.print
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import com.dantsu.escposprinter.EscPosPrinter
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg
 import com.groupec.salesb.core.convertToLocaleDateTimeFormat
 import com.groupec.salesb.core.formatAmount
+import com.groupec.salesb.core.getBitmapFromUrl
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.others.paymentTypeLibelleResFromValue
@@ -23,7 +20,7 @@ import java.util.Locale
 class Print(
     private val context: Context
 ) {
-    fun print(logoRes: Int ?= null, sale: Sale, parameter: Parameter) {
+    fun print(logoUrl: String? = null, sale: Sale, parameter: Parameter) {
         if (BluetoothPrintersConnections.selectFirstPaired() != null) {
             val printer = EscPosPrinter(
                 BluetoothPrintersConnections.selectFirstPaired(),
@@ -33,7 +30,7 @@ class Print(
                 32
             )
 
-            val formattedText = createFormattedText(printer = printer, logoRes, sale, parameter)
+            val formattedText = createFormattedText(printer = printer, logoUrl, sale, parameter)
             printer.printFormattedText(formattedText)
         } else {
             // Execute le toast sur le thread principale depuis un autre thread
@@ -45,7 +42,7 @@ class Print(
     }
 
     fun printWithResult(
-        logoRes: Int? = null,
+        logoUrl: String? = null,
         sale: Sale,
         parameter: Parameter
     ): Result<Unit> {
@@ -53,7 +50,7 @@ class Print(
             val printerConnection = BluetoothPrintersConnections.selectFirstPaired()
             if (printerConnection != null) {
                 val printer = EscPosPrinter(printerConnection, 203, 48f, 32)
-                val formattedText = createFormattedText(printer, logoRes, sale, parameter)
+                val formattedText = createFormattedText(printer, logoUrl, sale, parameter)
                 printer.printFormattedText(formattedText)
                 Result.success(Unit)
             } else {
@@ -67,25 +64,11 @@ class Print(
 
     private fun createFormattedText(
         printer: EscPosPrinter,
-        logoRes: Int? = null,
+        logoUrl: String? = null,
         sale: Sale,
         parameter: Parameter
     ): String {
-
-        // Convert drawable to bitmap
-        val drawable = logoRes?.let {
-            ContextCompat.getDrawable(context, it)
-        }
-        val bitmap = drawable?.let {
-            val width = it.intrinsicWidth.takeIf { w -> w > 0 } ?: 100
-            val height = it.intrinsicHeight.takeIf { h -> h > 0 } ?: 100
-            val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(bmp)
-            canvas.drawColor(Color.WHITE)
-            it.setBounds(0, 0, canvas.width, canvas.height)
-            it.draw(canvas)
-            bmp
-        }
+        val bitmap = getBitmapFromUrl(logoUrl)
 
         return buildString {
             // Logo or Business name

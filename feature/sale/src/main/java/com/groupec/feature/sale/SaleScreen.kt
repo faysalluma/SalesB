@@ -64,7 +64,6 @@ import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
-import com.groupec.salesb.core.getDrawableResIdIfExists
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.Sale
@@ -140,7 +139,7 @@ fun SaleScreen(
             savedSale?.let { sale ->
                 scope.launch(Dispatchers.IO) {
                     bluetoothPrint.print(
-                        getDrawableResIdIfExists(context),
+                        parameter.logo,
                         sale = sale,
                         parameter = parameter
                     )
@@ -240,7 +239,7 @@ fun SaleScreen(
                                 // Bluetooth is on print the receipt
                                 scope.launch(Dispatchers.IO) {
                                     bluetoothPrint.print(
-                                        getDrawableResIdIfExists(context),
+                                        parameter.logo,
                                         sale = sale,
                                         parameter = parameter
                                     )

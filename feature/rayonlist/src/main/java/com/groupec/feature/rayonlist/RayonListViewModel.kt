@@ -12,6 +12,7 @@ import com.groupec.salesb.core.domain.rayon.GenerateRayonListExcelUseCase
 import com.groupec.salesb.core.domain.rayon.GenerateRayonListPdfUseCase
 import com.groupec.salesb.core.domain.rayon.GetAllRayonsUseCase
 import com.groupec.salesb.core.domain.rayon.GetRayonUseCase
+import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.model.data.Rayon
 import com.groupec.salesb.core.saveExcelToDownloads
 import com.groupec.salesb.core.savePdfToDownloads
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +36,8 @@ class RayonListViewModel @Inject constructor(
     private val deleteRayonUseCase: DeleteRayonUseCase,
     private val getAllRayonsUseCase: GetAllRayonsUseCase,
     private val generateRayonListPdfUseCase: GenerateRayonListPdfUseCase,
-    private val generateRayonListExcelUseCase: GenerateRayonListExcelUseCase
+    private val generateRayonListExcelUseCase: GenerateRayonListExcelUseCase,
+    private val getParameterUseCase: GetParameterUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -113,8 +116,14 @@ class RayonListViewModel @Inject constructor(
                         return@launch
                     }
                     try {
+                        val logoUrl = getParameterUseCase().first().logo
                         val pdfBytes = withContext(Dispatchers.Default) {
-                            generateRayonListPdfUseCase(activityContext, rayons, _searchQuery.value)
+                            generateRayonListPdfUseCase(
+                                activityContext,
+                                rayons,
+                                _searchQuery.value,
+                                logoUrl
+                            )
                         }
                         val file = withContext(Dispatchers.IO) {
                             activityContext.savePdfToDownloads(

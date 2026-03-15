@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -42,7 +41,6 @@ import com.groupec.salesb.core.designsystem.component.TitleMedium
 import com.groupec.salesb.core.designsystem.component.TitleSmall
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.formatAmount
-import com.groupec.salesb.core.getDrawableResIdIfExists
 import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
@@ -51,6 +49,7 @@ import com.groupec.salesb.core.model.data.others.paymentTypeLibelleResFromValue
 import com.groupec.salesb.core.toDate
 import com.groupec.salesb.core.toPercentFormat
 import com.groupec.salesb.core.toWordsWithIcuRespectingLocaleAndCurrency
+import com.groupec.salesb.core.designsystem.component.ProductImage
 
 @Composable
 fun InvoiceContent(
@@ -120,12 +119,12 @@ fun InvoiceAction(
 fun HeaderSection(parameter: Parameter, invoicing: Invoicing) {
     val context = LocalContext.current
     Column {
-        getDrawableResIdIfExists(context)?.let {
-            Image(
-                painter = painterResource(id = it),
+        parameter.logo?.takeIf { it.isNotBlank() }?.let { logoUrl ->
+            ProductImage(
                 modifier = Modifier
                     .width(150.dp)
                     .height(60.dp),
+                url = logoUrl,
                 contentDescription = "Client logo"
             )
             Spacer(modifier = Modifier.height(18.dp))

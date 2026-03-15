@@ -103,7 +103,11 @@ fun CardImage(
 }
 
 @Composable
-fun ProductImage(url: String?) {
+fun ProductImage(
+    url: String?,
+    modifier: Modifier = Modifier,
+    contentDescription: String = "Product Image"
+) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)
@@ -112,9 +116,9 @@ fun ProductImage(url: String?) {
         // model = imageUri or url,
         placeholder = painterResource(AppIcons.NoImage),
         error = painterResource(AppIcons.NoImage),
-        contentDescription = "Product Image",
+        contentDescription = contentDescription,
         contentScale = ContentScale.Crop,
-        modifier = Modifier
+        modifier = modifier
             .size(72.dp)
             .clip(CircleShape)
         // .border(2.dp, Color.Gray, CircleShape),

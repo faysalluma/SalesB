@@ -5,8 +5,7 @@ import android.graphics.Bitmap
 import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.dayMonthYear
 import com.groupec.salesb.core.domain.R
-import com.groupec.salesb.core.getBitmapFromVectorDrawable
-import com.groupec.salesb.core.getDrawableResIdIfExists
+import com.groupec.salesb.core.getBitmapFromUrl
 import com.groupec.salesb.core.model.data.User
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.io.image.ImageDataFactory
@@ -29,14 +28,16 @@ class GenerateUserListPdfUseCase @Inject constructor() {
     operator fun invoke(
         context: Context,
         users: List<User>,
-        searchQuery: String? = null
-    ) = generateUserListPdf(context, users, searchQuery)
+        searchQuery: String? = null,
+        logoUrl: String? = null
+    ) = generateUserListPdf(context, users, searchQuery, logoUrl)
 }
 
 fun generateUserListPdf(
     context: Context,
     users: List<User>,
-    searchQuery: String?
+    searchQuery: String?,
+    logoUrl: String?
 ): ByteArray {
     val baos = ByteArrayOutputStream()
     val writer = PdfWriter(baos)
@@ -46,8 +47,7 @@ fun generateUserListPdf(
     val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
     val normalFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
 
-    getDrawableResIdIfExists(context)?.let {
-        val bitmap = getBitmapFromVectorDrawable(context, it)
+    getBitmapFromUrl(logoUrl)?.let { bitmap ->
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         val imageData = ImageDataFactory.create(stream.toByteArray())
@@ -56,7 +56,7 @@ fun generateUserListPdf(
         document.add(image)
     }
 
-    document.add(Paragraph("\n"))
+    document.add(Paragraph("").setMarginBottom(8f))
     document.add(
         Paragraph(context.getString(R.string.user_list_title))
             .setFont(boldFont)

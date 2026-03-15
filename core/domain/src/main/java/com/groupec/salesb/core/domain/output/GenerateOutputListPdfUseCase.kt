@@ -6,8 +6,7 @@ import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.dayMonthYear
 import com.groupec.salesb.core.domain.R
 import com.groupec.salesb.core.formatAmount
-import com.groupec.salesb.core.getBitmapFromVectorDrawable
-import com.groupec.salesb.core.getDrawableResIdIfExists
+import com.groupec.salesb.core.getBitmapFromUrl
 import com.groupec.salesb.core.model.data.Output
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.io.image.ImageDataFactory
@@ -30,14 +29,16 @@ class GenerateOutputListPdfUseCase @Inject constructor() {
     operator fun invoke(
         context: Context,
         outputs: List<Output>,
-        searchQuery: String? = null
-    ) = generateOutputListPdf(context, outputs, searchQuery)
+        searchQuery: String? = null,
+        logoUrl: String? = null
+    ) = generateOutputListPdf(context, outputs, searchQuery, logoUrl)
 }
 
 fun generateOutputListPdf(
     context: Context,
     outputs: List<Output>,
-    searchQuery: String?
+    searchQuery: String?,
+    logoUrl: String?
 ): ByteArray {
     val baos = ByteArrayOutputStream()
     val writer = PdfWriter(baos)
@@ -47,8 +48,7 @@ fun generateOutputListPdf(
     val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
     val normalFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
 
-    getDrawableResIdIfExists(context)?.let {
-        val bitmap = getBitmapFromVectorDrawable(context, it)
+    getBitmapFromUrl(logoUrl)?.let { bitmap ->
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         val imageData = ImageDataFactory.create(stream.toByteArray())
@@ -57,7 +57,7 @@ fun generateOutputListPdf(
         document.add(image)
     }
 
-    document.add(Paragraph("\n"))
+    document.add(Paragraph("").setMarginBottom(8f))
     document.add(
         Paragraph(context.getString(R.string.output_list_title))
             .setFont(boldFont)
