@@ -69,9 +69,10 @@ class RepositoryModule  {
     @Provides
     @Singleton
     fun providerStatisticRepository(
-        apiService: ApiService
+        apiService: ApiService,
+        dataStoreManager: DataStoreManager
     ) : StatisticRepository {
-        return StatisticRepositoryImpl(apiService)
+        return StatisticRepositoryImpl(apiService, dataStoreManager)
     }
 
     @Provides

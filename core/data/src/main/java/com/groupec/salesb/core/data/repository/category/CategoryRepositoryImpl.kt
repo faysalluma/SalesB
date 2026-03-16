@@ -12,7 +12,8 @@ import com.groupec.salesb.core.network.retrofit.common.executeApiCall
 import com.groupec.salesb.core.network.retrofit.common.safeApiCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
@@ -21,9 +22,13 @@ import javax.inject.Singleton
 @Singleton
 class CategoryRepositoryImpl @Inject constructor(private val apiService: ApiService, private val dataStoreManager: DataStoreManager) :
     CategoryRepository {
+    private suspend fun currentUserId(): Int =
+        dataStoreManager.userFlow.firstOrNull()?.id?.toIntOrNull() ?: 0
+
     override fun getCategories(): Flow<List<Category>> = flow {
+        val userId = currentUserId()
         val result = safeApiCall(
-            apiCall = { apiService.getCategories() },
+            apiCall = { apiService.getCategories(userId) },
             transform = { response ->
                 response.toCategorieList()
             }
@@ -33,7 +38,7 @@ class CategoryRepositoryImpl @Inject constructor(private val apiService: ApiServ
 
     override suspend fun getAllCategories(searchQuery: String): Result<List<Category>> {
         return try {
-            val response = apiService.getAllCategories(searchQuery)
+            val response = apiService.getAllCategories(searchQuery, currentUserId())
             if (!response.isSuccessful) {
                 return Result.Error(retrofit2.HttpException(response))
             }
@@ -44,21 +49,26 @@ class CategoryRepositoryImpl @Inject constructor(private val apiService: ApiServ
     }
 
     override fun getPagedCategories(searchQuery: String): Flow<PagingData<Category>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 15,
-                initialLoadSize = 15,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
-                CategoryPagingSource(apiService, searchQuery)
-            }
-        ).flow
+        return flow {
+            val userId = currentUserId()
+            emitAll(
+                Pager(
+                    config = PagingConfig(
+                        pageSize = 15,
+                        initialLoadSize = 15,
+                        enablePlaceholders = false
+                    ),
+                    pagingSourceFactory = {
+                        CategoryPagingSource(apiService, searchQuery, userId)
+                    }
+                ).flow
+            )
+        }
     }
 
     override suspend fun saveCategory(category: Category): Result<Unit> {
         val categoryValue = category.copy(
-            userid = dataStoreManager.userFlow.first().id.toInt()
+            userid = currentUserId()
         )
         return executeApiCall(
             apiCall = {

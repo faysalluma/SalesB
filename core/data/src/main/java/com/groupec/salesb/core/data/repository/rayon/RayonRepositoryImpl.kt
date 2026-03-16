@@ -9,7 +9,7 @@ import com.groupec.salesb.core.network.retrofit.common.executeApiCall
 import com.groupec.salesb.core.network.retrofit.common.safeApiCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
@@ -18,9 +18,13 @@ import javax.inject.Singleton
 @Singleton
 class RayonRepositoryImpl @Inject constructor(private val apiService: ApiService, private val dataStoreManager: DataStoreManager) :
     RayonRepository {
+    private suspend fun currentUserId(): Int =
+        dataStoreManager.userFlow.firstOrNull()?.id?.toIntOrNull() ?: 0
+
     override fun getRayons(searchQuery: String): Flow<List<Rayon>> = flow {
+        val userId = currentUserId()
         val result = safeApiCall(
-            apiCall = { apiService.getRayons(searchQuery) },
+            apiCall = { apiService.getRayons(searchQuery, userId) },
             transform = { response ->
                 response.toRayonList()
             }
@@ -30,7 +34,7 @@ class RayonRepositoryImpl @Inject constructor(private val apiService: ApiService
 
     override suspend fun saveRayon(rayon: Rayon): Result<Unit> {
         val rayonValue = rayon.copy(
-            userid = dataStoreManager.userFlow.first().id.toInt()
+            userid = currentUserId()
         )
         return executeApiCall(
             apiCall = {

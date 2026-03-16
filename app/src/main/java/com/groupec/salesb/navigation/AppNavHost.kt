@@ -83,7 +83,7 @@ fun AppNavHost(
                         popUpTo(NavigationItem.Loading.route) { inclusive = true }
                     }
                 },
-                navigateToLogin = { raisonSociale ->
+                navigateToLogin = {
                     navController.navigate(NavigationItem.Login.route) {
                         popUpTo(NavigationItem.Loading.route) { inclusive = true }
                     }
@@ -109,7 +109,7 @@ fun AppNavHost(
         composable(NavigationItem.Signup.route) {
             SignupScreen(
                 navigateToLogin = {
-                    navController.navigate(NavigationItem.Login.route.plus("/SalesB")) {
+                    navController.navigate(NavigationItem.Login.route) {
                         // popUpTo(NavigationItem.Signup.route) { inclusive = true }
                     }
                 },
@@ -131,7 +131,7 @@ fun AppNavHost(
                 },
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
-                        popUpTo(NavigationItem.Login.route.plus("/{raisonSociale}")) {
+                        popUpTo(NavigationItem.Login.route) {
                             inclusive = true
                         }
                     }
@@ -161,7 +161,7 @@ fun AppNavHost(
                 firstLoginOrResetPwd = firstLoginOrResetPwd,
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
-                        popUpTo(NavigationItem.Login.route.plus("/{raisonSociale}")) {
+                        popUpTo(NavigationItem.Login.route) {
                             inclusive = true
                         }
                     }
