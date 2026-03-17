@@ -177,8 +177,7 @@ private fun BottomContentScreen(
     val selectedPaymentType = paymentTypeFromLabel(context, paymentTypeState)
     val isCashSelected = selectedPaymentType == PaymentType.Cash
 
-    // Dont show payment selector if paymentTypeDefaultValue empty
-    if (paymentTypeState.isNotEmpty() && parameter.activepaymentmode) {
+    if (parameter.activepaymentmode) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
