@@ -156,6 +156,7 @@ fun AppNavHost(
             val userId = backStackEntry.arguments?.getInt("userId") ?: 0
             val firstLoginOrResetPwd = backStackEntry.arguments?.getBoolean("firstLoginOrResetPwd") ?: false
             ChangePasswordScreen(
+                isExpandedWidth = isExpandedWidth,
                 userId = userId,
                 firstLoginOrResetPwd = firstLoginOrResetPwd,
                 navigateToHome = {
