@@ -6,10 +6,10 @@
     <string name="statistic_label_benefit">Bénéfices</string>
     <string name="sale_number_and_date">N°: %1$d à %2$s</string>
     <string name="statistic_label_chart">Ventes périodiques</string>
-    <string name="product_item_detail">Date : %1$s, Prix : %2$s, Quantité : %3$s, Auteur : %4$s</string>
-    <string name="product_item_detail_without_quantity">Date : %1$s, Prix : %2$s, Auteur : %3$s</string>
-    <string name="output_item_detail">Date : %1$s, Prix : %2$s, Auteur : %3$s</string>
-    <string name="item_detail">Date: %1$s, Auteur : %2$s</string>
+    <string name="product_item_detail">Date : %1$s, Prix : %2$s, Quantité : %3$s</string>
+    <string name="product_item_detail_without_quantity">Date : %1$s, Prix : %2$s</string>
+    <string name="output_item_detail">Date : %1$s, Prix : %2$s</string>
+    <string name="item_detail">Date: %1$s</string>
     <string name="none">Aucun</string>
     <string name="view_item">Modifier</string>
     <string name="delete_item">Supprimer</string>
@@ -28,7 +28,7 @@
     <string name="total_amount">Montant total</string>
     <string name="registered_by">Enregistrée par</string>
     <string name="view_detail">Détail</string>
-    <string name="sale_item_dialog_title">Vente n° %1$s de %2$s, réalisée le  %3$s par  %4$s.</string>
+    <string name="sale_item_dialog_title">Vente n° %1$s de %2$s, réalisée le  %3$s</string>
     <string name="label">@string/label_view</string>
     <string name="quantity_greater">Limite de stock</string>
     <string name="send_invoice">Envoyer la facture par email</string>

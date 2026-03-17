@@ -57,7 +57,7 @@ fun OutputCard(
                 text = stringResource(
                     R.string.output_item_detail,
                     output.datecreation?.dayMonthYear() ?: stringResource(R.string.none),
-                    output.prix, output.username ?: ""
+                    output.prix
                 )
             )
         },

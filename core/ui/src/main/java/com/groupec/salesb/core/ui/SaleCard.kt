@@ -126,10 +126,9 @@ fun TableRow(
     actionItem: @Composable (() -> Unit) ? = null)
 {
 
-    val column1Weight = .15f
-    val column2Weight = .3f
-    val column3Weight = .25f
-    val column4Weight = .3f
+    val column1Weight = .2f
+    val column2Weight = .45f
+    val column3Weight = .35f
 
     Row(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.weight(1f)) {
@@ -147,11 +146,6 @@ fun TableRow(
             TableCell(
                 text =  sale?.totalprix?.formatAmount() ?: stringResource(R.string.total_amount),
                 weight = column3Weight,
-                isTitle = isTitle
-            )
-            TableCell(
-                text =  sale?.username ?: stringResource(R.string.registered_by),
-                weight = column4Weight,
                 isTitle = isTitle
             )
         }

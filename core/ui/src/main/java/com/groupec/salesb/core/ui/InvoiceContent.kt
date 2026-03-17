@@ -1,7 +1,6 @@
 package com.groupec.salesb.core.ui
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,8 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.convertToLocaleDateTimeFormat
 import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.designsystem.component.DefaultButton
+import com.groupec.salesb.core.designsystem.component.ProductImage
 import com.groupec.salesb.core.designsystem.component.TitleMedium
 import com.groupec.salesb.core.designsystem.component.TitleSmall
 import com.groupec.salesb.core.designsystem.theme.Silver
@@ -49,7 +47,6 @@ import com.groupec.salesb.core.model.data.others.paymentTypeLibelleResFromValue
 import com.groupec.salesb.core.toDate
 import com.groupec.salesb.core.toPercentFormat
 import com.groupec.salesb.core.toWordsWithIcuRespectingLocaleAndCurrency
-import com.groupec.salesb.core.designsystem.component.ProductImage
 
 @Composable
 fun InvoiceContent(

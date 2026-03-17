@@ -56,8 +56,7 @@ fun RayonCard(
             Text(
                 text = stringResource(
                     R.string.item_detail,
-                    rayon.datecreation?.dayMonthYear() ?: stringResource(R.string.none),
-                    rayon.username ?: ""
+                    rayon.datecreation?.dayMonthYear() ?: stringResource(R.string.none)
                 )
             )
         },

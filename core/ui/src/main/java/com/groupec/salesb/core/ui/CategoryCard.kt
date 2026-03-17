@@ -56,8 +56,7 @@ fun CategoryCard(
             Text(
                 text = stringResource(
                     R.string.item_detail,
-                    category.datecreation?.dayMonthYear() ?: stringResource(R.string.none),
-                    category.username ?: ""
+                    category.datecreation?.dayMonthYear() ?: stringResource(R.string.none)
                 )
             )
         },
