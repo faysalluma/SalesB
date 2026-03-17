@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="head_title">Produits</string>
+    <string name="head_title">Produits (%1$d)</string>
     <string name="loading_products">Chargement de produits …</string>
     <string name="export_to_pdf">Exporter en PDF</string>
     <string name="exporter_en_excel">Exporter en Excel</string>

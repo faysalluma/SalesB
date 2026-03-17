@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="head_title_output">Outputs</string>
+    <string name="head_title_output">Outputs (%1$d)</string>
     <string name="loading_outputs">Loading outputs…</string>
     <string name="export_to_pdf">Export to PDF</string>
     <string name="exporter_en_excel">Export to Excel</string>

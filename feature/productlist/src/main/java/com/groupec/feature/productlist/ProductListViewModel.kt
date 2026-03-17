@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onCompletion
@@ -51,6 +52,9 @@ class ProductListViewModel @Inject constructor(
     private val _isSearching = MutableStateFlow(false) // État de recherche
     val isSearching: StateFlow<Boolean> = _isSearching
 
+    private val _totalProductsCount = MutableStateFlow(0)
+    val totalProductsCount: StateFlow<Int> = _totalProductsCount.asStateFlow()
+
     private val _deleteProductUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
     val deleteProductUiState: StateFlow<FormUIState<*>> = _deleteProductUiState.asStateFlow()
 
@@ -64,12 +68,24 @@ class ProductListViewModel @Inject constructor(
 
     init {
         observeParameters()
+        observeTotalProductsCount()
     }
 
     private fun observeParameters() {
         viewModelScope.launch {
             getParameterUseCase().collect { parameter ->
                 _parameterState.value = parameter
+            }
+        }
+    }
+
+    private fun observeTotalProductsCount() {
+        viewModelScope.launch {
+            _searchQuery.collectLatest { query ->
+                _totalProductsCount.value = when (val result = getAllProductsUseCase(query)) {
+                    is Result.Success -> result.data.size
+                    else -> 0
+                }
             }
         }
     }

@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onCompletion
@@ -49,6 +50,9 @@ class OutputListViewModel @Inject constructor(
     private val _isSearching = MutableStateFlow(false) // État de recherche
     val isSearching: StateFlow<Boolean> = _isSearching
 
+    private val _totalOutputsCount = MutableStateFlow(0)
+    val totalOutputsCount: StateFlow<Int> = _totalOutputsCount.asStateFlow()
+
     private val _deleteOutputUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
     val deleteOutputUiState: StateFlow<FormUIState<*>> = _deleteOutputUiState.asStateFlow()
 
@@ -57,6 +61,10 @@ class OutputListViewModel @Inject constructor(
 
     private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
+
+    init {
+        observeTotalOutputsCount()
+    }
 
     val pagedOutputs: Flow<PagingData<Output>> = _searchQuery
         .flatMapLatest { query ->
@@ -70,6 +78,17 @@ class OutputListViewModel @Inject constructor(
 
     fun updateSearchQuery(newQuery: String) {
         _searchQuery.value = newQuery
+    }
+
+    private fun observeTotalOutputsCount() {
+        viewModelScope.launch {
+            _searchQuery.collectLatest { query ->
+                _totalOutputsCount.value = when (val result = getAllOutputsUseCase(query)) {
+                    is Result.Success -> result.data.size
+                    else -> 0
+                }
+            }
+        }
     }
 
     fun deleteOutput(id: Int) {

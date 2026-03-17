@@ -69,6 +69,7 @@ fun AccountListScreen(
     val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
+    val totalUsersCount by viewModel.totalUsersCount.collectAsState()
     val users = viewModel.pagedUsers.collectAsLazyPagingItems()
     val error = (users.loadState.refresh as? LoadState.Error)?.error?.message
     val deleteUserState by viewModel.deleteUserUiState.collectAsState()
@@ -231,7 +232,7 @@ fun AccountListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title_users),
+            text = stringResource(R.string.head_title_users, totalUsersCount),
             leadingContent = {
                 IconButton(onClick = { expanded = true }) {
                     Icon(imageVector = AppIcons.Export, contentDescription = "Export users")

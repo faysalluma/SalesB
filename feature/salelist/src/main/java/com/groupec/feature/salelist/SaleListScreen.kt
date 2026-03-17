@@ -58,6 +58,7 @@ import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.ExportType
 import com.groupec.salesb.core.convertToServerDateFormat
 import com.groupec.salesb.core.currentLocalDateString
+import com.groupec.salesb.core.formatAmount
 import com.groupec.salesb.core.designsystem.component.AppCustomBottomSheet
 import com.groupec.salesb.core.designsystem.component.AppCustomDialog
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
@@ -100,6 +101,8 @@ fun SaleListScreen(
 
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
+    val totalSalesCount by viewModel.totalSalesCount.collectAsStateWithLifecycle()
+    val totalSalesAmount by viewModel.totalSalesAmount.collectAsStateWithLifecycle()
     val sales = viewModel.pagedProducts.collectAsLazyPagingItems()
     val error = (sales.loadState.refresh as? LoadState.Error)?.error?.message
     val parameter by viewModel.parameter.collectAsStateWithLifecycle()
@@ -424,7 +427,12 @@ fun SaleListScreen(
                                         }
                                     }
                                     TitleLarge(
-                                        title = stringResource(R.string.my_sales),
+                                        title = stringResource(
+                                            R.string.my_sales,
+                                            totalSalesCount,
+                                            totalSalesAmount.formatAmount(),
+                                            parameter.devise
+                                        ),
                                         modifier = Modifier.padding(top = 22.dp)
                                     )
                                 }
@@ -553,7 +561,12 @@ fun SaleListScreen(
                                     }
                                 }
                                 TitleLarge(
-                                    title = stringResource(R.string.my_sales),
+                                    title = stringResource(
+                                        R.string.my_sales,
+                                        totalSalesCount,
+                                        totalSalesAmount.formatAmount(),
+                                        parameter.devise
+                                    ),
                                     modifier = Modifier.padding(top = 16.dp)
                                 )
                             }

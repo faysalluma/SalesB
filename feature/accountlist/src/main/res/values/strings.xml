@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="head_title_users">Users</string>
+    <string name="head_title_users">Users (%1$d)</string>
     <string name="retry">Retry</string>
     <string name="loading_products">Loading products…</string>
     <string name="search_product_place_holder">Search here</string>

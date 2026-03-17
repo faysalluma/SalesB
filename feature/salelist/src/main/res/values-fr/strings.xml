@@ -2,7 +2,7 @@
 <resources>
     <string name="retry">Réessayer</string>
     <string name="loading_sales">Chargement des ventes …</string>
-    <string name="my_sales">Mes ventes</string>
+    <string name="my_sales">Mes ventes (%1$d) - %2$s %3$s</string>
     <string name="search_sale_place_holder">Rechercher par montant</string>
     <string name="start_date">Date début</string>
     <string name="end_date">Date fin</string>
