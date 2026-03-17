@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="head_title_section">Sections</string>
+    <string name="head_title_section">Sections (%1$d)</string>
     <string name="no_section_avalaible">No section avalaible</string>
     <string name="loading_sections">Loading sections…</string>
     <string name="export_to_pdf">Export to PDF</string>

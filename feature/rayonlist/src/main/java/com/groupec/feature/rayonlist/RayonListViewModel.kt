@@ -20,6 +20,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -43,6 +44,9 @@ class RayonListViewModel @Inject constructor(
     private val _rayonUiState = MutableStateFlow<RayonUiState>(RayonUiState.Loading)
     val rayonUiState: StateFlow<RayonUiState> = _rayonUiState.asStateFlow()
 
+    private val _totalRayonsCount = MutableStateFlow(0)
+    val totalRayonsCount: StateFlow<Int> = _totalRayonsCount.asStateFlow()
+
     private val _deleteRayonUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
     val deleteRayonUiState: StateFlow<FormUIState<*>> = _deleteRayonUiState.asStateFlow()
 
@@ -54,6 +58,7 @@ class RayonListViewModel @Inject constructor(
 
     init {
         getRayons()
+        observeTotalRayonsCount()
     }
 
     fun getRayons() {
@@ -80,6 +85,17 @@ class RayonListViewModel @Inject constructor(
 
     fun updateSearchQuery(newQuery: String) {
         _searchQuery.value = newQuery
+    }
+
+    private fun observeTotalRayonsCount() {
+        viewModelScope.launch {
+            _searchQuery.collectLatest { query ->
+                _totalRayonsCount.value = when (val result = getAllRayonsUseCase(query)) {
+                    is Result.Success -> result.data.size
+                    else -> 0
+                }
+            }
+        }
     }
 
     fun deleteRayon(id: Int) {

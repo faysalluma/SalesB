@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
@@ -47,6 +48,9 @@ class AccountListViewModel @Inject constructor(
     private val _isSearching = MutableStateFlow(false) // État de recherche
     val isSearching: StateFlow<Boolean> = _isSearching
 
+    private val _totalUsersCount = MutableStateFlow(0)
+    val totalUsersCount: StateFlow<Int> = _totalUsersCount.asStateFlow()
+
     private val _deleteUserUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
     val deleteUserUiState: StateFlow<FormUIState<*>> = _deleteUserUiState.asStateFlow()
 
@@ -55,6 +59,10 @@ class AccountListViewModel @Inject constructor(
 
     private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
+
+    init {
+        observeTotalUsersCount()
+    }
 
     val pagedUsers: Flow<PagingData<User>> = _searchQuery
         .flatMapLatest { query ->
@@ -68,6 +76,17 @@ class AccountListViewModel @Inject constructor(
 
     fun updateSearchQuery(newQuery: String) {
         _searchQuery.value = newQuery
+    }
+
+    private fun observeTotalUsersCount() {
+        viewModelScope.launch {
+            _searchQuery.collectLatest { query ->
+                _totalUsersCount.value = when (val result = getAllUsersUseCase(query)) {
+                    is Result.Success -> result.data.size
+                    else -> 0
+                }
+            }
+        }
     }
 
     fun deleteUser(id: Int) {

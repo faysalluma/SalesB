@@ -72,6 +72,7 @@ fun ProductListScreen(
     val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
+    val totalProductsCount by viewModel.totalProductsCount.collectAsState()
     val products = viewModel.pagedProducts.collectAsLazyPagingItems()
     val error = (products.loadState.refresh as? LoadState.Error)?.error?.message
     val deleteProductState by viewModel.deleteProductUiState.collectAsState()
@@ -253,7 +254,7 @@ fun ProductListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title),
+            text = stringResource(R.string.head_title, totalProductsCount),
             leadingContent = {
                 IconButton(onClick = { expanded = true }) {
                     Icon(imageVector = AppIcons.Export, contentDescription = "Export product")

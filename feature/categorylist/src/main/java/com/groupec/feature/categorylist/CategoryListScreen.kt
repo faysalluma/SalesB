@@ -70,6 +70,7 @@ fun CategoryListScreen(
     val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
+    val totalCategoriesCount by viewModel.totalCategoriesCount.collectAsState()
     val categories = viewModel.pagedCategories.collectAsLazyPagingItems()
     val error = (categories.loadState.refresh as? LoadState.Error)?.error?.message
     val deleteCategoryState by viewModel.deleteCategoryUiState.collectAsState()
@@ -229,7 +230,7 @@ fun CategoryListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title_category),
+            text = stringResource(R.string.head_title_category, totalCategoriesCount),
             leadingContent = {
                 IconButton(onClick = { expanded = true }) {
                     Icon(imageVector = AppIcons.Export, contentDescription = "Export category")

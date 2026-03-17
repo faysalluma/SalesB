@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
@@ -46,6 +47,9 @@ class CategoryListViewModel @Inject constructor(
     private val _isSearching = MutableStateFlow(false) // État de recherche
     val isSearching: StateFlow<Boolean> = _isSearching
 
+    private val _totalCategoriesCount = MutableStateFlow(0)
+    val totalCategoriesCount: StateFlow<Int> = _totalCategoriesCount.asStateFlow()
+
     private val _deleteCategoryUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
     val deleteCategoryUiState: StateFlow<FormUIState<*>> = _deleteCategoryUiState.asStateFlow()
 
@@ -54,6 +58,10 @@ class CategoryListViewModel @Inject constructor(
 
     private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
+
+    init {
+        observeTotalCategoriesCount()
+    }
 
     val pagedCategories: Flow<PagingData<Category>> = _searchQuery
         .flatMapLatest { query ->
@@ -67,6 +75,17 @@ class CategoryListViewModel @Inject constructor(
 
     fun updateSearchQuery(newQuery: String) {
         _searchQuery.value = newQuery
+    }
+
+    private fun observeTotalCategoriesCount() {
+        viewModelScope.launch {
+            _searchQuery.collectLatest { query ->
+                _totalCategoriesCount.value = when (val result = getAllCategoriesUseCase(query)) {
+                    is Result.Success -> result.data.size
+                    else -> 0
+                }
+            }
+        }
     }
 
     fun deleteCategory(id: Int) {
