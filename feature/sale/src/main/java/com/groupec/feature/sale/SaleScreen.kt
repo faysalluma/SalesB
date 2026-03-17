@@ -196,11 +196,26 @@ fun SaleScreen(
 
     // For payment type selector
     val paymentTypeList = paymentTypeLabels(context)
-    val firstPaymentTypeDefaultValue = paymentTypeFromValue(parameter.defaultpaymenttype)?.let { type ->
-        context.getString(type.libelleRes)
-    } ?: ""
+    val firstPaymentTypeDefaultValue = when {
+        !parameter.activepaymentmode -> ""
+        else -> {
+            paymentTypeFromValue(parameter.defaultpaymenttype)?.let { type ->
+                context.getString(type.libelleRes)
+            } ?: parameter.defaultpaymenttype
+                .takeIf { it in paymentTypeList }
+            ?: ""
+        }
+    }
     var paymentTypeState by remember { mutableStateOf(firstPaymentTypeDefaultValue) }
     val paymentTypeValueForSave = paymentTypeFromLabel(context, paymentTypeState)?.let(::paymentTypeValue)
+
+    LaunchedEffect(parameter.activepaymentmode, firstPaymentTypeDefaultValue) {
+        if (!parameter.activepaymentmode) {
+            paymentTypeState = ""
+        } else if (paymentTypeState.isBlank()) {
+            paymentTypeState = firstPaymentTypeDefaultValue
+        }
+    }
 
     LaunchedEffect(selectedProducts.size) {
         if (selectedProducts.isEmpty()) {
