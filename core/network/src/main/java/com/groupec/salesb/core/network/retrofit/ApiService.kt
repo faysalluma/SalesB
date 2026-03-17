@@ -47,67 +47,119 @@ interface ApiService {
     suspend fun getUserById(@Path("userid") userId: Int) : Response<ApiResult<UserItemResponse>>
 
     @GET(Constants.GET_TOTAL_SALES)
-    suspend fun getTotalSales(@Path("startDate") startDate: String, @Path("endDate") endDate: String): Response<ApiResult<Int>>
+    suspend fun getTotalSales(
+        @Path("startDate") startDate: String,
+        @Path("endDate") endDate: String,
+        @Path("userid") userid: Int
+    ): Response<ApiResult<Int>>
 
     @GET(Constants.GET_TOTAL_AMOUNT_SALES)
-    suspend fun getTotalAmountSales(@Path("startDate") startDate: String, @Path("endDate") endDate: String): Response<ApiResult<Double>>
+    suspend fun getTotalAmountSales(
+        @Path("startDate") startDate: String,
+        @Path("endDate") endDate: String,
+        @Path("userid") userid: Int
+    ): Response<ApiResult<Double>>
 
     @GET(Constants.GET_TOTAL_AMOUNT_OUTPUTS)
-    suspend fun getTotalAmountOutputs(@Path("startDate") startDate: String, @Path("endDate") endDate: String): Response<ApiResult<Double>>
+    suspend fun getTotalAmountOutputs(
+        @Path("startDate") startDate: String,
+        @Path("endDate") endDate: String,
+        @Path("userid") userid: Int
+    ): Response<ApiResult<Double>>
 
     @GET(Constants.GET_TOTAL_PRODUCTS)
-    suspend fun getTotalProducts(): Response<ApiResult<Int>>
+    suspend fun getTotalProducts(@Query("userid") userid: Int): Response<ApiResult<Int>>
 
     @GET(Constants.GET_TOP_SALE_PRODUCTS)
-    suspend fun getTopSaleProducts(@Path("startDate") startDate: String, @Path("endDate") endDate: String): Response<ProductResponse>
+    suspend fun getTopSaleProducts(
+        @Path("startDate") startDate: String,
+        @Path("endDate") endDate: String,
+        @Path("userid") userid: Int
+    ): Response<ProductResponse>
 
     @GET(Constants.GET_ALERT_SEUIL)
-    suspend fun getAlertSeuil(): Response<ApiResult<Int>>
+    suspend fun getAlertSeuil(@Query("userid") userid: Int): Response<ApiResult<Int>>
 
     @GET(Constants.GET_TOTAL_SALE_DAY)
-    suspend fun getTotalSaleMorningEvening(@Path("date") date: String): Response<ApiResult<ChartDayResponse>>
+    suspend fun getTotalSaleMorningEvening(
+        @Path("date") date: String,
+        @Path("userid") userid: Int
+    ): Response<ApiResult<ChartDayResponse>>
 
     @GET(Constants.GET_TOTAL_SALE_BY_DATE)
-    suspend fun getTotalSalesByDate(@Path("startDate") startDate: String, @Path("endDate") endDate: String
+    suspend fun getTotalSalesByDate(
+        @Path("startDate") startDate: String,
+        @Path("endDate") endDate: String,
+        @Path("userid") userid: Int
     ): Response<ChartDateResponse>
 
     @GET(Constants.GET_PAGED_PRODUCTS)
-    suspend fun getPagedProducts(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
+    suspend fun getPagedProducts(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
+        @Query("search") search: String,
+        @Query("userid") userid: Int
     ): Response<ProductResponse>
 
     @GET(Constants.GET_PRODUCTS)
-    suspend fun getProducts(@Query("search") search: String
+    suspend fun getProducts(
+        @Query("search") search: String,
+        @Query("userid") userid: Int
     ): Response<ProductResponse>
 
 
     @GET(Constants.GET_PAGED_CATEGORIES)
-    suspend fun getPagedCategories(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
+    suspend fun getPagedCategories(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
+        @Query("search") search: String,
+        @Query("userid") userid: Int
     ): Response<CategoryResponse>
 
     @GET(Constants.GET_PAGED_OUTPUTS)
-    suspend fun getPagedOutputs(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
+    suspend fun getPagedOutputs(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
+        @Query("search") search: String,
+        @Query("userid") userid: Int
     ): Response<OutputResponse>
 
-    @GET(Constants.GET_OUTPUTS) suspend fun getOutputs(@Query("search") search: String): Response<OutputResponse>
+    @GET(Constants.GET_OUTPUTS)
+    suspend fun getOutputs(
+        @Query("search") search: String,
+        @Query("userid") userid: Int
+    ): Response<OutputResponse>
 
     @GET(Constants.GET_CATEGORIES)
-    suspend fun getCategories(): Response<CategoryResponse>
+    suspend fun getCategories(@Query("userid") userid: Int): Response<CategoryResponse>
 
     @GET(Constants.GET_ALL_CATEGORIES)
-    suspend fun getAllCategories(@Query("search") search: String): Response<CategoryResponse>
+    suspend fun getAllCategories(
+        @Query("search") search: String,
+        @Query("userid") userid: Int
+    ): Response<CategoryResponse>
 
     @GET(Constants.GET_RAYONS)
-    suspend fun getRayons(@Query("search") search: String): Response<RayonResponse>
+    suspend fun getRayons(
+        @Query("search") search: String,
+        @Query("userid") userid: Int
+    ): Response<RayonResponse>
 
     @GET(Constants.GET_PRODUCTS_LOW_INVENTORY)
-    suspend fun getProductsWithLowInventory(): Response<ProductResponse>
+    suspend fun getProductsWithLowInventory(@Query("userid") userid: Int): Response<ProductResponse>
 
     @GET(Constants.GET_PAGED_SALES)
-    suspend fun getPagedSales(@Query("page") page: Int, @Query("limit") limit: Int, @QueryMap searchParams: Map<String, String>
+    suspend fun getPagedSales(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
+        @QueryMap searchParams: Map<String, String>,
+        @Query("userid") userid: Int
     ): Response<SaleResponse>
 
     @GET(Constants.GET_SALES)
-    suspend fun getSales(@QueryMap searchParams: Map<String, String>
+    suspend fun getSales(
+        @QueryMap searchParams: Map<String, String>,
+        @Query("userid") userid: Int
     ): Response<SaleResponse>
 
     @GET(Constants.GET_PAGED_USERS)

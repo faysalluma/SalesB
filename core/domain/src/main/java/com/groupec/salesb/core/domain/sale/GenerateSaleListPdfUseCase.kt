@@ -6,8 +6,7 @@ import com.groupec.salesb.core.convertToLocaleDateTimeFormat
 import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.domain.R
 import com.groupec.salesb.core.formatAmount
-import com.groupec.salesb.core.getBitmapFromVectorDrawable
-import com.groupec.salesb.core.getDrawableResIdIfExists
+import com.groupec.salesb.core.getBitmapFromUrl
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.others.paymentTypeLibelleResFromValue
 import com.groupec.salesb.core.toDate
@@ -35,8 +34,9 @@ class GenerateSaleListPdfUseCase @Inject constructor() {
         searchQuery: String? = null,
         startDate: String? = null,
         endDate: String? = null,
-        devise: String? = null
-    ) = generateSaleListPdf(context, sales, searchQuery, startDate, endDate, devise)
+        devise: String? = null,
+        logoUrl: String? = null
+    ) = generateSaleListPdf(context, sales, searchQuery, startDate, endDate, devise, logoUrl)
 }
 
 fun generateSaleListPdf(
@@ -45,7 +45,8 @@ fun generateSaleListPdf(
     searchQuery: String?,
     startDate: String?,
     endDate: String?,
-    devise: String?
+    devise: String?,
+    logoUrl: String?
 ): ByteArray {
     val baos = ByteArrayOutputStream()
     val writer = PdfWriter(baos)
@@ -55,8 +56,7 @@ fun generateSaleListPdf(
     val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
     val normalFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
 
-    getDrawableResIdIfExists(context)?.let {
-        val bitmap = getBitmapFromVectorDrawable(context, it)
+    getBitmapFromUrl(logoUrl)?.let { bitmap ->
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         val imageData = ImageDataFactory.create(stream.toByteArray())
@@ -65,7 +65,7 @@ fun generateSaleListPdf(
         document.add(image)
     }
 
-    document.add(Paragraph("\n"))
+    document.add(Paragraph("").setMarginBottom(8f))
     document.add(
         Paragraph(context.getString(R.string.sale_list_title))
             .setFont(boldFont)

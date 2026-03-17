@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
@@ -14,6 +15,7 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.net.URL
 
 /* Replace , by . to have good dougle format */
 fun String.normalizeDecimalSeparator(): String {
@@ -103,6 +105,16 @@ fun Double.formatAmountNoTrailingZero(): String {
 // Because of BCrypt in Java/Kotlin (for org.mindrot.BCrypt) don't accept $2y$ format
 fun String.fixBCryptHash(): String {
     return this.replace("$2y$", "$2a$")
+}
+
+fun getBitmapFromUrl(url: String?): Bitmap? {
+    val urlFinal = Constants.UPLOAD_URL.plus(url)
+    if (url.isNullOrBlank()) return null
+    return runCatching {
+        URL(urlFinal).openStream().use { stream ->
+            BitmapFactory.decodeStream(stream)
+        }
+    }.getOrNull()
 }
 
 fun getDrawableResIdIfExists(context: Context, drawableName: String = "logo"): Int? {
@@ -202,5 +214,4 @@ fun Context.sendEmailWithAttachment(
 
     startActivity(Intent.createChooser(shareIntent , "Send with:"))
 }
-
 

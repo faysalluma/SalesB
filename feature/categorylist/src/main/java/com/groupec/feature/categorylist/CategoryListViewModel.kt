@@ -13,6 +13,7 @@ import com.groupec.salesb.core.domain.category.GenerateCategoryListExcelUseCase
 import com.groupec.salesb.core.domain.category.GenerateCategoryListPdfUseCase
 import com.groupec.salesb.core.domain.category.GetAllCategoriesUseCase
 import com.groupec.salesb.core.domain.category.GetPagedCategoryUsecase
+import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.model.data.Category
 import com.groupec.salesb.core.saveExcelToDownloads
 import com.groupec.salesb.core.savePdfToDownloads
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,7 +39,8 @@ class CategoryListViewModel @Inject constructor(
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
     private val getAllCategoriesUseCase: GetAllCategoriesUseCase,
     private val generateCategoryListPdfUseCase: GenerateCategoryListPdfUseCase,
-    private val generateCategoryListExcelUseCase: GenerateCategoryListExcelUseCase
+    private val generateCategoryListExcelUseCase: GenerateCategoryListExcelUseCase,
+    private val getParameterUseCase: GetParameterUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -100,8 +103,14 @@ class CategoryListViewModel @Inject constructor(
                         return@launch
                     }
                     try {
+                        val logoUrl = getParameterUseCase().first().logo
                         val pdfBytes = withContext(Dispatchers.Default) {
-                            generateCategoryListPdfUseCase(activityContext, categories, _searchQuery.value)
+                            generateCategoryListPdfUseCase(
+                                activityContext,
+                                categories,
+                                _searchQuery.value,
+                                logoUrl
+                            )
                         }
                         val file = withContext(Dispatchers.IO) {
                             activityContext.savePdfToDownloads(

@@ -16,7 +16,6 @@ import com.groupec.salesb.core.domain.sale.GenerateSaleListPdfUseCase
 import com.groupec.salesb.core.domain.sale.GenerateInvoicePdfUseCase
 import com.groupec.salesb.core.domain.sale.GetAllSalesUseCase
 import com.groupec.salesb.core.domain.sale.GetSaleUseCase
-import com.groupec.salesb.core.getDrawableResIdIfExists
 import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
@@ -144,7 +143,8 @@ class SaleListViewModel @Inject constructor(
                                 _searchQuery.value,
                                 _startDate.value,
                                 _endDate.value,
-                                _parameter.value.devise
+                                _parameter.value.devise,
+                                _parameter.value.logo
                             )
                         }
                         val file = withContext(Dispatchers.IO) {
@@ -228,7 +228,7 @@ class SaleListViewModel @Inject constructor(
             _printUiState.emit(FormUIState.Loading)
 
             val result = bluetoothPrint.printWithResult(
-                getDrawableResIdIfExists(context),
+                parameter.logo,
                 sale = sale,
                 parameter = parameter
             )

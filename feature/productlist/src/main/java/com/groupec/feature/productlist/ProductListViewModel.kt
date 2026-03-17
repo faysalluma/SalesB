@@ -123,7 +123,8 @@ class ProductListViewModel @Inject constructor(
                             generateProductListPdfUseCase(
                                 activityContext,
                                 products,
-                                _searchQuery.value
+                                _searchQuery.value,
+                                _parameterState.value.logo
                             )
                         }
                         val file = withContext(Dispatchers.IO) {

@@ -11,7 +11,9 @@ import com.groupec.salesb.core.network.retrofit.ApiService
 import com.groupec.salesb.core.network.retrofit.common.executeApiCall
 import com.groupec.salesb.core.network.retrofit.common.safeApiCall
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,22 +21,30 @@ import javax.inject.Singleton
 @Singleton
 class OutputRepositoryImpl @Inject constructor(private val apiService: ApiService, private val dataStoreManager: DataStoreManager) :
     OutputRepository {
+    private suspend fun currentUserId(): Int =
+        dataStoreManager.userFlow.firstOrNull()?.id?.toIntOrNull() ?: 0
+
     override fun getOutputs(searchQuery: String) : Flow<PagingData<Output>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 15,
-                initialLoadSize = 15,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
-                OutputPagingSource(apiService, searchQuery)
-            }
-        ).flow
+        return flow {
+            val userId = currentUserId()
+            emitAll(
+                Pager(
+                    config = PagingConfig(
+                        pageSize = 15,
+                        initialLoadSize = 15,
+                        enablePlaceholders = false
+                    ),
+                    pagingSourceFactory = {
+                        OutputPagingSource(apiService, searchQuery, userId)
+                    }
+                ).flow
+            )
+        }
     }
 
     override suspend fun getAllOutputs(searchQuery: String): Result<List<Output>> {
         return try {
-            val response = apiService.getOutputs(searchQuery)
+            val response = apiService.getOutputs(searchQuery, currentUserId())
             if (!response.isSuccessful) {
                 return Result.Error(HttpException(response))
             }
@@ -47,7 +57,7 @@ class OutputRepositoryImpl @Inject constructor(private val apiService: ApiServic
 
     override suspend fun saveOutput(output: Output) : Result<Unit> {
         val outputValue = output.copy(
-            userid = dataStoreManager.userFlow.first().id.toInt()
+            userid = currentUserId()
         )
         return executeApiCall(
             apiCall = {

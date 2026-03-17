@@ -12,7 +12,9 @@ import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.network.retrofit.ApiService
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,10 +25,13 @@ class SaleRepositoryImpl @Inject constructor(
     private val dataStoreManager: DataStoreManager,
     private val context: Context
 ) : SaleRepository {
+    private suspend fun currentUserId(): Int =
+        dataStoreManager.userFlow.firstOrNull()?.id?.toIntOrNull() ?: 0
+
     override suspend fun saveSale(sale: Sale): Result<Sale> {
         return try {
             val saleValue = sale.copy(
-                userid = dataStoreManager.userFlow.first().id.toInt()
+                userid = currentUserId()
             )
             val response =  apiService.addSale(saleValue)
             if (response.isSuccessful) {
@@ -43,21 +48,26 @@ class SaleRepositoryImpl @Inject constructor(
     }
 
     override fun getPagedSales(searchParams: Map<String, String>): Flow<PagingData<Sale>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 15,
-                initialLoadSize = 15,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
-                SalePagingSource(apiService, searchParams)
-            }
-        ).flow
+        return flow {
+            val userId = currentUserId()
+            emitAll(
+                Pager(
+                    config = PagingConfig(
+                        pageSize = 15,
+                        initialLoadSize = 15,
+                        enablePlaceholders = false
+                    ),
+                    pagingSourceFactory = {
+                        SalePagingSource(apiService, searchParams, userId)
+                    }
+                ).flow
+            )
+        }
     }
 
     override suspend fun getAllSales(searchParams: Map<String, String>): Result<List<Sale>> {
         return try {
-            val response = apiService.getSales(searchParams)
+            val response = apiService.getSales(searchParams, currentUserId())
             if (!response.isSuccessful) {
                 return Result.Error(HttpException(response))
             }

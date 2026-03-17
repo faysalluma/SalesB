@@ -14,6 +14,6 @@ dependencies {
     implementation(project(":core:print"))
 
     // Jetpack compose charts
-    implementation (libs.compose.charts)
+    implementation(libs.compose.charts)
     implementation(libs.androidx.hilt.navigation.compose)
 }

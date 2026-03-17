@@ -1,7 +1,6 @@
 package com.groupec.salesb.core.ui
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,8 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -38,11 +34,11 @@ import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.convertToLocaleDateTimeFormat
 import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.designsystem.component.DefaultButton
+import com.groupec.salesb.core.designsystem.component.ProductImage
 import com.groupec.salesb.core.designsystem.component.TitleMedium
 import com.groupec.salesb.core.designsystem.component.TitleSmall
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.formatAmount
-import com.groupec.salesb.core.getDrawableResIdIfExists
 import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
@@ -120,12 +116,12 @@ fun InvoiceAction(
 fun HeaderSection(parameter: Parameter, invoicing: Invoicing) {
     val context = LocalContext.current
     Column {
-        getDrawableResIdIfExists(context)?.let {
-            Image(
-                painter = painterResource(id = it),
+        parameter.logo?.takeIf { it.isNotBlank() }?.let { logoUrl ->
+            ProductImage(
                 modifier = Modifier
                     .width(150.dp)
                     .height(60.dp),
+                url = logoUrl,
                 contentDescription = "Client logo"
             )
             Spacer(modifier = Modifier.height(18.dp))

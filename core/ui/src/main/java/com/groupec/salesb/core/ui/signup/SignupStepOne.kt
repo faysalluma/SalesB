@@ -26,7 +26,6 @@ import com.groupec.salesb.core.ui.R
 fun SignupStepOne(
     state: SignupStepOneFormState,
     showErrors: Boolean,
-    emailErrorMessage: String?,
     onValueChange: (SignupStepOneFormState) -> Unit
 ) {
     Text(
@@ -40,19 +39,17 @@ fun SignupStepOne(
         style = MaterialTheme.typography.bodyLarge, color = Color.Gray,
         modifier = Modifier.padding(bottom = 18.dp)
     )
-    SignupStepOneForm(state, showErrors, emailErrorMessage, onValueChange)
+    SignupStepOneForm(state, showErrors, onValueChange)
 }
 
 @Composable
 private fun SignupStepOneForm(
     state: SignupStepOneFormState,
     showErrors: Boolean,
-    emailErrorMessage: String?,
     onValueChange: (SignupStepOneFormState) -> Unit
 ) {
     val isFullNameError = showErrors && state.fullName.isBlank()
-    val isEmailError = showErrors &&
-        (state.email.isBlank() || !isValidEmail(state.email) || !emailErrorMessage.isNullOrBlank())
+    val isEmailError = showErrors && (state.email.isBlank() || !isValidEmail(state.email))
     val isPasswordError = showErrors && state.password.isBlank()
     val isConfirmationError = showErrors &&
         (state.confirmPassword.isBlank() || !state.arePasswordsMatching())
@@ -86,15 +83,6 @@ private fun SignupStepOneForm(
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = stringResource(com.groupec.salesb.core.designsystem.R.string.invalid_email),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-            showErrors && !emailErrorMessage.isNullOrBlank() -> {
-                {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = emailErrorMessage,
                         color = MaterialTheme.colorScheme.error
                     )
                 }

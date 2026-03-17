@@ -22,7 +22,10 @@ import javax.inject.Singleton
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.network.retrofit.common.safeApiCall
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 
 @Singleton
@@ -31,23 +34,30 @@ class ProductRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val dataStoreManager: DataStoreManager
 ) : ProductRepository {
+    private suspend fun currentUserId(): Int =
+        dataStoreManager.userFlow.firstOrNull()?.id?.toIntOrNull() ?: 0
 
     override fun getPagedProducts(searchQuery: String): Flow<PagingData<Product>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 15,
-                initialLoadSize = 15,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
-                ProductPagingSource(apiService, searchQuery)
-            }
-        ).flow
+        return flow {
+            val userId = currentUserId()
+            emitAll(
+                Pager(
+                    config = PagingConfig(
+                        pageSize = 15,
+                        initialLoadSize = 15,
+                        enablePlaceholders = false
+                    ),
+                    pagingSourceFactory = {
+                        ProductPagingSource(apiService, searchQuery, userId)
+                    }
+                ).flow
+            )
+        }
     }
 
     override suspend fun getProducts(searchQuery: String): Result<List<Product>> {
         return try {
-            val response = apiService.getProducts(searchQuery)
+            val response = apiService.getProducts(searchQuery, currentUserId())
             if (!response.isSuccessful) {
                 throw HttpException(response)
             }

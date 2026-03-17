@@ -6,8 +6,7 @@ import com.groupec.salesb.core.convertToLocaleDateTimeFormat
 import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.domain.R
 import com.groupec.salesb.core.formatAmount
-import com.groupec.salesb.core.getBitmapFromVectorDrawable
-import com.groupec.salesb.core.getDrawableResIdIfExists
+import com.groupec.salesb.core.getBitmapFromUrl
 import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
@@ -66,8 +65,7 @@ fun generateInvoicePdf(
     /* Header */
 
     // Add logo
-    getDrawableResIdIfExists(context)?.let {
-        val bitmap = getBitmapFromVectorDrawable(context, it)
+    getBitmapFromUrl(parameter.logo)?.let { bitmap ->
         // Convert Bitmap en byte array PNG
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
@@ -78,7 +76,7 @@ fun generateInvoicePdf(
         image.scaleToFit(150f, 60f)
         document.add(image)
     }
-    document.add(Paragraph("\n"))
+    document.add(Paragraph("").setMarginBottom(8f))
 
     // Add entreprise details and facturation ligne
     // Table 2 colonnes largeur égale (50% chacune)

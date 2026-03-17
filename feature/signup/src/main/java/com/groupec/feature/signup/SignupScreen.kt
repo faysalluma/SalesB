@@ -1,6 +1,7 @@
 package com.groupec.feature.signup
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -66,7 +67,6 @@ fun SignupScreen(
     val paymentTypeList = paymentTypeLabels(context)
     val firstPaymentTypeValue = paymentTypeList.firstOrNull().orEmpty()
     var paymentTypeState by remember { mutableStateOf(firstPaymentTypeValue) }
-    val paymentTypeValueForSave = paymentTypeFromLabel(context, paymentTypeState)?.let(::paymentTypeValue)
 
     var stepOne by remember { mutableStateOf(SignupStepOneFormState()) }
     var stepTwo by remember { mutableStateOf(SignupStepTwoFormState()) }
@@ -118,7 +118,6 @@ fun SignupScreen(
                 1 -> SignupStepOne(
                     state = stepOne,
                     showErrors = showStepOneErrors,
-                    emailErrorMessage = stepOneEmailErrorMessage,
                     onValueChange = {
                         if (it.email != stepOne.email) {
                             stepOneEmailErrorMessage = null
@@ -195,11 +194,9 @@ fun SignupScreen(
                                         }
                                     }
                                     is Result.Error -> {
-                                        stepOneEmailErrorMessage = emailCheckResult.exception.message
-                                            ?.takeIf { it.isNotBlank() }
-                                            ?: context.getString(
-                                                com.groupec.salesb.core.ui.R.string.signup_email_validation_error
-                                            )
+                                        stepOneEmailErrorMessage = context.getString(
+                                            com.groupec.salesb.core.ui.R.string.signup_email_validation_error
+                                        )
                                         showStepOneErrors = true
                                     }
                                     is Result.Loading -> Unit
@@ -246,6 +243,11 @@ fun SignupScreen(
             },
             navigateToLogin = navigateToLogin,
             onStartExperience = {
+                val paymentTypeValueForSave = if (stepThree.showPaymentMode == 1) {
+                    paymentTypeFromLabel(context, stepThree.defaultpayment)?.let(::paymentTypeValue)
+                } else {
+                    null
+                }
                 val configuration = SignupConfiguration(
                     fullName = stepOne.fullName,
                     email = stepOne.email,
@@ -268,6 +270,15 @@ fun SignupScreen(
                 viewModel.saveInitialConfiguration(configuration, uri)
             }
         )
+    }
+
+    LaunchedEffect(stepOneEmailErrorMessage) {
+        stepOneEmailErrorMessage
+            ?.takeIf { it.isNotBlank() }
+            ?.let { message ->
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                stepOneEmailErrorMessage = null
+            }
     }
 
     LaunchedEffect(uiState, currentStep) {

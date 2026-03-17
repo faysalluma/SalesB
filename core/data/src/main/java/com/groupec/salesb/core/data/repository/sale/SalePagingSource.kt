@@ -10,7 +10,8 @@ import retrofit2.HttpException
 
 class SalePagingSource(
     private val api: ApiService,
-    private val searchParams: Map<String, String>
+    private val searchParams: Map<String, String>,
+    private val userId: Int
 ) : PagingSource<Int, Sale>() {
 
     override fun getRefreshKey(state: PagingState<Int, Sale>): Int? {
@@ -23,7 +24,7 @@ class SalePagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Sale> {
         return try {
             val currentPage = params.key ?: 1
-            val response = api.getPagedSales(currentPage, params.loadSize, searchParams)
+            val response = api.getPagedSales(currentPage, params.loadSize, searchParams, userId)
             if (response.isSuccessful) {
                 val sales = response.body()?.toSaleList().orEmpty()
                 //Log.d("Paging", "Loading page: $currentPage, items: ${sales.size}")

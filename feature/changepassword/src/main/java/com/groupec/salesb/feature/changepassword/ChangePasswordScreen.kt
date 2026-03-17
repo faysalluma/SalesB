@@ -25,6 +25,7 @@ import com.groupec.salesb.core.ui.ChangePasswordForm
 
 @Composable
 fun ChangePasswordScreen(
+    isExpandedWidth: Boolean,
     userId: Int,
     firstLoginOrResetPwd: Boolean,
     navigateToHome: () -> Unit,
@@ -75,8 +76,8 @@ fun ChangePasswordScreen(
         contentAlignment = Alignment.Center,
         modifier = modifier.fillMaxSize(),
     ) {
-        Column(modifier = Modifier.fillMaxWidth(0.5f)) {
-
+        val fractionWidth = if (isExpandedWidth) 0.6f else 0.9f
+        Column(modifier = Modifier.fillMaxWidth(fractionWidth)) {
             TitleHeader(
                 title =
                 if (firstLoginOrResetPwd) stringResource(id = com.groupec.salesb.core.designsystem.R.string.update_password_required)

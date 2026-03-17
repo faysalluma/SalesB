@@ -36,8 +36,7 @@ fun SaleItemDetailProduct(
                     s.id ?: 0,
                     "${s.totalprix.formatAmount()} ${parameter.devise}",
                     s.datevente?.convertToLocaleDateTimeFormat(
-                    )?:"",
-                    s.username.toString()
+                    )?:""
                 ),
                 modifier = Modifier.padding(vertical = 12.dp),
                 textAlign = TextAlign.Center

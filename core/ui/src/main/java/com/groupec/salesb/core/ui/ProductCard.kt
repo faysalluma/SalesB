@@ -60,15 +60,13 @@ fun ProductCard(
                         R.string.product_item_detail,
                         product.datecreation?.dayMonthYear() ?: stringResource(R.string.none),
                         product.prixttc,
-                        product.qtestock ?: 0,
-                        product.username ?: ""
+                        product.qtestock ?: 0
                     )
                 } else {
                     stringResource(
                         R.string.product_item_detail_without_quantity,
                         product.datecreation?.dayMonthYear() ?: stringResource(R.string.none),
-                        product.prixttc,
-                        product.username ?: ""
+                        product.prixttc
                     )
                 }
             )

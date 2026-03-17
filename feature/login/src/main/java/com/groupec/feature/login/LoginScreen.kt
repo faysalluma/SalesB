@@ -33,6 +33,7 @@ fun LoginScreen(
     raisonSociale: String,
     navigateToChangePassword: (Int, Boolean) -> Unit,
     navigateToHome: (User) -> Unit,
+    onSignUp: () -> Unit,
     navigateToForgotPassword: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel()
@@ -82,7 +83,7 @@ fun LoginScreen(
         ) {
             SalesBImage(Modifier.fillMaxSize().weight(1f))
             Column(Modifier.weight(1f)) {
-                FormScreen(modifier, raisonSociale, viewModel, isLoading, navigateToForgotPassword)
+                FormScreen(modifier, raisonSociale, viewModel, isLoading, onSignUp, navigateToForgotPassword)
             }
         }
     } else {
@@ -92,7 +93,7 @@ fun LoginScreen(
         ) {
             SalesBImage(Modifier.fillMaxSize().weight(.3f))
             Column(Modifier.weight(.7f).verticalScroll(rememberScrollState())) {
-                FormScreen(modifier, raisonSociale, viewModel, isLoading, navigateToForgotPassword)
+                FormScreen(modifier, raisonSociale, viewModel, isLoading, onSignUp, navigateToForgotPassword)
             }
         }
     }
@@ -104,6 +105,7 @@ private fun FormScreen(
     raisonSociale: String,
     viewModel: LoginViewModel,
     isLoading: Boolean,
+    onSignUp: () -> Unit,
     navigateToForgotPassword: () -> Unit
 ) {
     Box(
@@ -113,8 +115,8 @@ private fun FormScreen(
         Column(modifier = Modifier.padding(24.dp)) {
 
             TitleHeader(
-                title = stringResource(id = R.string.title_login, raisonSociale),
-                detail = stringResource(id = R.string.detail_login)
+                title = stringResource(id = R.string.title_login_without_raisoc),
+                detail = stringResource(id = R.string.detail_login_new)
             )
 
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
@@ -124,6 +126,7 @@ private fun FormScreen(
                     viewModel.login(credentials)
                 },
                 isLoading = isLoading,
+                onSignUp = onSignUp,
                 onForgotPassword = navigateToForgotPassword
             )
         }

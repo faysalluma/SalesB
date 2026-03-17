@@ -3,7 +3,6 @@ package com.groupec.salesb.core.data.repository.signup
 import android.content.Context
 import android.net.Uri
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.UploadUtility.Companion.deleteImageFromCache
 import com.groupec.salesb.core.UploadUtility.Companion.getRealPathFromURI
 import com.groupec.salesb.core.data.model.toParameter
 import com.groupec.salesb.core.model.data.Parameter
@@ -27,11 +26,16 @@ class SignupRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : SignupRepository {
 
+    private data class PreparedUpload(
+        val part: MultipartBody.Part,
+        val file: File
+    )
+
     override suspend fun saveSignupConfiguration(
         configuration: SignupConfiguration,
         uriLogo: Uri?
     ): Result<Parameter> {
-        val logoPart = uriLogo?.let { prepareImageForUpload(context, it) }
+        val preparedLogo = uriLogo?.let { prepareImageForUpload(context, it) }
         val langMessageEn = if (Locale.getDefault().language.equals("fr", ignoreCase = true)) 0 else 1
         // Hash pawword with salt generating
         val hashPassword = BCrypt.hashpw(configuration.password, BCrypt.gensalt())
@@ -54,14 +58,19 @@ class SignupRepositoryImpl @Inject constructor(
                 useIntForPriceAndAmount = configuration.useIntForPriceAndAmount.toString().toPlainTextBody(),
                 showImageOnProduct = configuration.showImageOnProduct.toString().toPlainTextBody(),
                 activePaymentMode = configuration.activePaymentMode.toString().toPlainTextBody(),
-                defaultpayment = configuration.defaultpayment?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
+                defaultpayment = configuration.defaultpayment
+                    ?.takeIf { configuration.activePaymentMode == 1 && it.isNotBlank() }
+                    ?.toPlainTextBody(),
                 activePrinter = configuration.activePrinter.toString().toPlainTextBody(),
-                logoPart = logoPart
+                logoPart = preparedLogo?.part
             )
 
             if (response.isSuccessful) {
                 val parameter = response.body()?.toParameter()
                 if (parameter != null) {
+                    preparedLogo?.file
+                        ?.takeIf { it.absolutePath.startsWith(context.cacheDir.absolutePath) }
+                        ?.delete()
                     Result.Success(parameter)
                 } else {
                     Result.Error(IllegalStateException("Empty parameter response"))
@@ -73,7 +82,6 @@ class SignupRepositoryImpl @Inject constructor(
             Result.Error(it)
         }
 
-        deleteImageFromCache(context, uriLogo?.lastPathSegment ?: "")
         return result
     }
 
@@ -81,14 +89,16 @@ class SignupRepositoryImpl @Inject constructor(
         return toRequestBody("text/plain".toMediaTypeOrNull())
     }
 
-    private fun prepareImageForUpload(context: Context, imageUri: Uri): MultipartBody.Part? {
+    private fun prepareImageForUpload(context: Context, imageUri: Uri): PreparedUpload? {
         val filePath = getRealPathFromURI(context, imageUri) ?: return null
         val file = File(filePath)
+        if (!file.exists()) return null
         val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-        return MultipartBody.Part.createFormData(
+        val part = MultipartBody.Part.createFormData(
             "logoPart",
             file.name,
             requestBody
         )
+        return PreparedUpload(part, file)
     }
 }
