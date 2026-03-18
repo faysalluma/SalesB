@@ -18,11 +18,14 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Print
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.RemoveCircleOutline
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
@@ -76,4 +79,7 @@ object AppIcons {
     val ShareByEmail = Icons.AutoMirrored.Filled.ForwardToInbox
     val Next = Icons.AutoMirrored.Filled.ArrowForward
     val Export = Icons.Default.FileDownload
+    val Public = Icons.Default.Public
+    val Language = Icons.Default.Language
+    val ViewDetail = Icons.Default.Description
 }
