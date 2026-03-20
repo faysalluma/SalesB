@@ -77,6 +77,7 @@ fun HomeScreen(
     val userStoreState by viewModel.userStore.collectAsStateWithLifecycle()
     val chartValuesState by viewModel.chartValues.collectAsStateWithLifecycle()
     val privileges = userStoreState.getPrivileges()
+    val parameterState by viewModel.parameter.collectAsStateWithLifecycle()
 
     ComposableLifecycle(
         onCreate = {
@@ -102,14 +103,14 @@ fun HomeScreen(
         val heigthModifier = Modifier.height(34.dp)
 
         // Headline
-        HeadLigne(context, viewModel,privileges, navigateToSaleList)
+        HeadLigne(context, viewModel,parameterState, privileges, navigateToSaleList)
 
         // Periodic statistic
         StatisticPeriodic(context, viewModel,privileges, navigateToSaleList)
         Spacer(modifier = heigthModifier)
 
         // Non-Periodic statistic
-        StatisticNonPeriodic(viewModel,privileges, navigateToProduct)
+        StatisticNonPeriodic(viewModel, parameterState, privileges, navigateToProduct)
         Spacer(modifier = heigthModifier)
 
         // Chart statistic
@@ -136,13 +137,13 @@ fun HomeScreen(
 fun HeadLigne(
     context: Context,
     viewModel: HomeViewModel,
+    parameter: Parameter,
     privileges: List<String>,
     navigateToSaleList: () -> Unit
 ) {
     val totalAmountOutputState by viewModel.totalAmountOutputs.collectAsStateWithLifecycle()
     val totalAmountSalesState by viewModel.totalAmountSales.collectAsStateWithLifecycle()
     val profits by remember { derivedStateOf { totalAmountSalesState - totalAmountOutputState } }
-    val parameterState by viewModel.parameter.collectAsStateWithLifecycle()
 
     val periodList = Period.entries.map { it.getTitle(context) }
     var periodValue by rememberSaveable { mutableStateOf(periodList[1]) }
@@ -152,7 +153,7 @@ fun HeadLigne(
         context = context,
         profits = profits,
         totalAmountOutputState = totalAmountOutputState,
-        parameterState = parameterState,
+        parameterState = parameter,
         profitColor = profitColor,
         periodList = periodList,
         periodValue = periodValue,
@@ -298,6 +299,7 @@ fun StatisticPeriodic(
 @Composable
 fun StatisticNonPeriodic(
     viewModel: HomeViewModel,
+    parameter: Parameter,
     privileges: List<String>,
     navigateToProduct: () -> Unit
 ) {
@@ -325,12 +327,14 @@ fun StatisticNonPeriodic(
                 navigateToProduct()
             }
         )
-        AlertInventoryStatisticCard(
-            modifier = cardModifier,
-            dataValue = totalAlertSeuilState.toString(),
-            productsWithLowInventoryState = productsWithLowInventoryState,
-            getProductsWithLowInventory = viewModel::getProductsWithLowInventory
-        )
+        if (!parameter.serviceview) {
+            AlertInventoryStatisticCard(
+                modifier = cardModifier,
+                dataValue = totalAlertSeuilState.toString(),
+                productsWithLowInventoryState = productsWithLowInventoryState,
+                getProductsWithLowInventory = viewModel::getProductsWithLowInventory
+            )
+        }
     }
 }
 
