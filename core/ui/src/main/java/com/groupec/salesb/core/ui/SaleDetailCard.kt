@@ -226,7 +226,10 @@ private fun BottomContentScreen(
         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TitleMedium(title = stringResource(R.string.total))
+        TitleMedium(
+            modifier = Modifier.padding(end = 8.dp),
+            title = stringResource(R.string.total)
+        )
         Text(
             text = totalLabel,
             style = MaterialTheme.typography.titleLarge

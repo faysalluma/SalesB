@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -51,6 +52,7 @@ fun ProductGridPortrait(
     onQuantityChange: (Pair<Int, Product>) -> Unit,
 ) {
     val isIntegerQuantityMode = parameter.serviceview || parameter.useintforpriceandamout
+    val itemBottomSpace = 96.dp
     if (parameter.serviceview) {
         LazyColumn {
             itemsIndexed(products) { _, product ->
@@ -80,6 +82,11 @@ fun ProductGridPortrait(
                         }
                     )
                 }
+            }
+
+            // Additional space for the resume card
+            item {
+                Spacer(modifier = Modifier.height(itemBottomSpace))
             }
         }
     } else {
@@ -128,6 +135,11 @@ fun ProductGridPortrait(
                         }
                     )
                 }
+            }
+
+            // Additional space for the resume card
+            item (span = { GridItemSpan(maxLineSpan) }) {
+                Spacer(modifier = Modifier.height(itemBottomSpace))
             }
 
             products.apply {

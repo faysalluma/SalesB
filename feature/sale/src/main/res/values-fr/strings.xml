@@ -6,6 +6,6 @@
     <string name="my_products">Mes produits</string>
     <string name="no_products">Aucun produit</string>
     <string name="add_product">Ajouter un produit</string>
-    <string name="view_resume">Voir le récapitulatif</string>
-    <string name="cart_items_label">%1$s article(s) dans le panier</string>
+    <string name="view_resume">Finaliser</string>
+    <string name="cart_items_label">%1$s article(s)</string>
 </resources>

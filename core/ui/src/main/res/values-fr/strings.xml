@@ -35,7 +35,8 @@
     <string name="amount">@string/amount_view</string>
     <string name="title_product">Produits</string>
     <string name="price">@string/price_view</string>
-    <string name="payment_type_label">Mode de paiement</string>
+    <string name="payment_type_label">Mode de paiement :</string>
+    <string name="total">Total :</string>
     <string name="cash_received">Espèces reçues</string>
     <string name="change_due">Monnaie à rendre : %s</string>
     <string name="confirm_sale_message">Confirmer la vente de %s ?</string>
