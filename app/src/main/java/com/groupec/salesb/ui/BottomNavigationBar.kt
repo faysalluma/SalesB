@@ -11,10 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.navigation.NavigationIcon
 import com.groupec.salesb.navigation.NavigationItem
 
@@ -23,13 +25,24 @@ import com.groupec.salesb.navigation.NavigationItem
 fun BottomNavigationBar(
     items: List<NavigationItem>,
     currentRoute: String?,
+    isServiceView: Boolean,
     onItemClick: (NavigationItem) -> Unit
 ) {
+    val context = LocalContext.current
     NavigationBar(
         modifier = Modifier.fillMaxWidth(),
         containerColor = MaterialTheme.colorScheme.surface
     ) {
         items.forEach { navigationItem ->
+            val itemLabel = if (navigationItem == NavigationItem.Product) {
+                context.getCatalogItemLabel(
+                    isServiceView = isServiceView,
+                    plural = true,
+                    capitalize = true
+                )
+            } else {
+                stringResource(id = navigationItem.title)
+            }
             NavigationBarItem(
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
@@ -41,14 +54,14 @@ fun BottomNavigationBar(
                         is NavigationIcon.VectorIcon -> {
                             Icon(
                                 imageVector = navigationItem.icon.imageVector,
-                                contentDescription = stringResource(id = navigationItem.title),
+                                contentDescription = itemLabel,
                                 //modifier = Modifier.size(32.dp)
                             )
                         }
                         is NavigationIcon.DrawableIcon -> {
                             Icon(
                                 painter = painterResource(navigationItem.icon.drawableRes),
-                                contentDescription = stringResource(id = navigationItem.title),
+                                contentDescription = itemLabel,
                                 // modifier = Modifier.size(30.dp)
                             )
                         }
@@ -59,7 +72,7 @@ fun BottomNavigationBar(
                 },
                 label = {
                     Text(
-                        text = stringResource(navigationItem.title),
+                        text = itemLabel,
                         style = if (navigationItem.route == currentRoute) MaterialTheme.typography.labelLarge
                         else MaterialTheme.typography.labelMedium,
                         maxLines = 1,

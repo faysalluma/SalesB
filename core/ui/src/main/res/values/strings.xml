@@ -15,9 +15,9 @@
     <string name="item_detail">Date: %1$s, Created by: %2$s</string>
     <string name="none">None</string>
     <string name="view_item">Edit</string>
-    <string name="show_detail_item">See product page</string>
-    <string name="product_detail_title">Product details</string>
-    <string name="product_detail_image">Product image</string>
+    <string name="show_detail_item">See %1$s page</string>
+    <string name="product_detail_title">%1$s details</string>
+    <string name="product_detail_image">%1$s image</string>
     <string name="product_detail_id">Id</string>
     <string name="product_detail_date_creation">Creation date</string>
     <string name="product_detail_reference">Reference</string>
@@ -38,7 +38,7 @@
     <string name="summary">Summary</string>
     <string name="quantity">@string/quantity_view</string>
     <string name="amount">@string/amount_view</string>
-    <string name="title_product">Products</string>
+    <string name="title_product">%1$s</string>
     <string name="price">@string/price_view</string>
     <string name="label">@string/label_view</string>
     <string name="total">Total:</string>
@@ -56,7 +56,7 @@
     <string name="search_place_holder">Search here</string>
     <string name="btn_close">Close</string>
     <string name="btn_cancel">Cancel</string>
-    <string name="low_inventory_products">Low inventory products</string>
+    <string name="low_inventory_products">Low inventory %1$s</string>
     <string name="validate">Validate Sale</string>
     <string name="download_invoice">Download</string>
     <string name="send_invoice">Send invoice by e-mail</string>

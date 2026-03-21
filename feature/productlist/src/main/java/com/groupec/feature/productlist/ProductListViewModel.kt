@@ -9,6 +9,7 @@ import com.groupec.feature.product.R
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.currentDateString
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.domain.product.DeleteProductUseCase
 import com.groupec.salesb.core.domain.product.GenerateProductListExcelUseCase
 import com.groupec.salesb.core.domain.product.GenerateProductListPdfUseCase
@@ -129,6 +130,10 @@ class ProductListViewModel @Inject constructor(
                 is Result.Success -> {
                     val products = result.data
                     if (products.isEmpty()) {
+                        val catalogLabel = activityContext.getCatalogItemLabel(
+                            isServiceView = _parameterState.value.serviceview,
+                            plural = true
+                        )
                         _exportPdfUiState.value = FormUIState.Error(
                             activityContext.getString(R.string.no_products_to_export)
                         )
@@ -139,7 +144,8 @@ class ProductListViewModel @Inject constructor(
                             generateProductListPdfUseCase(
                                 activityContext,
                                 products,
-                                _searchQuery.value
+                                _searchQuery.value,
+                                _parameterState.value.serviceview
                             )
                         }
                         val file = withContext(Dispatchers.IO) {
@@ -171,8 +177,12 @@ class ProductListViewModel @Inject constructor(
                 is Result.Success -> {
                     val products = result.data
                     if (products.isEmpty()) {
+                        val catalogLabel = activityContext.getCatalogItemLabel(
+                            isServiceView = _parameterState.value.serviceview,
+                            plural = true
+                        )
                         _exportExcelUiState.value = FormUIState.Error(
-                            activityContext.getString(R.string.no_products_to_export)
+                            activityContext.getString(R.string.no_products_to_export, catalogLabel)
                         )
                         return@launch
                     }
@@ -181,7 +191,8 @@ class ProductListViewModel @Inject constructor(
                             generateProductListExcelUseCase(
                                 activityContext,
                                 products,
-                                _searchQuery.value
+                                _searchQuery.value,
+                                _parameterState.value.serviceview
                             )
                         }
                         val file = withContext(Dispatchers.IO) {

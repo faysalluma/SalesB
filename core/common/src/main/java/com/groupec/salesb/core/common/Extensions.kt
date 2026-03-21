@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
@@ -14,6 +15,7 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.net.URL
 
 /* Replace , by . to have good dougle format */
 fun String.normalizeDecimalSeparator(): String {
@@ -96,6 +98,27 @@ fun String.convertToViewDateFormat(): String {
 fun Double.formatAmountNoTrailingZero(): String {
     val formatted = formatAmount()
     return formatted.replace(Regex("([.,])0+$"), "")
+}
+
+fun Context.getCatalogItemLabel(
+    isServiceView: Boolean,
+    plural: Boolean = true,
+    capitalize: Boolean = false
+): String {
+    val resId = when {
+        isServiceView && plural -> R.string.catalog_item_services
+        isServiceView && !plural -> R.string.catalog_item_service
+        !isServiceView && plural -> R.string.catalog_item_products
+        else -> R.string.catalog_item_product
+    }
+    val label = getString(resId)
+    return if (!capitalize || label.isEmpty()) {
+        label
+    } else {
+        label.replaceFirstChar { firstChar ->
+            if (firstChar.isLowerCase()) firstChar.titlecase(Locale.getDefault()) else firstChar.toString()
+        }
+    }
 }
 
 
@@ -202,5 +225,4 @@ fun Context.sendEmailWithAttachment(
 
     startActivity(Intent.createChooser(shareIntent , "Send with:"))
 }
-
 

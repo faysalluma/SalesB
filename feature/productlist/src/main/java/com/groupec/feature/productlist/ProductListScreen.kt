@@ -40,6 +40,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.groupec.feature.product.R
 import com.groupec.salesb.core.ExportType
 import com.groupec.salesb.core.FormUIState
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.AppCustomDialog
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
@@ -84,6 +85,15 @@ fun ProductListScreen(
     val isRefreshing = products.loadState.refresh is LoadState.Loading
     var isManualRefreshing by remember { mutableStateOf(false) }
     val isExporting = exportPdfState is FormUIState.Loading || exportExcelState is FormUIState.Loading
+    val catalogLabelPlural = context.getCatalogItemLabel(
+        isServiceView = parameterState.serviceview,
+        plural = true
+    )
+    val catalogLabelPluralCapitalized = context.getCatalogItemLabel(
+        isServiceView = parameterState.serviceview,
+        plural = true,
+        capitalize = true
+    )
 
     var expanded by remember { mutableStateOf(false) }
     var pendingExport by remember { mutableStateOf(ExportType.Pdf) }
@@ -254,7 +264,11 @@ fun ProductListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title, totalProductsCount),
+            text = stringResource(
+                R.string.head_title,
+                catalogLabelPluralCapitalized,
+                totalProductsCount
+            ),
             leadingContent = {
                 IconButton(onClick = { expanded = true }) {
                     Icon(imageVector = AppIcons.Export, contentDescription = "Export product")
@@ -325,7 +339,7 @@ fun ProductListScreen(
         } else {
             // Show Progress bar waiting load products
             if (!isSearching && products.itemCount == 0) {
-                AppLoadingScreen(text = stringResource(R.string.loading_products))
+                AppLoadingScreen(text = stringResource(R.string.loading_products, catalogLabelPlural))
             } else {
                 // Barre de recherche
                 AppTextField(
@@ -364,6 +378,7 @@ fun ProductListScreen(
                         products = products,
                         isSearching = isSearching,
                         showQuantity = !parameterState.serviceview,
+                        isServiceView = parameterState.serviceview,
                         onViewDetail = onViewDetail,
                         onDelete = { id, libelle ->
                             showDialog = true

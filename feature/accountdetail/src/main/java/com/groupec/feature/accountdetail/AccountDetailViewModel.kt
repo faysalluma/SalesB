@@ -4,24 +4,42 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.domain.user.SaveUserUseCase
+import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.ui.UserDataForm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class AccountDetailViewModel @Inject constructor(
-    private val saveUserUseCase: SaveUserUseCase
+    private val saveUserUseCase: SaveUserUseCase,
+    private val getParameterUseCase: GetParameterUseCase
 ) : ViewModel() {
 
     private val _addUserUiState = MutableStateFlow<FormUIState<*>>(FormUIState.Idle)
     val addUserUiState : StateFlow<FormUIState<*>> = _addUserUiState.asStateFlow()
+    private val _parameterState = MutableStateFlow(Parameter())
+    val parameterState: StateFlow<Parameter> = _parameterState.asStateFlow()
+
+    init {
+        observeParameters()
+    }
+
+    private fun observeParameters() {
+        viewModelScope.launch {
+            getParameterUseCase().collectLatest { parameter ->
+                _parameterState.value = parameter
+            }
+        }
+    }
 
     fun addUser(user: UserDataForm) {
         _addUserUiState.value = FormUIState.Loading

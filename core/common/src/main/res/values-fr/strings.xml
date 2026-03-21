@@ -7,8 +7,8 @@
     <string name="view_stat_periodic">Statistiques périodiques</string>
     <string name="view_stat_non_periodic">Statistiques non périodiques</string>
     <string name="stat_chart">Graphe de statistiques</string>
-    <string name="view_stat_periodic_detail">Voir les statistiques périodiques (total ventes et top 3 des produits les plus vendus)</string>
-    <string name="view_stat_non_periodic_detail">Voir les statistiques non périodiques (total produits et produits avec faible stock)</string>
+    <string name="view_stat_periodic_detail">Voir les statistiques périodiques (total ventes et top 3 produits/services des plus vendus)</string>
+    <string name="view_stat_non_periodic_detail">Voir les statistiques non périodiques (total produits/services et avec faible stock)</string>
     <string name="stat_chart_detail">Voir les graphes de statistiques sur l\'écran d\'accueil</string>
     <string name="authorize_add">Ajout</string>
     <string name="authorize_edit">Modification</string>
@@ -29,6 +29,10 @@
     <string name="menu_category_view">Catégories</string>
     <string name="menu_my_sales_view">Mes ventes</string>
     <string name="menu_rayon_view">Rayons</string>
+    <string name="catalog_item_product">produit</string>
+    <string name="catalog_item_products">produits</string>
+    <string name="catalog_item_service">service</string>
+    <string name="catalog_item_services">services</string>
 
     <!-- For generating pdf -->
     <string name="billing_address">Adresse de facturation</string>

@@ -12,8 +12,8 @@
     <string name="item_detail">Date: %1$s, Auteur : %2$s</string>
     <string name="none">Aucun</string>
     <string name="view_item">Modifier</string>
-    <string name="product_detail_title">Détails produit</string>
-    <string name="product_detail_image">Image du produit</string>
+    <string name="product_detail_title">Fiche %1$s</string>
+    <string name="product_detail_image">Image du %1$s</string>
     <string name="product_detail_id">Id</string>
     <string name="product_detail_date_creation">Date de création</string>
     <string name="product_detail_reference">Référence</string>
@@ -33,7 +33,7 @@
     <string name="summary">Résumé</string>
     <string name="quantity">@string/quantity_view</string>
     <string name="amount">@string/amount_view</string>
-    <string name="title_product">Produits</string>
+    <string name="title_product">%1$s</string>
     <string name="price">@string/price_view</string>
     <string name="payment_type_label">Mode de paiement :</string>
     <string name="total">Total :</string>
@@ -45,7 +45,7 @@
     <string name="registered_by">Enregistrée par</string>
     <string name="view_detail">Détail</string>
     <string name="sale_item_dialog_title">Vente n° %1$s de %2$s, réalisée le  %3$s par  %4$s.</string>
-    <string name="show_detail_item">Voir fiche produit</string>
+    <string name="show_detail_item">Voir fiche %1$s</string>
     <string name="label">@string/label_view</string>
     <string name="quantity_greater">Limite de stock</string>
     <string name="send_invoice">Envoyer la facture par email</string>
@@ -57,7 +57,7 @@
     <string name="search_place_holder">Rechercher ici</string>
     <string name="btn_close">Fermer</string>
     <string name="btn_cancel">Annuler</string>
-    <string name="low_inventory_products">Produits avec faible stock</string>
+    <string name="low_inventory_products">%1$s avec faible stock</string>
     <string name="validate">Valider vente</string>
     <string name="download_invoice">Télécharger</string>
     <string name="print_receipt">Imprimer un recu</string>

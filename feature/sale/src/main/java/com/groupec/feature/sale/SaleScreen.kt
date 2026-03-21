@@ -70,6 +70,8 @@ import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.getDrawableResIdIfExists
+import com.groupec.salesb.core.formatAmount
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.Sale
@@ -577,6 +579,16 @@ private fun ProductSelectionSection(
     onQuantityChange: (Pair<Int, Product>) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val catalogLabelPlural = context.getCatalogItemLabel(
+        isServiceView = parameter.serviceview,
+        plural = true
+    )
+    val catalogLabelSingular = context.getCatalogItemLabel(
+        isServiceView = parameter.serviceview,
+        plural = false
+    )
+
     // if get error when fetching products
     if (error != null) {
         Column(
@@ -602,7 +614,7 @@ private fun ProductSelectionSection(
     } else {
         // Show Progress bar waiting load products
         if (!isSearching && products.itemCount == 0) {
-            AppLoadingScreen(text = stringResource(R.string.loading_products))
+            AppLoadingScreen(text = stringResource(R.string.loading_products, catalogLabelPlural))
         } else {
             Column(modifier = modifier) {
                 // Head
@@ -611,7 +623,7 @@ private fun ProductSelectionSection(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     TitleLarge(
-                        title = stringResource(R.string.my_products),
+                        title = stringResource(R.string.my_products, catalogLabelPlural),
                         modifier = Modifier.padding(top = 12.dp, end = 8.dp)
                     )
                     // Barre de recherche
@@ -651,7 +663,7 @@ private fun ProductSelectionSection(
                     ) {
                         DefaultButton(
                             modifier = Modifier.wrapContentWidth(),
-                            text = stringResource(R.string.add_product),
+                            text = stringResource(R.string.add_product, catalogLabelSingular),
                             onClick = navigateToProduct
                         )
                     }

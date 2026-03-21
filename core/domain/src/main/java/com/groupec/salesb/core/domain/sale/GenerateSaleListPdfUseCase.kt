@@ -7,6 +7,7 @@ import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.domain.R
 import com.groupec.salesb.core.formatAmount
 import com.groupec.salesb.core.getBitmapFromVectorDrawable
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.getDrawableResIdIfExists
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.others.paymentTypeLibelleResFromValue
@@ -35,8 +36,9 @@ class GenerateSaleListPdfUseCase @Inject constructor() {
         searchQuery: String? = null,
         startDate: String? = null,
         endDate: String? = null,
-        devise: String? = null
-    ) = generateSaleListPdf(context, sales, searchQuery, startDate, endDate, devise)
+        devise: String? = null,
+        isServiceView: Boolean = false
+    ) = generateSaleListPdf(context, sales, searchQuery, startDate, endDate, devise, isServiceView)
 }
 
 fun generateSaleListPdf(
@@ -45,7 +47,8 @@ fun generateSaleListPdf(
     searchQuery: String?,
     startDate: String?,
     endDate: String?,
-    devise: String?
+    devise: String?,
+    isServiceView: Boolean = false
 ): ByteArray {
     val baos = ByteArrayOutputStream()
     val writer = PdfWriter(baos)
@@ -65,7 +68,7 @@ fun generateSaleListPdf(
         document.add(image)
     }
 
-    document.add(Paragraph("\n"))
+    document.add(Paragraph("").setMarginBottom(8f))
     document.add(
         Paragraph(context.getString(R.string.sale_list_title))
             .setFont(boldFont)
@@ -105,7 +108,7 @@ fun generateSaleListPdf(
         saleTable.addCell(createCell(sale.id?.toString() ?: "-"))
         saleTable.addCell(createCell(sale.datevente?.convertToLocaleDateTimeFormat()?.replace(" - ", " : ") ?: "-"))
         saleTable.addCell(createCell(sale.totalprix.formatAmount().plus(" $devise")))
-        saleTable.addCell(createCell(buildSaleDetails(context, sale), fontSize = 9f))
+        saleTable.addCell(createCell(buildSaleDetails(context, sale, isServiceView), fontSize = 9f))
     }
     document.add(saleTable)
 
@@ -132,8 +135,13 @@ private fun buildSaleFilterLines(
     return filters
 }
 
-private fun buildSaleDetails(context: Context, sale: Sale): String {
+private fun buildSaleDetails(context: Context, sale: Sale, isServiceView: Boolean): String {
     val none = "-"
+    val catalogLabelPlural = context.getCatalogItemLabel(
+        isServiceView = isServiceView,
+        plural = true,
+        capitalize = true
+    )
     val paymentType = sale.paymenttype
         ?.takeIf { it.isNotBlank() }
         ?.let { value ->
@@ -151,7 +159,7 @@ private fun buildSaleDetails(context: Context, sale: Sale): String {
 
     return listOf(
         "${context.getString(R.string.payment_type_header)}: $paymentType",
-        "${context.getString(R.string.products_header)}:",
+        "${context.getString(R.string.products_header, catalogLabelPlural)}:",
         productLines
     ).joinToString("\n")
 }

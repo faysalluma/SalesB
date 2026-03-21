@@ -12,6 +12,8 @@ import com.groupec.salesb.core.domain.user.GenerateUserListPdfUseCase
 import com.groupec.salesb.core.domain.user.GetAllUsersUseCase
 import com.groupec.salesb.core.domain.user.GetUserUseCase
 import com.groupec.salesb.core.domain.user.SaveUserUseCase
+import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
+import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,7 +42,8 @@ class AccountListViewModel @Inject constructor(
     private val deleteUserUseCase: DeleteUserUseCase,
     private val getAllUsersUseCase: GetAllUsersUseCase,
     private val generateUserListPdfUseCase: GenerateUserListPdfUseCase,
-    private val generateUserListExcelUseCase: GenerateUserListExcelUseCase
+    private val generateUserListExcelUseCase: GenerateUserListExcelUseCase,
+    private val getParameterUseCase: GetParameterUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -59,9 +63,20 @@ class AccountListViewModel @Inject constructor(
 
     private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
+    private val _parameterState = MutableStateFlow(Parameter())
+    val parameterState: StateFlow<Parameter> = _parameterState.asStateFlow()
 
     init {
+        observeParameters()
         observeTotalUsersCount()
+    }
+
+    private fun observeParameters() {
+        viewModelScope.launch {
+            getParameterUseCase().collectLatest { parameter ->
+                _parameterState.value = parameter
+            }
+        }
     }
 
     val pagedUsers: Flow<PagingData<User>> = _searchQuery

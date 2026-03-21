@@ -7,8 +7,8 @@
     <string name="view_stat_periodic">Periodic statistics</string>
     <string name="view_stat_non_periodic">Non-periodic statistics</string>
     <string name="stat_chart">Statitistics charts</string>
-    <string name="view_stat_periodic_detail">View Periodic statistics (total sales and top 3 best-selling products)</string>
-    <string name="view_stat_non_periodic_detail">View Non-periodic statistics (total products and low-stock products)</string>
+    <string name="view_stat_periodic_detail">View Periodic statistics (total sales and top 3 best-selling products/services)</string>
+    <string name="view_stat_non_periodic_detail">View Non-periodic statistics (total products/services and low-stock)</string>
     <string name="stat_chart_detail">View Statitistics charts on home screen</string>
     <string name="authorize_view">View</string>
     <string name="authorize_add">Add</string>
@@ -29,6 +29,10 @@
     <string name="handle_services">Service management</string>
     <string name="menu_log_out_view">Log out</string>
     <string name="menu_settings_view">Settings</string>
+    <string name="catalog_item_product">product</string>
+    <string name="catalog_item_products">products</string>
+    <string name="catalog_item_service">service</string>
+    <string name="catalog_item_services">services</string>
 
     <!-- For generating pdf -->
     <string name="billing_address">Billing address</string>
