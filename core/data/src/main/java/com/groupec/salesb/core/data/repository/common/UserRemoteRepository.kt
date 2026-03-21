@@ -4,6 +4,7 @@ package com.groupec.salesb.core.data.repository.common
 import android.content.Context
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.data.R
+import com.groupec.salesb.core.data.model.toParameter
 import com.groupec.salesb.core.data.model.toUser
 import com.groupec.salesb.core.data.model.toUserStore
 import com.groupec.salesb.core.datastore.DataStoreManager
@@ -13,6 +14,7 @@ import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.network.retrofit.ApiService
 import com.groupec.salesb.core.network.retrofit.common.executeApiCall
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.firstOrNull
 import org.mindrot.jbcrypt.BCrypt
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -47,8 +49,13 @@ class UserRemoteRepository @Inject constructor(
                                 it <= getDateTimeByNtp()
                             } ?: false
                             if (isMainPasswordValid || (isResetPasswordValid && !isResetPasswordExpired)) {
-                                dataStoreManager.setUserConfig(user.toUserStore())
-                                Result.Success(user.toUser() to isMainPasswordValid)
+                                when (val parameterResult = chargeParameterIfMissing(user.id)) {
+                                    is Result.Error -> Result.Error(parameterResult.exception)
+                                    else -> {
+                                        dataStoreManager.setUserConfig(user.toUserStore())
+                                        Result.Success(user.toUser() to isMainPasswordValid)
+                                    }
+                                }
                             } else if (isResetPasswordValid) {
                                 Result.Error(Exception(context.getString(R.string.error_tempory_password_expire)))
                             } else {
@@ -60,6 +67,32 @@ class UserRemoteRepository @Inject constructor(
             } else {
                 Result.Error(HttpException(response))
             }
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    private suspend fun chargeParameterIfMissing(userId: Int?): Result<Unit> {
+        val currentParameter = dataStoreManager.parameterFlow.firstOrNull()
+        val missingConfig = currentParameter == null ||
+            currentParameter.raisonsociale.isBlank() ||
+            currentParameter.devise.isBlank()
+
+        if (!missingConfig) {
+            return Result.Success(Unit)
+        }
+
+        return try {
+            val response = apiService.getParameter(userId ?: 0)
+            if (!response.isSuccessful) {
+                return Result.Error(HttpException(response))
+            }
+
+            val parameter = response.body()?.toParameter()
+                ?: return Result.Error(Exception(context.getString(R.string.error_empty_response)))
+
+            dataStoreManager.setParameterConfig(parameter)
+            Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e)
         }

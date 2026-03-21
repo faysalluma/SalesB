@@ -35,7 +35,7 @@ import retrofit2.http.QueryMap
 interface ApiService {
     /* GET API */
     @GET(Constants.GET_PARAMETER)
-    suspend fun getParameter() : Response<ParameterResponse>
+    suspend fun getParameter(@Path("userid") userid: Int) : Response<ParameterResponse>
 
     @GET(Constants.GET_DEFAULT_USER)
     suspend fun getDefaultUser() : Response<UserItemResponse>

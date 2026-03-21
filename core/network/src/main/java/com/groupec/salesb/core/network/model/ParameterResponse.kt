@@ -8,7 +8,8 @@ data class ParameterResponse(
 )
 data class ParamItemResponse(
 
-    @SerializedName("userid")
+    // Here it is the userid not parameter id
+    @SerializedName("id")
     val id: Int,
 
     @SerializedName("logo")
@@ -46,7 +47,7 @@ data class ParamItemResponse(
     val expirationdate: String,
 
     @SerializedName("offline")
-    val offline: Int,
+    val offline: Int?,
 
     @SerializedName("showimageonproduct")
     val showimageonproduct: Int,

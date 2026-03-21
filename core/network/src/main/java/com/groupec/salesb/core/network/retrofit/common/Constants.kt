@@ -7,7 +7,7 @@ class Constants {
         const val BASE_URL = Constants.BASE_URL
 
         // Get endpoint
-        const val GET_PARAMETER = "parameter"
+        const val GET_PARAMETER = "parameter/{userid}"
         const val GET_DEFAULT_USER = "defaultUser"
         const val GET_USER_BY_EMAIL = "checkLoginByEmail/{email}"
         const val GET_USER_BY_ID = "checkLoginById/{userid}"
