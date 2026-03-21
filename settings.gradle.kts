@@ -55,5 +55,6 @@ include(":feature:editinvoicing")
 include(":feature:accountlist")
 include(":feature:accountdetail")
 include(":feature:termsandconditions")
+include(":core:firebaseremoteconfig")
 
 include(":feature:handleservice")
