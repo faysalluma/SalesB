@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +50,7 @@ import com.groupec.salesb.core.designsystem.theme.Silver2
 import com.groupec.salesb.core.designsystem.theme.Silver3
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.formatAmount
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.toDate
 
@@ -57,12 +59,18 @@ fun ProductCard(
     product: Product,
     isSelected: Boolean,
     showQuantity: Boolean,
+    isServiceView: Boolean,
     onViewDetail: (Product) -> Unit,
     onDelete: (Int, String) -> Unit
 ) {
+    val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     var showDetailBottomSheet by remember { mutableStateOf(false) }
     val cardColor = if (isSelected) Silver else White // Define the color based on the 'selected' state
+    val catalogLabelSingular = context.getCatalogItemLabel(
+        isServiceView = isServiceView,
+        plural = false
+    )
 
     ListItem(
         colors = ListItemDefaults.colors(
@@ -111,7 +119,12 @@ fun ProductCard(
                             contentDescription = "Edit Icon"
                         )
                     },
-                    text = { Text(stringResource(R.string.show_detail_item), color = Black) },
+                    text = {
+                        Text(
+                            stringResource(R.string.show_detail_item, catalogLabelSingular),
+                            color = Black
+                        )
+                    },
                     onClick = {
                         showDetailBottomSheet = true
                         expanded = false // Close DropdownMenuItem
@@ -154,6 +167,7 @@ fun ProductCard(
         ) {
             ProductDetailBottomSheetContent(
                 product = product,
+                isServiceView = isServiceView,
                 onClose = { showDetailBottomSheet = false }
             )
         }
@@ -163,9 +177,15 @@ fun ProductCard(
 @Composable
 private fun ProductDetailBottomSheetContent(
     product: Product,
+    isServiceView: Boolean,
     onClose: () -> Unit
 ) {
+    val context = LocalContext.current
     val none = stringResource(R.string.none)
+    val catalogLabelSingular = context.getCatalogItemLabel(
+        isServiceView = isServiceView,
+        plural = false
+    )
     val dateCreation = product.datecreation?.dayMonthYear() ?: none
     val dateLastUpdate = product.datemodif?.dayMonthYear() ?: none
     val priceTtc = product.prixttc.formatAmount()
@@ -186,7 +206,7 @@ private fun ProductDetailBottomSheetContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(R.string.product_detail_title),
+                text = stringResource(R.string.product_detail_title, catalogLabelSingular),
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
                 fontWeight = FontWeight.Medium
             )
@@ -205,7 +225,10 @@ private fun ProductDetailBottomSheetContent(
                 url = imageUrl,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally),
-                contentDescription = stringResource(R.string.product_detail_image),
+                contentDescription = stringResource(
+                    R.string.product_detail_image,
+                    catalogLabelSingular
+                ),
                 isCircle = false,
                 imageSize = 128.dp
             )
@@ -287,24 +310,26 @@ private fun ProductDetailBottomSheetContent(
             )
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            ProductDetailField(
-                modifier = Modifier.weight(1f),
-                label = stringResource(R.string.product_detail_stock_quantity),
-                value = product.qtestock?.toString() ?: none
-            )
-            ProductDetailField(
-                modifier = Modifier.weight(1f),
-                label = stringResource(R.string.product_detail_stock_minimum),
-                value = product.stockmini?.toString() ?: none
-            )
+        if (!isServiceView) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                ProductDetailField(
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(R.string.product_detail_stock_quantity),
+                    value = product.qtestock?.toString() ?: none
+                )
+                ProductDetailField(
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(R.string.product_detail_stock_minimum),
+                    value = product.stockmini?.toString() ?: none
+                )
+            }
         }
-
+        
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -383,6 +408,7 @@ fun ProductCardPreview() {
             ),
             isSelected = false,
             showQuantity = true,
+            isServiceView = false,
             onViewDetail = {},
             onDelete = { id, libelle ->
             }

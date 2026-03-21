@@ -5,6 +5,7 @@ import com.groupec.salesb.core.convertToLocaleDateTimeFormat
 import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.domain.R
 import com.groupec.salesb.core.formatAmount
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.others.paymentTypeLibelleResFromValue
 import com.groupec.salesb.core.toDate
@@ -17,8 +18,9 @@ class GenerateSaleListExcelUseCase @Inject constructor() {
         searchQuery: String? = null,
         startDate: String? = null,
         endDate: String? = null,
-        devise: String? = null
-    ) = generateSaleListExcel(context, sales, searchQuery, startDate, endDate, devise)
+        devise: String? = null,
+        isServiceView: Boolean = false
+    ) = generateSaleListExcel(context, sales, searchQuery, startDate, endDate, devise, isServiceView)
 }
 
 fun generateSaleListExcel(
@@ -27,16 +29,22 @@ fun generateSaleListExcel(
     searchQuery: String?,
     startDate: String?,
     endDate: String?,
-    devise: String?
+    devise: String?,
+    isServiceView: Boolean = false
 ): ByteArray {
     val none = "-"
+    val catalogLabelPlural = context.getCatalogItemLabel(
+        isServiceView = isServiceView,
+        plural = true,
+        capitalize = true
+    )
     val headers = listOf(
         context.getString(R.string.id_header),
         context.getString(R.string.date_time_header),
         context.getString(R.string.price_header),
         context.getString(R.string.payment_type_header),
         context.getString(R.string.username_header),
-        context.getString(R.string.products_header)
+        context.getString(R.string.products_header, catalogLabelPlural)
     )
 
     val rows = buildList {

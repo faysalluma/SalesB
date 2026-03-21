@@ -31,6 +31,7 @@ import com.groupec.salesb.core.designsystem.R as Res
 @Composable
 fun SignupStepThree(
     showErrors: Boolean,
+    isServiceView: Boolean,
     state: SignupStepThreeFormState,
     paymentTypeState: String,
     onPaymenTypeSelected: (String) -> Unit,
@@ -112,8 +113,16 @@ fun SignupStepThree(
     SwitchRow(
         verticalpadding = verticalpadding,
         option = HandleServiceOption(
-            titleRes = Res.string.handle_service_show_product_images,
-            descriptionRes = Res.string.handle_service_show_product_images_desc,
+            titleRes = if (isServiceView) {
+                Res.string.handle_service_show_service_images
+            } else {
+                Res.string.handle_service_show_product_images
+            },
+            descriptionRes = if (isServiceView) {
+                Res.string.handle_service_show_service_images_desc
+            } else {
+                Res.string.handle_service_show_product_images_desc
+            },
             checked = state.showProductImage == 1,
             enabled = true,
             type = HandleServiceToggleType.SHOW_IMAGE_ON_PRODUCT

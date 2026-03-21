@@ -7,13 +7,13 @@
     <string name="label_select_period">Period</string>
     <string name="see_more">See more</string>
     <string name="statistic_label_sale">Total Sales</string>
-    <string name="statistic_label_top">Top 3 best-selling products</string>
-    <string name="statistic_label_product">Total products</string>
-    <string name="statistic_label_alert_inventory">Total low inventory products</string>
+    <string name="statistic_label_top">Top 3 best-selling %1$s</string>
+    <string name="statistic_label_product">Total %1$s</string>
+    <string name="statistic_label_alert_inventory">Total low inventory %1$s</string>
     <string name="no_data">No data available</string>
     <string name="morning">Morning</string>
     <string name="evening">Evening</string>
     <string name="profit_label">Profits: %1$s %2$s</string>
     <string name="output_label">Outputs: %1$s %2$s</string>
-    <string name="products_copied">Products copied</string>
+    <string name="products_copied">%1$s copied</string>
 </resources>

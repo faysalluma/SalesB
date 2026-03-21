@@ -51,6 +51,7 @@ fun AccountDetailScreen(
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val addUserState by viewModel.addUserUiState.collectAsState()
+    val parameterState by viewModel.parameterState.collectAsState()
     val isLoading = addUserState is FormUIState.Loading
     var userDataForm by remember { mutableStateOf(UserDataForm()) }
     val privilegesState = remember { mutableStateMapOf<String, MutableSet<String>>() }
@@ -181,6 +182,7 @@ fun AccountDetailScreen(
             UserForm(
                 modifier = Modifier.fillMaxWidth(0.8f),
                 isLoading = isLoading,
+                isServiceView = parameterState.serviceview,
                 users = userDataForm,
                 actifItems = activeList,
                 actifState = actifState,

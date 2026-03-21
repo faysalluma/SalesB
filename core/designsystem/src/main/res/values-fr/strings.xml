@@ -79,6 +79,8 @@
     <string name="handle_service_view_service_desc">Activer l\'affichage spécifique à la gestion des services</string>
     <string name="handle_service_show_product_images">Afficher les images des produits</string>
     <string name="handle_service_show_product_images_desc">Inclure les images dans la liste de produits lors de l\'enregistrement d\'une vente</string>
+    <string name="handle_service_show_service_images">Afficher les images des services</string>
+    <string name="handle_service_show_service_images_desc">Inclure les images dans la liste de services lors de l\'enregistrement d\'une vente</string>
     <string name="handle_service_use_integer_price">Utiliser des entiers pour les quantités</string>
     <string name="handle_service_use_integer_price_desc">Désactiver les décimales</string>
     <string name="handle_service_payment_mode">Afficher mode de paiement</string>

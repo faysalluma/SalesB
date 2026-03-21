@@ -6,13 +6,13 @@
     <string name="title_stat_period">Statistiques périodiques</string>
     <string name="title_stat_no_period">Statistiques non périodiques</string>
     <string name="statistic_label_sale">Total ventes</string>
-    <string name="statistic_label_top">Top 3 des produits les plus vendus</string>
-    <string name="statistic_label_product">Total produits</string>
-    <string name="statistic_label_alert_inventory">Total produits avec faible stock</string>
+    <string name="statistic_label_top">Top 3 des %1$s les plus vendus</string>
+    <string name="statistic_label_product">Total %1$s</string>
+    <string name="statistic_label_alert_inventory">Total %1$s avec faible stock</string>
     <string name="no_data">Aucune donnée</string>
     <string name="morning">Matin</string>
     <string name="evening">Soir</string>
     <string name="profit_label">Bénéfices: %1$s %2$s</string>
     <string name="output_label">Sorties: %1$s %2$s</string>
-    <string name="products_copied">Produits copiés</string>
+    <string name="products_copied">%1$s copiés</string>
 </resources>

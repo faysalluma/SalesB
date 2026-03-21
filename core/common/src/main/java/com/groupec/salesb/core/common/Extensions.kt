@@ -100,6 +100,27 @@ fun Double.formatAmountNoTrailingZero(): String {
     return formatted.replace(Regex("([.,])0+$"), "")
 }
 
+fun Context.getCatalogItemLabel(
+    isServiceView: Boolean,
+    plural: Boolean = true,
+    capitalize: Boolean = false
+): String {
+    val resId = when {
+        isServiceView && plural -> R.string.catalog_item_services
+        isServiceView && !plural -> R.string.catalog_item_service
+        !isServiceView && plural -> R.string.catalog_item_products
+        else -> R.string.catalog_item_product
+    }
+    val label = getString(resId)
+    return if (!capitalize || label.isEmpty()) {
+        label
+    } else {
+        label.replaceFirstChar { firstChar ->
+            if (firstChar.isLowerCase()) firstChar.titlecase(Locale.getDefault()) else firstChar.toString()
+        }
+    }
+}
+
 
 
 // Because of BCrypt in Java/Kotlin (for org.mindrot.BCrypt) don't accept $2y$ format
@@ -214,4 +235,3 @@ fun Context.sendEmailWithAttachment(
 
     startActivity(Intent.createChooser(shareIntent , "Send with:"))
 }
-

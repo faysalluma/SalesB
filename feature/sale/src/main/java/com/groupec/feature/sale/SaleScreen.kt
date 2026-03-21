@@ -19,15 +19,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -45,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -66,10 +62,9 @@ import com.groupec.salesb.core.designsystem.component.Position
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.component.TitleLarge
 import com.groupec.salesb.core.designsystem.icon.AppIcons
-import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Silver
-import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.formatAmount
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.Sale
@@ -84,7 +79,6 @@ import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.core.ui.ProductGridAdaptive
 import com.groupec.salesb.core.ui.ProductGridPortrait
 import com.groupec.salesb.core.ui.SaleDetailCard
-import com.groupec.salesb.core.ui.isTablet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -577,6 +571,16 @@ private fun ProductSelectionSection(
     onQuantityChange: (Pair<Int, Product>) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val catalogLabelPlural = context.getCatalogItemLabel(
+        isServiceView = parameter.serviceview,
+        plural = true
+    )
+    val catalogLabelSingular = context.getCatalogItemLabel(
+        isServiceView = parameter.serviceview,
+        plural = false
+    )
+
     // if get error when fetching products
     if (error != null) {
         Column(
@@ -602,7 +606,7 @@ private fun ProductSelectionSection(
     } else {
         // Show Progress bar waiting load products
         if (!isSearching && products.itemCount == 0) {
-            AppLoadingScreen(text = stringResource(R.string.loading_products))
+            AppLoadingScreen(text = stringResource(R.string.loading_products, catalogLabelPlural))
         } else {
             Column(modifier = modifier) {
                 // Head
@@ -611,7 +615,7 @@ private fun ProductSelectionSection(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     TitleLarge(
-                        title = stringResource(R.string.my_products),
+                        title = stringResource(R.string.my_products, catalogLabelPlural),
                         modifier = Modifier.padding(top = 12.dp, end = 8.dp)
                     )
                     // Barre de recherche
@@ -651,7 +655,7 @@ private fun ProductSelectionSection(
                     ) {
                         DefaultButton(
                             modifier = Modifier.wrapContentWidth(),
-                            text = stringResource(R.string.add_product),
+                            text = stringResource(R.string.add_product, catalogLabelSingular),
                             onClick = navigateToProduct
                         )
                     }

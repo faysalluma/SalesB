@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,12 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.designsystem.icon.AppIcons
@@ -38,6 +34,7 @@ import com.groupec.salesb.core.designsystem.theme.White
 fun StatisticCard(
     modifier : Modifier = Modifier,
     labelRes: Int,
+    labelText: String? = null,
     iconColor: Color = Primary,
     numberTitle: Int ? = null,
     dataValue: String ?,
@@ -62,9 +59,10 @@ fun StatisticCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            val cardLabel = labelText ?: stringResource(labelRes)
             val numberTitleValue = numberTitle?.let {
-                "${stringResource(labelRes)} ($it)"
-            } ?: stringResource(labelRes)
+                "$cardLabel ($it)"
+            } ?: cardLabel
             Text(
                 numberTitleValue,
                 textAlign = TextAlign.Center,

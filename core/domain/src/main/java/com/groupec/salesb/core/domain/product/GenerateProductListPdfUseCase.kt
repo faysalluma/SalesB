@@ -6,6 +6,7 @@ import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.dayMonthYear
 import com.groupec.salesb.core.domain.R
 import com.groupec.salesb.core.formatAmount
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.getBitmapFromUrl
 import com.groupec.salesb.core.model.data.Product
 import com.itextpdf.io.font.constants.StandardFonts
@@ -30,15 +31,17 @@ class GenerateProductListPdfUseCase @Inject constructor() {
         context: Context,
         products: List<Product>,
         searchQuery: String? = null,
-        logoUrl: String? = null
-    ) = generateProductListPdf(context, products, searchQuery, logoUrl)
+        logoUrl: String? = null,
+        isServiceView: Boolean = false
+    ) = generateProductListPdf(context, products, searchQuery, logoUrl, isServiceView)
 }
 
 fun generateProductListPdf(
     context: Context,
     products: List<Product>,
     searchQuery: String?,
-    logoUrl: String?
+    logoUrl: String?,
+    isServiceView: Boolean = false
 ): ByteArray {
     val baos = ByteArrayOutputStream()
     val writer = PdfWriter(baos)
@@ -57,9 +60,14 @@ fun generateProductListPdf(
         document.add(image)
     }
 
+    val catalogLabelPlural = context.getCatalogItemLabel(
+        isServiceView = isServiceView,
+        plural = true
+    )
+
     document.add(Paragraph("").setMarginBottom(8f))
     document.add(
-        Paragraph(context.getString(R.string.product_list_title))
+        Paragraph(context.getString(R.string.product_list_title, catalogLabelPlural))
             .setFont(boldFont)
             .setFontSize(16f)
     )
@@ -76,7 +84,7 @@ fun generateProductListPdf(
         )
     }
     document.add(
-        Paragraph(context.getString(R.string.product_list_total, products.size))
+        Paragraph(context.getString(R.string.product_list_total, catalogLabelPlural, products.size))
             .setFont(boldFont)
             .setFontSize(12f)
     )

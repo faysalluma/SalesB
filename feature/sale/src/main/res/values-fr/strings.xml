@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="retry">Réessayer</string>
-    <string name="loading_products">Chargement de produits …</string>
+    <string name="loading_products">Chargement de %1$s …</string>
     <string name="search_product_place_holder">Rechercher ici</string>
-    <string name="my_products">Mes produits</string>
-    <string name="no_products">Aucun produit</string>
-    <string name="add_product">Ajouter un produit</string>
+    <string name="my_products">Mes %1$s</string>
+    <string name="no_products">Aucun %1$s</string>
+    <string name="add_product">Ajouter un %1$s</string>
     <string name="view_resume">Finaliser</string>
     <string name="cart_items_label">%1$s article(s)</string>
 </resources>
