@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="head_title_section">Rayons</string>
+    <string name="head_title_section">Rayons (%1$d)</string>
     <string name="no_section_avalaible">Aucun rayon disponible</string>
     <string name="loading_sections">Chargement de rayons …</string>
     <string name="export_to_pdf">Exporter en PDF</string>

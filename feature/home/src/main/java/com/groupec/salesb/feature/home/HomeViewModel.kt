@@ -24,6 +24,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import com.groupec.salesb.core.Result
@@ -79,7 +80,11 @@ class HomeViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _userStore.value = getUserStoreUseCase().first()
-            _parameter.value = getParameterUseCase().first()
+        }
+        viewModelScope.launch {
+            getParameterUseCase().collectLatest { parameter ->
+                _parameter.value = parameter
+            }
         }
     }
 

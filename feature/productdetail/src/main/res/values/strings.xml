@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="detail_title">Product details</string>
+    <string name="detail_title">%1$s details</string>
 </resources>

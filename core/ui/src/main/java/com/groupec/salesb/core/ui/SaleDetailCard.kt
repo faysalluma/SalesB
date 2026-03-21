@@ -55,6 +55,7 @@ import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.formatAmount
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.others.PaymentType
@@ -78,6 +79,12 @@ fun SaleDetailCard(
     paymentTypeState: String,
     onPaymenTypeSelected: (String) -> Unit
 ) {
+    val context = LocalContext.current
+    val catalogLabelPlural = context.getCatalogItemLabel(
+        isServiceView = parameter.serviceview,
+        plural = true,
+        capitalize = true
+    )
 
     Column(
         modifier = modifier,
@@ -102,7 +109,7 @@ fun SaleDetailCard(
                     AppHeadLine(
                         leadingContent = {
                             TextNormal(
-                                text = stringResource(R.string.title_product),
+                                text = stringResource(R.string.title_product, catalogLabelPlural),
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.W300)
                             )
                         },
@@ -226,7 +233,10 @@ private fun BottomContentScreen(
         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TitleMedium(title = stringResource(R.string.total))
+        TitleMedium(
+            modifier = Modifier.padding(end = 8.dp),
+            title = stringResource(R.string.total)
+        )
         Text(
             text = totalLabel,
             style = MaterialTheme.typography.titleLarge

@@ -222,6 +222,7 @@ fun MainScreen(
                             BottomNavigationBar(
                                 items = items,
                                 currentRoute = route,
+                                isServiceView = parameterState.serviceview,
                                 onItemClick = { currentNavigationItem ->
                                     navController.navigate(currentNavigationItem.route) {
                                         // Supprime toutes les destinations jusqu’à la destination de départ du graphe de navigation
@@ -305,6 +306,7 @@ fun MainScreen(
                         MyNavigationRail(
                             items = items,
                             navController,
+                            isServiceView = parameterState.serviceview,
                             modifier = Modifier.weight(0.09f)
                         )
                     }

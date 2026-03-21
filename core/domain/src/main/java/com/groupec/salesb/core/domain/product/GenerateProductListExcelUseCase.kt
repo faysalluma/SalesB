@@ -5,6 +5,7 @@ import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.dayMonthYear
 import com.groupec.salesb.core.domain.R
 import com.groupec.salesb.core.formatAmount
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.model.data.Product
 import javax.inject.Inject
 
@@ -12,16 +13,22 @@ class GenerateProductListExcelUseCase @Inject constructor() {
     operator fun invoke(
         context: Context,
         products: List<Product>,
-        searchQuery: String? = null
-    ) = generateProductListExcel(context, products, searchQuery)
+        searchQuery: String? = null,
+        isServiceView: Boolean = false
+    ) = generateProductListExcel(context, products, searchQuery, isServiceView)
 }
 
 fun generateProductListExcel(
     context: Context,
     products: List<Product>,
-    searchQuery: String?
+    searchQuery: String?,
+    isServiceView: Boolean = false
 ): ByteArray {
     val none = "-"
+    val catalogLabelPlural = context.getCatalogItemLabel(
+        isServiceView = isServiceView,
+        plural = true
+    )
     val headers = listOf(
         context.getString(R.string.product_id_header),
         context.getString(R.string.label),
@@ -40,12 +47,12 @@ fun generateProductListExcel(
     )
 
     val rows = buildList {
-        add(listOf(context.getString(R.string.product_list_title)))
+        add(listOf(context.getString(R.string.product_list_title, catalogLabelPlural)))
         add(listOf("${context.getString(R.string.export_date)} ${currentLocalDateString()}"))
         if (!searchQuery.isNullOrBlank()) {
             add(listOf("${context.getString(R.string.filter_data)} $searchQuery"))
         }
-        add(listOf(context.getString(R.string.product_list_total, products.size)))
+        add(listOf(context.getString(R.string.product_list_total, catalogLabelPlural, products.size)))
         add(emptyList())
         add(headers)
         products.forEach { product ->

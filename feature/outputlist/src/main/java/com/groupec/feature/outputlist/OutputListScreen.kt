@@ -70,6 +70,7 @@ fun OutputListScreen(
     val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
+    val totalOutputsCount by viewModel.totalOutputsCount.collectAsState()
     val outputs = viewModel.pagedOutputs.collectAsLazyPagingItems()
     val error = (outputs.loadState.refresh as? LoadState.Error)?.error?.message
     val deleteOutputState by viewModel.deleteOutputUiState.collectAsState()
@@ -229,7 +230,7 @@ fun OutputListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title_output),
+            text = stringResource(R.string.head_title_output, totalOutputsCount),
             leadingContent = {
                 IconButton(onClick = { expanded = true }) {
                     Icon(imageVector = AppIcons.Export, contentDescription = "Export output")

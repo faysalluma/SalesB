@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.groupec.salesb.core.Approval
 import com.groupec.salesb.core.Privileges
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.component.AppCheckboxMinimal
 import com.groupec.salesb.core.designsystem.component.AppExposedDropdownMenu
@@ -51,6 +52,7 @@ import kotlin.random.Random
 fun UserForm(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
+    isServiceView: Boolean = false,
     users: UserDataForm,
     actifItems: List<String>,
     actifState: String,
@@ -63,6 +65,11 @@ fun UserForm(
     val context = LocalContext.current
     var isNomPrenomError by remember { mutableStateOf(false) }
     var isEmailError by remember { mutableStateOf(false) }
+    val catalogLabelPluralCapitalized = context.getCatalogItemLabel(
+        isServiceView = isServiceView,
+        plural = true,
+        capitalize = true
+    )
 
     val submitAction = {
         isNomPrenomError = users.nomprenom.isEmpty()
@@ -180,9 +187,14 @@ fun UserForm(
         ) {
            Privileges.entries.forEachIndexed { index, privilege ->
                val selectedChildren = privilegesState[privilege.name]?.toList() ?: emptyList()
+               val privilegeLabel = if (privilege == Privileges.Product) {
+                   catalogLabelPluralCapitalized
+               } else {
+                   privilege.getTitle(context)
+               }
                if (privilege.values.size == 1) {
                    AppCheckboxMinimal(
-                       label = privilege.getTitle(context),
+                       label = privilegeLabel,
                        child = privilege.values.entries.first().key,
                        selectedChildren = selectedChildren
                    ) { approval ->
@@ -201,7 +213,7 @@ fun UserForm(
                    }
                } else {
                    AppCheckboxParent(
-                       parentLabel = privilege.getTitle(context),
+                       parentLabel = privilegeLabel,
                        children = privilege.values.entries.drop(1).associate { it.toPair() },// Supprimer le premier élément du map
                        selectedChildren = selectedChildren
                    ) { checkedList ->

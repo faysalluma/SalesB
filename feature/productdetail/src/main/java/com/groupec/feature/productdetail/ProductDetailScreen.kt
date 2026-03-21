@@ -31,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.groupec.salesb.core.Approval
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Privileges
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.theme.Primary
@@ -62,6 +63,10 @@ fun ProductDetailScreen(
     val categoriesPairState by viewModel.categoriesUiPairState.collectAsState()
     val rayonsPairState by viewModel.rayonsUiPairState.collectAsState()
     val parameterState by viewModel.parameterState.collectAsState()
+    val catalogLabelSingular = context.getCatalogItemLabel(
+        isServiceView = parameterState.serviceview,
+        plural = false
+    )
 
     var productDataForm by remember { mutableStateOf(ProductDataForm()) }
     var categorielibelleState by remember { mutableStateOf(TextFieldValue(productDataForm.categorielibelle)) }
@@ -166,7 +171,7 @@ fun ProductDetailScreen(
     Column {
         AppHeadLine(
             modifier = Modifier.padding(bottom = 28.dp),
-            text = stringResource(R.string.detail_title),
+            text = stringResource(R.string.detail_title, catalogLabelSingular),
             trailingContent = {
                 Text(
                     stringResource(com.groupec.salesb.core.ui.R.string.btn_cancel),

@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -63,11 +64,22 @@ class SaleListViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    private val saleSearchParams: Flow<Map<String, String>> =
+        combine(_searchQuery, _startDate, _endDate) { query, start, end ->
+            buildSaleSearchParams(query, start, end)
+        }
+
     private val _isSearching = MutableStateFlow(false) // État de recherche
     val isSearching: StateFlow<Boolean> = _isSearching
 
     private val _parameter = MutableStateFlow(Parameter())
     val parameter: StateFlow<Parameter> = _parameter.asStateFlow()
+
+    private val _totalSalesCount = MutableStateFlow(0)
+    val totalSalesCount: StateFlow<Int> = _totalSalesCount.asStateFlow()
+
+    private val _totalSalesAmount = MutableStateFlow(0.0)
+    val totalSalesAmount: StateFlow<Double> = _totalSalesAmount.asStateFlow()
 
     // Bluetooth
     val bluetoothPrint = Print(context)
@@ -85,6 +97,10 @@ class SaleListViewModel @Inject constructor(
     private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
 
+    init {
+        observeSalesSummary()
+    }
+
     fun getParameter() {
         viewModelScope.launch {
             _parameter.value = getParameterUseCase().first()
@@ -92,13 +108,7 @@ class SaleListViewModel @Inject constructor(
     }
 
     val pagedProducts: Flow<PagingData<Sale>> =
-        combine(_searchQuery, _startDate, _endDate) { query, start, end ->
-            mapOf(
-                "totalprix" to query,
-                "startDate" to start,
-                "endDate" to end
-            )
-        }
+        saleSearchParams
             .flatMapLatest { searchParams ->
                 getSaleUseCase(searchParams)
                     .onStart { _isSearching.value = true /* Indique qu'une recherche commence */ }
@@ -144,7 +154,8 @@ class SaleListViewModel @Inject constructor(
                                 _startDate.value,
                                 _endDate.value,
                                 _parameter.value.devise,
-                                _parameter.value.logo
+                                _parameter.value.logo,
+                                _parameter.value.serviceview
                             )
                         }
                         val file = withContext(Dispatchers.IO) {
@@ -194,7 +205,8 @@ class SaleListViewModel @Inject constructor(
                                 _searchQuery.value,
                                 _startDate.value,
                                 _endDate.value,
-                                _parameter.value.devise
+                                _parameter.value.devise,
+                                _parameter.value.serviceview
                             )
                         }
                         val file = withContext(Dispatchers.IO) {
@@ -321,11 +333,33 @@ class SaleListViewModel @Inject constructor(
         _exportExcelUiState.value = FormUIState.Idle
     }
 
-    private fun buildSaleSearchParams(): Map<String, String> {
+    private fun observeSalesSummary() {
+        viewModelScope.launch {
+            saleSearchParams.collectLatest { searchParams ->
+                when (val result = getAllSalesUseCase(searchParams)) {
+                    is Result.Success -> {
+                        _totalSalesCount.value = result.data.size
+                        _totalSalesAmount.value = result.data.sumOf { it.totalprix }
+                    }
+
+                    else -> {
+                        _totalSalesCount.value = 0
+                        _totalSalesAmount.value = 0.0
+                    }
+                }
+            }
+        }
+    }
+
+    private fun buildSaleSearchParams(
+        query: String = _searchQuery.value,
+        startDate: String = _startDate.value,
+        endDate: String = _endDate.value
+    ): Map<String, String> {
         return mapOf(
-            "totalprix" to _searchQuery.value,
-            "startDate" to _startDate.value,
-            "endDate" to _endDate.value
+            "totalprix" to query,
+            "startDate" to startDate,
+            "endDate" to endDate
         )
     }
 }

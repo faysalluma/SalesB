@@ -59,6 +59,7 @@ import com.groupec.salesb.core.designsystem.theme.Red
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.Yellow
 import com.groupec.salesb.core.formatAmount
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.ui.ComposableLifecycle
@@ -77,6 +78,7 @@ fun HomeScreen(
     val userStoreState by viewModel.userStore.collectAsStateWithLifecycle()
     val chartValuesState by viewModel.chartValues.collectAsStateWithLifecycle()
     val privileges = userStoreState.getPrivileges()
+    val parameterState by viewModel.parameter.collectAsStateWithLifecycle()
 
     ComposableLifecycle(
         onCreate = {
@@ -102,14 +104,14 @@ fun HomeScreen(
         val heigthModifier = Modifier.height(34.dp)
 
         // Headline
-        HeadLigne(context, viewModel,privileges, navigateToSaleList)
+        HeadLigne(context, viewModel,parameterState, privileges, navigateToSaleList)
 
         // Periodic statistic
         StatisticPeriodic(context, viewModel,privileges, navigateToSaleList)
         Spacer(modifier = heigthModifier)
 
         // Non-Periodic statistic
-        StatisticNonPeriodic(viewModel,privileges, navigateToProduct)
+        StatisticNonPeriodic(viewModel, parameterState, privileges, navigateToProduct)
         Spacer(modifier = heigthModifier)
 
         // Chart statistic
@@ -136,13 +138,13 @@ fun HomeScreen(
 fun HeadLigne(
     context: Context,
     viewModel: HomeViewModel,
+    parameter: Parameter,
     privileges: List<String>,
     navigateToSaleList: () -> Unit
 ) {
     val totalAmountOutputState by viewModel.totalAmountOutputs.collectAsStateWithLifecycle()
     val totalAmountSalesState by viewModel.totalAmountSales.collectAsStateWithLifecycle()
     val profits by remember { derivedStateOf { totalAmountSalesState - totalAmountOutputState } }
-    val parameterState by viewModel.parameter.collectAsStateWithLifecycle()
 
     val periodList = Period.entries.map { it.getTitle(context) }
     var periodValue by rememberSaveable { mutableStateOf(periodList[1]) }
@@ -152,7 +154,7 @@ fun HeadLigne(
         context = context,
         profits = profits,
         totalAmountOutputState = totalAmountOutputState,
-        parameterState = parameterState,
+        parameterState = parameter,
         profitColor = profitColor,
         periodList = periodList,
         periodValue = periodValue,
@@ -257,11 +259,14 @@ fun StatisticPeriodic(
     privileges: List<String>,
     navigateToSaleList: () -> Unit
 ) {
-    val context = LocalContext.current
     val parameterState by viewModel.parameter.collectAsStateWithLifecycle()
     val totalSalesState by viewModel.totalSales.collectAsStateWithLifecycle()
     val totalAmountSalesState by viewModel.totalAmountSales.collectAsStateWithLifecycle()
     val topSaleProductsState by viewModel.topSaleProducts.collectAsStateWithLifecycle()
+    val catalogLabelPlural = context.getCatalogItemLabel(
+        isServiceView = parameterState.serviceview,
+        plural = true
+    )
 
     Column {
         TitleMedium(
@@ -286,6 +291,7 @@ fun StatisticPeriodic(
             )
             TopSaleStatisticCard(
                 modifier = cardModifier,
+                labelText = stringResource(R.string.statistic_label_top, catalogLabelPlural),
                 dataValue = topSaleProductsState
                     .takeIf { it.isNotEmpty() }
                     ?.joinToString { "${it.libelle} (${it.qtestock})" } ?: context.getString(R.string.no_data),
@@ -298,6 +304,7 @@ fun StatisticPeriodic(
 @Composable
 fun StatisticNonPeriodic(
     viewModel: HomeViewModel,
+    parameter: Parameter,
     privileges: List<String>,
     navigateToProduct: () -> Unit
 ) {
@@ -305,6 +312,10 @@ fun StatisticNonPeriodic(
     val totalProductsState by viewModel.totalProducts.collectAsStateWithLifecycle()
     val totalAlertSeuilState by viewModel.totalAlertSeuilProducts.collectAsStateWithLifecycle()
     val productsWithLowInventoryState by viewModel.productsWithLowInventoryUiState.collectAsStateWithLifecycle()
+    val catalogLabelPlural = context.getCatalogItemLabel(
+        isServiceView = parameter.serviceview,
+        plural = true
+    )
 
     TitleMedium(
         title = stringResource(R.string.title_stat_no_period),
@@ -320,17 +331,23 @@ fun StatisticNonPeriodic(
         val cardModifier = Modifier.weight(1f)
         ProductStatisticCard(
             modifier = cardModifier,
+            labelText = stringResource(R.string.statistic_label_product, catalogLabelPlural),
             dataValue = totalProductsState.toString(),
             navigateToProduct = {
                 navigateToProduct()
             }
         )
-        AlertInventoryStatisticCard(
-            modifier = cardModifier,
-            dataValue = totalAlertSeuilState.toString(),
-            productsWithLowInventoryState = productsWithLowInventoryState,
-            getProductsWithLowInventory = viewModel::getProductsWithLowInventory
-        )
+        if (!parameter.serviceview) {
+            AlertInventoryStatisticCard(
+                modifier = cardModifier,
+                labelText = stringResource(R.string.statistic_label_alert_inventory, catalogLabelPlural),
+                copiedLabel = catalogLabelPlural,
+                isServiceView = parameter.serviceview,
+                dataValue = totalAlertSeuilState.toString(),
+                productsWithLowInventoryState = productsWithLowInventoryState,
+                getProductsWithLowInventory = viewModel::getProductsWithLowInventory
+            )
+        }
     }
 }
 
@@ -396,10 +413,17 @@ fun SaleStatisticCard(
 }
 
 @Composable
-fun TopSaleStatisticCard(modifier: Modifier = Modifier, numberTitle: Int ? = null, dataValue: String ?, devise: String ? = null) {
+fun TopSaleStatisticCard(
+    modifier: Modifier = Modifier,
+    numberTitle: Int ? = null,
+    labelText: String? = null,
+    dataValue: String ?,
+    devise: String ? = null
+) {
     StatisticCard(
         modifier = modifier,
         labelRes = R.string.statistic_label_top,
+        labelText = labelText,
         iconColor = Yellow,
         numberTitle = numberTitle,
         dataValue = dataValue,
@@ -414,6 +438,7 @@ fun TopSaleStatisticCard(modifier: Modifier = Modifier, numberTitle: Int ? = nul
 fun ProductStatisticCard(
     modifier: Modifier = Modifier,
     numberTitle: Int ? = null,
+    labelText: String? = null,
     dataValue: String ?,
     devise: String ? = null,
     navigateToProduct: () -> Unit
@@ -421,6 +446,7 @@ fun ProductStatisticCard(
     StatisticCard(
         modifier = modifier,
         labelRes = R.string.statistic_label_product,
+        labelText = labelText,
         iconColor = Primary,
         numberTitle = numberTitle,
         dataValue = dataValue,
@@ -433,6 +459,9 @@ fun ProductStatisticCard(
 fun AlertInventoryStatisticCard(
     modifier: Modifier = Modifier,
     numberTitle: Int? = null,
+    labelText: String? = null,
+    copiedLabel: String,
+    isServiceView: Boolean,
     dataValue: String?,
     devise: String? = null,
     productsWithLowInventoryState: UIState<List<Product>>,
@@ -447,6 +476,7 @@ fun AlertInventoryStatisticCard(
     StatisticCard(
         modifier = modifier,
         labelRes = R.string.statistic_label_alert_inventory,
+        labelText = labelText,
         iconColor = Red,
         numberTitle = numberTitle,
         dataValue = dataValue,
@@ -471,7 +501,11 @@ fun AlertInventoryStatisticCard(
                             clipBoardManager.setText(
                                 AnnotatedString(copiedProducts)
                             )
-                            Toast.makeText(context, context.getString(R.string.products_copied), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.products_copied, copiedLabel),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     ) {
                         Icon(
@@ -490,6 +524,7 @@ fun AlertInventoryStatisticCard(
                     is UIState.Success -> {
                         products = productsWithLowInventoryState.data
                         ProductsWithLowInventoryList(
+                            isServiceView = isServiceView,
                             products = products
                         )
                     }

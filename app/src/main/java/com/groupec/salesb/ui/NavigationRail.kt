@@ -3,7 +3,6 @@ package com.groupec.salesb.ui
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,11 +13,8 @@ import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -31,6 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.navigation.NavigationIcon
 import com.groupec.salesb.navigation.NavigationItem
 
@@ -38,8 +35,10 @@ import com.groupec.salesb.navigation.NavigationItem
 fun MyNavigationRail(
     items: List<NavigationItem>,
     navController: NavController,
+    isServiceView: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
 
     // Observer la destination actuelle
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -53,20 +52,29 @@ fun MyNavigationRail(
             .verticalScroll(rememberScrollState()),
     ) {
         items.forEach { item ->
+            val itemLabel = if (item == NavigationItem.Product) {
+                context.getCatalogItemLabel(
+                    isServiceView = isServiceView,
+                    plural = true,
+                    capitalize = true
+                )
+            } else {
+                stringResource(id = item.title)
+            }
             NavigationRailItem(
                 icon = {
                     when (item.icon) {
                         is NavigationIcon.VectorIcon -> {
                             Icon(
                                 imageVector = item.icon.imageVector,
-                                contentDescription = stringResource(id = item.title),
+                                contentDescription = itemLabel,
                                 modifier = Modifier.size(32.dp)
                             )
                         }
                         is NavigationIcon.DrawableIcon -> {
                             Icon(
                                 painter = painterResource(item.icon.drawableRes),
-                                contentDescription = stringResource(id = item.title),
+                                contentDescription = itemLabel,
                                 modifier = Modifier.size(30.dp)
                             )
                         }
@@ -76,7 +84,7 @@ fun MyNavigationRail(
                     }
                 },
                 label = { Text(
-                    stringResource(id = item.title), fontSize = 16.sp,
+                    itemLabel, fontSize = 16.sp,
                     textAlign = TextAlign.Center
                     )
                 },
@@ -112,6 +120,7 @@ fun MyNavigationRailPreview() {
             NavigationItem.Product,
             NavigationItem.Outputs
         ),
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        isServiceView = false
     )
 }

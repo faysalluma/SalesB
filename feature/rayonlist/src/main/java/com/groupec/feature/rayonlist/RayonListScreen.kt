@@ -66,6 +66,7 @@ fun RayonListScreen(
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsState()
+    val totalRayonsCount by viewModel.totalRayonsCount.collectAsStateWithLifecycle()
     val rayonState by viewModel.rayonUiState.collectAsStateWithLifecycle()
     val deleteRayonState by viewModel.deleteRayonUiState.collectAsState()
     val exportPdfState by viewModel.exportPdfUiState.collectAsState()
@@ -224,7 +225,7 @@ fun RayonListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title_section),
+            text = stringResource(R.string.head_title_section, totalRayonsCount),
             leadingContent = {
                 IconButton(onClick = { expanded = true }) {
                     Icon(imageVector = AppIcons.Export, contentDescription = "Export rayon")

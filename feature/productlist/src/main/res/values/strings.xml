@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="head_title">Products</string>
-    <string name="loading_products">Loading products…</string>
+    <string name="head_title">%1$s (%2$d)</string>
+    <string name="loading_products">Loading %1$s…</string>
     <string name="export_to_pdf">Export to PDF</string>
     <string name="exporter_en_excel">Export to Excel</string>
     <string name="export_pdf_saved">Export completed and saved</string>
@@ -11,6 +11,6 @@
     <string name="export_excel_completed">Export completed</string>
     <string name="export_excel_failed">Export failed</string>
     <string name="export_pdf_loading">Exporting PDF…</string>
-    <string name="no_products_to_export">No products to export</string>
+    <string name="no_products_to_export">No %1$s to export</string>
     <string name="permission_denied">Permission denied</string>
 </resources>

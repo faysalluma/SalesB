@@ -38,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.groupec.salesb.core.FormUIState
+import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.AppCustomDialog
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
@@ -69,17 +70,23 @@ fun AccountListScreen(
     val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
+    val totalUsersCount by viewModel.totalUsersCount.collectAsState()
     val users = viewModel.pagedUsers.collectAsLazyPagingItems()
     val error = (users.loadState.refresh as? LoadState.Error)?.error?.message
     val deleteUserState by viewModel.deleteUserUiState.collectAsState()
     val exportPdfState by viewModel.exportPdfUiState.collectAsState()
     val exportExcelState by viewModel.exportExcelUiState.collectAsState()
+    val parameterState by viewModel.parameterState.collectAsState()
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var showLoadingExportDialog by rememberSaveable { mutableStateOf(true) }
     var userIdLibelle by remember { mutableStateOf(Pair(0, "")) }
     val isRefreshing = users.loadState.refresh is LoadState.Loading
     var isManualRefreshing by remember { mutableStateOf(false) }
     val isExporting = exportPdfState is FormUIState.Loading || exportExcelState is FormUIState.Loading
+    val catalogLabelPlural = context.getCatalogItemLabel(
+        isServiceView = parameterState.serviceview,
+        plural = true
+    )
 
     var expanded by remember { mutableStateOf(false) }
     var pendingExport by remember { mutableStateOf(ExportType.Pdf) }
@@ -231,7 +238,7 @@ fun AccountListScreen(
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         AppHeadLine(
-            text = stringResource(R.string.head_title_users),
+            text = stringResource(R.string.head_title_users, totalUsersCount),
             leadingContent = {
                 IconButton(onClick = { expanded = true }) {
                     Icon(imageVector = AppIcons.Export, contentDescription = "Export users")
@@ -302,7 +309,7 @@ fun AccountListScreen(
         } else {
             // Show Progress bar waiting load users
             if (!isSearching && users.itemCount == 0) {
-                AppLoadingScreen(text = stringResource(R.string.loading_products))
+                AppLoadingScreen(text = stringResource(R.string.loading_products, catalogLabelPlural))
             } else {
                 // Barre de recherche
                 AppTextField(
