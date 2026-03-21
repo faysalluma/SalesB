@@ -1,6 +1,9 @@
 package com.groupec.salesb.ui
 
 import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -45,6 +48,7 @@ import com.groupec.salesb.core.designsystem.theme.Red
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.ui.ComposableLifecycle
+import com.groupec.salesb.core.ui.OfflineErrorScreen
 import com.groupec.salesb.navigation.AppNavHost
 import com.groupec.salesb.navigation.NavigationItem
 
@@ -162,6 +166,31 @@ fun MainScreen(
                 NavigationItem.Outputs
             )
         )
+    }
+
+    // For internet error screen
+    val retryOfflineAction: () -> Unit = {
+        viewModel.getUserStore()
+        viewModel.getParameterStore()
+        if (connectionState && currentDestination.value != NavigationItem.Login.route) {
+            viewModel.checkSubscriptionExpiration()
+        }
+    }
+
+    val openNetworkSettingsAction: () -> Unit = {
+        val settingsIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+        } else {
+            Intent(Settings.ACTION_WIRELESS_SETTINGS)
+        }.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        try {
+            context.startActivity(settingsIntent)
+        } catch (_: Exception) {
+            context.startActivity(
+                Intent(Settings.ACTION_WIRELESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        }
     }
 
     // Log out customers when subscription expire
@@ -293,8 +322,9 @@ fun MainScreen(
     ) {
         Row(modifier = Modifier.padding(it)) {
             if (!connectionState && shouldShowBarAndRailApp(currentDestination.value, firstLogin, resetPassword)) {
-                ErrorScreen(
-                    error = stringResource(R.string.no_internet_connexion)
+                OfflineErrorScreen(
+                    onRetry = retryOfflineAction,
+                    onOpenNetworkSettings = openNetworkSettingsAction
                 )
             } else {
                 if (
