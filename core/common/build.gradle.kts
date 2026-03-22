@@ -8,6 +8,9 @@ android {
 }
 
 dependencies {
+
+    implementation(project(":core:config"))
+
     // Upload
     implementation(libs.commons.net)
 

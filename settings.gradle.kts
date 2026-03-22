@@ -56,5 +56,5 @@ include(":feature:accountlist")
 include(":feature:accountdetail")
 include(":feature:termsandconditions")
 include(":core:firebaseremoteconfig")
-
+include(":core:config")
 include(":feature:handleservice")

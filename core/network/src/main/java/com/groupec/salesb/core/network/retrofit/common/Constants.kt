@@ -1,10 +1,15 @@
 package com.groupec.salesb.core.network.retrofit.common
 
-import com.groupec.salesb.core.Constants
+import com.groupec.salesb.core.Constants as CommonConstants
 
 class Constants {
     companion object {
-        const val BASE_URL = Constants.BASE_URL
+        val BASE_URL: String
+            get() = CommonConstants.BASE_URL
+
+        val NETWORK_TIMEOUT_SECONDS: Long
+            get() = CommonConstants.NETWORK_TIMEOUT_SECONDS
+
 
         // Get endpoint
         const val GET_PARAMETER = "parameter"

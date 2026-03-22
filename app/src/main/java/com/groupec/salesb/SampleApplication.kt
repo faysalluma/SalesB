@@ -3,6 +3,8 @@ package com.groupec.salesb
 import android.app.Application
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import com.groupec.cleanarchitecture.core.config.AppConfigHolder
+import com.groupec.salesb.appconfig.AppConfigImpl
 /*import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
@@ -17,6 +19,7 @@ import dagger.hilt.android.HiltAndroidApp
 class SampleApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        AppConfigHolder.initialize(AppConfigImpl())
         // initFlipper(this)
     }
 }
