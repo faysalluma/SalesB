@@ -403,6 +403,16 @@ fun getDropdownItemsWithActions(
 
     items.add(
         MenuItem.Action(
+            context.getString(R.string.menu_salesb_pro)
+        ) {
+            navController.navigate(NavigationItem.Subscription.route) {
+                launchSingleTop = true
+            }
+        }
+    )
+
+    items.add(
+        MenuItem.Action(
             context.getString(R.string.menu_handle_service)
         ) {
             navController.navigate(NavigationItem.HandleService.route) {
@@ -444,7 +454,8 @@ private fun shouldShowBarAndRailApp(
         NavigationItem.Configuration.route,
         NavigationItem.Login.route,
         NavigationItem.ForgotPassword.route,
-        NavigationItem.TermsAndConditions.route
+        NavigationItem.TermsAndConditions.route,
+        NavigationItem.Subscription.route
     )
 
     if (firstLogin || resetPassword.isNotEmpty()) {

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="subscription_app_name" translatable="false">SalesB</string>
+    <string name="subscription_back">Back</string>
+    <string name="subscription_help">Help</string>
+    <string name="subscription_title">Upgrade to SalesB Pro</string>
+    <string name="subscription_subtitle">Unlock every key feature to manage your business without limits</string>
+    <string name="subscription_free_plan">Free</string>
+    <string name="subscription_pro_plan">Pro</string>
+    <string name="subscription_free_price" translatable="false">0€</string>
+    <string name="subscription_period_month">/month</string>
+    <string name="subscription_period_month_short">/month</string>
+    <string name="subscription_period_year">/year</string>
+    <string name="subscription_period_week">/week</string>
+    <string name="subscription_period_default">/month</string>
+    <string name="subscription_recommended">RECOMMENDED</string>
+    <string name="subscription_current_plan">Current plan</string>
+    <string name="subscription_active_plan">Subscription active</string>
+    <string name="subscription_upgrade_cta">Upgrade to Pro</string>
+    <string name="subscription_payment_secured">Secure payment via Google Play</string>
+    <string name="subscription_free_feature_sales">100 sales / month</string>
+    <string name="subscription_free_feature_products">30 products max</string>
+    <string name="subscription_free_feature_stats">Inventory and Statistics</string>
+    <string name="subscription_free_feature_invoice">Edit PDF Invoice</string>
+    <string name="subscription_free_feature_exports">No PDF / Excel export</string>
+    <string name="subscription_free_feature_receipt">No Receipt printing</string>
+    <string name="subscription_pro_feature_sales">Unlimited sales</string>
+    <string name="subscription_pro_feature_products">Unlimited products</string>
+    <string name="subscription_pro_feature_exports">PDF / Excel export</string>
+    <string name="subscription_pro_feature_receipt">Receipt printing</string>
+    <string name="subscription_pro_feature_stats">Advanced statistics</string>
+    <string name="subscription_purchase_success">Your SalesB Pro subscription is now active.</string>
+    <string name="subscription_purchase_pending">Your purchase is pending confirmation by Google Play.</string>
+    <string name="subscription_purchase_cancelled">Purchase cancelled.</string>
+    <string name="subscription_purchase_error">Unable to start Google Play purchase.</string>
+</resources>

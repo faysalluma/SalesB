@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
@@ -82,4 +83,5 @@ object AppIcons {
     val Public = Icons.Default.Public
     val Language = Icons.Default.Language
     val ViewDetail = Icons.Default.Description
+    val Premium = Icons.Default.WorkspacePremium
 }

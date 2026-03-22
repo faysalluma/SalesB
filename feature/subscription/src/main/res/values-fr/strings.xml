@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="subscription_app_name" translatable="false">SalesB</string>
+    <string name="subscription_back">Retour</string>
+    <string name="subscription_help">Aide</string>
+    <string name="subscription_title">Passez à SalesB Pro</string>
+    <string name="subscription_subtitle">Débloquez toutes les fonctionnalités pour gérer votre activité sans limite</string>
+    <string name="subscription_free_plan">Gratuit</string>
+    <string name="subscription_pro_plan">Pro</string>
+    <string name="subscription_free_price" translatable="false">0€</string>
+    <string name="subscription_period_month">/mois</string>
+    <string name="subscription_period_month_short">/mois</string>
+    <string name="subscription_period_year">/an</string>
+    <string name="subscription_period_week">/semaine</string>
+    <string name="subscription_period_default">/mois</string>
+    <string name="subscription_recommended">RECOMMANDÉ</string>
+    <string name="subscription_current_plan">Plan actuel</string>
+    <string name="subscription_active_plan">Abonnement actif</string>
+    <string name="subscription_upgrade_cta">Passer au Pro</string>
+    <string name="subscription_payment_secured">Paiement sécurisé via Google Play</string>
+    <string name="subscription_free_feature_sales">100 ventes / mois</string>
+    <string name="subscription_free_feature_products">30 produits max</string>
+    <string name="subscription_free_feature_stats">Stock et Statistiques</string>
+    <string name="subscription_free_feature_exports">Export PDF / Excel indisponible</string>
+    <string name="subscription_free_feature_receipt">Impression de reçu indisponible</string>
+    <string name="subscription_free_feature_invoice">Edition de facture pdf</string>
+    <string name="subscription_pro_feature_sales">Ventes illimitées</string>
+    <string name="subscription_pro_feature_products">Produits illimités</string>
+    <string name="subscription_pro_feature_exports">Export PDF / Excel</string>
+    <string name="subscription_pro_feature_receipt">Impression de reçu</string>
+    <string name="subscription_pro_feature_stats">Statistiques complètes</string>
+    <string name="subscription_purchase_success">Votre abonnement SalesB Pro est maintenant actif.</string>
+    <string name="subscription_purchase_pending">Votre achat est en attente de confirmation par Google Play.</string>
+    <string name="subscription_purchase_cancelled">Achat annulé.</string>
+    <string name="subscription_purchase_error">Impossible de démarrer le paiement Google Play.</string>
+</resources>

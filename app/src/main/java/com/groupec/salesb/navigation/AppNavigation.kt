@@ -27,7 +27,8 @@ enum class Screen {
     AccountDetail,
     HandleService,
     TermsAndConditions,
-    Signup
+    Signup,
+    Subscription
 
 }
 sealed class NavigationItem(val route: String,val title: Int = 0, val icon: NavigationIcon ? = null) {
@@ -53,6 +54,7 @@ sealed class NavigationItem(val route: String,val title: Int = 0, val icon: Navi
     data object HandleService : NavigationItem(Screen.HandleService.name)
     data object TermsAndConditions : NavigationItem(Screen.TermsAndConditions.name)
     data object Signup : NavigationItem(Screen.Signup.name)
+    data object Subscription : NavigationItem(Screen.Subscription.name)
 }
 
 sealed class NavigationIcon {

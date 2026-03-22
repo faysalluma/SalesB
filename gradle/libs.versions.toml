@@ -46,6 +46,7 @@ firebase-bom = "33.0.0"
 firebase-crashlytics-gradle = "3.0.3"
 firebaseConfig = "22.0.1"
 google-services = "4.4.2"
+googlePlayBilling = "7.1.1"
 
 # X.Y.Z; X = Major(Changement majeur, souvent incompatible avec les versions précédentes),
 # Y = Minor (Changement mineur, ajouts de fonctionnalités compatibles avec la version précédente),
@@ -57,6 +58,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-config = { module = "com.google.firebase:firebase-config", version.ref = "firebaseConfig" }
+google-play-billing = { module = "com.android.billingclient:billing", version.ref = "googlePlayBilling" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
@@ -143,4 +145,3 @@ common-android-library = { id = "gradlePlugins.android.library", version = "unsp
 common-android-feature = { id = "gradlePlugins.android.feature", version = "unspecified" }
 common-android-hilt = { id = "gradlePlugins.android.hilt", version = "unspecified" }
 common-android-flipper = { id = "gradlePlugins.android.flipper", version = "unspecified" }
-

@@ -2,6 +2,8 @@ package com.groupec.salesb.navigation
 
 // import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 // import com.groupec.salesb.utils.FlipperNavigationLogger
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,7 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -24,6 +26,7 @@ import com.groupec.feature.forgotpassword.ForgotPasswordScreen
 import com.groupec.feature.login.LoginScreen
 import com.groupec.feature.sale.SaleScreen
 import com.groupec.feature.signup.SignupScreen
+import com.groupec.feature.subscription.SubscriptionScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
 import com.groupec.feature.termsandconditions.TermsAndConditionsScreen
@@ -51,6 +54,8 @@ fun AppNavHost(
     navController: NavHostController,
     startDestination: String = NavigationItem.Loading.route
 ) {
+    val context = LocalContext.current
+
     /*LaunchedEffect(Unit) {
         val flipperPlugin = NavigationFlipperPlugin.getInstance()
         val flipperLogger = FlipperNavigationLogger(flipperPlugin)
@@ -117,6 +122,23 @@ fun AppNavHost(
                     navController.navigate(NavigationItem.Home.route) {
                         popUpTo(0) { inclusive = true }
                     }
+                }
+            )
+        }
+
+        composable(NavigationItem.Subscription.route) {
+            SubscriptionScreen(
+                snackbarHostState = snackbarHostState,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onHelpClick = {
+                    context.startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://support.google.com/googleplay/answer/7018481")
+                        )
+                    )
                 }
             )
         }

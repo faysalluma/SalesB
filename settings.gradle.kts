@@ -56,7 +56,9 @@ include(":feature:accountlist")
 include(":feature:accountdetail")
 include(":feature:termsandconditions")
 include(":core:firebaseremoteconfig")
+include(":core:googlebilling")
 
 include(":feature:handleservice")
 
 include(":feature:signup")
+include(":feature:subscription")
