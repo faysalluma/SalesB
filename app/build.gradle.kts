@@ -11,7 +11,7 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
 }
 
-val vcode = (((System.currentTimeMillis() / 1000) - 1451606400) / 10).toInt()
+// val vcode = (((System.currentTimeMillis() / 1000) - 1451606400) / 10).toInt()
 
 android {
     namespace = "com.groupec.salesb"
@@ -19,7 +19,7 @@ android {
     defaultConfig {
         applicationId = "com.groupec.salesb"
         targetSdk = libs.versions.compileSdk.get().toInt()
-        versionCode = vcode
+        versionCode = 1
         versionName = libs.versions.versionName.get()
 
         vectorDrawables {
@@ -61,7 +61,7 @@ android {
 
             // Definies config data
             buildConfigField("boolean", "ENABLE_CRASH_REPORTING", "true")
-            buildConfigField("String", "SERVER_URL", "\"https://salesbapi.groupec.net/\"")
+            buildConfigField("String", "SERVER_URL", "\"https://salesbstoreapi.groupec.net/\"")
             buildConfigField("int", "NETWORK_TIMEOUT_SECONDS", "30")
         }
     }
