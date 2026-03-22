@@ -25,6 +25,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildFeatures {
+            buildConfig = true
+        }
     }
 
     signingConfigs {
@@ -41,9 +44,12 @@ android {
 
     buildTypes {
 
-        /*debug {
-            applicationIdSuffix = ".debug"
-        }*/
+        debug {
+            // Definies config data
+            buildConfigField("boolean", "ENABLE_CRASH_REPORTING", "false")
+            buildConfigField("String", "SERVER_URL", "\"http://192.168.1.69/SalesBStoreApi/\"")
+            buildConfigField("int", "NETWORK_TIMEOUT_SECONDS", "30")
+        }
 
         release {
             isMinifyEnabled = true
@@ -52,6 +58,11 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("release")
+
+            // Definies config data
+            buildConfigField("boolean", "ENABLE_CRASH_REPORTING", "true")
+            buildConfigField("String", "SERVER_URL", "\"https://salesbapi.groupec.net/\"")
+            buildConfigField("int", "NETWORK_TIMEOUT_SECONDS", "30")
         }
     }
 
@@ -85,6 +96,7 @@ dependencies {
     implementation(project(":feature:handleservice"))
     implementation(project(":feature:signup"))
     implementation(project(":feature:subscription"))
+    implementation(project(":core:config"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

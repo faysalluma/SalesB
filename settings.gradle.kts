@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.project
+
 pluginManagement {
     includeBuild("build-logic")
     repositories {
@@ -57,6 +59,7 @@ include(":feature:accountdetail")
 include(":feature:termsandconditions")
 include(":core:firebaseremoteconfig")
 include(":core:googlebilling")
+include(":core:config")
 
 include(":feature:handleservice")
 
