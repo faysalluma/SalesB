@@ -21,7 +21,7 @@
     <application
         android:allowBackup="true"
         android:name="com.groupec.salesb.SampleApplication"
-        android:usesCleartextTraffic="true"
+        android:usesCleartextTraffic="${usesCleartextTraffic}"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/salesb_launcher_icon"

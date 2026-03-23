@@ -10,6 +10,9 @@ class Constants {
         val SERVER_URL: String
             get() = AppConfigHolder.current.serverUrl
 
+        val IS_DEBUG: Boolean
+            get() = AppConfigHolder.current.isDebug
+
         val NETWORK_TIMEOUT_SECONDS: Long
             get() = AppConfigHolder.current.networkTimeoutSeconds.toLong()
 

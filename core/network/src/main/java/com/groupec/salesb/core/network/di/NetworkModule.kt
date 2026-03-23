@@ -1,6 +1,5 @@
 package com.groupec.salesb.core.network.di
 
-import android.content.Context
 /*import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin*/
@@ -11,7 +10,6 @@ import com.groupec.salesb.core.network.retrofit.common.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -26,13 +24,19 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(@ApplicationContext context: Context) : OkHttpClient {
+    fun provideHttpClient(): OkHttpClient {
+        val loggingLevel = if (Constants.IS_DEBUG) {
+            HttpLoggingInterceptor.Level.BODY
+        } else {
+            HttpLoggingInterceptor.Level.NONE
+        }
+
         return OkHttpClient.Builder()
             .connectTimeout(Constants.NETWORK_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(Constants.NETWORK_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(Constants.NETWORK_TIMEOUT_SECONDS, TimeUnit.SECONDS)  // Increase write timeout
             .addInterceptor(TimeZoneInterceptor())
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+            .addInterceptor(HttpLoggingInterceptor().setLevel(loggingLevel))
             //.addNetworkInterceptor(FlipperOkhttpInterceptor(getNetworkFlipperPlugin(context)))
             .build()
     }
