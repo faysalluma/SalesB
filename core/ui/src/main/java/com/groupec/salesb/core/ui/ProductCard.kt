@@ -343,11 +343,11 @@ private fun ProductDetailBottomSheetContent(
                 label = stringResource(R.string.product_detail_category),
                 value = product.categorielibelle ?: none
             )
-            ProductDetailField(
+            /*ProductDetailField(
                 modifier = Modifier.weight(1f),
                 label = stringResource(R.string.product_detail_rayon),
                 value = product.rayonlibelle ?: none
-            )
+            )*/
         }
 
         Row(

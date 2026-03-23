@@ -10,6 +10,9 @@ class Constants {
         val NETWORK_TIMEOUT_SECONDS: Long
             get() = CommonConstants.NETWORK_TIMEOUT_SECONDS
 
+        val IS_DEBUG: Boolean
+            get() = CommonConstants.IS_DEBUG
+
 
         // Get endpoint
         const val GET_PARAMETER = "parameter"

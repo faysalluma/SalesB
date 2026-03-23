@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import com.groupec.cleanarchitecture.core.config.AppConfigHolder
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.groupec.salesb.appconfig.AppConfigImpl
 /*import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
@@ -20,6 +21,8 @@ class SampleApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         AppConfigHolder.initialize(AppConfigImpl())
+        FirebaseCrashlytics.getInstance()
+            .setCrashlyticsCollectionEnabled(AppConfigHolder.current.enableCrashReporting)
         // initFlipper(this)
     }
 }

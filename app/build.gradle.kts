@@ -16,6 +16,10 @@ plugins {
 android {
     namespace = "com.groupec.salesb"
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.groupec.salesb"
         targetSdk = libs.versions.compileSdk.get().toInt()
@@ -24,9 +28,6 @@ android {
 
         vectorDrawables {
             useSupportLibrary = true
-        }
-        buildFeatures {
-            buildConfig = true
         }
     }
 
@@ -49,6 +50,7 @@ android {
             buildConfigField("boolean", "ENABLE_CRASH_REPORTING", "false")
             buildConfigField("String", "SERVER_URL", "\"http://192.168.1.69/SalesBApi/\"")
             buildConfigField("int", "NETWORK_TIMEOUT_SECONDS", "30")
+            manifestPlaceholders["usesCleartextTraffic"] = "true"
         }
 
         release {
@@ -63,6 +65,7 @@ android {
             buildConfigField("boolean", "ENABLE_CRASH_REPORTING", "true")
             buildConfigField("String", "SERVER_URL", "\"https://salesbstoreapi.groupec.net/\"")
             buildConfigField("int", "NETWORK_TIMEOUT_SECONDS", "30")
+            manifestPlaceholders["usesCleartextTraffic"] = "false"
         }
     }
 
