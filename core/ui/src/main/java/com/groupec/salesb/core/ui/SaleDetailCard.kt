@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -63,6 +64,7 @@ import com.groupec.salesb.core.model.data.others.paymentTypeFromLabel
 import com.groupec.salesb.core.model.data.others.paymentTypeLabels
 import com.groupec.salesb.core.normalizeDecimalSeparator
 import com.groupec.salesb.core.print.PrintAction
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -74,7 +76,7 @@ fun SaleDetailCard(
     parameter: Parameter,
     isLoading: Boolean,
     onQuantityChange: (Pair<Int, Product>) -> Unit,
-    onSave: (Double, PrintAction) -> Unit,
+    onSave: suspend (Double, PrintAction) -> Boolean,
     onClear: () -> Unit,
     paymentTypeState: String,
     onPaymenTypeSelected: (String) -> Unit
@@ -167,7 +169,7 @@ private fun BottomContentScreen(
     total: String,
     parameter: Parameter,
     isLoading: Boolean,
-    onSave: (Double, PrintAction) -> Unit,
+    onSave: suspend (Double, PrintAction) -> Boolean,
     onClear: () -> Unit,
     enabled: Boolean,
     paymentTypeState: String,
@@ -175,7 +177,9 @@ private fun BottomContentScreen(
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
     val showDialog = rememberSaveable { mutableStateOf(false) }
+    var isCheckingPrinter by remember { mutableStateOf(false) }
     val totalLabel = total.toDouble().formatAmount().plus(" ${parameter.devise}")
     val paymentTypeList = paymentTypeLabels(context)
     var cashReceived by remember { mutableStateOf("") }
@@ -295,6 +299,7 @@ private fun BottomContentScreen(
                         modifier = Modifier.wrapContentSize(),
                         containerColor = Silver,
                         border = BorderStroke(1.dp, Silver),
+                        enabled = !isCheckingPrinter,
                         textcolor = Color.Black,
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = Black,
@@ -311,10 +316,18 @@ private fun BottomContentScreen(
                         DefaultButton(
                             modifier = Modifier.wrapContentSize(),
                             text = stringResource(R.string.validate_and_print_receipt),
-                            containerColor = LightGreen
+                            containerColor = LightGreen,
+                            enabled = enabled && !isCheckingPrinter,
+                            isLoading = isCheckingPrinter
                         ) {
-                            onSave(total.toDouble(), PrintAction.Thermal)
-                            showDialog.value = false
+                            scope.launch {
+                                isCheckingPrinter = true
+                                val shouldCloseDialog = onSave(total.toDouble(), PrintAction.Thermal)
+                                isCheckingPrinter = false
+                                if (shouldCloseDialog) {
+                                    showDialog.value = false
+                                }
+                            }
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                     }
@@ -322,9 +335,14 @@ private fun BottomContentScreen(
                     DefaultButton(
                         modifier = Modifier.wrapContentSize(),
                         text = stringResource(R.string.validate),
+                        enabled = enabled && !isCheckingPrinter,
                     ) {
-                        onSave(total.toDouble(), PrintAction.None)
-                        showDialog.value = false
+                        scope.launch {
+                            val shouldCloseDialog = onSave(total.toDouble(), PrintAction.None)
+                            if (shouldCloseDialog) {
+                                showDialog.value = false
+                            }
+                        }
                     }
                 }
             }
