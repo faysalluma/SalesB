@@ -759,6 +759,7 @@ fun SaleListScreen(
                                                 }
                                             },
                                             onPrint = {
+                                                showInvoiceDialog = false
                                                 viewModel.onPrint(context, saleGetValue!!, parameter, invoicingGetValue!!)
                                             },
                                         )

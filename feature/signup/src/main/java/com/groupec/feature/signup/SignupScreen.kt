@@ -76,6 +76,7 @@ fun SignupScreen(
     var showStepTwoErrors by remember { mutableStateOf(false) }
     var showStepThreeErrors by remember { mutableStateOf(false) }
     var stepOneEmailErrorMessage by remember { mutableStateOf<String?>(null) }
+    var isStepOneLoading by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
@@ -161,6 +162,7 @@ fun SignupScreen(
         SignupBottomActions(
             currentStep = currentStep,
             isLoading = uiState is SignupConfigurationUiState.Loading,
+            isStepOneLoading = isStepOneLoading,
             onPrevious = {
                 if (currentStep > 1) {
                     currentStep -= 1
@@ -181,6 +183,7 @@ fun SignupScreen(
                         showStepOneErrors = !valid
                         if (valid) {
                             coroutineScope.launch {
+                                isStepOneLoading = true
                                 when (val emailCheckResult = viewModel.checkEmailExists(stepOne.email.trim())) {
                                     is Result.Success -> {
                                         if (emailCheckResult.data) {
@@ -202,6 +205,7 @@ fun SignupScreen(
                                     }
                                     is Result.Loading -> Unit
                                 }
+                                isStepOneLoading = false
                             }
                         }
                     }
@@ -293,6 +297,7 @@ fun SignupScreen(
 private fun SignupBottomActions(
     currentStep: Int,
     isLoading: Boolean,
+    isStepOneLoading: Boolean,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
     navigateToLogin: () -> Unit,
@@ -310,6 +315,7 @@ private fun SignupBottomActions(
                     DefaultButton(
                         text = stringResource(R.string.signup_next),
                         onClick = onNext,
+                        isLoading = isStepOneLoading,
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(Modifier.height(16.dp))

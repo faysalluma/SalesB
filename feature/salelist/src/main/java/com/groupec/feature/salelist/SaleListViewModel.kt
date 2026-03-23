@@ -258,13 +258,18 @@ class SaleListViewModel @Inject constructor(
 
     fun onPrint(activityContext: Context, sale: Sale, parameter: Parameter, invoicing: Invoicing) {
         viewModelScope.launch {
-            val pdfBytes = generatePdf(activityContext, sale, parameter, invoicing)
+            runCatching {
+                val pdfBytes = generatePdf(activityContext, sale, parameter, invoicing)
 
-            // Création de l'adapter et lancement de l'impression sur le main thread
-            val printAdapter = BitmapPrintAdapter(pdfBytes)
-            val printManager =
-                activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager
-            printManager.print("MyPdfJob", printAdapter, null)
+                val printAdapter = BitmapPrintAdapter(pdfBytes)
+                val printManager =
+                    activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager
+                printManager.print("MyPdfJob", printAdapter, null)
+            }.onFailure { exception ->
+                _saveReceiptToDownloads.value = FormUIState.Error(
+                    exception.localizedMessage ?: "Error when opening the system print dialog"
+                )
+            }
         }
     }
 
@@ -275,20 +280,28 @@ class SaleListViewModel @Inject constructor(
         invoicing: Invoicing
     ) {
         viewModelScope.launch {
-            val pdfBytes = generatePdf(activityContext, sale, parameter, invoicing)
-            val file = File(activityContext.cacheDir, fileName)
-            file.outputStream().use { it.write(pdfBytes) }
+            runCatching {
+                val pdfBytes = generatePdf(activityContext, sale, parameter, invoicing)
+                val file = withContext(Dispatchers.IO) {
+                    File(activityContext.cacheDir, fileName).apply {
+                        outputStream().use { it.write(pdfBytes) }
+                    }
+                }
 
-            // 3. Envoyer l'email avec pièce jointe
-            activityContext.sendEmailWithAttachment(
-                addresses = arrayOf(invoicing.email),
-                subject = activityContext.getString(
-                    R.string.your_invoice_object,
-                    parameter.raisonsociale
-                ),
-                body = activityContext.getString(R.string.your_invoice_body),
-                attachment = file
-            )
+                activityContext.sendEmailWithAttachment(
+                    addresses = arrayOf(invoicing.email),
+                    subject = activityContext.getString(
+                        R.string.your_invoice_object,
+                        parameter.raisonsociale
+                    ),
+                    body = activityContext.getString(R.string.your_invoice_body),
+                    attachment = file
+                )
+            }.onFailure { exception ->
+                _saveReceiptToDownloads.value = FormUIState.Error(
+                    exception.localizedMessage ?: "Error when preparing the invoice email"
+                )
+            }
         }
     }
 
