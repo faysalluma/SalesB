@@ -1,11 +1,16 @@
 package com.groupec.salesb.core.print
 
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import com.dantsu.escposprinter.EscPosPrinter
-import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections
+import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnection
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg
 import com.groupec.salesb.core.convertToLocaleDateTimeFormat
 import com.groupec.salesb.core.formatAmount
@@ -15,30 +20,35 @@ import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.others.paymentTypeLibelleResFromValue
 import com.groupec.salesb.core.toPercentFormat
 import java.util.Locale
+import androidx.core.content.ContextCompat
 
 
 class Print(
     private val context: Context
 ) {
     fun print(logoUrl: String? = null, sale: Sale, parameter: Parameter) {
-        if (BluetoothPrintersConnections.selectFirstPaired() != null) {
-            val printer = EscPosPrinter(
-                BluetoothPrintersConnections.selectFirstPaired(),
-                // MyBluetoothPrintersConnections.selectFirstPaired(),
-                203,
-                48f,
-                32
-            )
-
-            val formattedText = createFormattedText(printer = printer, logoUrl, sale, parameter)
-            printer.printFormattedText(formattedText)
-        } else {
-            // Execute le toast sur le thread principale depuis un autre thread
-            // (thread de fond Dispatchers.IO dans ce cas de figure)
+        val result = printWithResult(logoUrl, sale, parameter)
+        if (result.isFailure) {
             Handler(Looper.getMainLooper()).post {
-                Toast.makeText(context, "The printer is not connected !!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    result.exceptionOrNull()?.message ?: context.getString(R.string.printer_not_connected),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
+    }
+
+    fun validatePrinterReadiness(): Result<Unit> {
+        return openPrinterConnection().fold(
+            onSuccess = { connection ->
+                connection.disconnect()
+                Result.success(Unit)
+            },
+            onFailure = { exception ->
+                Result.failure(exception)
+            }
+        )
     }
 
     fun printWithResult(
@@ -47,17 +57,87 @@ class Print(
         parameter: Parameter
     ): Result<Unit> {
         return try {
-            val printerConnection = BluetoothPrintersConnections.selectFirstPaired()
-            if (printerConnection != null) {
-                val printer = EscPosPrinter(printerConnection, 203, 48f, 32)
-                val formattedText = createFormattedText(printer, logoUrl, sale, parameter)
-                printer.printFormattedText(formattedText)
-                Result.success(Unit)
-            } else {
-                Result.failure(Exception("The printer is not connected !!"))
-            }
+            openPrinterConnection().fold(
+                onSuccess = { printerConnection ->
+                    try {
+                        val printer = EscPosPrinter(printerConnection, 203, 48f, 32)
+                        val formattedText = createFormattedText(printer, logoUrl, sale, parameter)
+                        printer.printFormattedText(formattedText)
+                        Result.success(Unit)
+                    } finally {
+                        printerConnection.disconnect()
+                    }
+                },
+                onFailure = { exception ->
+                    Result.failure(exception)
+                }
+            )
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    private fun openPrinterConnection(): Result<BluetoothConnection> {
+        return try {
+            if (!hasBluetoothPermissions()) {
+                return Result.failure(
+                    IllegalStateException(context.getString(R.string.bluetooth_permission_required))
+                )
+            }
+
+            val bluetoothAdapter = getBluetoothAdapter()
+                ?: return Result.failure(
+                    IllegalStateException(context.getString(R.string.bluetooth_not_supported))
+                )
+
+            if (!bluetoothAdapter.isEnabled) {
+                return Result.failure(
+                    IllegalStateException(context.getString(R.string.bluetooth_disabled))
+                )
+            }
+
+            val printerConnection = MyBluetoothPrintersConnections.selectFirstPaired()
+            if (printerConnection != null && printerConnection.isConnected) {
+                Result.success(printerConnection)
+            } else {
+                Result.failure(
+                    IllegalStateException(context.getString(R.string.printer_not_connected))
+                )
+            }
+        } catch (securityException: SecurityException) {
+            Result.failure(
+                IllegalStateException(context.getString(R.string.bluetooth_permission_required))
+            )
+        } catch (exception: Exception) {
+            Result.failure(
+                IllegalStateException(
+                    exception.localizedMessage
+                        ?: context.getString(R.string.printer_not_connected)
+                )
+            )
+        }
+    }
+
+    private fun getBluetoothAdapter(): BluetoothAdapter? {
+        val bluetoothManager = context.getSystemService(BluetoothManager::class.java)
+        return bluetoothManager?.adapter
+    }
+
+    private fun hasBluetoothPermissions(): Boolean {
+        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            arrayOf(
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.BLUETOOTH_SCAN,
+            )
+        } else {
+            arrayOf(
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+            )
+        }
+
+        return permissions.all { permission ->
+            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
         }
     }
 
@@ -106,7 +186,7 @@ class Print(
                     paymentTypeLibelleResFromValue(paymentType)?.let(context::getString) ?: paymentType
                 }
             paidByValue?.let {
-                append("[C]"+ context.getString(com.groupec.salesb.core.R.string.payment_method, it) + "\n")
+                append("[C]"+ context.getString(com.groupec.salesb.core.R.string.payment_method_2, it) + "\n")
             }
 
 
@@ -141,14 +221,13 @@ class Print(
             }
 
             // Ligne separator
-            append("[L]\n")
             append("[C]--------------------------------\n")
 
             // Footer
             append("[L]"+ context.getString(R.string.nb_product) + sale.details.size+
                    "[R]"+ context.getString(R.string.tva, parameter.tva.toPercentFormat()) + "\n")
             append("[L]\n")
-            append("[L]<b><font size='tall'>"+ context.getString(R.string.total_sale) +
+            append("[L]<b><font size='tall'>"+ context.getString(R.string.total_sale) + " " +
                     sale.details.map { it.prix * it.qte }.reduce { acc, value -> acc + value }.formatAmount() + " " +
                     parameter.devise +
                 "</font></b>\n"
@@ -158,8 +237,9 @@ class Print(
 
             parameter.website?.takeIf { it.isNotEmpty() }?.let {
                 append("[C]<qrcode size='20'>" + it +"</qrcode>\n")
+                append("[L]\n")
             }
-            append("[L]\n")
+
             // TODO("Souhaitez-vous une facture ? Rendez-vous sur .......")
             append("[C]"+context.getString(R.string.software_message)+"\n")
             append("[C]"+context.getString(R.string.thanks_you) + "\n")

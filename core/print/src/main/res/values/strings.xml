@@ -15,4 +15,8 @@
     <string name="software_message">Software: SalesB</string>
     <string name="thanks_you">Thank you for your visit!</string>
     <string name="tva">TVA: %s</string>
+    <string name="bluetooth_permission_required">Bluetooth permission is required to print a receipt.</string>
+    <string name="bluetooth_not_supported">Bluetooth is not available on this device.</string>
+    <string name="bluetooth_disabled">Bluetooth is disabled. Turn it on to print a receipt.</string>
+    <string name="printer_not_connected">No POS printer is connected.</string>
 </resources>

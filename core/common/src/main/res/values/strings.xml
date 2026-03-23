@@ -40,6 +40,7 @@
     <string name="invoice_no">Invoice no:</string>
     <string name="invoice_date">Invoice date:</string>
     <string name="payment_method">Payment method: %s</string>
+    <string name="payment_method_2">Paid by: %s</string>
     <string name="invoice_summary">Invoice summary - %d item(s)</string>
     <string name="infos_tva">TVA: %s</string>
     <string name="total_sale_view">TOTAL: %s</string>

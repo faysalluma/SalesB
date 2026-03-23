@@ -1,12 +1,7 @@
 package com.groupec.feature.salelist
 
 import android.Manifest
-import android.app.Activity
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
-import android.content.Intent
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,8 +48,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.ExportType
 import com.groupec.salesb.core.convertToServerDateFormat
@@ -76,6 +70,7 @@ import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Sale
+import com.groupec.salesb.core.print.Print
 import com.groupec.salesb.core.print.PrintAction
 import com.groupec.salesb.core.showDownloadNotification
 import com.groupec.salesb.core.ui.ComposableLifecycle
@@ -84,8 +79,11 @@ import com.groupec.salesb.core.ui.InvoiceContent
 import com.groupec.salesb.core.ui.InvoicingInfoScreen
 import com.groupec.salesb.core.ui.SaleCardList
 import com.groupec.salesb.core.ui.SaleItemDetailProduct
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalComposeUiApi::class,
+@OptIn(ExperimentalComposeUiApi::class,
     ExperimentalComposeApi::class, ExperimentalLayoutApi::class
 )
 @Composable
@@ -97,6 +95,8 @@ fun SaleListScreen(
     viewModel: SaleListViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val bluetoothPrint = remember(context) { Print(context) }
+    val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
 
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -120,50 +120,10 @@ fun SaleListScreen(
     val exportExcelState by viewModel.exportExcelUiState.collectAsState()
     val isExporting = exportPdfState is FormUIState.Loading || exportExcelState is FormUIState.Loading
     var showLoadingExportDialog by rememberSaveable { mutableStateOf(true) }
+    var showLoadingThermalPrintDialog by rememberSaveable { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     var pendingExport by remember { mutableStateOf(ExportType.Pdf) }
-
-    val bluetoothPermissions =
-        // Checks if the device has Android 12 or above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            rememberMultiplePermissionsState(
-                permissions = listOf(
-                    Manifest.permission.BLUETOOTH,
-                    Manifest.permission.BLUETOOTH_ADMIN,
-                    Manifest.permission.BLUETOOTH_CONNECT,
-                    Manifest.permission.BLUETOOTH_SCAN,
-                )
-            )
-        } else {
-            rememberMultiplePermissionsState(
-                permissions = listOf(
-                    Manifest.permission.BLUETOOTH,
-                    Manifest.permission.BLUETOOTH_ADMIN,
-                )
-            )
-        }
-
-    val enableBluetoothContract = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            Log.d("bluetoothLauncher", "Success")
-            saleGetValue?.let { sale ->
-                viewModel.printThermalReceipt(
-                    sale = sale,
-                    parameter = parameter
-                )
-            }
-        } else {
-            Log.w("bluetoothLauncher", "Failed")
-        }
-    }
-
-    // This intent will open the enable bluetooth dialog
-    val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-    val bluetoothManager = remember { context.getSystemService(BluetoothManager::class.java) }
-    val bluetoothAdapter: BluetoothAdapter? = remember { bluetoothManager.adapter }
 
     // When save to Downloads notify user
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -228,6 +188,7 @@ fun SaleListScreen(
     when (thermalPrintUiSate) {
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
+                showLoadingThermalPrintDialog = false
                 snackbarHostState.currentSnackbarData?.dismiss()
                 snackbarHostState.showSnackbar(
                     SnackbarVisualsWithState(
@@ -238,6 +199,7 @@ fun SaleListScreen(
         }
         is FormUIState.Error -> {
             LaunchedEffect(Unit) {
+                showLoadingThermalPrintDialog = false
                 val message =(thermalPrintUiSate as FormUIState.Error).message
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
@@ -325,6 +287,15 @@ fun SaleListScreen(
             }
         }
         else -> {}
+    }
+
+    if (showLoadingThermalPrintDialog) {
+        AppCustomDialog(
+            modifier = Modifier.wrapContentWidth(),
+            setShowDialog = { }
+        ) {
+            AppLoadingScreen(modifier = Modifier.wrapContentWidth())
+        }
     }
 
     Box(
@@ -685,21 +656,25 @@ fun SaleListScreen(
                                         sendByEmail = false
                                     }
                                     PrintAction.Thermal -> {
-                                        if (bluetoothPermissions.allPermissionsGranted) {
-                                            if (bluetoothAdapter?.isEnabled == true) {
-                                                // Bluetooth is on print the receipt
+                                        showLoadingThermalPrintDialog = true
+                                        scope.launch {
+                                            val result = withContext(Dispatchers.IO) {
+                                                bluetoothPrint.validatePrinterReadiness()
+                                            }
+                                            val errorMessage = result.exceptionOrNull()?.message
+                                            if (errorMessage != null) {
+                                                showLoadingThermalPrintDialog = false
+                                                Toast.makeText(
+                                                    context,
+                                                    errorMessage,
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            } else {
                                                 viewModel.printThermalReceipt(
                                                     sale = sale,
                                                     parameter = parameter
                                                 )
-                                            } else {
-                                                // Bluetooth is off, ask user to turn it on
-                                                enableBluetoothContract.launch(enableBluetoothIntent)
                                             }
-                                        } else {
-                                            bluetoothPermissions.launchMultiplePermissionRequest()
-                                            // Show error message
-                                            Toast.makeText(context,"Permission denied for access bluetooth", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                     PrintAction.SendByEmail -> {

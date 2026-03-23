@@ -9,10 +9,14 @@
     <string name="price">Prix</string>
     <string name="amount">MONTANT</string>
     <string name="nb_product">"Nb articles : "</string>
-    <string name="total_sale">TOTAL : </string>
+    <string name="total_sale">TOTAL :</string>
     <string name="software_message">Logiciel : SalesB</string>
     <string name="thanks_you">Merci de votre visite !</string>
     <string name="description">Désignation</string>
     <string name="qte_price">Quantité   Prix</string>
     <string name="tva">TVA : %s</string>
+    <string name="bluetooth_permission_required">L\'autorisation Bluetooth est requise pour imprimer un reçu.</string>
+    <string name="bluetooth_not_supported">Le Bluetooth n\'est pas disponible sur cet appareil.</string>
+    <string name="bluetooth_disabled">Le Bluetooth est désactivé. Active-le pour imprimer un reçu.</string>
+    <string name="printer_not_connected">Aucune imprimante POS n\'est connectée.</string>
 </resources>

@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -88,7 +89,10 @@ fun DefaultButton(
             contentPadding = PaddingValues(16.dp)
         ) {
             if (isLoading)  {
-                AppLoadingScreen(Modifier.wrapContentSize(), color = textcolor)
+                CircularProgressIndicator(
+                    modifier = Modifier.size(22.dp),
+                    color = textcolor,
+                )
             } else {
                 if (style != null) {
                     Text(text = text, style = style)

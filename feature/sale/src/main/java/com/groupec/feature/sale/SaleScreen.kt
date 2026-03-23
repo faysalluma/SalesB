@@ -1,16 +1,7 @@
 package com.groupec.feature.sale
 
-import android.Manifest
-import android.app.Activity
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
-import android.content.Intent
-import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,8 +39,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.autoRound
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
@@ -81,8 +70,8 @@ import com.groupec.salesb.core.ui.ProductGridPortrait
 import com.groupec.salesb.core.ui.SaleDetailCard
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SaleScreen(
     snackbarHostState: SnackbarHostState,
@@ -108,52 +97,7 @@ fun SaleScreen(
     val quantityCheck = remember { mutableStateMapOf<Int, Boolean>() }
 
     // Bluetooth
-    val bluetoothPrint = Print(context)
-    var savedSale by remember { mutableStateOf<Sale?>(null) }
-
-    val bluetoothPermissions =
-        // Checks if the device has Android 12 or above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            rememberMultiplePermissionsState(
-                permissions = listOf(
-                    Manifest.permission.BLUETOOTH,
-                    Manifest.permission.BLUETOOTH_ADMIN,
-                    Manifest.permission.BLUETOOTH_CONNECT,
-                    Manifest.permission.BLUETOOTH_SCAN,
-                )
-            )
-        } else {
-            rememberMultiplePermissionsState(
-                permissions = listOf(
-                    Manifest.permission.BLUETOOTH,
-                    Manifest.permission.BLUETOOTH_ADMIN,
-                )
-            )
-        }
-
-    val enableBluetoothContract = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            Log.d("bluetoothLauncher", "Success")
-            savedSale?.let { sale ->
-                scope.launch(Dispatchers.IO) {
-                    bluetoothPrint.print(
-                        parameter.logo,
-                        sale = sale,
-                        parameter = parameter
-                    )
-                }
-            }
-        } else {
-            Log.w("bluetoothLauncher", "Failed")
-        }
-    }
-
-    // This intent will open the enable bluetooth dialog
-    val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-    val bluetoothManager = remember { context.getSystemService(BluetoothManager::class.java) }
-    val bluetoothAdapter: BluetoothAdapter? = remember { bluetoothManager.adapter }
+    val bluetoothPrint = remember(context) { Print(context) }
 
     val onQuantityChange: (Pair<Int, Product>) -> Unit = { productLine ->
         val (index, product) = productLine
@@ -246,31 +190,19 @@ fun SaleScreen(
                 val (printAction, sale) = (addSaleUiState as FormUIState.Success).data
                 // Consume state immediately to avoid re-triggering on configuration change.
                 viewModel.resetFlow()
-                savedSale = sale // Set saved sale
                 when (printAction) {
                     PrintAction.Thermal -> {
-                        if (bluetoothPermissions.allPermissionsGranted) {
-                            if (bluetoothAdapter?.isEnabled == true) {
-                                // Bluetooth is on print the receipt
-                                scope.launch(Dispatchers.IO) {
-                                    bluetoothPrint.print(
-                                        parameter.logo,
-                                        sale = sale,
-                                        parameter = parameter
-                                    )
-                                }
-                            } else {
-                                // Bluetooth is off, ask user to turn it on
-                                enableBluetoothContract.launch(enableBluetoothIntent)
+                        scope.launch {
+                            val result = withContext(Dispatchers.IO) {
+                                bluetoothPrint.printWithResult(
+                                    parameter.logo,
+                                    sale = sale,
+                                    parameter = parameter
+                                )
                             }
-                        } else {
-                            bluetoothPermissions.launchMultiplePermissionRequest()
-                            // Show error message
-                            Toast.makeText(
-                                context,
-                                "Permission denied for access bluetooth",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            result.exceptionOrNull()?.message?.let { message ->
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                     else -> {}
@@ -339,7 +271,27 @@ fun SaleScreen(
                                 prix = productLine.second.prixttc
                             )
                         }
-                        viewModel.addSale(Sale(totalprix = total, paymenttype = paymentTypeValueForSave, details = saleDetail), printAction)
+                        val sale = Sale(
+                            totalprix = total,
+                            paymenttype = paymentTypeValueForSave,
+                            details = saleDetail
+                        )
+                        if (printAction == PrintAction.Thermal) {
+                            val result = withContext(Dispatchers.IO) {
+                                bluetoothPrint.validatePrinterReadiness()
+                            }
+                            val errorMessage = result.exceptionOrNull()?.message
+                            if (errorMessage != null) {
+                                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                false
+                            } else {
+                                viewModel.addSale(sale, printAction)
+                                true
+                            }
+                        } else {
+                            viewModel.addSale(sale, printAction)
+                            true
+                        }
                     },
                     onClear = {
                         selectedProducts.clear()
@@ -507,7 +459,27 @@ fun SaleScreen(
                                 prix = productLine.second.prixttc
                             )
                         }
-                        viewModel.addSale(Sale(totalprix = total, paymenttype = paymentTypeValueForSave, details = saleDetail), printAction)
+                        val sale = Sale(
+                            totalprix = total,
+                            paymenttype = paymentTypeValueForSave,
+                            details = saleDetail
+                        )
+                        if (printAction == PrintAction.Thermal) {
+                            val result = withContext(Dispatchers.IO) {
+                                bluetoothPrint.validatePrinterReadiness()
+                            }
+                            val errorMessage = result.exceptionOrNull()?.message
+                            if (errorMessage != null) {
+                                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                false
+                            } else {
+                                viewModel.addSale(sale, printAction)
+                                true
+                            }
+                        } else {
+                            viewModel.addSale(sale, printAction)
+                            true
+                        }
                     },
                     onClear = {
                         selectedProducts.clear()
@@ -533,7 +505,7 @@ fun SaleDetailScreen(
     quantityCheck: MutableMap<Int, Boolean>,
     parameter: Parameter,
     isLoading: Boolean,
-    onSave: (Double, PrintAction) -> Unit,
+    onSave: suspend (Double, PrintAction) -> Boolean,
     onClear: () -> Unit,
     onQuantityChange: (Pair<Int, Product>) -> Unit,
     paymentTypeState: String,
