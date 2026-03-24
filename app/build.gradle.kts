@@ -99,7 +99,7 @@ dependencies {
     implementation(project(":feature:termsandconditions"))
     implementation(project(":feature:handleservice"))
     implementation(project(":core:config"))
-
+    implementation(project(":feature:printreceiptguide"))
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
     implementation(project(":core:designsystem"))

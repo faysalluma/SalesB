@@ -1,0 +1,28 @@
+<resources>
+    <string name="print_receipt_guide_title">Comment imprimer un ticket de caisse</string>
+    <string name="print_receipt_guide_badge">Guide officiel</string>
+    <string name="print_receipt_guide_intro">Suivez ces étapes pour configurer et utiliser votre mini-imprimante afin d’imprimer des tickets de caisse.</string>
+    <string name="print_receipt_step_1_title">Acheter une imprimante compatible</string>
+    <string name="print_receipt_step_1_card_1_title">Imprimante thermique ticket</string>
+    <string name="print_receipt_step_1_card_1_description">Modèle Bluetooth ou USB recommandé pour une impression rapide à la caisse.</string>
+    <string name="print_receipt_step_1_card_1_cta">Voir sur Amazon</string>
+    <string name="print_receipt_step_1_card_2_title">Mini imprimante Bluetooth</string>
+    <string name="print_receipt_step_1_card_2_description">Format compact adapté aux comptoirs avec peu d\'espace.</string>
+    <string name="print_receipt_step_1_card_2_cta">Voir sur AliExpress</string>
+    <string name="print_receipt_step_1_note">Si vous avez des difficultés à commander, contactez-nous au salesb.groupec.net.</string>
+    <string name="print_receipt_step_2_title">Connecter l\'imprimante</string>
+    <string name="print_receipt_step_2_body">Allumez l\'imprimante et connectez la à votre appareil via le Bluetooth.</string>
+    <string name="print_receipt_step_3_title">Activer le service d\'impression</string>
+    <string name="print_receipt_step_3_body">Cliquez sur le menu à 3 points > Paramètres > Gestion des services > faites défiler vers le bas. Acceptez les autorisations demandées.</string>
+    <string name="print_receipt_step_4_title">Comment utiliser ?</string>
+    <string name="print_receipt_step_4_card_1_title">Encaisser et imprimer</string>
+    <string name="print_receipt_step_4_card_1_body">Un nouveau bouton vert apparaît lors de l\'enregistrement d\'une vente pour enregrister la vente et imprimer le reçu (Ecran : Encaisser).</string>
+    <string name="print_receipt_step_4_card_2_title">Re-impression</string>
+    <string name="print_receipt_step_4_card_2_body">Sur l’écran Mes ventes, l’option Imprimer un reçu apparaît dans le menu d’une vente spécifique et vous permet d’imprimer le reçu correspondant à cette vente.</string>
+    <string name="print_receipt_help_title">Besoin d\'aide ?</string>
+    <string name="print_receipt_help_body">Notre équipe support est disponible pour vous accompagner dans la configuration de votre matériel de caisse.</string>
+    <string name="print_receipt_help_email">salesb.groupec.net</string>
+    <string name="print_receipt_help_chat">WhatsApp</string>
+    <string name="print_receipt_printer_visual_desc">Illustration d\'une imprimante ticket</string>
+    <string name="print_receipt_menu_title">Comment imprimer un ticket de caisse ?</string>
+</resources>

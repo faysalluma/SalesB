@@ -9,12 +9,16 @@
     <string name="menu_outputs">@string/menu_outputs_view</string>
     <string name="menu_product">@string/menu_product_view</string>
     <string name="menu_category">@string/menu_category_view</string>
+    <string name="menu_help_faq">Aide et FAQ</string>
+    <string name="menu_questions">Questions fréquentes</string>
     <string name="menu_rayon">@string/menu_rayon_view</string>
     <string name="menu_update_password">@string/menu_update_password_view</string>
     <string name="manage_your_account">@string/manage_your_account_view</string>
     <string name="menu_handle_service">Gestion des services</string>
     <string name="menu_log_out">@string/menu_log_out_view</string>
     <string name="menu_settings">@string/menu_settings_view</string>
+    <string name="menu_salesb_pro">Passer à SalesB Pro</string>
     <string name="confirm_log_out">Êtes-vous sûr de vouloir vous déconnecter ?</string>
     <string name="error_visible_only_expanded">Cette page est visible uniquement en mode paysage sur tablette.</string>
+    <string name="menu_print_receipt_guide">Comment imprimer un ticket de caisse ?</string>
 </resources>

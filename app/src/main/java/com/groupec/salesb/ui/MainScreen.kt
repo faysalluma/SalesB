@@ -423,7 +423,7 @@ fun getDropdownItemsWithActions(
         listOf(Approval.AUTHORIZE_VIEW)
     ) }
 
-    if (hasCategoryPrivilege || hasRayonPrivilege) {
+    if (hasCategoryPrivilege || hasRayonPrivilege || hasUserSettingsPrivilege || hasHandleServicePrivilege) {
         val childrenList = mutableListOf<MenuItem.Action>()
         if (hasCategoryPrivilege) {
             childrenList.add(
@@ -449,6 +449,30 @@ fun getDropdownItemsWithActions(
             )
         }
 
+        if (hasHandleServicePrivilege) {
+            childrenList.add(
+                MenuItem.Action(
+                    context.getString(R.string.menu_handle_service)
+                ) {
+                    navController.navigate(NavigationItem.HandleService.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        if (hasUserSettingsPrivilege) {
+            childrenList.add(
+                MenuItem.Action(
+                    context.getString(R.string.manage_your_account)
+                ) {
+                    navController.navigate(NavigationItem.Account.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
         items.add(
             MenuItem.SubMenu(
                 context.getString(R.string.menu_settings),
@@ -457,30 +481,34 @@ fun getDropdownItemsWithActions(
         )
     }
 
-    // Add UserManagement Account item
-    if (hasUserSettingsPrivilege) {
-        items.add(
-            MenuItem.Action(
-                context.getString(R.string.manage_your_account)
-            ) {
-                navController.navigate(NavigationItem.Account.route) {
-                    launchSingleTop = true
-                }
+    // Add Help and FAQ
+    val childrenList2 = mutableListOf<MenuItem.Action>()
+    childrenList2.add(
+        MenuItem.Action(
+            context.getString(R.string.menu_print_receipt_guide)
+        ) {
+            navController.navigate(NavigationItem.PrintReceiptGuide.route) {
+                launchSingleTop = true
             }
-        )
-    }
+        }
+    )
 
-    if (hasHandleServicePrivilege) {
-        items.add(
-            MenuItem.Action(
-                context.getString(R.string.menu_handle_service)
-            ) {
-                navController.navigate(NavigationItem.HandleService.route) {
-                    launchSingleTop = true
-                }
-            }
+    /* childrenList2.add(
+         MenuItem.Action(
+             context.getString(R.string.menu_questions)
+         ) {
+             navController.navigate(NavigationItem.HandleService.route) {
+                 launchSingleTop = true
+             }
+         }
+     )*/
+
+    items.add(
+        MenuItem.SubMenu(
+            context.getString(R.string.menu_help_faq),
+            childrenList2
         )
-    }
+    )
 
     // Add  remaining list
     items.addAll(
