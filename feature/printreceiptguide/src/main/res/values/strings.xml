@@ -1,0 +1,28 @@
+<resources>
+    <string name="print_receipt_guide_title">How to print a receipt</string>
+    <string name="print_receipt_guide_badge">Official guide</string>
+    <string name="print_receipt_guide_intro">Follow these steps to set up and use your mini printer to print receipts.</string>
+    <string name="print_receipt_step_1_title">Buy a compatible printer</string>
+    <string name="print_receipt_step_1_card_1_title">Thermal receipt printer</string>
+    <string name="print_receipt_step_1_card_1_description">Bluetooth or USB model recommended for quick checkout printing.</string>
+    <string name="print_receipt_step_1_card_1_cta">Search on Amazon</string>
+    <string name="print_receipt_step_1_card_2_title">Compact Bluetooth printer</string>
+    <string name="print_receipt_step_1_card_2_description">A compact format suitable for counters with limited space.</string>
+    <string name="print_receipt_step_1_card_2_cta">Search on AliExpress</string>
+    <string name="print_receipt_step_1_note">If you have trouble ordering one, contact us at salesb.groupec.net.</string>
+    <string name="print_receipt_step_2_title">Connect the printer</string>
+    <string name="print_receipt_step_2_body">Turn on the printer and connect it to your device via Bluetooth.</string>
+    <string name="print_receipt_step_3_title">Enable the print service</string>
+    <string name="print_receipt_step_3_body">Click the three-dot menu > Settings > Service Management > scroll down. Accept the requested permissions.</string>
+    <string name="print_receipt_step_4_title">How to use?</string>
+    <string name="print_receipt_step_4_card_1_title">Checkout and print</string>
+    <string name="print_receipt_step_4_card_1_body">A new green button appears when recording a sale allowing you to save the sale and print the receipt (Screen: Cash In).</string>
+    <string name="print_receipt_step_4_card_2_title">Re-print</string>
+    <string name="print_receipt_step_4_card_2_body">On the My Sales screen, the “Print Receipt” option appears in the menu for a specific sale and allows you to print the receipt for the sale.</string>
+    <string name="print_receipt_help_title">Need help?</string>
+    <string name="print_receipt_help_body">Our support team is available to help you configure your checkout hardware.</string>
+    <string name="print_receipt_help_email">salesb.groupec.net</string>
+    <string name="print_receipt_help_chat">WhatsApp</string>
+    <string name="print_receipt_printer_visual_desc">Receipt printer illustration</string>
+    <string name="print_receipt_menu_title">How to print a receipt?</string>
+</resources>

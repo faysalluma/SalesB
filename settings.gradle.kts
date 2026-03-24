@@ -60,3 +60,5 @@ include(":core:firebaseremoteconfig")
 include(":feature:handleservice")
 
 include(":feature:signup")
+
+include(":feature:printreceiptguide")
