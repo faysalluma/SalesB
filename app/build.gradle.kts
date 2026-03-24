@@ -100,6 +100,7 @@ dependencies {
     implementation(project(":feature:signup"))
     implementation(project(":feature:subscription"))
     implementation(project(":core:config"))
+    implementation(project(":feature:printreceiptguide"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

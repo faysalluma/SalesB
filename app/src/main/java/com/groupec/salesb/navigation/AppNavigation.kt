@@ -28,8 +28,8 @@ enum class Screen {
     HandleService,
     TermsAndConditions,
     Signup,
-    Subscription
-
+    Subscription,
+    PrintReceiptGuide
 }
 sealed class NavigationItem(val route: String,val title: Int = 0, val icon: NavigationIcon ? = null) {
     data object Loading : NavigationItem(Screen.Loading.name)
@@ -55,6 +55,7 @@ sealed class NavigationItem(val route: String,val title: Int = 0, val icon: Navi
     data object TermsAndConditions : NavigationItem(Screen.TermsAndConditions.name)
     data object Signup : NavigationItem(Screen.Signup.name)
     data object Subscription : NavigationItem(Screen.Subscription.name)
+    data object PrintReceiptGuide : NavigationItem(Screen.PrintReceiptGuide.name)
 }
 
 sealed class NavigationIcon {

@@ -62,6 +62,6 @@ include(":core:googlebilling")
 include(":core:config")
 
 include(":feature:handleservice")
-
 include(":feature:signup")
 include(":feature:subscription")
+include(":feature:printreceiptguide")

@@ -384,6 +384,16 @@ fun getDropdownItemsWithActions(
         }
     )
 
+    childrenList.add(
+        MenuItem.Action(
+            context.getString(R.string.menu_handle_service)
+        ) {
+            navController.navigate(NavigationItem.HandleService.route) {
+                launchSingleTop = true
+            }
+        }
+    )
+
     /*childrenList.add(
         MenuItem.Action(
             context.getString(R.string.menu_rayon)
@@ -413,9 +423,9 @@ fun getDropdownItemsWithActions(
 
     items.add(
         MenuItem.Action(
-            context.getString(R.string.menu_handle_service)
+            context.getString(R.string.menu_print_receipt_guide)
         ) {
-            navController.navigate(NavigationItem.HandleService.route) {
+            navController.navigate(NavigationItem.PrintReceiptGuide.route) {
                 launchSingleTop = true
             }
         }

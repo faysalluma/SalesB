@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.groupec.feature.forgotpassword.ForgotPasswordScreen
 import com.groupec.feature.login.LoginScreen
+import com.groupec.feature.printreceiptguide.PrintReceiptGuideScreen
 import com.groupec.feature.sale.SaleScreen
 import com.groupec.feature.signup.SignupScreen
 import com.groupec.feature.subscription.SubscriptionScreen
@@ -491,6 +492,10 @@ fun AppNavHost(
 
         composable(NavigationItem.HandleService.route) {
             HandleServiceScreen()
+        }
+
+        composable(NavigationItem.PrintReceiptGuide.route) {
+            PrintReceiptGuideScreen()
         }
 
         composable(
