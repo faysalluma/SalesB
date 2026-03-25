@@ -372,6 +372,17 @@ fun getDropdownItemsWithActions(
 
     val items = mutableListOf<MenuItem>()
 
+    // SalesB Pro
+    items.add(
+        MenuItem.Action(
+            context.getString(R.string.menu_salesb_pro)
+        ) {
+            navController.navigate(NavigationItem.Subscription.route) {
+                launchSingleTop = true
+            }
+        }
+    )
+
     // Add Parameters items
     val childrenList = mutableListOf<MenuItem.Action>()
     childrenList.add(
@@ -411,17 +422,9 @@ fun getDropdownItemsWithActions(
         )
     )
 
-    items.add(
-        MenuItem.Action(
-            context.getString(R.string.menu_salesb_pro)
-        ) {
-            navController.navigate(NavigationItem.Subscription.route) {
-                launchSingleTop = true
-            }
-        }
-    )
-
-    items.add(
+    // Add Help and FAQ
+    val childrenList2 = mutableListOf<MenuItem.Action>()
+    childrenList2.add(
         MenuItem.Action(
             context.getString(R.string.menu_print_receipt_guide)
         ) {
@@ -429,6 +432,23 @@ fun getDropdownItemsWithActions(
                 launchSingleTop = true
             }
         }
+    )
+
+   /* childrenList2.add(
+        MenuItem.Action(
+            context.getString(R.string.menu_questions)
+        ) {
+            navController.navigate(NavigationItem.HandleService.route) {
+                launchSingleTop = true
+            }
+        }
+    )*/
+
+    items.add(
+        MenuItem.SubMenu(
+            context.getString(R.string.menu_help_faq),
+            childrenList2
+        )
     )
 
     // Add  remaining list

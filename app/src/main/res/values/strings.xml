@@ -19,4 +19,6 @@
     <string name="confirm_log_out">Are you sure you want to log out?</string>
     <string name="error_visible_only_expanded">This page is only visible in landscape mode on tablets.</string>
     <string name="menu_print_receipt_guide">How to print a receipt?</string>
+    <string name="menu_help_faq">Help and FAQ</string>
+    <string name="menu_questions">Frequently Asked Questions</string>
 </resources>

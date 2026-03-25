@@ -138,7 +138,7 @@ fun PrintReceiptGuideScreen(
             description = stringResource(R.string.print_receipt_help_body),
             lines = listOf(
                 stringResource(R.string.print_receipt_help_email) to AppIcons.ShareByEmail,
-                stringResource(R.string.print_receipt_help_chat) to AppIcons.Chat
+                //stringResource(R.string.print_receipt_help_chat) to AppIcons.Chat
             )
         )
     }
