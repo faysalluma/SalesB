@@ -22,6 +22,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.groupec.feature.faq.FaqScreen
 import com.groupec.feature.forgotpassword.ForgotPasswordScreen
 import com.groupec.feature.login.LoginScreen
 import com.groupec.feature.printreceiptguide.PrintReceiptGuideScreen
@@ -496,6 +497,10 @@ fun AppNavHost(
 
         composable(NavigationItem.PrintReceiptGuide.route) {
             PrintReceiptGuideScreen()
+        }
+
+        composable(NavigationItem.Faq.route) {
+            FaqScreen()
         }
 
         composable(

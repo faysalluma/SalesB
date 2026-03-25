@@ -1,0 +1,16 @@
+<resources>
+    <string name="faq_question_business_roles">How to enable multi-user and employee roles?</string>
+    <string name="faq_answer_business_roles_prefix">These features are available in </string>
+    <string name="faq_answer_business_roles_highlight">SalesB Business</string>
+    <string name="faq_answer_business_roles_suffix">, our custom version. It requires configuration and installation, which we will handle for you. Please contact us by email with details of your specific needs to receive a quote.</string>
+    <string name="faq_question_pc_install">How do I install the app on PC?</string>
+    <string name="faq_answer_pc_install">You need to download BlueStacks from the Microsoft Store on your PC or directly from the internet. Once it’s installed, open the Play Store in BlueStacks, search for SalesB in the search bar, and then download the app. That’s it—you can start using it right away.</string>
+    <string name="faq_question_delete_account">How do I permanently delete my account?</string>
+    <string name="faq_answer_delete_account">You can request the deletion of your account by sending us an email at salesb@groupec.net
+with the subject line: Account deletion request. We will then send you a reply email with a few security verification requests. Once your identity has been confirmed, your account will be deleted within two weeks.</string>
+    <string name="faq_action_email">E-mail</string>
+    <string name="faq_action_whatsapp">WhatsApp</string>
+    <string name="faq_contact_email_subject">SalesB support request</string>
+    <string name="faq_contact_email_body">Hello, I would like more information about SalesB.</string>
+    <string name="faq_contact_whatsapp_message">Hello, I would like more information about SalesB.</string>
+</resources>

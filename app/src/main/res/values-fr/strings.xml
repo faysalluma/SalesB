@@ -20,5 +20,5 @@
     <string name="menu_salesb_pro">Passer à SalesB Pro</string>
     <string name="confirm_log_out">Êtes-vous sûr de vouloir vous déconnecter ?</string>
     <string name="error_visible_only_expanded">Cette page est visible uniquement en mode paysage sur tablette.</string>
-    <string name="menu_print_receipt_guide">Comment imprimer un ticket de caisse ?</string>
+    <string name="menu_print_receipt_guide">Comment imprimer un ticket de caisse</string>
 </resources>

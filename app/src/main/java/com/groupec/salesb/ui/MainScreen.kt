@@ -434,15 +434,15 @@ fun getDropdownItemsWithActions(
         }
     )
 
-   /* childrenList2.add(
+    childrenList2.add(
         MenuItem.Action(
             context.getString(R.string.menu_questions)
         ) {
-            navController.navigate(NavigationItem.HandleService.route) {
+            navController.navigate(NavigationItem.Faq.route) {
                 launchSingleTop = true
             }
         }
-    )*/
+    )
 
     items.add(
         MenuItem.SubMenu(

@@ -101,6 +101,7 @@ dependencies {
     implementation(project(":feature:subscription"))
     implementation(project(":core:config"))
     implementation(project(":feature:printreceiptguide"))
+    implementation(project(":feature:faq"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
