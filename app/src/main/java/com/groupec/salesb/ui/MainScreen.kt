@@ -30,7 +30,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -44,7 +43,6 @@ import com.groupec.salesb.core.Privileges
 import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.CustomSnackBar
-import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.theme.Green
 import com.groupec.salesb.core.designsystem.theme.Primary
@@ -493,15 +491,15 @@ fun getDropdownItemsWithActions(
         }
     )
 
-    /* childrenList2.add(
-         MenuItem.Action(
-             context.getString(R.string.menu_questions)
-         ) {
-             navController.navigate(NavigationItem.HandleService.route) {
-                 launchSingleTop = true
-             }
-         }
-     )*/
+    childrenList2.add(
+        MenuItem.Action(
+            context.getString(R.string.menu_questions)
+        ) {
+            navController.navigate(NavigationItem.Faq.route) {
+                launchSingleTop = true
+            }
+        }
+    )
 
     items.add(
         MenuItem.SubMenu(

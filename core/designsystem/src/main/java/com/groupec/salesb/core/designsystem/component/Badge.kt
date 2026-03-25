@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.designsystem.theme.Primary
 
 @Composable
-private fun AppBadge(text: String) {
+fun AppBadge(text: String) {
     Text(
         modifier = Modifier
             .clip(RoundedCornerShape(999.dp))

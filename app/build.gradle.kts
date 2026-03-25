@@ -79,7 +79,6 @@ android {
 dependencies {
     implementation(project(":feature:home"))
     implementation(project(":feature:login"))
-    implementation(project(":feature:configuration"))
     implementation(project(":feature:loading"))
     implementation(project(":feature:changepassword"))
     implementation(project(":feature:productlist"))
@@ -88,6 +87,7 @@ dependencies {
     implementation(project(":feature:salelist"))
     implementation(project(":feature:salechart"))
     implementation(project(":feature:forgotpassword"))
+    implementation(project(":feature:configuration"))
     implementation(project(":feature:categorylist"))
     implementation(project(":feature:categorydetail"))
     implementation(project(":feature:rayonlist"))
@@ -100,6 +100,7 @@ dependencies {
     implementation(project(":feature:handleservice"))
     implementation(project(":core:config"))
     implementation(project(":feature:printreceiptguide"))
+    implementation(project(":feature:faq"))
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
     implementation(project(":core:designsystem"))
