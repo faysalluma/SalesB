@@ -290,6 +290,13 @@ fun SaleScreen(
                             paymenttype = paymentTypeValueForSave,
                             details = saleDetail
                         )
+                        if (printAction != PrintAction.Thermal &&
+                            !userStore.isProActive &&
+                            viewModel.hasReachedFreeMonthlySalesLimit()
+                        ) {
+                            showProBottomSheet = true
+                            return@SaleDetailScreen false
+                        }
                         if (printAction == PrintAction.Thermal) {
                             if (!userStore.isProActive) {
                                 showProBottomSheet = true
@@ -482,6 +489,13 @@ fun SaleScreen(
                             paymenttype = paymentTypeValueForSave,
                             details = saleDetail
                         )
+                        if (printAction != PrintAction.Thermal &&
+                            !userStore.isProActive &&
+                            viewModel.hasReachedFreeMonthlySalesLimit()
+                        ) {
+                            showProBottomSheet = true
+                            return@SaleDetailScreen false
+                        }
                         if (printAction == PrintAction.Thermal) {
                             if (!userStore.isProActive) {
                                 showProBottomSheet = true

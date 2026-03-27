@@ -83,7 +83,8 @@ fun ProductNavContent(
                     navigateToHome = onNavigateToHome,
                     onPopBack = onPopBack,
                     navigateToCategory = onNavigateToCategory,
-                    navigateToRayon = onNavigateToRayon
+                    navigateToRayon = onNavigateToRayon,
+                    onNavigateToSubscription = onNavigateToSubscription
                 )
             }
         }
@@ -131,7 +132,8 @@ fun ExpandedProductScreen(
                 refreshProducts = onRefreshProducts,
                 onPopBack = onPopBack,
                 navigateToCategory = onNavigateToCategory,
-                navigateToRayon = onNavigateToRayon
+                navigateToRayon = onNavigateToRayon,
+                onNavigateToSubscription = onNavigateToSubscription
             )
         }
     }

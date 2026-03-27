@@ -10,6 +10,7 @@ import com.groupec.salesb.core.UploadUtility
 import com.groupec.salesb.core.asResult
 import com.groupec.salesb.core.domain.category.GetCategoryUseCase
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
+import com.groupec.salesb.core.domain.product.GetAllProductsUseCase
 import com.groupec.salesb.core.domain.product.SaveProductUseCase
 import com.groupec.salesb.core.domain.rayon.GetRayonUseCase
 import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
@@ -28,6 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(
     private val saveProductUseCase: SaveProductUseCase,
+    private val getAllProductsUseCase: GetAllProductsUseCase,
     private val getCategorieUsecase: GetCategoryUseCase,
     private val getRayonUseCase: GetRayonUseCase,
     private val getParameterUseCase: GetParameterUseCase,
@@ -47,12 +49,15 @@ class ProductDetailViewModel @Inject constructor(
     val userStoreState: StateFlow<UserStore> = _userStoreState.asStateFlow()
     private val _parameterState = MutableStateFlow(Parameter())
     val parameterState: StateFlow<Parameter> = _parameterState.asStateFlow()
+    private val _totalProductsCountState = MutableStateFlow(0)
+    val totalProductsCountState: StateFlow<Int> = _totalProductsCountState.asStateFlow()
 
     init {
         viewModelScope.launch {
             _userStoreState.value = getUserStoreUseCase().first()
         }
         getParameter()
+        refreshTotalProductsCount()
     }
 
     fun getParameter() {
@@ -60,6 +65,16 @@ class ProductDetailViewModel @Inject constructor(
             _parameterState.value = getParameterUseCase().first()
         }
     }
+
+    fun refreshTotalProductsCount() {
+        viewModelScope.launch {
+            _totalProductsCountState.value = when (val result = getAllProductsUseCase("")) {
+                is Result.Success -> result.data.size
+                else -> 0
+            }
+        }
+    }
+
     fun getCategories() {
         viewModelScope.launch {
             getCategorieUsecase()

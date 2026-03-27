@@ -20,7 +20,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.domain.sale.SaveSaleUseCase
+import com.groupec.salesb.core.domain.sale.GetTotalSaleUseCase
 import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
+import com.groupec.salesb.core.getCurrentMontDelimitedDates
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.model.data.UserStore
@@ -36,6 +38,7 @@ import kotlinx.coroutines.flow.onEmpty
 class SaleViewModel @Inject constructor(
     private val getProductUseCase: GetProductUseCase,
     private val getParameterUseCase: GetParameterUseCase,
+    private val getTotalSaleUseCase: GetTotalSaleUseCase,
     private val getUserStoreUseCase: GetUserStoreUseCase,
     private val saveSaleUseCase: SaveSaleUseCase
 ) : ViewModel() {
@@ -90,6 +93,12 @@ class SaleViewModel @Inject constructor(
 
     fun updateSearchQuery(newQuery: String) {
         _searchQuery.value = newQuery
+    }
+
+    suspend fun hasReachedFreeMonthlySalesLimit(): Boolean {
+        val (startDate, endDate) = getCurrentMontDelimitedDates()
+        val monthlySalesCount = getTotalSaleUseCase(startDate, endDate).first()
+        return monthlySalesCount > 100
     }
 
     fun addSale(sale: Sale, printAction: PrintAction) {

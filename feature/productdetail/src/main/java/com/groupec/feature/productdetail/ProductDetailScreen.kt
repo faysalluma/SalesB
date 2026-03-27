@@ -38,6 +38,7 @@ import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.ui.AddImage
 import com.groupec.salesb.core.ui.ComposableLifecycle
+import com.groupec.salesb.core.ui.ProFeatureBottomSheet
 import com.groupec.salesb.core.ui.ProductDataForm
 import com.groupec.salesb.core.ui.ProductForm
 import java.io.File
@@ -55,6 +56,7 @@ fun ProductDetailScreen(
     viewModel: ProductDetailViewModel = hiltViewModel(),
     navigateToCategory: () -> Unit,
     navigateToRayon: () -> Unit,
+    onNavigateToSubscription: () -> Unit,
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -63,6 +65,7 @@ fun ProductDetailScreen(
     val categoriesPairState by viewModel.categoriesUiPairState.collectAsState()
     val rayonsPairState by viewModel.rayonsUiPairState.collectAsState()
     val parameterState by viewModel.parameterState.collectAsState()
+    val totalProductsCount by viewModel.totalProductsCountState.collectAsState()
     val catalogLabelSingular = context.getCatalogItemLabel(
         isServiceView = parameterState.serviceview,
         plural = false
@@ -76,12 +79,14 @@ fun ProductDetailScreen(
 
     val userStoreState by viewModel.userStoreState.collectAsState()
     val privileges = userStoreState.getPrivileges()
+    var showProBottomSheet by remember { mutableStateOf(false) }
 
     ComposableLifecycle(
         onResume = {
             viewModel.getParameter()
             viewModel.getCategories()
             viewModel.getRayons()
+            viewModel.refreshTotalProductsCount()
         }
     )
 
@@ -168,6 +173,19 @@ fun ProductDetailScreen(
         else -> {}
     }
 
+    if (showProBottomSheet) {
+        ProFeatureBottomSheet(
+            onDismiss = {
+                focusManager.clearFocus()
+                showProBottomSheet = false
+            },
+            onUpgradeClick = {
+                showProBottomSheet = false
+                onNavigateToSubscription()
+            }
+        )
+    }
+
     Column {
         AppHeadLine(
             modifier = Modifier.padding(bottom = 28.dp),
@@ -239,7 +257,12 @@ fun ProductDetailScreen(
                     fournisseurlibelleState = newFournisseur
                 },
                 onSubmitForm = { product ->
-                    viewModel.addProduct(product, uri.value)
+                    val isCreatingProduct = productDataForm.id.isBlank()
+                    if (isCreatingProduct && !userStoreState.isProActive && totalProductsCount >= 30) {
+                        showProBottomSheet = true
+                    } else {
+                        viewModel.addProduct(product, uri.value)
+                    }
                 }
             )
         }
