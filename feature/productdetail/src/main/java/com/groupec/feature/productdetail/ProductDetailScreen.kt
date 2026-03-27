@@ -19,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,6 +81,8 @@ fun ProductDetailScreen(
     val userStoreState by viewModel.userStoreState.collectAsState()
     val privileges = userStoreState.getPrivileges()
     var showProBottomSheet by remember { mutableStateOf(false) }
+    var proBottomSheetTitle by rememberSaveable { mutableStateOf("") }
+    val productLimitTitle = stringResource(com.groupec.salesb.core.ui.R.string.pro_feature_products_limit_title)
 
     ComposableLifecycle(
         onResume = {
@@ -175,6 +178,7 @@ fun ProductDetailScreen(
 
     if (showProBottomSheet) {
         ProFeatureBottomSheet(
+            title = proBottomSheetTitle,
             onDismiss = {
                 focusManager.clearFocus()
                 showProBottomSheet = false
@@ -259,6 +263,7 @@ fun ProductDetailScreen(
                 onSubmitForm = { product ->
                     val isCreatingProduct = productDataForm.id.isBlank()
                     if (isCreatingProduct && !userStoreState.isProActive && totalProductsCount >= 30) {
+                        proBottomSheetTitle = productLimitTitle
                         showProBottomSheet = true
                     } else {
                         viewModel.addProduct(product, uri.value)

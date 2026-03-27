@@ -29,6 +29,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,6 +95,9 @@ fun SaleScreen(
     val isLoading = addSaleUiState is FormUIState.Loading
     var showSummary by remember { mutableStateOf(false) }
     var showProBottomSheet by remember { mutableStateOf(false) }
+    var proBottomSheetTitle by rememberSaveable { mutableStateOf("") }
+    val salesLimitTitle = stringResource(com.groupec.salesb.core.ui.R.string.pro_feature_sales_limit_title)
+    val receiptPrintTitle = stringResource(com.groupec.salesb.core.ui.R.string.pro_feature_receipt_print_title)
 
     // For selected Products and handling of multiples textfield created
     val selectedProducts = remember { mutableStateListOf<Pair<Int, Product>>() }
@@ -246,6 +250,7 @@ fun SaleScreen(
 
     if (showProBottomSheet) {
         ProFeatureBottomSheet(
+            title = proBottomSheetTitle,
             onDismiss = { showProBottomSheet = false },
             onUpgradeClick = {
                 showProBottomSheet = false
@@ -294,11 +299,13 @@ fun SaleScreen(
                             !userStore.isProActive &&
                             viewModel.hasReachedFreeMonthlySalesLimit()
                         ) {
+                            proBottomSheetTitle = salesLimitTitle
                             showProBottomSheet = true
                             return@SaleDetailScreen false
                         }
                         if (printAction == PrintAction.Thermal) {
                             if (!userStore.isProActive) {
+                                proBottomSheetTitle = receiptPrintTitle
                                 showProBottomSheet = true
                                 return@SaleDetailScreen false
                             }
@@ -493,11 +500,13 @@ fun SaleScreen(
                             !userStore.isProActive &&
                             viewModel.hasReachedFreeMonthlySalesLimit()
                         ) {
+                            proBottomSheetTitle = salesLimitTitle
                             showProBottomSheet = true
                             return@SaleDetailScreen false
                         }
                         if (printAction == PrintAction.Thermal) {
                             if (!userStore.isProActive) {
+                                proBottomSheetTitle = receiptPrintTitle
                                 showProBottomSheet = true
                                 return@SaleDetailScreen false
                             }

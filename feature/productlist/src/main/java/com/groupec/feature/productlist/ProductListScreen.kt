@@ -98,10 +98,13 @@ fun ProductListScreen(
         plural = true,
         capitalize = true
     )
+    val exportPdfTitle = stringResource(R.string.export_to_pdf)
+    val exportExcelTitle = stringResource(R.string.exporter_en_excel)
 
     var expanded by remember { mutableStateOf(false) }
     var pendingExport by remember { mutableStateOf(ExportType.Pdf) }
     var showLoadingExportDialog by rememberSaveable { mutableStateOf(true) }
+    var proBottomSheetTitle by rememberSaveable { mutableStateOf("") }
 
     val exportPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -120,6 +123,10 @@ fun ProductListScreen(
         focusManager.clearFocus()
         expanded = false
         if (!userStore.isProActive) {
+            proBottomSheetTitle = when (exportType) {
+                ExportType.Pdf -> exportPdfTitle
+                ExportType.Excel -> exportExcelTitle
+            }
             showProBottomSheet = true
         } else {
             showLoadingExportDialog = true
@@ -277,6 +284,7 @@ fun ProductListScreen(
 
     if (showProBottomSheet) {
         ProFeatureBottomSheet(
+            title = proBottomSheetTitle,
             onDismiss = { showProBottomSheet = false },
             onUpgradeClick = {
                 showProBottomSheet = false

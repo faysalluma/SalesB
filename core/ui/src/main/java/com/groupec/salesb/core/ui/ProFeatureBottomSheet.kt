@@ -17,12 +17,13 @@ import com.groupec.salesb.core.designsystem.component.TitleLarge
 
 @Composable
 fun ProFeatureBottomSheet(
+    title: String,
     onDismiss: () -> Unit,
     onUpgradeClick: () -> Unit
 ) {
     AppCustomBottomSheet(
         onDismiss = onDismiss,
-        header = stringResource(R.string.pro_feature_required_title)
+        header = title
     ) {
         Column(
             modifier = Modifier

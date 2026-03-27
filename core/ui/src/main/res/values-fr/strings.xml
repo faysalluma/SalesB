@@ -112,8 +112,10 @@ Vous pouvez maintenant commencer à gérer vos ventes et services.</string>
     <string name="offline_error_title">Pas de connexion internet</string>
     <string name="offline_error_message_prefix">Il semble que vous soyez hors ligne.\nVeuillez vérifier votre connexion\npour continuer à utiliser </string>
     <string name="offline_network_settings">Paramètres réseau</string>
-    <string name="pro_feature_required_title">Version Pro requise</string>
     <string name="pro_feature_required_message">Cette fonctionnalité est disponible uniquement sur la version Pro.</string>
     <string name="pro_feature_required_cta">Passer à Pro</string>
+    <string name="pro_feature_sales_limit_title">Limite vente atteinte</string>
+    <string name="pro_feature_products_limit_title">Limite produit atteinte</string>
+    <string name="pro_feature_receipt_print_title">Impression recu pro</string>
 
 </resources>

@@ -122,12 +122,16 @@ fun SaleListScreen(
     val exportExcelState by viewModel.exportExcelUiState.collectAsState()
     val userStore by viewModel.userStoreState.collectAsState()
     val isExporting = exportPdfState is FormUIState.Loading || exportExcelState is FormUIState.Loading
+    val exportPdfTitle = stringResource(R.string.export_to_pdf)
+    val exportExcelTitle = stringResource(R.string.exporter_en_excel)
+    val receiptPrintTitle = stringResource(com.groupec.salesb.core.ui.R.string.pro_feature_receipt_print_title)
     var showLoadingExportDialog by rememberSaveable { mutableStateOf(true) }
     var showLoadingThermalPrintDialog by rememberSaveable { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var showProBottomSheet by rememberSaveable { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     var pendingExport by remember { mutableStateOf(ExportType.Pdf) }
+    var proBottomSheetTitle by rememberSaveable { mutableStateOf("") }
 
     // When save to Downloads notify user
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -155,6 +159,10 @@ fun SaleListScreen(
         focusManager.clearFocus()
         expanded = false
         if (!userStore.isProActive) {
+            proBottomSheetTitle = when (exportType) {
+                ExportType.Pdf -> exportPdfTitle
+                ExportType.Excel -> exportExcelTitle
+            }
             showProBottomSheet = true
         } else {
             showLoadingExportDialog = true
@@ -323,6 +331,7 @@ fun SaleListScreen(
 
     if (showProBottomSheet) {
         ProFeatureBottomSheet(
+            title = proBottomSheetTitle,
             onDismiss = { showProBottomSheet = false },
             onUpgradeClick = {
                 showProBottomSheet = false
@@ -650,6 +659,7 @@ fun SaleListScreen(
                                     }
                                     PrintAction.Thermal -> {
                                         if (!userStore.isProActive) {
+                                            proBottomSheetTitle = receiptPrintTitle
                                             showProBottomSheet = true
                                             return@SaleCardList
                                         }

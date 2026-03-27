@@ -79,9 +79,12 @@ fun RayonListScreen(
     var showLoadingExportDialog by rememberSaveable { mutableStateOf(true) }
     var rayonIdLibelle by remember { mutableStateOf(Pair(0, "")) }
     val isExporting = exportPdfState is FormUIState.Loading || exportExcelState is FormUIState.Loading
+    val exportPdfTitle = stringResource(R.string.export_to_pdf)
+    val exportExcelTitle = stringResource(R.string.exporter_en_excel)
 
     var expanded by remember { mutableStateOf(false) }
     var pendingExport by remember { mutableStateOf(ExportType.Pdf) }
+    var proBottomSheetTitle by rememberSaveable { mutableStateOf("") }
 
     val exportPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -100,6 +103,10 @@ fun RayonListScreen(
         focusManager.clearFocus()
         expanded = false
         if (!userStore.isProActive) {
+            proBottomSheetTitle = when (exportType) {
+                ExportType.Pdf -> exportPdfTitle
+                ExportType.Excel -> exportExcelTitle
+            }
             showProBottomSheet = true
         } else {
             showLoadingExportDialog = true
@@ -245,6 +252,7 @@ fun RayonListScreen(
 
     if (showProBottomSheet) {
         ProFeatureBottomSheet(
+            title = proBottomSheetTitle,
             onDismiss = { showProBottomSheet = false },
             onUpgradeClick = {
                 showProBottomSheet = false
