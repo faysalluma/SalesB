@@ -16,7 +16,7 @@ fun UserItemResponse.toUser(): User {
         id = id, nomprenom = nomprenom, email = email, password = password,
         reset_password = reset_password, reset_expires = reset_expires, adresse = adresse,
         tel = tel, privilege = privilege, actif = (actif == 1), firstlogin = (firstlogin == 1),
-        datecreation = datecreation, datemodif = datemodif
+        datecreation = datecreation, datemodif = datemodif, isProActive = isProActive
     )
 }
 
@@ -24,20 +24,31 @@ fun UserItemResponse.toUserEntity() = UserEntity(
     id = id ?: 0, nomprenom = nomprenom, email = email, password = password, adresse = adresse,
     tel = tel, privilege = privilege, actif = (actif == 1), firstlogin = (firstlogin == 1),
     datecreation = datecreation?.toDateString(), datemodif = datemodif?.toDateString(),
-    reset_password = reset_password, reset_expires = reset_expires, synchronised = false
+    reset_password = reset_password, reset_expires = reset_expires, synchronised = false,
+    isProActive = isProActive
 )
 
-fun UserItemResponse.toUserStore() = UserStore(id = id.toString(), nomprenom = nomprenom, privilege = privilege ?: "",
-    firstLogin = (firstlogin == 1), reset_password = reset_password ?: "")
+fun UserItemResponse.toUserStore() = UserStore(
+    id = id.toString(),
+    nomprenom = nomprenom,
+    privilege = privilege ?: "",
+    firstLogin = (firstlogin == 1),
+    reset_password = reset_password ?: "",
+    isProActive = isProActive
+)
 
 fun UserEntity.toUser() = User(
     id = id, nomprenom = nomprenom, email = email, password = password, adresse = adresse,
     tel = tel, privilege = privilege, actif = actif, firstlogin = firstlogin,
-    datecreation = datecreation?.toDate(),  datemodif = datemodif?.toDate(),  reset_password = reset_password, reset_expires = reset_expires, synchronised = synchronised)
+    datecreation = datecreation?.toDate(),  datemodif = datemodif?.toDate(),  reset_password = reset_password,
+    reset_expires = reset_expires, synchronised = synchronised, isProActive = isProActive)
 
-fun UserEntity.toUserStore() = UserStore(id = id.toString(), nomprenom = nomprenom, privilege = privilege ?: "", firstLogin = firstlogin,
-reset_password = reset_password ?: "")
-
-
-
+fun UserEntity.toUserStore() = UserStore(
+    id = id.toString(),
+    nomprenom = nomprenom,
+    privilege = privilege ?: "",
+    firstLogin = firstlogin,
+    reset_password = reset_password ?: "",
+    isProActive = isProActive
+)
 

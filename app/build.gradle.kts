@@ -113,6 +113,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:print"))
     implementation(project(":core:firebaseremoteconfig"))
+    implementation(project(":core:googlebilling"))
 
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material3.adaptive.layout)

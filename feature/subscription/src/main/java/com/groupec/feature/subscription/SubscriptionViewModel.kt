@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
+import com.groupec.salesb.core.domain.user.UpdateUserSubscriptionStatusUseCase
 import com.groupec.salesb.core.googlebilling.GoogleBillingEvent
 import com.groupec.salesb.core.googlebilling.GoogleBillingProductRequest
 import com.groupec.salesb.core.googlebilling.GoogleBillingProductTypes
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class SubscriptionViewModel @Inject constructor(
     private val getParameterUseCase: GetParameterUseCase,
+    private val updateUserSubscriptionStatusUseCase: UpdateUserSubscriptionStatusUseCase,
     private val googleBillingProvider: GoogleBillingProvider,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -130,6 +132,10 @@ class SubscriptionViewModel @Inject constructor(
                 // Billing SDK callbacks are translated into screen-friendly messages here.
                 when (event) {
                     is GoogleBillingEvent.PurchaseCompleted -> {
+                        updateUserSubscriptionStatusUseCase(
+                            productId = event.productIds.firstOrNull(),
+                            purchaseToken = event.purchaseToken
+                        )
                         _uiState.update {
                             it.copy(
                                 isPurchaseInProgress = false,

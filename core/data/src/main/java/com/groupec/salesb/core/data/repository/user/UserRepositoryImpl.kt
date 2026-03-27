@@ -14,10 +14,13 @@ import com.groupec.salesb.core.data.repository.common.UserLocalRepository
 import com.groupec.salesb.core.data.repository.common.UserRemoteRepository
 import com.groupec.salesb.core.data.repository.common.UserSyncRepository
 import com.groupec.salesb.core.datastore.DataStoreManager
-import com.groupec.salesb.core.getDateTimeByNtp
+ import com.groupec.salesb.core.googlebilling.GoogleBillingProductRequest
+import com.groupec.salesb.core.googlebilling.GoogleBillingProductTypes
+import com.groupec.salesb.core.googlebilling.GoogleBillingProvider
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.model.data.others.Subscription
+import com.groupec.salesb.core.network.model.SubscriptionStatusRequest
 import com.groupec.salesb.core.network.retrofit.ApiService
 import com.groupec.salesb.core.network.retrofit.common.executeApiCall
 import com.groupec.salesb.core.network.retrofit.common.safeApiCall
@@ -40,7 +43,8 @@ class UserRepositoryImpl @Inject constructor(
     private val dataStoreManager: DataStoreManager,
     private val userLocalRepository: UserLocalRepository,
     private val userRemoteRepository: UserRemoteRepository,
-    private val userSyncRepository: UserSyncRepository
+    private val userSyncRepository: UserSyncRepository,
+    private val googleBillingProvider: GoogleBillingProvider
 ) : UserRepository {
 
     private suspend fun getOfflineMode() = dataStoreManager.parameterFlow.firstOrNull()?.offline
@@ -152,13 +156,7 @@ class UserRepositoryImpl @Inject constructor(
         return if (getOfflineMode() == true) {
             userLocalRepository.checkLogin(email, password)
         } else {
-            isExpired()?.let { isExpired ->
-                if (!isExpired) {
-                    userRemoteRepository.checkLogin(email, password)
-                } else {
-                    Result.Error(Exception(context.getString(R.string.subscription_expired)))
-                }
-            } ?: Result.Error(Exception(context.getString(R.string.error_subscription_expired)))
+            userRemoteRepository.checkLogin(email, password)
         }
     }
 
@@ -173,7 +171,8 @@ class UserRepositoryImpl @Inject constructor(
         }
 
         // Sinon faire un nouveau check
-        val expired = isExpired()
+        val userId = dataStoreManager.userFlow.first().id.takeIf { it.isNotEmpty() }
+        val expired = userId?.let { isExpired(it) }
 
         // Mettre à jour le cache seulement si on a une réponse valide
         if (expired != null) {
@@ -185,20 +184,44 @@ class UserRepositoryImpl @Inject constructor(
             )
         }
 
+        dataStoreManager.saveUserSubscriptionStatus(isProActive = expired ?: false)
         return expired
     }
 
-    suspend fun isExpired(): Boolean? {
-       /* return try {
-            val response = apiService.getParameter()
+    suspend fun isExpired(userId: String): Boolean? {
+        return try {
+            val response = apiService.getUserById(userId.toInt())
             if (!response.isSuccessful) return null
 
-            val expirationDate = response.body()?.parameter?.expirationdate
-            expirationDate?.let { it < getDateTimeByNtp() } ?: true
+            val user = response.body()?.data ?: return null
+            val backendProductId = user.productId ?: SALESB_PRO_MONTHLY_PRODUCT_ID
+            val backendPurchaseToken = user.purchaseToken
+            val backendIsProActive = user.isProActive
+
+            googleBillingProvider.loadCatalog(
+                listOf(
+                    GoogleBillingProductRequest(
+                        productId = backendProductId,
+                        productType = GoogleBillingProductTypes.SUBS
+                    )
+                )
+            )
+
+            val matchingPurchase = googleBillingProvider.purchaseState.value.purchases.firstOrNull { purchase ->
+                !purchase.isPending &&
+                    purchase.purchaseToken == backendPurchaseToken &&
+                    backendProductId in purchase.productIds
+            }
+
+            when {
+                !backendIsProActive -> true
+                backendPurchaseToken.isNullOrBlank() -> true
+                matchingPurchase == null -> true
+                else -> false
+            }
         } catch (e: Exception) {
             null
-        }*/
-        return false
+        }
     }
 
     /* Set methods */
@@ -225,5 +248,39 @@ class UserRepositoryImpl @Inject constructor(
         return executeApiCall (context = context) {
             apiService.forgotPassword(email)
         }
+    }
+
+    override suspend fun updateUserSubscriptionStatus(
+        productId: String?,
+        purchaseToken: String?
+    ): Result<Unit> {
+        dataStoreManager.saveUserSubscriptionStatus(isProActive = true)
+        val userId = dataStoreManager.userFlow.first().id.toIntOrNull()
+            ?: return Result.Error(Exception(context.getString(R.string.error_user_not_found)))
+
+        return try {
+            val response = apiService.updateUserSubscriptionStatus(
+                userid = userId,
+                request = SubscriptionStatusRequest(
+                    productId = productId,
+                    purchaseToken = purchaseToken
+                )
+            )
+
+            if (!response.isSuccessful) {
+                return Result.Error(HttpException(response))
+            }
+
+            val body = response.body()
+                ?: return Result.Error(Exception(context.getString(R.string.error_empty_response)))
+
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    private companion object {
+        const val SALESB_PRO_MONTHLY_PRODUCT_ID = "salesb_pro_monthly"
     }
 }

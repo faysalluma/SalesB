@@ -20,5 +20,6 @@ data class User(
     val datecreation: Date ? = null,
     val datemodif: Date ? = null,
     val synchronised: Boolean = false,
-    val langMessageEn: Boolean = true
+    val langMessageEn: Boolean = true,
+    val isProActive: Boolean = false
 ): Parcelable

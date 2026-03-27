@@ -361,7 +361,12 @@ class GoogleBillingProvider @Inject constructor(
                     }
 
                     if (emitCompletionEvents) {
-                        _events.tryEmit(GoogleBillingEvent.PurchaseCompleted(purchase.products))
+                        _events.tryEmit(
+                            GoogleBillingEvent.PurchaseCompleted(
+                                productIds = purchase.products,
+                                purchaseToken = purchase.purchaseToken
+                            )
+                        )
                     }
                 }
 

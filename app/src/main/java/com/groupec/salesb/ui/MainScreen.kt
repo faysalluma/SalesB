@@ -40,7 +40,6 @@ import com.groupec.salesb.R
 import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.CustomSnackBar
-import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.theme.Green
 import com.groupec.salesb.core.designsystem.theme.Primary
@@ -173,7 +172,7 @@ fun MainScreen(
         viewModel.getUserStore()
         viewModel.getParameterStore()
         if (connectionState && currentDestination.value != NavigationItem.Login.route) {
-            viewModel.checkSubscriptionExpiration()
+            viewModel.checkSubscriptionStatus()
         }
     }
 
@@ -198,7 +197,7 @@ fun MainScreen(
         onResume = {
             viewModel.getParameterStore()
             if (currentDestination.value!= null && currentDestination.value != NavigationItem.Login.route) {
-                viewModel.checkSubscriptionExpiration()
+                viewModel.checkSubscriptionStatus()
             }
         }
     )

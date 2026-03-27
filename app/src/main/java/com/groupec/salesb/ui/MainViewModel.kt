@@ -3,7 +3,6 @@ package com.groupec.salesb.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
@@ -44,7 +43,7 @@ class MainViewModel @Inject constructor(
 
     init {
         observeParameterStore()
-        getUserStore()
+        observeUserStore()
     }
 
     private fun observeParameterStore() {
@@ -80,16 +79,26 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun checkSubscriptionExpiration() {
+    fun checkSubscriptionStatus() {
         viewModelScope.launch {
-            val isExpired = checkSubscriptionExpirationUseCase()
-            if (isExpired == true) {
-                logout()
+            if (_userStore.value.id.isEmpty()) {
+                return@launch
             }
+            checkSubscriptionExpirationUseCase()
         }
     }
 
     fun resetFlow() {
         _logoutUiState.value = UIState.Loading
+    }
+
+    private fun observeUserStore() {
+        viewModelScope.launch {
+            getUserStoreUseCase()
+                .distinctUntilChanged()
+                .collectLatest { userStore ->
+                    _userStore.value = userStore
+                }
+        }
     }
 }

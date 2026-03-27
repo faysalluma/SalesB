@@ -52,7 +52,10 @@ data class GoogleBillingOperationResult(
 )
 
 sealed interface GoogleBillingEvent {
-    data class PurchaseCompleted(val productIds: List<String>) : GoogleBillingEvent
+    data class PurchaseCompleted(
+        val productIds: List<String>,
+        val purchaseToken: String
+    ) : GoogleBillingEvent
     data class PurchasePending(val productIds: List<String>) : GoogleBillingEvent
     data object PurchaseCancelled : GoogleBillingEvent
     data class Error(val message: String) : GoogleBillingEvent

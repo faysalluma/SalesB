@@ -34,4 +34,6 @@ data class User(
     val datemodif: String ? = null,
     @ColumnInfo(name = "synchronised")
     val synchronised: Boolean,
+    @ColumnInfo(name = "isProActive")
+    val isProActive: Boolean = false,
 )

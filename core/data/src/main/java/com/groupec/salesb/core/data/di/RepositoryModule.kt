@@ -26,6 +26,7 @@ import com.groupec.salesb.core.data.repository.user.UserRepository
 import com.groupec.salesb.core.data.repository.user.UserRepositoryImpl
 import com.groupec.salesb.core.data.repository.common.UserSyncRepository
 import com.groupec.salesb.core.datastore.DataStoreManager
+import com.groupec.salesb.core.googlebilling.GoogleBillingProvider
 import com.groupec.salesb.core.network.retrofit.ApiService
 import dagger.Module
 import dagger.Provides
@@ -61,9 +62,18 @@ class RepositoryModule  {
         dataStoreManager: DataStoreManager,
         userLocalRepository: UserLocalRepository,
         userRemoteRepository: UserRemoteRepository,
-        userSyncRepository: UserSyncRepository
+        userSyncRepository: UserSyncRepository,
+        googleBillingProvider: GoogleBillingProvider
     ) : UserRepository {
-        return UserRepositoryImpl(context, apiService, dataStoreManager, userLocalRepository, userRemoteRepository, userSyncRepository)
+        return UserRepositoryImpl(
+            context,
+            apiService,
+            dataStoreManager,
+            userLocalRepository,
+            userRemoteRepository,
+            userSyncRepository,
+            googleBillingProvider
+        )
     }
 
     @Provides

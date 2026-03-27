@@ -16,6 +16,10 @@ interface UserRepository{
     suspend fun changePassword(userId: Int, ancPassword: String, password: String) : Result<User>
     suspend fun logout() : Result<Unit>
     suspend fun forgotPassword(email: String) : Result<Unit>
+    suspend fun updateUserSubscriptionStatus(
+        productId: String? = null,
+        purchaseToken: String? = null
+    ) : Result<Unit>
     fun getPagedUsers(searchQuery: String) : Flow<PagingData<User>>
     suspend fun getAllUsers(searchQuery: String) : Result<List<User>>
     suspend fun saveUser(user: User) : Result<Unit>

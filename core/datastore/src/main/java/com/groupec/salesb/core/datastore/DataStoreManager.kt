@@ -50,6 +50,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         private val USER_ID_KEY = stringPreferencesKey("userid")
         private val USER_NAME_KEY = stringPreferencesKey("nomprenom")
         private val USER_RESET_PASSWORD_KEY = stringPreferencesKey("resetpassword")
+        private val USER_IS_PRO_ACTIVE_KEY = booleanPreferencesKey("isproactive")
 
         // Subscriptions
         private val SUBSCRIPTION_LAST_CHECK = longPreferencesKey("last_sub_check")
@@ -87,10 +88,10 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         .map { preferences ->
             // No type safety.
             UserStore(
-                preferences[USER_ID_KEY] ?: "",
-                preferences[USER_NAME_KEY] ?: "",
-                preferences[USER_RESET_PASSWORD_KEY] ?: ""
-
+                id = preferences[USER_ID_KEY] ?: "",
+                nomprenom = preferences[USER_NAME_KEY] ?: "",
+                reset_password = preferences[USER_RESET_PASSWORD_KEY] ?: "",
+                isProActive = preferences[USER_IS_PRO_ACTIVE_KEY] ?: false
             )
         }
 
@@ -130,6 +131,13 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             datastore[USER_ID_KEY] = user.id
             datastore[USER_NAME_KEY] = user.nomprenom
             datastore[USER_RESET_PASSWORD_KEY] = user.reset_password
+            datastore[USER_IS_PRO_ACTIVE_KEY] = user.isProActive
+        }
+    }
+
+    suspend fun saveUserSubscriptionStatus(isProActive: Boolean) {
+        context.dataStore.edit { datastore ->
+            datastore[USER_IS_PRO_ACTIVE_KEY] = isProActive
         }
     }
 

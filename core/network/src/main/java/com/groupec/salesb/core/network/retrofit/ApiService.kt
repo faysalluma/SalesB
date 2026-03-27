@@ -15,6 +15,7 @@ import com.groupec.salesb.core.network.model.ProductResponse
 import com.groupec.salesb.core.network.model.RayonResponse
 import com.groupec.salesb.core.network.model.SaleItemResponse
 import com.groupec.salesb.core.network.model.SaleResponse
+import com.groupec.salesb.core.network.model.SubscriptionStatusRequest
 import com.groupec.salesb.core.network.model.UserItemResponse
 import com.groupec.salesb.core.network.model.UserResponse
 import com.groupec.salesb.core.network.retrofit.common.Constants
@@ -235,6 +236,12 @@ interface ApiService {
     /* PUT API */
     @PUT(Constants.PUT_CHANGE_PASSWORD)
     suspend fun changePassword(@Path("userid") userid: Int, @Body user: User): Response<User>
+
+    @PUT(Constants.PUT_USER_SUBSCRIPTION_STATUS)
+    suspend fun updateUserSubscriptionStatus(
+        @Path("userid") userid: Int,
+        @Body request: SubscriptionStatusRequest
+    ): Response<Unit>
 
     /* DELETE API */
     @DELETE(Constants.DELETE_PRODUCT)
