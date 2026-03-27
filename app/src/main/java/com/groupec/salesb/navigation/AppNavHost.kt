@@ -219,6 +219,9 @@ fun AppNavHost(
                 isExpandedWidth = isExpandedWidth,
                 navigateToProduct = {
                     navController.navigate(NavigationItem.Product.route)
+                },
+                onNavigateToSubscription = {
+                    navController.navigate(NavigationItem.Subscription.route)
                 }
             )
         }

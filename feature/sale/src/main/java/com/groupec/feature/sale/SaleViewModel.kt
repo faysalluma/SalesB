@@ -20,10 +20,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.domain.sale.SaveSaleUseCase
+import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
+import com.groupec.salesb.core.model.data.UserStore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEmpty
@@ -33,6 +36,7 @@ import kotlinx.coroutines.flow.onEmpty
 class SaleViewModel @Inject constructor(
     private val getProductUseCase: GetProductUseCase,
     private val getParameterUseCase: GetParameterUseCase,
+    private val getUserStoreUseCase: GetUserStoreUseCase,
     private val saveSaleUseCase: SaveSaleUseCase
 ) : ViewModel() {
 
@@ -45,8 +49,23 @@ class SaleViewModel @Inject constructor(
     private val _parameter = MutableStateFlow(Parameter())
     val parameter : StateFlow<Parameter> = _parameter.asStateFlow()
 
+    private val _userStoreState = MutableStateFlow(UserStore())
+    val userStoreState: StateFlow<UserStore> = _userStoreState.asStateFlow()
+
     private val _addSaleUiState = MutableStateFlow<FormUIState<Pair<PrintAction, Sale>>>(FormUIState.Idle)
     val addSaleUiState : StateFlow<FormUIState<Pair<PrintAction, Sale>>> = _addSaleUiState.asStateFlow()
+
+    init {
+        observeUserStore()
+    }
+
+    private fun observeUserStore() {
+        viewModelScope.launch {
+            getUserStoreUseCase().collectLatest { userStore ->
+                _userStoreState.value = userStore
+            }
+        }
+    }
 
     fun getParameter() {
         viewModelScope.launch {

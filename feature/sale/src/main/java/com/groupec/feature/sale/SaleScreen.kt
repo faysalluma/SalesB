@@ -67,6 +67,7 @@ import com.groupec.salesb.core.print.PrintAction
 import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.core.ui.ProductGridAdaptive
 import com.groupec.salesb.core.ui.ProductGridPortrait
+import com.groupec.salesb.core.ui.ProFeatureBottomSheet
 import com.groupec.salesb.core.ui.SaleDetailCard
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -78,7 +79,8 @@ fun SaleScreen(
     isExpandedWidth: Boolean,
     modifier: Modifier = Modifier,
     viewModel: SaleViewModel = hiltViewModel(),
-    navigateToProduct: () -> Unit
+    navigateToProduct: () -> Unit,
+    onNavigateToSubscription: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -87,9 +89,11 @@ fun SaleScreen(
     val products = viewModel.pagedProducts.collectAsLazyPagingItems()
     val error = (products.loadState.refresh as? LoadState.Error)?.error?.message
     val parameter by viewModel.parameter.collectAsState()
+    val userStore by viewModel.userStoreState.collectAsState()
     val addSaleUiState by viewModel.addSaleUiState.collectAsState()
     val isLoading = addSaleUiState is FormUIState.Loading
     var showSummary by remember { mutableStateOf(false) }
+    var showProBottomSheet by remember { mutableStateOf(false) }
 
     // For selected Products and handling of multiples textfield created
     val selectedProducts = remember { mutableStateListOf<Pair<Int, Product>>() }
@@ -240,6 +244,16 @@ fun SaleScreen(
         else -> {}
     }
 
+    if (showProBottomSheet) {
+        ProFeatureBottomSheet(
+            onDismiss = { showProBottomSheet = false },
+            onUpgradeClick = {
+                showProBottomSheet = false
+                onNavigateToSubscription()
+            }
+        )
+    }
+
     // When not in expanded mode
     if (!isExpandedWidth) {
         if (showSummary) {
@@ -277,6 +291,10 @@ fun SaleScreen(
                             details = saleDetail
                         )
                         if (printAction == PrintAction.Thermal) {
+                            if (!userStore.isProActive) {
+                                showProBottomSheet = true
+                                return@SaleDetailScreen false
+                            }
                             val result = withContext(Dispatchers.IO) {
                                 bluetoothPrint.validatePrinterReadiness()
                             }
@@ -465,6 +483,10 @@ fun SaleScreen(
                             details = saleDetail
                         )
                         if (printAction == PrintAction.Thermal) {
+                            if (!userStore.isProActive) {
+                                showProBottomSheet = true
+                                return@SaleDetailScreen false
+                            }
                             val result = withContext(Dispatchers.IO) {
                                 bluetoothPrint.validatePrinterReadiness()
                             }
