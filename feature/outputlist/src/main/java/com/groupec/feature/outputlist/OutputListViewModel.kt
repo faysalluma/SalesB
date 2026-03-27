@@ -15,6 +15,8 @@ import com.groupec.salesb.core.domain.output.GetAllOutputsUseCase
 import com.groupec.salesb.core.domain.output.GetOutputUseCase
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.model.data.Output
+import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
+import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.saveExcelToDownloads
 import com.groupec.salesb.core.savePdfToDownloads
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,6 +41,7 @@ class OutputListViewModel @Inject constructor(
     private val getOutputUseCase: GetOutputUseCase,
     private val deleteOutputUseCase: DeleteOutputUseCase,
     private val getAllOutputsUseCase: GetAllOutputsUseCase,
+    private val getUserStoreUseCase: GetUserStoreUseCase,
     private val generateOutputListPdfUseCase: GenerateOutputListPdfUseCase,
     private val generateOutputListExcelUseCase: GenerateOutputListExcelUseCase,
     private val getParameterUseCase: GetParameterUseCase
@@ -61,9 +64,20 @@ class OutputListViewModel @Inject constructor(
 
     private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
+    private val _userStoreState = MutableStateFlow(UserStore())
+    val userStoreState: StateFlow<UserStore> = _userStoreState.asStateFlow()
 
     init {
+        observeUserStore()
         observeTotalOutputsCount()
+    }
+
+    private fun observeUserStore() {
+        viewModelScope.launch {
+            getUserStoreUseCase().collectLatest { userStore ->
+                _userStoreState.value = userStore
+            }
+        }
     }
 
     val pagedOutputs: Flow<PagingData<Output>> = _searchQuery

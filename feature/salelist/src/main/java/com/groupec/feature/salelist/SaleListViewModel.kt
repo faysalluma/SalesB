@@ -16,9 +16,11 @@ import com.groupec.salesb.core.domain.sale.GenerateSaleListPdfUseCase
 import com.groupec.salesb.core.domain.sale.GenerateInvoicePdfUseCase
 import com.groupec.salesb.core.domain.sale.GetAllSalesUseCase
 import com.groupec.salesb.core.domain.sale.GetSaleUseCase
+import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
 import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Sale
+import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.print.Print
 import com.groupec.salesb.core.saveExcelToDownloads
 import com.groupec.salesb.core.savePdfToDownloads
@@ -51,6 +53,7 @@ class SaleListViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val getSaleUseCase:GetSaleUseCase,
     private val getAllSalesUseCase: GetAllSalesUseCase,
+    private val getUserStoreUseCase: GetUserStoreUseCase,
     private val getParameterUseCase: GetParameterUseCase,
     private val generateInvoicePdfUseCase: GenerateInvoicePdfUseCase,
     private val generateSaleListPdfUseCase: GenerateSaleListPdfUseCase,
@@ -96,9 +99,20 @@ class SaleListViewModel @Inject constructor(
 
     private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
+    private val _userStoreState = MutableStateFlow(UserStore())
+    val userStoreState: StateFlow<UserStore> = _userStoreState.asStateFlow()
 
     init {
+        observeUserStore()
         observeSalesSummary()
+    }
+
+    private fun observeUserStore() {
+        viewModelScope.launch {
+            getUserStoreUseCase().collectLatest { userStore ->
+                _userStoreState.value = userStore
+            }
+        }
     }
 
     fun getParameter() {

@@ -32,6 +32,7 @@ fun ProductNavContent(
     onPopBack: (() -> Unit)? = null,
     onNavigateToCategory: () -> Unit,
     onNavigateToRayon: () -> Unit,
+    onNavigateToSubscription: () -> Unit,
 ) {
     var selectedProduct by remember { mutableStateOf<Product?>(product) }
     var refreshProductList by remember { mutableStateOf(false) }
@@ -59,6 +60,7 @@ fun ProductNavContent(
                 onRefreshProducts = { refreshProductList = !refreshProductList },
                 onNavigateToCategory = onNavigateToCategory,
                 onNavigateToRayon = onNavigateToRayon,
+                onNavigateToSubscription = onNavigateToSubscription,
                 onPopBack = onPopBack
             )
         } else {
@@ -68,6 +70,7 @@ fun ProductNavContent(
                     refreshProductList = refreshProductList,
                     removeSelectedBgColor = removeSelectedBgColor,
                     fromDetail = fromDetail,
+                    onNavigateToSubscription = onNavigateToSubscription,
                     onViewDetail = { selectedProduct ->
                         onNavigateToDetail(selectedProduct)
                     }
@@ -99,7 +102,8 @@ fun ExpandedProductScreen(
     onRefreshProducts: () -> Unit,
     onPopBack: (() -> Unit)? = null,
     onNavigateToCategory: () -> Unit,
-    onNavigateToRayon: () -> Unit
+    onNavigateToRayon: () -> Unit,
+    onNavigateToSubscription: () -> Unit
 ) {
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
     Row(
@@ -112,6 +116,7 @@ fun ExpandedProductScreen(
                 snackbarHostState = snackbarHostState,
                 refreshProductList = refreshProductList,
                 removeSelectedBgColor = removeSelectedBgColor,
+                onNavigateToSubscription = onNavigateToSubscription,
                 onViewDetail = { product ->
                     selectedProduct = product
                 }

@@ -15,6 +15,8 @@ import com.groupec.salesb.core.domain.category.GetAllCategoriesUseCase
 import com.groupec.salesb.core.domain.category.GetPagedCategoryUsecase
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.model.data.Category
+import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
+import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.saveExcelToDownloads
 import com.groupec.salesb.core.savePdfToDownloads
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,6 +41,7 @@ class CategoryListViewModel @Inject constructor(
     private val getPagedCategoryUsecase: GetPagedCategoryUsecase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
     private val getAllCategoriesUseCase: GetAllCategoriesUseCase,
+    private val getUserStoreUseCase: GetUserStoreUseCase,
     private val generateCategoryListPdfUseCase: GenerateCategoryListPdfUseCase,
     private val generateCategoryListExcelUseCase: GenerateCategoryListExcelUseCase,
     private val getParameterUseCase: GetParameterUseCase
@@ -61,9 +64,20 @@ class CategoryListViewModel @Inject constructor(
 
     private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
+    private val _userStoreState = MutableStateFlow(UserStore())
+    val userStoreState: StateFlow<UserStore> = _userStoreState.asStateFlow()
 
     init {
+        observeUserStore()
         observeTotalCategoriesCount()
+    }
+
+    private fun observeUserStore() {
+        viewModelScope.launch {
+            getUserStoreUseCase().collectLatest { userStore ->
+                _userStoreState.value = userStore
+            }
+        }
     }
 
     val pagedCategories: Flow<PagingData<Category>> = _searchQuery

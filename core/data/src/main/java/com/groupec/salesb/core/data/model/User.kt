@@ -16,7 +16,7 @@ fun UserItemResponse.toUser(): User {
         id = id, nomprenom = nomprenom, email = email, password = password,
         reset_password = reset_password, reset_expires = reset_expires, adresse = adresse,
         tel = tel, privilege = privilege, actif = (actif == 1), firstlogin = (firstlogin == 1),
-        datecreation = datecreation, datemodif = datemodif, isProActive = isProActive
+        datecreation = datecreation, datemodif = datemodif
     )
 }
 
@@ -24,8 +24,7 @@ fun UserItemResponse.toUserEntity() = UserEntity(
     id = id ?: 0, nomprenom = nomprenom, email = email, password = password, adresse = adresse,
     tel = tel, privilege = privilege, actif = (actif == 1), firstlogin = (firstlogin == 1),
     datecreation = datecreation?.toDateString(), datemodif = datemodif?.toDateString(),
-    reset_password = reset_password, reset_expires = reset_expires, synchronised = false,
-    isProActive = isProActive
+    reset_password = reset_password, reset_expires = reset_expires, synchronised = false
 )
 
 fun UserItemResponse.toUserStore() = UserStore(
@@ -33,15 +32,14 @@ fun UserItemResponse.toUserStore() = UserStore(
     nomprenom = nomprenom,
     privilege = privilege ?: "",
     firstLogin = (firstlogin == 1),
-    reset_password = reset_password ?: "",
-    isProActive = isProActive
+    reset_password = reset_password ?: ""
 )
 
 fun UserEntity.toUser() = User(
     id = id, nomprenom = nomprenom, email = email, password = password, adresse = adresse,
     tel = tel, privilege = privilege, actif = actif, firstlogin = firstlogin,
     datecreation = datecreation?.toDate(),  datemodif = datemodif?.toDate(),  reset_password = reset_password,
-    reset_expires = reset_expires, synchronised = synchronised, isProActive = isProActive)
+    reset_expires = reset_expires, synchronised = synchronised)
 
 fun UserEntity.toUserStore() = UserStore(
     id = id.toString(),

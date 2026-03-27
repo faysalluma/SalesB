@@ -30,6 +30,7 @@ fun RayonNavContent(
     onNavigateToDetail: ((Rayon) -> Unit)? = null,
     onNavigateToHome: (() -> Unit)? = null,
     onPopBack: (() -> Unit)? = null,
+    onNavigateToSubscription: () -> Unit,
 ) {
     var selectedRayon by remember { mutableStateOf<Rayon?>(rayon) }
     var refreshList by remember { mutableStateOf(false) }
@@ -58,6 +59,7 @@ fun RayonNavContent(
                 onRemoveSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor },
                 onRefreshList = { refreshList = !refreshList },
                 onPopBack = onPopBack,
+                onNavigateToSubscription = onNavigateToSubscription,
             )
         } else {
             if (onNavigateToDetail != null) {
@@ -66,6 +68,7 @@ fun RayonNavContent(
                     refreshList = refreshList,
                     removeSelectedBgColor = removeSelectedBgColor,
                     fromDetail = fromDetail,
+                    onNavigateToSubscription = onNavigateToSubscription,
                     onViewDetail = { rayonItem ->
                         onNavigateToDetail(rayonItem)
                     },
@@ -92,6 +95,7 @@ fun ExpandedRayonScreen(
     onRemoveSelectedBgColor: () -> Unit,
     onRefreshList: () -> Unit,
     onPopBack: (() -> Unit)? = null,
+    onNavigateToSubscription: () -> Unit,
 ) {
     var selectedRayon by remember { mutableStateOf<Rayon?>(null) }
     Row(
@@ -104,6 +108,7 @@ fun ExpandedRayonScreen(
                 snackbarHostState = snackbarHostState,
                 refreshList = refreshList,
                 removeSelectedBgColor = removeSelectedBgColor,
+                onNavigateToSubscription = onNavigateToSubscription,
                 onViewDetail = { rayonItem ->
                     selectedRayon = rayonItem
                 },

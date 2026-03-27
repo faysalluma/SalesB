@@ -100,7 +100,8 @@ class UserRepositoryImpl @Inject constructor(
                 return Result.Error(Exception(context.getString(R.string.error_user_not_found)))
             }
 
-            dataStoreManager.setUserConfig(user.toUserStore())
+            val isProActive =  isExpired(id.toString())?.let { !it } ?: false
+            dataStoreManager.setUserConfig(user.toUserStore().copy(isProActive = isProActive))
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e)
@@ -156,7 +157,9 @@ class UserRepositoryImpl @Inject constructor(
         return if (getOfflineMode() == true) {
             userLocalRepository.checkLogin(email, password)
         } else {
-            userRemoteRepository.checkLogin(email, password)
+            val userId = dataStoreManager.userFlow.first().id.takeIf { it.isNotEmpty() }
+            val isProActive =  isExpired(userId.toString())?.let { !it } ?: false
+            userRemoteRepository.checkLogin(email, password, isProActive)
         }
     }
 
@@ -184,7 +187,7 @@ class UserRepositoryImpl @Inject constructor(
             )
         }
 
-        dataStoreManager.saveUserSubscriptionStatus(isProActive = expired ?: false)
+        dataStoreManager.saveUserSubscriptionStatus(isProActive = expired?.let { !it } ?: false)
         return expired
     }
 
@@ -196,7 +199,6 @@ class UserRepositoryImpl @Inject constructor(
             val user = response.body()?.data ?: return null
             val backendProductId = user.productId ?: SALESB_PRO_MONTHLY_PRODUCT_ID
             val backendPurchaseToken = user.purchaseToken
-            val backendIsProActive = user.isProActive
 
             googleBillingProvider.loadCatalog(
                 listOf(
@@ -214,7 +216,6 @@ class UserRepositoryImpl @Inject constructor(
             }
 
             when {
-                !backendIsProActive -> true
                 backendPurchaseToken.isNullOrBlank() -> true
                 matchingPurchase == null -> true
                 else -> false

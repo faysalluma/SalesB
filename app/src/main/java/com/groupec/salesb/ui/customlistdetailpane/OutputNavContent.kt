@@ -29,7 +29,8 @@ fun OutputNavContent(
     output: Output? = null,
     onNavigateToDetail: ((Output) -> Unit)? = null,
     onNavigateToHome: (() -> Unit)? = null,
-    onPopBack: (() -> Unit)? = null
+    onPopBack: (() -> Unit)? = null,
+    onNavigateToSubscription: () -> Unit
 ) {
     var selectedOutput by remember { mutableStateOf<Output?>(output) }
     var refreshList by remember { mutableStateOf(false) }
@@ -58,6 +59,7 @@ fun OutputNavContent(
                 },
                 onRemoveSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor },
                 onRefreshList = { refreshList = !refreshList },
+                onNavigateToSubscription = onNavigateToSubscription,
                 onPopBack = onPopBack
             )
         } else {
@@ -67,6 +69,7 @@ fun OutputNavContent(
                     refreshList = refreshList,
                     removeSelectedBgColor = removeSelectedBgColor,
                     fromDetail = fromDetail,
+                    onNavigateToSubscription = onNavigateToSubscription,
                     onViewDetail = { outputItem ->
                         onNavigateToDetail(outputItem)
                     }
@@ -92,7 +95,8 @@ fun ExpandedOutputScreen(
     onViewDetail: (Output) -> Unit,
     onRemoveSelectedBgColor: () -> Unit,
     onRefreshList: () -> Unit,
-    onPopBack: (() -> Unit)? = null
+    onPopBack: (() -> Unit)? = null,
+    onNavigateToSubscription: () -> Unit
 ) {
     var selectedOutput by remember { mutableStateOf<Output?>(null) }
     Row(
@@ -105,6 +109,7 @@ fun ExpandedOutputScreen(
                 snackbarHostState = snackbarHostState,
                 refreshList = refreshList,
                 removeSelectedBgColor = removeSelectedBgColor,
+                onNavigateToSubscription = onNavigateToSubscription,
                 onViewDetail = { outputItem ->
                     selectedOutput = outputItem
                 }

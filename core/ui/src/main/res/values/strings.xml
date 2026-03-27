@@ -122,4 +122,7 @@ You can now start managing your sales and services.</string>
     <string name="offline_error_title">No internet connection</string>
     <string name="offline_error_message_prefix">It seems that you are offline.\nPlease check your connection\nto continue using </string>
     <string name="offline_network_settings">Network settings</string>
+    <string name="pro_feature_required_title">Pro required</string>
+    <string name="pro_feature_required_message">This feature is only available on the Pro version.</string>
+    <string name="pro_feature_required_cta">Upgrade to Pro</string>
 </resources>

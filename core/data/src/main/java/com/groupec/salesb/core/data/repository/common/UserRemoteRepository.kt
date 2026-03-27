@@ -28,7 +28,7 @@ class UserRemoteRepository @Inject constructor(
     @ApplicationContext val context: Context
 ) {
 
-    suspend fun checkLogin(email: String, password: String): Result<Pair<User, Boolean>> {
+    suspend fun checkLogin(email: String, password: String, isProActive: Boolean): Result<Pair<User, Boolean>> {
         return try {
             val response = apiService.getUserByEmail(email)
             if (response.isSuccessful) {
@@ -52,7 +52,7 @@ class UserRemoteRepository @Inject constructor(
                                 when (val parameterResult = chargeParameterIfMissing(user.id)) {
                                     is Result.Error -> Result.Error(parameterResult.exception)
                                     else -> {
-                                        dataStoreManager.setUserConfig(user.toUserStore())
+                                        dataStoreManager.setUserConfig(user.toUserStore().copy(isProActive = isProActive))
                                         Result.Success(user.toUser() to isMainPasswordValid)
                                     }
                                 }

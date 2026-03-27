@@ -14,8 +14,10 @@ import com.groupec.salesb.core.domain.user.GenerateUserListExcelUseCase
 import com.groupec.salesb.core.domain.user.GenerateUserListPdfUseCase
 import com.groupec.salesb.core.domain.user.GetAllUsersUseCase
 import com.groupec.salesb.core.domain.user.GetUserUseCase
+import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.saveExcelToDownloads
 import com.groupec.salesb.core.savePdfToDownloads
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,6 +42,7 @@ class AccountListViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
     private val getAllUsersUseCase: GetAllUsersUseCase,
+    private val getUserStoreUseCase: GetUserStoreUseCase,
     private val generateUserListPdfUseCase: GenerateUserListPdfUseCase,
     private val generateUserListExcelUseCase: GenerateUserListExcelUseCase,
     private val getParameterUseCase: GetParameterUseCase
@@ -64,9 +67,12 @@ class AccountListViewModel @Inject constructor(
     val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
     private val _parameterState = MutableStateFlow(Parameter())
     val parameterState: StateFlow<Parameter> = _parameterState.asStateFlow()
+    private val _userStoreState = MutableStateFlow(UserStore())
+    val userStoreState: StateFlow<UserStore> = _userStoreState.asStateFlow()
 
     init {
         observeParameters()
+        observeUserStore()
         observeTotalUsersCount()
     }
 
@@ -74,6 +80,14 @@ class AccountListViewModel @Inject constructor(
         viewModelScope.launch {
             getParameterUseCase().collectLatest { parameter ->
                 _parameterState.value = parameter
+            }
+        }
+    }
+
+    private fun observeUserStore() {
+        viewModelScope.launch {
+            getUserStoreUseCase().collectLatest { userStore ->
+                _userStoreState.value = userStore
             }
         }
     }

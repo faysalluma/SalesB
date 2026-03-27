@@ -30,6 +30,7 @@ fun CategoryNavContent(
     onNavigateToDetail: ((Category) -> Unit)? = null,
     onNavigateToHome: (() -> Unit)? = null,
     onPopBack: (() -> Unit)? = null,
+    onNavigateToSubscription: () -> Unit,
 ) {
     var selectedCategory by remember { mutableStateOf<Category?>(category) }
     var refreshCategoryList by remember { mutableStateOf(false) }
@@ -58,6 +59,7 @@ fun CategoryNavContent(
                 onRemoveSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor },
                 onRefreshCategoryList = { refreshCategoryList = !refreshCategoryList },
                 onPopBack = onPopBack,
+                onNavigateToSubscription = onNavigateToSubscription,
             )
         } else {
             if (onNavigateToDetail != null) {
@@ -66,6 +68,7 @@ fun CategoryNavContent(
                     refreshCategoryList = refreshCategoryList,
                     removeSelectedBgColor = removeSelectedBgColor,
                     fromDetail = fromDetail,
+                    onNavigateToSubscription = onNavigateToSubscription,
                     onViewDetail = { categoryItem ->
                         onNavigateToDetail(categoryItem)
                     },
@@ -92,6 +95,7 @@ fun ExpandedCategoryScreen(
     onRemoveSelectedBgColor: () -> Unit,
     onRefreshCategoryList: () -> Unit,
     onPopBack: (() -> Unit)? = null,
+    onNavigateToSubscription: () -> Unit,
 ) {
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
     Row(
@@ -104,6 +108,7 @@ fun ExpandedCategoryScreen(
                 snackbarHostState = snackbarHostState,
                 refreshCategoryList = refreshCategoryList,
                 removeSelectedBgColor = removeSelectedBgColor,
+                onNavigateToSubscription = onNavigateToSubscription,
                 onViewDetail = { categoryItem ->
                     selectedCategory = categoryItem
                 },

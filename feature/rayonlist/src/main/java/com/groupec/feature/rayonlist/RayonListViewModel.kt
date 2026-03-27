@@ -14,6 +14,8 @@ import com.groupec.salesb.core.domain.rayon.GetAllRayonsUseCase
 import com.groupec.salesb.core.domain.rayon.GetRayonUseCase
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.model.data.Rayon
+import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
+import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.saveExcelToDownloads
 import com.groupec.salesb.core.savePdfToDownloads
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +38,7 @@ class RayonListViewModel @Inject constructor(
     private val getRayonUseCase: GetRayonUseCase,
     private val deleteRayonUseCase: DeleteRayonUseCase,
     private val getAllRayonsUseCase: GetAllRayonsUseCase,
+    private val getUserStoreUseCase: GetUserStoreUseCase,
     private val generateRayonListPdfUseCase: GenerateRayonListPdfUseCase,
     private val generateRayonListExcelUseCase: GenerateRayonListExcelUseCase,
     private val getParameterUseCase: GetParameterUseCase
@@ -58,10 +61,21 @@ class RayonListViewModel @Inject constructor(
 
     private val _exportExcelUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportExcelUiState: StateFlow<FormUIState<File>> = _exportExcelUiState.asStateFlow()
+    private val _userStoreState = MutableStateFlow(UserStore())
+    val userStoreState: StateFlow<UserStore> = _userStoreState.asStateFlow()
 
     init {
         getRayons()
+        observeUserStore()
         observeTotalRayonsCount()
+    }
+
+    private fun observeUserStore() {
+        viewModelScope.launch {
+            getUserStoreUseCase().collectLatest { userStore ->
+                _userStoreState.value = userStore
+            }
+        }
     }
 
     fun getRayons() {

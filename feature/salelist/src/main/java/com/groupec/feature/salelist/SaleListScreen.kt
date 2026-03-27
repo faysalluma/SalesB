@@ -77,6 +77,7 @@ import com.groupec.salesb.core.ui.ComposableLifecycle
 import com.groupec.salesb.core.ui.InvoiceAction
 import com.groupec.salesb.core.ui.InvoiceContent
 import com.groupec.salesb.core.ui.InvoicingInfoScreen
+import com.groupec.salesb.core.ui.ProFeatureBottomSheet
 import com.groupec.salesb.core.ui.SaleCardList
 import com.groupec.salesb.core.ui.SaleItemDetailProduct
 import kotlinx.coroutines.Dispatchers
@@ -92,6 +93,7 @@ fun SaleListScreen(
     isExpandedWidth: Boolean,
     modifier: Modifier = Modifier,
     navigateToSaleChart: (String, String) -> Unit,
+    onNavigateToSubscription: () -> Unit,
     viewModel: SaleListViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -118,10 +120,12 @@ fun SaleListScreen(
     val saveReceiptToDownloadsState by viewModel.saveReceiptToDownloads.collectAsStateWithLifecycle()
     val exportPdfState by viewModel.exportPdfUiState.collectAsState()
     val exportExcelState by viewModel.exportExcelUiState.collectAsState()
+    val userStore by viewModel.userStoreState.collectAsState()
     val isExporting = exportPdfState is FormUIState.Loading || exportExcelState is FormUIState.Loading
     var showLoadingExportDialog by rememberSaveable { mutableStateOf(true) }
     var showLoadingThermalPrintDialog by rememberSaveable { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
+    var showProBottomSheet by rememberSaveable { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     var pendingExport by remember { mutableStateOf(ExportType.Pdf) }
 
@@ -144,6 +148,25 @@ fun SaleListScreen(
             }
         } else {
             Toast.makeText(context, context.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val launchExport: (ExportType) -> Unit = { exportType ->
+        focusManager.clearFocus()
+        expanded = false
+        if (!userStore.isProActive) {
+            showProBottomSheet = true
+        } else {
+            showLoadingExportDialog = true
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                when (exportType) {
+                    ExportType.Pdf -> viewModel.exportSalesToPdf(context)
+                    ExportType.Excel -> viewModel.exportSalesToExcel(context)
+                }
+            } else {
+                pendingExport = exportType
+                exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
         }
     }
 
@@ -298,6 +321,16 @@ fun SaleListScreen(
         }
     }
 
+    if (showProBottomSheet) {
+        ProFeatureBottomSheet(
+            onDismiss = { showProBottomSheet = false },
+            onUpgradeClick = {
+                showProBottomSheet = false
+                onNavigateToSubscription()
+            }
+        )
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -367,33 +400,13 @@ fun SaleListScreen(
                                             DropdownMenuItem(
                                                 text = { Text(stringResource(R.string.export_to_pdf)) },
                                                 enabled = !isExporting,
-                                        onClick = {
-                                            showLoadingExportDialog = true
-                                            focusManager.clearFocus()
-                                            expanded = false
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                                viewModel.exportSalesToPdf(context)
-                                            } else {
-                                                pendingExport = ExportType.Pdf
-                                                        exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                                    }
-                                                }
+                                                onClick = { launchExport(ExportType.Pdf) }
                                             )
 
                                             DropdownMenuItem(
                                                 text = { Text(stringResource(R.string.exporter_en_excel)) },
                                                 enabled = !isExporting,
-                                        onClick = {
-                                            showLoadingExportDialog = true
-                                            focusManager.clearFocus()
-                                            expanded = false
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                                viewModel.exportSalesToExcel(context)
-                                            } else {
-                                                pendingExport = ExportType.Excel
-                                                        exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                                    }
-                                                }
+                                                onClick = { launchExport(ExportType.Excel) }
                                             )
                                         }
                                     }
@@ -501,33 +514,13 @@ fun SaleListScreen(
                                         DropdownMenuItem(
                                             text = { Text(stringResource(R.string.export_to_pdf)) },
                                             enabled = !isExporting,
-                                        onClick = {
-                                            showLoadingExportDialog = true
-                                            focusManager.clearFocus()
-                                            expanded = false
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                                viewModel.exportSalesToPdf(context)
-                                            } else {
-                                                pendingExport = ExportType.Pdf
-                                                    exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                                }
-                                            }
+                                            onClick = { launchExport(ExportType.Pdf) }
                                         )
 
                                         DropdownMenuItem(
                                             text = { Text(stringResource(R.string.exporter_en_excel)) },
                                             enabled = !isExporting,
-                                        onClick = {
-                                            showLoadingExportDialog = true
-                                            focusManager.clearFocus()
-                                            expanded = false
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                                viewModel.exportSalesToExcel(context)
-                                            } else {
-                                                pendingExport = ExportType.Excel
-                                                    exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                                }
-                                            }
+                                            onClick = { launchExport(ExportType.Excel) }
                                         )
                                     }
                                 }

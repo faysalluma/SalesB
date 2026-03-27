@@ -56,6 +56,7 @@ import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.showDownloadNotification
+import com.groupec.salesb.core.ui.ProFeatureBottomSheet
 import com.groupec.salesb.core.ui.ProductCardList
 
 
@@ -67,6 +68,7 @@ fun ProductListScreen(
     refreshProductList: Boolean,
     removeSelectedBgColor: Boolean,
     fromDetail: Boolean = false,
+    onNavigateToSubscription: () -> Unit,
     onViewDetail: (Product) -> Unit
 ) {
     val context = LocalContext.current
@@ -80,7 +82,9 @@ fun ProductListScreen(
     val exportPdfState by viewModel.exportPdfUiState.collectAsState()
     val exportExcelState by viewModel.exportExcelUiState.collectAsState()
     val parameterState by viewModel.parameterState.collectAsState()
+    val userStore by viewModel.userStoreState.collectAsState()
     var showDialog by rememberSaveable { mutableStateOf(false) }
+    var showProBottomSheet by rememberSaveable { mutableStateOf(false) }
     var productIdLibelle by remember { mutableStateOf(Pair(0, "")) }
     val isRefreshing = products.loadState.refresh is LoadState.Loading
     var isManualRefreshing by remember { mutableStateOf(false) }
@@ -109,6 +113,25 @@ fun ProductListScreen(
             }
         } else {
             Toast.makeText(context, context.getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val launchExport: (ExportType) -> Unit = { exportType ->
+        focusManager.clearFocus()
+        expanded = false
+        if (!userStore.isProActive) {
+            showProBottomSheet = true
+        } else {
+            showLoadingExportDialog = true
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                when (exportType) {
+                    ExportType.Pdf -> viewModel.exportProductsToPdf(context)
+                    ExportType.Excel -> viewModel.exportProductsToExcel(context)
+                }
+            } else {
+                pendingExport = exportType
+                exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
         }
     }
 
@@ -252,6 +275,16 @@ fun ProductListScreen(
         else -> {}
     }
 
+    if (showProBottomSheet) {
+        ProFeatureBottomSheet(
+            onDismiss = { showProBottomSheet = false },
+            onUpgradeClick = {
+                showProBottomSheet = false
+                onNavigateToSubscription()
+            }
+        )
+    }
+
     /*PullToRefreshBox(isRefreshing = isRefreshing *//* isManualRefreshing *//*, onRefresh = {
         // isManualRefreshing = true
         products.refresh()
@@ -282,33 +315,13 @@ fun ProductListScreen(
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.export_to_pdf)) },
                         enabled = !isExporting,
-                        onClick = {
-                            showLoadingExportDialog = true // Show loading
-                            focusManager.clearFocus() // Close keyborad
-                            expanded = false
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                viewModel.exportProductsToPdf(context)
-                            } else {
-                                pendingExport = ExportType.Pdf
-                                exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            }
-                        }
+                        onClick = { launchExport(ExportType.Pdf) }
                     )
 
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.exporter_en_excel)) },
                         enabled = !isExporting,
-                        onClick = {
-                            showLoadingExportDialog = true // Show loading
-                            expanded = false
-                            focusManager.clearFocus()
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                viewModel.exportProductsToExcel(context)
-                            } else {
-                                pendingExport = ExportType.Excel
-                                exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            }
-                        }
+                        onClick = { launchExport(ExportType.Excel) }
                     )
                 }
             }

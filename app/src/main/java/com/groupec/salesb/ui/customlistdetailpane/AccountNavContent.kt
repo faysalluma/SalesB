@@ -30,7 +30,8 @@ fun AccountNavContent(
     account: User? = null,
     onNavigateToDetail: ((User) -> Unit)? = null,
     onNavigateToHome: (() -> Unit)? = null,
-    onPopBack: (() -> Unit)? = null
+    onPopBack: (() -> Unit)? = null,
+    onNavigateToSubscription: () -> Unit
 ) {
     var selectedAccount by remember { mutableStateOf<User?>(account) }
     var refreshAccountList by remember { mutableStateOf(false) }
@@ -56,6 +57,7 @@ fun AccountNavContent(
                 onViewDetail = { user -> selectedAccount = user },
                 onRemoveSelectedBgColor = { removeSelectedBgColor = !removeSelectedBgColor },
                 onRefreshAccounts = { refreshAccountList = !refreshAccountList },
+                onNavigateToSubscription = onNavigateToSubscription,
                 onPopBack = onPopBack
             )
         } else {
@@ -65,6 +67,7 @@ fun AccountNavContent(
                     refreshAccountList = refreshAccountList,
                     removeSelectedBgColor = removeSelectedBgColor,
                     fromDetail = fromDetail,
+                    onNavigateToSubscription = onNavigateToSubscription,
                     onViewDetail = { user ->
                         onNavigateToDetail(user)
                     }
@@ -90,7 +93,8 @@ fun ExpandedAccountScreen(
     onViewDetail: (User) -> Unit,
     onRemoveSelectedBgColor: () -> Unit,
     onRefreshAccounts: () -> Unit,
-    onPopBack: (() -> Unit)? = null
+    onPopBack: (() -> Unit)? = null,
+    onNavigateToSubscription: () -> Unit
 ) {
     var selectedAccount by remember { mutableStateOf<User?>(null) }
     Row(
@@ -103,6 +107,7 @@ fun ExpandedAccountScreen(
                 snackbarHostState = snackbarHostState,
                 refreshAccountList = refreshAccountList,
                 removeSelectedBgColor = removeSelectedBgColor,
+                onNavigateToSubscription = onNavigateToSubscription,
                 onViewDetail = { user ->
                     selectedAccount = user
                 }
@@ -120,5 +125,4 @@ fun ExpandedAccountScreen(
         }
     }
 }
-
 
