@@ -48,21 +48,22 @@ fun ProductTableRow(
 ) {
     val column1Weight = if (showAmount) 0.1f else 0.15f
     val column2Weight = 0.3f
-    val column3Weight = if (showAmount) 0.175f else 0.25f
+    val column3Weight = if (showAmount) 0.275f else 0.4f
     val column4Weight = if (showAmount) 0.175f else 0.3f
     val column5Weight = 0.25f
 
     Row(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.weight(1f)) {
-            TableCell(
+            /*TableCell(
                 text = saleDetail?.id?.toString() ?: "Id",
                 weight = column1Weight,
                 alignment = TextAlign.Left,
                 isTitle = isTitle
-            )
+            )*/
             TableCell(
                 text = saleDetail?.libelle ?: stringResource(R.string.label),
                 weight = column2Weight,
+                alignment = TextAlign.Left,
                 isTitle = isTitle
             )
             TableCell(

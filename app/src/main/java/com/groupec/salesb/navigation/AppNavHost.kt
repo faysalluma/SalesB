@@ -54,7 +54,7 @@ fun AppNavHost(
     snackbarHostState: SnackbarHostState,
     isExpandedWidth: Boolean,
     navController: NavHostController,
-    startDestination: String = NavigationItem.Loading.route
+    startDestination: String
 ) {
     val context = LocalContext.current
 
@@ -155,7 +155,8 @@ fun AppNavHost(
                 },
                 navigateToHome = {
                     navController.navigate(NavigationItem.Home.route) {
-                        popUpTo(NavigationItem.Login.route) {
+                        // Delete the entire background stack
+                        popUpTo(0) {
                             inclusive = true
                         }
                     }

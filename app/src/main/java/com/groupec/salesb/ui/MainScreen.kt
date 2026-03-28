@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -326,6 +327,16 @@ fun MainScreen(
                     onOpenNetworkSettings = openNetworkSettingsAction
                 )
             } else {
+                val startDestination by remember(items, firstLogin, resetPassword) {
+                    derivedStateOf {
+                        when {
+                            items.isEmpty()  || resetPassword.isNotEmpty() ->
+                                NavigationItem.Loading.route
+                            else -> items.first().route
+                        }
+                    }
+                }
+
                 if (
                     shouldShowBarAndRailApp(currentDestination.value, firstLogin, resetPassword) &&
                     isExpandedWidth
@@ -354,7 +365,8 @@ fun MainScreen(
                             ) 0.91f else 1f
                         )
                         .padding(16.dp),
-                    navController = navController
+                    navController = navController,
+                    startDestination = startDestination
                 )
             }
         }

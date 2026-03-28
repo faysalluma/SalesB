@@ -127,17 +127,17 @@ fun TableRow(
 {
 
     val column1Weight = .2f
-    val column2Weight = .45f
-    val column3Weight = .35f
+    val column2Weight = .6f
+    val column3Weight = .4f
 
     Row(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.weight(1f)) {
-            TableCell(
+           /* TableCell(
                 text = sale?.id?.toString() ?: "Id",
                 weight = column1Weight,
                 alignment = TextAlign.Left,
                 isTitle = isTitle
-            )
+            )*/
             TableCell(
                 text =  sale?.datevente?.convertToLocaleDateTimeFormat() ?: "Date" ,
                 weight = column2Weight,
