@@ -39,7 +39,7 @@ fun generateSaleListExcel(
         capitalize = true
     )
     val headers = listOf(
-        context.getString(R.string.id_header),
+        //context.getString(R.string.id_header),
         context.getString(R.string.date_time_header),
         context.getString(R.string.price_header),
         context.getString(R.string.payment_type_header),
@@ -70,7 +70,7 @@ fun generateSaleListExcel(
 
             add(
                 listOf(
-                    sale.id?.toString() ?: none,
+                    //sale.id?.toString() ?: none,
                     sale.datevente?.convertToLocaleDateTimeFormat()?.replace(" - ", " : ") ?: none,
                     sale.totalprix.formatAmount(),
                     sale.paymenttype
