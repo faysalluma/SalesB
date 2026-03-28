@@ -158,7 +158,14 @@ fun getBitmapFromVectorDrawable(context: Context, drawableId: Int): Bitmap {
     return bitmap
 }
 
-fun Double.toPercentFormat() = "${(this * 100).toInt()} %"
+fun Double.toPercentFormat(): String {
+    val formattedValue = if (this % 1.0 == 0.0) {
+        this.toInt().toString()
+    } else {
+        this.autoRound()
+    }
+    return "$formattedValue %"
+}
 
 fun Double.toWordsWithIcuRespectingFrOrEn(): String {
     val locale = if (Locale.getDefault().language == "fr") Locale.FRENCH else Locale.ENGLISH
