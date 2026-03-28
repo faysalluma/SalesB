@@ -174,9 +174,9 @@ fun generateInvoicePdf(
     document.add(Paragraph("\n"))
 
     // Product Table
-    val productTable = Table(UnitValue.createPercentArray(floatArrayOf(1f, 3f, 2f, 2f, 2f)))
+    val productTable = Table(UnitValue.createPercentArray(floatArrayOf(3f, 2f, 2f, 3f)))
         .useAllAvailableWidth()
-    productTable.addHeaderCell(createCell("ID", true))
+    // productTable.addHeaderCell(createCell("ID", true))
     productTable.addHeaderCell(createCell(context.getString(R.string.label), true))
     productTable.addHeaderCell(createCell(context.getString(R.string.price), true))
     productTable.addHeaderCell(createCell(context.getString(R.string.quantity), true))
@@ -186,7 +186,7 @@ fun generateInvoicePdf(
     for (detail in sale.details) {
         val montant = detail.qte * detail.prix
         totalSale += montant
-        productTable.addCell(createCell(detail.id.toString()))
+        //  productTable.addCell(createCell(detail.id.toString()))
         productTable.addCell(createCell(detail.libelle ?: ""))
         productTable.addCell(createCell(detail.prix.formatAmount(forceStyleFrenchUseDot = true)))
         productTable.addCell(createCell(detail.qte.toString()))

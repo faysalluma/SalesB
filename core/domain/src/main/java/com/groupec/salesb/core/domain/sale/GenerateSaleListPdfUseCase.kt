@@ -97,15 +97,15 @@ fun generateSaleListPdf(
 
     document.add(Paragraph("\n"))
 
-    val saleTable = Table(UnitValue.createPercentArray(floatArrayOf(1.5f, 2f, 2f, 4.5f)))
+    val saleTable = Table(UnitValue.createPercentArray(floatArrayOf(2.5f, 2.5f, 5f)))
         .useAllAvailableWidth()
-    saleTable.addHeaderCell(createCell(context.getString(R.string.id_header), isHeader = true))
+    // saleTable.addHeaderCell(createCell(context.getString(R.string.id_header), isHeader = true))
     saleTable.addHeaderCell(createCell(context.getString(R.string.date_time_header), isHeader = true))
     saleTable.addHeaderCell(createCell(context.getString(R.string.amount), isHeader = true))
     saleTable.addHeaderCell(createCell(context.getString(R.string.details), isHeader = true))
 
     sales.forEach { sale ->
-        saleTable.addCell(createCell(sale.id?.toString() ?: "-"))
+        // saleTable.addCell(createCell(sale.id?.toString() ?: "-"))
         saleTable.addCell(createCell(sale.datevente?.convertToLocaleDateTimeFormat()?.replace(" - ", " : ") ?: "-"))
         saleTable.addCell(createCell(sale.totalprix.formatAmount().plus(" $devise")))
         saleTable.addCell(createCell(buildSaleDetails(context, sale, isServiceView), fontSize = 9f))
