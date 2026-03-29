@@ -87,6 +87,7 @@ fun HomeScreen(
     ) { }
     val userStoreState by viewModel.userStore.collectAsStateWithLifecycle()
     val chartValuesState by viewModel.chartValues.collectAsStateWithLifecycle()
+    val selectedPeriod by viewModel.selectedPeriod.collectAsStateWithLifecycle()
     val privileges = userStoreState.getPrivileges()
     val parameterState by viewModel.parameter.collectAsStateWithLifecycle()
 
@@ -102,16 +103,8 @@ fun HomeScreen(
     }
 
     ComposableLifecycle(
-        onCreate = {
-            val startDate = Period.Today.startDate
-            val endDate = Period.Today.endDate
-            viewModel.apply {
-                getTotalSale(startDate, endDate)
-                getTopSaleProducts(startDate, endDate)
-                getTotalProduct()
-                getTotalAlertSeuil()
-                getChartDataToday(context, startDate)
-            }
+        onResume = {
+            viewModel.refreshDashboard(context)
         }
     )
 
@@ -147,7 +140,14 @@ fun HomeScreen(
                     )
                 }
             ) {
-                HeadLigne(context, viewModel,parameterState, privileges, navigateToSaleList)
+                HeadLigne(
+                    context = context,
+                    viewModel = viewModel,
+                    parameter = parameterState,
+                    privileges = privileges,
+                    navigateToSaleList = navigateToSaleList,
+                    selectedPeriod = selectedPeriod
+                )
             }
 
             // Periodic statistic
@@ -197,14 +197,15 @@ fun HeadLigne(
     viewModel: HomeViewModel,
     parameter: Parameter,
     privileges: List<String>,
-    navigateToSaleList: () -> Unit
+    navigateToSaleList: () -> Unit,
+    selectedPeriod: Period
 ) {
     val totalAmountOutputState by viewModel.totalAmountOutputs.collectAsStateWithLifecycle()
     val totalAmountSalesState by viewModel.totalAmountSales.collectAsStateWithLifecycle()
     val profits by remember { derivedStateOf { totalAmountSalesState - totalAmountOutputState } }
 
     val periodList = Period.entries.map { it.getTitle(context) }
-    var periodValue by rememberSaveable { mutableStateOf(periodList[1]) }
+    val periodValue = selectedPeriod.getTitle(context)
     val profitColor = if (profits >= 0) Green else Red
 
     ExpandedLayout(
@@ -215,7 +216,11 @@ fun HeadLigne(
         profitColor = profitColor,
         periodList = periodList,
         periodValue = periodValue,
-        onPeriodChange = { periodValue = it },
+        onPeriodChange = { newPeriod ->
+            Period.entries.firstOrNull { it.getTitle(context) == newPeriod }?.let { period ->
+                viewModel.onPeriodChange(period, context)
+            }
+        },
         viewModel = viewModel,
         privileges = privileges,
         navigateToSaleList = navigateToSaleList
@@ -286,16 +291,7 @@ private fun ExpandedLayout(
                     value = periodValue,
                     onValueChange = { newPeriod -> onPeriodChange(newPeriod) }
                 ) { index, _ ->
-                    val startDate = Period.entries[index].startDate
-                    val endDate = Period.entries[index].endDate
-                    viewModel.apply {
-                        getTotalSale(startDate, endDate)
-                        getTopSaleProducts(startDate, endDate)
-                        when (Period.entries[index]) {
-                            Period.Yesterday, Period.Today -> getChartDataToday(context, startDate)
-                            Period.Week, Period.Month -> getChartDataByDate(startDate, endDate)
-                        }
-                    }
+                    viewModel.onPeriodChange(Period.entries[index], context)
                 }
             }
 

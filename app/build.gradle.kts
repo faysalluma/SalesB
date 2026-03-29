@@ -63,7 +63,7 @@ android {
 
             // Definies config data
             buildConfigField("boolean", "ENABLE_CRASH_REPORTING", "true")
-            buildConfigField("String", "SERVER_URL", "\"https://salesbstoreapi.groupec.net/\"")
+            buildConfigField("String", "SERVER_URL", "\"https://salesbapi.groupec.net/\"")
             buildConfigField("int", "NETWORK_TIMEOUT_SECONDS", "30")
             manifestPlaceholders["usesCleartextTraffic"] = "false"
         }
