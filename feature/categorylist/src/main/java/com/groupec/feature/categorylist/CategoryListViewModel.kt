@@ -110,6 +110,7 @@ class CategoryListViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = deleteCategoryUseCase(id)) {
                 is Result.Success -> {
+                    _totalCategoriesCount.value = (_totalCategoriesCount.value - 1).coerceAtLeast(0)
                     _deleteCategoryUiState.value = FormUIState.Success(Unit)
                 }
 

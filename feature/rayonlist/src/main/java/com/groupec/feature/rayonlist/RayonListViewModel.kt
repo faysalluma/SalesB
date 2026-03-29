@@ -120,6 +120,7 @@ class RayonListViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = deleteRayonUseCase(id)) {
                 is Result.Success -> {
+                    _totalRayonsCount.value = (_totalRayonsCount.value - 1).coerceAtLeast(0)
                     _deleteRayonUiState.value = FormUIState.Success(Unit)
                 }
 

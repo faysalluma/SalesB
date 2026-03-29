@@ -110,6 +110,7 @@ class OutputListViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = deleteOutputUseCase(id)) {
                 is Result.Success -> {
+                    _totalOutputsCount.value = (_totalOutputsCount.value - 1).coerceAtLeast(0)
                     _deleteOutputUiState.value = FormUIState.Success(Unit)
                 }
 
