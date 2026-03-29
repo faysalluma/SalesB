@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
@@ -116,11 +117,14 @@ fun SaleListScreen(
     var showInvoice by rememberSaveable { mutableStateOf(false) }
     var sendByEmail by rememberSaveable { mutableStateOf(false) }
     val saveReceiptToDownloadsState by viewModel.saveReceiptToDownloads.collectAsStateWithLifecycle()
+    val invoicePrintUiState by viewModel.invoicePrintUiState.collectAsStateWithLifecycle()
+    val sendInvoiceEmailUiState by viewModel.sendInvoiceEmailUiState.collectAsStateWithLifecycle()
     val exportPdfState by viewModel.exportPdfUiState.collectAsState()
     val exportExcelState by viewModel.exportExcelUiState.collectAsState()
     val isExporting = exportPdfState is FormUIState.Loading || exportExcelState is FormUIState.Loading
     var showLoadingExportDialog by rememberSaveable { mutableStateOf(true) }
     var showLoadingThermalPrintDialog by rememberSaveable { mutableStateOf(false) }
+    var showLoadingInvoiceActionDialog by rememberSaveable { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     var pendingExport by remember { mutableStateOf(ExportType.Pdf) }
@@ -128,8 +132,10 @@ fun SaleListScreen(
     // When save to Downloads notify user
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) {
+            showLoadingInvoiceActionDialog = true
             viewModel.savePdfToDownloads(context, saleGetValue!!, parameter, invoicingGetValue!!)
         } else {
+            showLoadingInvoiceActionDialog = false
             Toast.makeText(context, "Permission denied", Toast.LENGTH_SHORT).show()
         }
     }
@@ -155,8 +161,12 @@ fun SaleListScreen(
     )
 
     when (saveReceiptToDownloadsState) {
+        is FormUIState.Loading -> {
+            showLoadingInvoiceActionDialog = true
+        }
         is FormUIState.Success -> {
             LaunchedEffect(Unit) {
+                showLoadingInvoiceActionDialog = false
                 val file = (saveReceiptToDownloadsState as FormUIState.Success).data
                 context.showDownloadNotification(
                     file = file,
@@ -169,16 +179,71 @@ fun SaleListScreen(
                         message = context.getString(R.string.donwload_completed_and_save)
                     )
                 )
+                viewModel.resetInvoiceActionState()
             }
         }
         is FormUIState.Error -> {
             LaunchedEffect(Unit) {
+                showLoadingInvoiceActionDialog = false
                 snackbarHostState.showSnackbar(
                     SnackbarVisualsWithState(
                         message =(saveReceiptToDownloadsState as FormUIState.Error).message,
                         isError = true
                     )
                 )
+                viewModel.resetInvoiceActionState()
+            }
+        }
+
+        else -> {}
+    }
+
+    when (invoicePrintUiState) {
+        is FormUIState.Loading -> {
+            showLoadingInvoiceActionDialog = true
+        }
+        is FormUIState.Success -> {
+            LaunchedEffect(Unit) {
+                showLoadingInvoiceActionDialog = false
+                viewModel.resetInvoiceActionState()
+            }
+        }
+        is FormUIState.Error -> {
+            LaunchedEffect(Unit) {
+                showLoadingInvoiceActionDialog = false
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = (invoicePrintUiState as FormUIState.Error).message,
+                        isError = true
+                    )
+                )
+                viewModel.resetInvoiceActionState()
+            }
+        }
+
+        else -> {}
+    }
+
+    when (sendInvoiceEmailUiState) {
+        is FormUIState.Loading -> {
+            showLoadingInvoiceActionDialog = true
+        }
+        is FormUIState.Success -> {
+            LaunchedEffect(Unit) {
+                showLoadingInvoiceActionDialog = false
+                viewModel.resetInvoiceActionState()
+            }
+        }
+        is FormUIState.Error -> {
+            LaunchedEffect(Unit) {
+                showLoadingInvoiceActionDialog = false
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithState(
+                        message = (sendInvoiceEmailUiState as FormUIState.Error).message,
+                        isError = true
+                    )
+                )
+                viewModel.resetInvoiceActionState()
             }
         }
 
@@ -701,13 +766,14 @@ fun SaleListScreen(
                                 InvoicingInfoScreen(sendByEmail = sendByEmail) { invoicingData ->
                                     invoicingGetValue = invoicingData
                                     if (sendByEmail && saleGetValue != null) {
+                                        showInvoiceDialog = false
+                                        showLoadingInvoiceActionDialog = true
                                         viewModel.sendByEmail(
                                             activityContext = context,
                                             sale = saleGetValue!!,
                                             parameter = parameter,
                                             invoicing = invoicingData
                                         )
-                                        showInvoiceDialog = false
                                     } else if (!sendByEmail) {
                                         showInvoice = true // Show Invoice content that will be printed
                                     }
@@ -730,11 +796,13 @@ fun SaleListScreen(
                                                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                                                     launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                                 } else {
+                                                    showLoadingInvoiceActionDialog = true
                                                     viewModel.savePdfToDownloads(context, saleGetValue!!, parameter, invoicingGetValue!!)
                                                 }
                                             },
                                             onPrint = {
                                                 showInvoiceDialog = false
+                                                showLoadingInvoiceActionDialog = true
                                                 viewModel.onPrint(context, saleGetValue!!, parameter, invoicingGetValue!!)
                                             },
                                         )

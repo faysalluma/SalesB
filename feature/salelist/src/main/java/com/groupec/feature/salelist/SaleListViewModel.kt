@@ -92,6 +92,12 @@ class SaleListViewModel @Inject constructor(
     private val _saveReceiptToDownloads = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val saveReceiptToDownloads: StateFlow<FormUIState<File>> = _saveReceiptToDownloads.asStateFlow()
 
+    private val _invoicePrintUiState = MutableStateFlow<FormUIState<Unit>>(FormUIState.Idle)
+    val invoicePrintUiState: StateFlow<FormUIState<Unit>> = _invoicePrintUiState.asStateFlow()
+
+    private val _sendInvoiceEmailUiState = MutableStateFlow<FormUIState<Unit>>(FormUIState.Idle)
+    val sendInvoiceEmailUiState: StateFlow<FormUIState<Unit>> = _sendInvoiceEmailUiState.asStateFlow()
+
     private val _exportPdfUiState = MutableStateFlow<FormUIState<File>>(FormUIState.Idle)
     val exportPdfUiState: StateFlow<FormUIState<File>> = _exportPdfUiState.asStateFlow()
 
@@ -258,6 +264,7 @@ class SaleListViewModel @Inject constructor(
 
     fun onPrint(activityContext: Context, sale: Sale, parameter: Parameter, invoicing: Invoicing) {
         viewModelScope.launch {
+            _invoicePrintUiState.value = FormUIState.Loading
             runCatching {
                 val pdfBytes = generatePdf(activityContext, sale, parameter, invoicing)
 
@@ -265,8 +272,9 @@ class SaleListViewModel @Inject constructor(
                 val printManager =
                     activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager
                 printManager.print("MyPdfJob", printAdapter, null)
+                _invoicePrintUiState.value = FormUIState.Success(Unit)
             }.onFailure { exception ->
-                _saveReceiptToDownloads.value = FormUIState.Error(
+                _invoicePrintUiState.value = FormUIState.Error(
                     exception.localizedMessage ?: "Error when opening the system print dialog"
                 )
             }
@@ -280,6 +288,7 @@ class SaleListViewModel @Inject constructor(
         invoicing: Invoicing
     ) {
         viewModelScope.launch {
+            _sendInvoiceEmailUiState.value = FormUIState.Loading
             runCatching {
                 val pdfBytes = generatePdf(activityContext, sale, parameter, invoicing)
                 val file = withContext(Dispatchers.IO) {
@@ -297,8 +306,9 @@ class SaleListViewModel @Inject constructor(
                     body = activityContext.getString(R.string.your_invoice_body),
                     attachment = file
                 )
+                _sendInvoiceEmailUiState.value = FormUIState.Success(Unit)
             }.onFailure { exception ->
-                _saveReceiptToDownloads.value = FormUIState.Error(
+                _sendInvoiceEmailUiState.value = FormUIState.Error(
                     exception.localizedMessage ?: "Error when preparing the invoice email"
                 )
             }
@@ -344,6 +354,12 @@ class SaleListViewModel @Inject constructor(
 
     fun resetExportExcelState() {
         _exportExcelUiState.value = FormUIState.Idle
+    }
+
+    fun resetInvoiceActionState() {
+        _saveReceiptToDownloads.value = FormUIState.Idle
+        _invoicePrintUiState.value = FormUIState.Idle
+        _sendInvoiceEmailUiState.value = FormUIState.Idle
     }
 
     private fun observeSalesSummary() {
