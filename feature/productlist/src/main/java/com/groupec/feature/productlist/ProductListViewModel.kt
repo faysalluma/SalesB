@@ -110,6 +110,7 @@ class ProductListViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = deleteProductUseCase(id)) {
                 is Result.Success -> {
+                    _totalProductsCount.value = (_totalProductsCount.value - 1).coerceAtLeast(0)
                     _deleteProductUiState.value = FormUIState.Success(Unit)
                 }
 

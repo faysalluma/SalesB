@@ -109,6 +109,7 @@ class AccountListViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = deleteUserUseCase(id)) {
                 is Result.Success -> {
+                    _totalUsersCount.value = (_totalUsersCount.value - 1).coerceAtLeast(0)
                     _deleteUserUiState.value = FormUIState.Success(Unit)
                 }
 
