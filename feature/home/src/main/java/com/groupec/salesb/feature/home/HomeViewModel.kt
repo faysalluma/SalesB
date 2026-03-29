@@ -4,6 +4,7 @@ package com.groupec.salesb.feature.home
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.groupec.salesb.core.Period
 import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.asResult
 import com.groupec.salesb.core.domain.statistic.GetTotalAmountSaleUseCase
@@ -73,6 +74,9 @@ class HomeViewModel @Inject constructor(
 
     private val _chartValues = MutableStateFlow<List<Pair<String, Double>>>(emptyList())
     val chartValues : StateFlow<List<Pair<String, Double>>> = _chartValues.asStateFlow()
+
+    private val _selectedPeriod = MutableStateFlow(Period.Today)
+    val selectedPeriod: StateFlow<Period> = _selectedPeriod.asStateFlow()
 
     private val _productsWithLowInventoryUiState = MutableStateFlow<UIState<List<Product>>>(UIState.Loading)
     val productsWithLowInventoryUiState: StateFlow<UIState<List<Product>>> = _productsWithLowInventoryUiState.asStateFlow()
@@ -146,6 +150,27 @@ class HomeViewModel @Inject constructor(
     fun getChartDataByDate(startDate: String, endDate: String) {
         viewModelScope.launch {
             _chartValues.value = getTotalSaleByDateUseCase(startDate, endDate).first()
+        }
+    }
+
+    fun onPeriodChange(period: Period, context: Context) {
+        _selectedPeriod.value = period
+        refreshDashboard(context)
+    }
+
+    fun refreshDashboard(context: Context) {
+        val period = _selectedPeriod.value
+        val startDate = period.startDate
+        val endDate = period.endDate
+
+        getTotalSale(startDate, endDate)
+        getTopSaleProducts(startDate, endDate)
+        getTotalProduct()
+        getTotalAlertSeuil()
+
+        when (period) {
+            Period.Yesterday, Period.Today -> getChartDataToday(context, startDate)
+            Period.Week, Period.Month -> getChartDataByDate(startDate, endDate)
         }
     }
 
