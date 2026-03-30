@@ -6,7 +6,8 @@ data class UserStore(
     val privilege: String = "",
     val firstLogin: Boolean = false,
     val reset_password: String = "",
-    val isProActive: Boolean = false
+    val isProActive: Boolean = false,
+    val purchaseexpdate: String = ""
 ) {
     fun getPrivileges(): List<String> = privilege.takeIf { it.isNotEmpty() }?.toStringList() ?: listOf()
 }

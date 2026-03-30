@@ -14,7 +14,7 @@ import com.groupec.salesb.core.data.repository.common.UserLocalRepository
 import com.groupec.salesb.core.data.repository.common.UserRemoteRepository
 import com.groupec.salesb.core.data.repository.common.UserSyncRepository
 import com.groupec.salesb.core.datastore.DataStoreManager
- import com.groupec.salesb.core.googlebilling.GoogleBillingProductRequest
+import com.groupec.salesb.core.googlebilling.GoogleBillingProductRequest
 import com.groupec.salesb.core.googlebilling.GoogleBillingProductTypes
 import com.groupec.salesb.core.googlebilling.GoogleBillingProvider
 import com.groupec.salesb.core.model.data.User
@@ -100,7 +100,7 @@ class UserRepositoryImpl @Inject constructor(
                 return Result.Error(Exception(context.getString(R.string.error_user_not_found)))
             }
 
-            val isProActive =  isExpired(id.toString())?.let { !it } ?: false
+            val isProActive =  checkIfSubscriptionExpired(id.toString())?.let { !it } ?: false
             dataStoreManager.setUserConfig(user.toUserStore().copy(isProActive = isProActive))
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -158,7 +158,7 @@ class UserRepositoryImpl @Inject constructor(
             userLocalRepository.checkLogin(email, password)
         } else {
             val userId = dataStoreManager.userFlow.first().id.takeIf { it.isNotEmpty() }
-            val isProActive =  isExpired(userId.toString())?.let { !it } ?: false
+            val isProActive =  checkIfSubscriptionExpired(userId.toString())?.let { !it } ?: false
             userRemoteRepository.checkLogin(email, password, isProActive)
         }
     }
@@ -169,13 +169,14 @@ class UserRepositoryImpl @Inject constructor(
         val lastCheck = subscription.last_sub_check
 
         // Si la dernière vérification date de moins de 24h → renvoyer le statut stocké
-        if (now - lastCheck < 24 * 60 * 60 * 1000L) {
+        val oneMonthMillis = 30L * 24 * 60 * 60 * 1000
+        if (now - lastCheck < oneMonthMillis) {
             return subscription.last_sub_status
         }
 
         // Sinon faire un nouveau check
         val userId = dataStoreManager.userFlow.first().id.takeIf { it.isNotEmpty() }
-        val expired = userId?.let { isExpired(it) }
+        val expired = userId?.let { checkIfSubscriptionExpired(it) }
 
         // Mettre à jour le cache seulement si on a une réponse valide
         if (expired != null) {
@@ -191,7 +192,7 @@ class UserRepositoryImpl @Inject constructor(
         return expired
     }
 
-    suspend fun isExpired(userId: String): Boolean? {
+    suspend fun checkIfSubscriptionExpired(userId: String): Boolean? {
         return try {
             val response = apiService.getUserById(userId.toInt())
             if (!response.isSuccessful) return null
@@ -272,8 +273,7 @@ class UserRepositoryImpl @Inject constructor(
                 return Result.Error(HttpException(response))
             }
 
-            val body = response.body()
-                ?: return Result.Error(Exception(context.getString(R.string.error_empty_response)))
+            response.body() ?: return Result.Error(Exception(context.getString(R.string.error_empty_response)))
 
             Result.Success(Unit)
         } catch (e: Exception) {

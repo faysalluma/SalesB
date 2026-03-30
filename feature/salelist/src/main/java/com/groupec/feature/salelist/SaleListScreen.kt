@@ -732,11 +732,11 @@ fun SaleListScreen(
                                         sendByEmail = false
                                     }
                                     PrintAction.Thermal -> {
-                                        if (!userStore.isProActive) {
+                                        /*if (!userStore.isProActive) {
                                             proBottomSheetTitle = receiptPrintTitle
                                             showProBottomSheet = true
                                             return@SaleCardList
-                                        }
+                                        }*/
                                         showLoadingThermalPrintDialog = true
                                         scope.launch {
                                             val result = withContext(Dispatchers.IO) {
