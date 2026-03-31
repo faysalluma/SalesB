@@ -10,6 +10,9 @@ import com.groupec.salesb.core.data.model.toUserStore
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.fixBCryptHash
 import com.groupec.salesb.core.getDateTimeByNtp
+import com.groupec.salesb.core.googlebilling.GoogleBillingProductRequest
+import com.groupec.salesb.core.googlebilling.GoogleBillingProductTypes
+import com.groupec.salesb.core.googlebilling.GoogleBillingProvider
 import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.network.retrofit.ApiService
 import com.groupec.salesb.core.network.retrofit.common.executeApiCall
@@ -25,10 +28,11 @@ import javax.inject.Singleton
 class UserRemoteRepository @Inject constructor(
     private val apiService: ApiService,
     private val dataStoreManager: DataStoreManager,
-    @ApplicationContext val context: Context
+    @ApplicationContext val context: Context,
+    private val googleBillingProvider: GoogleBillingProvider
 ) {
 
-    suspend fun checkLogin(email: String, password: String, isProActive: Boolean): Result<Pair<User, Boolean>> {
+    suspend fun checkLogin(email: String, password: String): Result<Pair<User, Boolean>> {
         return try {
             val response = apiService.getUserByEmail(email)
             if (response.isSuccessful) {
@@ -52,6 +56,7 @@ class UserRemoteRepository @Inject constructor(
                                 when (val parameterResult = chargeParameterIfMissing(user.id)) {
                                     is Result.Error -> Result.Error(parameterResult.exception)
                                     else -> {
+                                        val isProActive =  checkIfSubscriptionExpired(user.id.toString())?.let { !it } ?: false
                                         dataStoreManager.setUserConfig(user.toUserStore().copy(isProActive = isProActive))
                                         Result.Success(user.toUser() to isMainPasswordValid)
                                     }
@@ -146,6 +151,44 @@ class UserRemoteRepository @Inject constructor(
                 )
             }
         }
+    }
+
+    suspend fun checkIfSubscriptionExpired(userId: String): Boolean? {
+        return try {
+            val response = apiService.getUserById(userId.toInt())
+            if (!response.isSuccessful) return null
+
+            val user = response.body()?.data ?: return null
+            val backendProductId = user.billingproductid ?: SALESB_PRO_MONTHLY_PRODUCT_ID
+            val backendPurchaseToken = user.purchasetoken
+            println("toto3 ${user.billingproductid} - ${user.purchasetoken} ")
+            googleBillingProvider.loadCatalog(
+                listOf(
+                    GoogleBillingProductRequest(
+                        productId = backendProductId,
+                        productType = GoogleBillingProductTypes.SUBS
+                    )
+                )
+            )
+            
+            val matchingPurchase = googleBillingProvider.purchaseState.value.purchases.firstOrNull { purchase ->
+                !purchase.isPending
+                        && purchase.purchaseToken == backendPurchaseToken &&
+                        backendProductId in purchase.productIds
+            }
+            println("toto5 ")
+            when {
+                backendPurchaseToken.isNullOrBlank() -> true
+                matchingPurchase == null -> true
+                else -> false
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private companion object {
+        const val SALESB_PRO_MONTHLY_PRODUCT_ID = "salesb_pro_monthly"
     }
 
     /*

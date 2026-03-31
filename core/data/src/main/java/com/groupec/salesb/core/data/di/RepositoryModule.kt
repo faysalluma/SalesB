@@ -62,8 +62,7 @@ class RepositoryModule  {
         dataStoreManager: DataStoreManager,
         userLocalRepository: UserLocalRepository,
         userRemoteRepository: UserRemoteRepository,
-        userSyncRepository: UserSyncRepository,
-        googleBillingProvider: GoogleBillingProvider
+        userSyncRepository: UserSyncRepository
     ) : UserRepository {
         return UserRepositoryImpl(
             context,
@@ -71,8 +70,7 @@ class RepositoryModule  {
             dataStoreManager,
             userLocalRepository,
             userRemoteRepository,
-            userSyncRepository,
-            googleBillingProvider
+            userSyncRepository
         )
     }
 

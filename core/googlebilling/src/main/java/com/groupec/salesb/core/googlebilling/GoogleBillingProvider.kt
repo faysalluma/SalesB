@@ -362,13 +362,13 @@ class GoogleBillingProvider @Inject constructor(
                     if (!purchase.isAcknowledged) {
                         val acknowledgeResult = acknowledgePurchase(purchase.purchaseToken)
                         if (acknowledgeResult.responseCode != BillingClient.BillingResponseCode.OK) {
-                            _events.tryEmit(
+                           /* _events.tryEmit(
                                 GoogleBillingEvent.Error(
                                     acknowledgeResult.debugMessage.ifBlank {
                                         "Unable to acknowledge the Google Play purchase."
                                     }
                                 )
-                            )
+                            )*/
                             return@forEach
                         }
                     }

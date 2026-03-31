@@ -47,11 +47,11 @@ data class UserItemResponse(
     @SerializedName("datemodif")
     val datemodif: Date ? = null,
 
-    @SerializedName("productId")
-    val productId: String? = null,
+    @SerializedName("billingproductid")
+    val billingproductid: String? = null,
 
-    @SerializedName("purchaseToken")
-    val purchaseToken: String? = null,
+    @SerializedName("purchasetoken")
+    val purchasetoken: String? = null,
 )
 
 data class UserReducedResponse(

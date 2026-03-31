@@ -30,6 +30,7 @@
     <string name="subscription_pro_feature_receipt">Impression de reçu</string>
     <string name="subscription_pro_feature_stats">Statistiques complètes</string>
     <string name="subscription_purchase_success">Votre abonnement SalesB Pro est maintenant actif.</string>
+    <string name="subscription_purchase_success_with_error">Votre abonnement à SalesB Pro est actif. Suite à un problème réseau, veuillez vous reconnecter pour qu’il apparaisse correctement.</string>
     <string name="subscription_purchase_pending">Votre achat est en attente de confirmation par Google Play.</string>
     <string name="subscription_purchase_cancelled">Achat annulé.</string>
     <string name="subscription_purchase_error">Impossible de démarrer le paiement Google Play.</string>

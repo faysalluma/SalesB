@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.domain.user.UpdateUserSubscriptionStatusUseCase
 import com.groupec.salesb.core.googlebilling.GoogleBillingEvent
@@ -42,14 +41,6 @@ class SubscriptionViewModel @Inject constructor(
         observePurchases()
         observeBillingEvents()
         refresh()
-    }
-
-    private fun getParameters() {
-        viewModelScope.launch {
-            getParameterUseCase().collectLatest { parameter ->
-                _parameterSate.value = parameter
-            }
-        }
     }
 
     fun refresh() {

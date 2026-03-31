@@ -54,7 +54,7 @@ fun AppNavHost(
     snackbarHostState: SnackbarHostState,
     isExpandedWidth: Boolean,
     navController: NavHostController,
-    startDestination: String
+    startDestination: String = NavigationItem.Loading.route
 ) {
     val context = LocalContext.current
 
