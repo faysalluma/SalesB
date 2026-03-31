@@ -167,29 +167,19 @@ class GoogleBillingProvider @Inject constructor(
             return
         }
 
+        _purchaseState.update { it.copy(isRefreshing = true) }
+
         val connectionResult = connectIfNeeded()
         if (connectionResult.responseCode != BillingClient.BillingResponseCode.OK) {
-            _events.tryEmit(
-                GoogleBillingEvent.Error(
-                    connectionResult.debugMessage.ifBlank { "Unable to connect to Google Play." }
-                )
-            )
+            _purchaseState.update { it.copy(isRefreshing = false) }
             return
         }
-
-        _purchaseState.update { it.copy(isRefreshing = true) }
 
         val allPurchases = mutableListOf<GoogleBillingPurchase>()
         trackedProductTypes.forEach { productType ->
             val purchaseResult = queryPurchases(productType)
             if (purchaseResult.billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
-                _events.tryEmit(
-                    GoogleBillingEvent.Error(
-                        purchaseResult.billingResult.debugMessage.ifBlank {
-                            "Unable to refresh Google Play purchases."
-                        }
-                    )
-                )
+                _purchaseState.update { it.copy(isRefreshing = false) }
                 return@forEach
             }
 

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.domain.user.UpdateUserSubscriptionStatusUseCase
 import com.groupec.salesb.core.googlebilling.GoogleBillingEvent
@@ -161,7 +162,7 @@ class SubscriptionViewModel @Inject constructor(
                             it.copy(
                                 isPurchaseInProgress = false,
                                 pendingMessage = context.getString(R.string.subscription_purchase_cancelled),
-                                pendingMessageIsError = false
+                                pendingMessageIsError = true
                             )
                         }
                     }

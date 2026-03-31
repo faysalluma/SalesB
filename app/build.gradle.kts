@@ -23,7 +23,7 @@ android {
     defaultConfig {
         applicationId = "com.groupec.salesb"
         targetSdk = libs.versions.compileSdk.get().toInt()
-        versionCode = 2
+        versionCode = 3
         versionName = libs.versions.versionName.get()
 
         vectorDrawables {
