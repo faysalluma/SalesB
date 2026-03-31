@@ -80,7 +80,7 @@ fun SubscriptionScreen(
             snackbarHostState.showSnackbar(
                 SnackbarVisualsWithState(
                     message = message,
-                    isError = uiState.errorMessage != null
+                    isError = uiState.pendingMessageIsError
                 )
             )
             viewModel.consumeMessage()

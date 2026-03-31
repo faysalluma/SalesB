@@ -80,9 +80,8 @@ class SubscriptionViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isPurchaseInProgress = false,
-                        pendingMessage = billingResult.debugMessage.ifBlank {
-                            context.getString(R.string.subscription_purchase_error)
-                        }
+                        pendingMessage = billingResult.debugMessage.toUserBillingMessage(context),
+                        pendingMessageIsError = true
                     )
                 }
             }
@@ -90,7 +89,7 @@ class SubscriptionViewModel @Inject constructor(
     }
 
     fun consumeMessage() {
-        _uiState.update { it.copy(pendingMessage = null) }
+        _uiState.update { it.copy(pendingMessage = null, pendingMessageIsError = false) }
     }
 
     private fun observeCatalog() {
@@ -107,6 +106,8 @@ class SubscriptionViewModel @Inject constructor(
                         proPeriodLabel = proProduct?.billingPeriod.toLocalizedPeriod(context),
                         isProPlanAvailable = proProduct != null,
                         errorMessage = catalogState.errorMessage
+                            ?.toUserBillingMessage(context)
+                            ?.takeIf { proProduct == null }
                     )
                 }
             }
@@ -139,7 +140,8 @@ class SubscriptionViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isPurchaseInProgress = false,
-                                pendingMessage = context.getString(R.string.subscription_purchase_success)
+                                pendingMessage = context.getString(R.string.subscription_purchase_success),
+                                pendingMessageIsError = false
                             )
                         }
                     }
@@ -148,7 +150,8 @@ class SubscriptionViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isPurchaseInProgress = false,
-                                pendingMessage = context.getString(R.string.subscription_purchase_pending)
+                                pendingMessage = context.getString(R.string.subscription_purchase_pending),
+                                pendingMessageIsError = false
                             )
                         }
                     }
@@ -157,7 +160,8 @@ class SubscriptionViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isPurchaseInProgress = false,
-                                pendingMessage = context.getString(R.string.subscription_purchase_cancelled)
+                                pendingMessage = context.getString(R.string.subscription_purchase_cancelled),
+                                pendingMessageIsError = false
                             )
                         }
                     }
@@ -166,7 +170,8 @@ class SubscriptionViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isPurchaseInProgress = false,
-                                pendingMessage = event.message
+                                pendingMessage = event.message.toUserBillingMessage(context),
+                                pendingMessageIsError = true
                             )
                         }
                     }
@@ -181,6 +186,17 @@ class SubscriptionViewModel @Inject constructor(
             "P1Y" -> context.getString(R.string.subscription_period_year)
             "P1W" -> context.getString(R.string.subscription_period_week)
             else -> context.getString(R.string.subscription_period_default)
+        }
+    }
+
+    private fun String?.toUserBillingMessage(context: Context): String {
+        val message = this?.trim().orEmpty()
+        if (message.isBlank()) return context.getString(R.string.subscription_purchase_error)
+
+        return if (message.contains("service disconnected", ignoreCase = true)) {
+            context.getString(R.string.subscription_purchase_error)
+        } else {
+            message
         }
     }
 
@@ -201,5 +217,6 @@ data class SubscriptionUiState(
     val proPrice: String = "--",
     val proPeriodLabel: String = "",
     val errorMessage: String? = null,
-    val pendingMessage: String? = null
+    val pendingMessage: String? = null,
+    val pendingMessageIsError: Boolean = false
 )

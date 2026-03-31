@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -109,20 +110,20 @@ class GoogleBillingProvider @Inject constructor(
         trackedRequests = requests
         _catalogState.update { it.copy(isLoading = true, errorMessage = null) }
 
+        val connectionResult = connectIfNeeded()
+        if (connectionResult.responseCode != BillingClient.BillingResponseCode.OK) {
+            _catalogState.value = GoogleBillingCatalogState(
+                errorMessage = connectionResult.debugMessage.ifBlank { "Unable to connect to Google Play." }
+            )
+            return
+        }
+
         val featureSupported = billingClient.isFeatureSupported(BillingClient.FeatureType.PRODUCT_DETAILS)
         if (featureSupported.responseCode != BillingClient.BillingResponseCode.OK) {
             _catalogState.value = GoogleBillingCatalogState(
                 errorMessage = featureSupported.debugMessage.ifBlank {
                     "Product details are not supported on this device."
                 }
-            )
-            return
-        }
-
-        val connectionResult = connectIfNeeded()
-        if (connectionResult.responseCode != BillingClient.BillingResponseCode.OK) {
-            _catalogState.value = GoogleBillingCatalogState(
-                errorMessage = connectionResult.debugMessage.ifBlank { "Unable to connect to Google Play." }
             )
             return
         }
@@ -254,15 +255,31 @@ class GoogleBillingProvider @Inject constructor(
                 .build()
         }
 
-        return suspendCancellableCoroutine { continuation ->
+        var lastResult = disconnectedBillingResult()
+        repeat(2) { attempt ->
+            val billingResult = startConnection()
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK || billingClient.isReady) {
+                return billingResult
+            }
+
+            lastResult = billingResult
+            if (
+                attempt == 0 &&
+                billingResult.responseCode == BillingClient.BillingResponseCode.SERVICE_DISCONNECTED
+            ) {
+                delay(300)
+            }
+        }
+
+        return lastResult
+    }
+
+    private suspend fun startConnection(): BillingResult = suspendCancellableCoroutine { continuation ->
             billingClient.startConnection(object : BillingClientStateListener {
                 override fun onBillingServiceDisconnected() {
                     if (continuation.isActive) {
                         continuation.resume(
-                            BillingResult.newBuilder()
-                                .setResponseCode(BillingClient.BillingResponseCode.SERVICE_DISCONNECTED)
-                                .setDebugMessage("Google Play Billing service disconnected.")
-                                .build()
+                            disconnectedBillingResult()
                         )
                     }
                 }
@@ -274,6 +291,12 @@ class GoogleBillingProvider @Inject constructor(
                 }
             })
         }
+
+    private fun disconnectedBillingResult(): BillingResult {
+        return BillingResult.newBuilder()
+            .setResponseCode(BillingClient.BillingResponseCode.SERVICE_DISCONNECTED)
+            .setDebugMessage("Google Play Billing service disconnected.")
+            .build()
     }
 
     private suspend fun queryProductDetails(
