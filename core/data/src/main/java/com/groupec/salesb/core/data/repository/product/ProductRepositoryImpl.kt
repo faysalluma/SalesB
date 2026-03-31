@@ -20,6 +20,7 @@ import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.data.R
 import com.groupec.salesb.core.datastore.DataStoreManager
 import com.groupec.salesb.core.network.retrofit.common.safeApiCall
 import kotlinx.coroutines.flow.emitAll
@@ -68,6 +69,7 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveProduct(product: Product, uriImage: Uri?): Result<Unit> {
+        val userId = currentUserId()
         // Image part
         val imagePart = uriImage?.let{
             // If not change image when update
@@ -84,7 +86,7 @@ class ProductRepositoryImpl @Inject constructor(
         // Required field
         val libelleBody = product.libelle.toRequestBody("text/plain".toMediaTypeOrNull())
         val prixttcBody = product.prixttc.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-        val useridBody = dataStoreManager.userFlow.first().id.toRequestBody("text/plain".toMediaTypeOrNull())
+        val useridBody = userId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
         // Optional field
         val idBody = product.id?.toString()?.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -112,7 +114,19 @@ class ProductRepositoryImpl @Inject constructor(
                 tvaidBody, useridBody, imagePart
             )
             if (response.isSuccessful) {
-                Result.Success(Unit)
+                val body = response.body()
+                    ?: return@runCatching Result.Error(Exception(context.getString(R.string.error_empty_response)))
+
+                if (body.error) {
+                    Result.Error(
+                        Exception(
+                            body.message?.takeIf { it.isNotBlank() }
+                                ?: "Error when saving product"
+                        )
+                    )
+                } else {
+                    Result.Success(Unit)
+                }
             } else {
                 Result.Error(HttpException(response))
             }
