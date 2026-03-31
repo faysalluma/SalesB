@@ -118,12 +118,14 @@ fun SubscriptionScreen(
                 PlanFeature(stringResource(R.string.subscription_free_feature_receipt), false)
             ),
             footer = {
-                DefaultButton(
-                    text = stringResource(R.string.subscription_current_plan),
-                    enabled = false,
-                    containerColor = Color(0xFFF0F3F9),
-                    textcolor = Color(0xFF4C5B75)
-                ) {}
+                if (!uiState.isProPlanActive) {
+                    DefaultButton(
+                        text = stringResource(R.string.subscription_current_plan),
+                        enabled = false,
+                        containerColor = Color(0xFFF0F3F9),
+                        textcolor = Color(0xFF4C5B75)
+                    ) {}
+                }
             }
         )
 
