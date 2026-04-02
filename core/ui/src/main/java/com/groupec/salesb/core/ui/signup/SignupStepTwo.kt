@@ -120,6 +120,7 @@ private fun SignUpStepTwoForm(
         value = state.ifu,
         onChange = { onValueChange(state.copy(ifu = it)) },
         label = stringResource(R.string.signup_ifu_optional),
+        placeholder = stringResource(R.string.signup_ifu_optional_placeholder),
         fieldColor = White,
         modifier = Modifier.fillMaxWidth()
     )

@@ -89,7 +89,8 @@
     <string name="signup_company_email_optional">Email (Optionnel)</string>
     <string name="signup_address_optional">Adresse (Optionnel)</string>
     <string name="signup_phone_optional">Téléphone (Optionnel)</string>
-    <string name="signup_ifu_optional">IFU (Optionnel)</string>
+    <string name="signup_ifu_optional">N° ID (Optionnel)</string>
+    <string name="signup_ifu_optional_placeholder">SIRET/EIN/IFU/Autre</string>
     <string name="signup_website_optional">Website (Optionnel)</string>
     <string name="signup_add_logo">Ajouter un logo</string>
     <string name="signup_click_to_upload">Cliquer pour uploader</string>

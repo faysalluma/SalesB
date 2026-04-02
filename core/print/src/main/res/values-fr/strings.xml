@@ -2,7 +2,7 @@
 <resources>
     <string name="tel">Tel :</string>
     <string name="email">Email :</string>
-    <string name="ifu">Ifu :</string>
+    <string name="ifu">N° ID :</string>
     <string name="date">"Date : "</string>
     <string name="noticket">Ticket N° :</string>
     <string name="qte_description">Qte Désignation</string>
