@@ -33,6 +33,7 @@ import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
 import com.groupec.feature.termsandconditions.TermsAndConditionsScreen
 import com.groupec.salesb.core.model.data.Category
+import com.groupec.salesb.core.model.data.Client
 import com.groupec.salesb.core.model.data.Output
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.Rayon
@@ -43,6 +44,7 @@ import com.groupec.salesb.feature.loading.LoadingScreen
 import com.groupec.feature.handleservice.HandleServiceScreen
 import com.groupec.salesb.ui.customlistdetailpane.AccountNavContent
 import com.groupec.salesb.ui.customlistdetailpane.CategoryNavContent
+import com.groupec.salesb.ui.customlistdetailpane.ClientNavContent
 import com.groupec.salesb.ui.customlistdetailpane.OutputNavContent
 import com.groupec.salesb.ui.customlistdetailpane.ProductNavContent
 import com.groupec.salesb.ui.customlistdetailpane.RayonNavContent
@@ -221,6 +223,9 @@ fun AppNavHost(
                 navigateToProduct = {
                     navController.navigate(NavigationItem.Product.route)
                 },
+                navigateToClient = {
+                    navController.navigate(NavigationItem.Client.route)
+                },
                 onNavigateToSubscription = {
                     navController.navigate(NavigationItem.Subscription.route)
                 }
@@ -366,6 +371,67 @@ fun AppNavHost(
                 onPopBack = {
                     navController.navigate(NavigationItem.Category.route.plus("?fromDetail=false")) {
                         popUpTo(NavigationItem.Category.route) { inclusive = true }
+                    }
+                },
+                onNavigateToSubscription = {
+                    navController.navigate(NavigationItem.Subscription.route)
+                }
+            )
+        }
+
+        composable(
+            route = NavigationItem.Client.route.plus("?fromDetail={fromDetail}"),
+            arguments = listOf(
+                navArgument("fromDetail") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
+        ) { backStackEntry ->
+            val fromDetail = backStackEntry.arguments?.getBoolean("fromDetail") ?: false
+            var fromDetailValue by rememberSaveable { mutableStateOf(fromDetail) }
+            val configuration = LocalConfiguration.current
+            LaunchedEffect(configuration) {
+                if (fromDetailValue) {
+                    fromDetailValue = false
+                }
+            }
+
+            ClientNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                fromDetail = fromDetailValue,
+                onNavigateToDetail = { client ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("client", client)
+                    navController.navigate(NavigationItem.ClientDetail.route)
+                },
+                onPopBack = {
+                    navController.navigate(startDestination) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToSubscription = {
+                    navController.navigate(NavigationItem.Subscription.route)
+                }
+            )
+        }
+
+        composable(NavigationItem.ClientDetail.route) {
+            val client = navController.previousBackStackEntry?.savedStateHandle?.get<Client>("client")
+
+            ClientNavContent(
+                isExpandedWidth = isExpandedWidth,
+                snackbarHostState = snackbarHostState,
+                client = client,
+                onNavigateToHome = {
+                    navController.navigate(NavigationItem.Client.route.plus("?fromDetail=true")) {
+                        popUpTo(NavigationItem.Client.route) { inclusive = true }
+                    }
+                },
+                onPopBack = {
+                    navController.navigate(NavigationItem.Client.route.plus("?fromDetail=false")) {
+                        popUpTo(NavigationItem.Client.route) { inclusive = true }
                     }
                 },
                 onNavigateToSubscription = {

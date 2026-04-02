@@ -9,6 +9,7 @@
     <string name="menu_outputs">@string/menu_outputs_view</string>
     <string name="menu_product">@string/menu_product_view</string>
     <string name="menu_category">@string/menu_category_view</string>
+    <string name="menu_client">@string/menu_client_view</string>
     <string name="menu_help_faq">Aide et FAQ</string>
     <string name="menu_questions">Questions fréquentes</string>
     <string name="menu_rayon">@string/menu_rayon_view</string>

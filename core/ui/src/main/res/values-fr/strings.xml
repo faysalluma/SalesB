@@ -36,6 +36,8 @@
     <string name="title_product">%1$s</string>
     <string name="price">@string/price_view</string>
     <string name="payment_type_label">Mode de paiement :</string>
+    <string name="sale_client_label">Client (Optionnel)</string>
+    <string name="sale_add_client">Ajouter un client</string>
     <string name="total">Total :</string>
     <string name="cash_received">Espèces reçues</string>
     <string name="change_due">Monnaie à rendre : %s</string>
@@ -66,6 +68,7 @@
     <string name="change_invoice_info">Changer infos facturation</string>
     <string name="total_sales">@string/total_sale_view</string>
     <string name="user_item_detail">Date : %1$s, Email : %2$s, Tel : %3$s, Compte : %4$s</string>
+    <string name="client_item_detail">Date : %1$s, Nom : %2$s, Tel : %3$s</string>
     <string name="active">Actif</string>
     <string name="please_read">Je reconnais avoir lu et accepté les</string>
     <string name="terms_and_conditions_of_use">conditions générales d’utilisation.</string>

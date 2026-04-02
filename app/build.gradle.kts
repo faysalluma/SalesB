@@ -89,6 +89,8 @@ dependencies {
     implementation(project(":feature:forgotpassword"))
     implementation(project(":feature:categorylist"))
     implementation(project(":feature:categorydetail"))
+    implementation(project(":feature:clientlist"))
+    implementation(project(":feature:clientdetail"))
     implementation(project(":feature:rayonlist"))
     implementation(project(":feature:rayondetail"))
     implementation(project(":feature:outputlist"))

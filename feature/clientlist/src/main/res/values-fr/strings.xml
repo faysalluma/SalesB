@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="head_title_client">Clients (%1$d)</string>
+    <string name="loading_clients">Chargement des clients …</string>
+    <string name="export_to_pdf">Exporter en PDF</string>
+    <string name="exporter_en_excel">Exporter en Excel</string>
+    <string name="export_pdf_saved">Export terminé. Fichier enregistré dans Téléchargements.</string>
+    <string name="export_pdf_completed">Export terminé</string>
+    <string name="export_pdf_failed">Échec de l\'export</string>
+    <string name="export_excel_saved">Export terminé. Fichier enregistré dans Téléchargements.</string>
+    <string name="export_excel_completed">Export terminé</string>
+    <string name="export_excel_failed">Échec de l\'export</string>
+    <string name="no_clients_to_export">Aucun client à exporter</string>
+    <string name="permission_denied">Permission refusée</string>
+</resources>

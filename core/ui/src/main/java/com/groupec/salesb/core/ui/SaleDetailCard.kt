@@ -15,8 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,23 +34,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.groupec.salesb.core.allowOnlyDigits
 import com.groupec.salesb.core.autoRound
 import com.groupec.salesb.core.designsystem.component.AppCustomDialog
+import com.groupec.salesb.core.designsystem.component.AppEditableExposedDropdown
 import com.groupec.salesb.core.designsystem.component.AppExposedDropdownMenu
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DefaultButton
 import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
+import com.groupec.salesb.core.designsystem.component.IconTextButton
 import com.groupec.salesb.core.designsystem.component.TextNormal
 import com.groupec.salesb.core.designsystem.component.TitleHeader
 import com.groupec.salesb.core.designsystem.component.TitleLarge
 import com.groupec.salesb.core.designsystem.component.TitleMedium
+import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.LightGreen
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
@@ -79,7 +82,12 @@ fun SaleDetailCard(
     onSave: suspend (Double, PrintAction) -> Boolean,
     onClear: () -> Unit,
     paymentTypeState: String,
-    onPaymenTypeSelected: (String) -> Unit
+    onPaymenTypeSelected: (String) -> Unit,
+    clientItems: List<Pair<String, String>>,
+    clientlibelleState: TextFieldValue,
+    onClientlibelleState: (TextFieldValue) -> Unit,
+    onClientSelected: (Pair<String, String>) -> Unit,
+    navigateToClient: () -> Unit
 ) {
     val context = LocalContext.current
     val catalogLabelPlural = context.getCatalogItemLabel(
@@ -156,7 +164,12 @@ fun SaleDetailCard(
                     onSave = onSave,
                     onClear = onClear,
                     paymentTypeState = paymentTypeState,
-                    onPaymenTypeSelected = onPaymenTypeSelected
+                    onPaymenTypeSelected = onPaymenTypeSelected,
+                    clientItems = clientItems,
+                    clientlibelleState = clientlibelleState,
+                    onClientlibelleState = onClientlibelleState,
+                    onClientSelected = onClientSelected,
+                    navigateToClient = navigateToClient
                 )
             }
         }
@@ -173,7 +186,12 @@ private fun BottomContentScreen(
     onClear: () -> Unit,
     enabled: Boolean,
     paymentTypeState: String,
-    onPaymenTypeSelected: (String) -> Unit
+    onPaymenTypeSelected: (String) -> Unit,
+    clientItems: List<Pair<String, String>>,
+    clientlibelleState: TextFieldValue,
+    onClientlibelleState: (TextFieldValue) -> Unit,
+    onClientSelected: (Pair<String, String>) -> Unit,
+    navigateToClient: () -> Unit
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -184,10 +202,56 @@ private fun BottomContentScreen(
     val paymentTypeList = paymentTypeLabels(context)
     var cashReceived by remember { mutableStateOf("") }
     val cashDue = ((cashReceived.toDoubleOrNull() ?: 0.0) - total.toDouble()).coerceAtLeast(0.0)
+    var isClientLibelleError by remember { mutableStateOf(false) }
 
     val selectedPaymentType = paymentTypeFromLabel(context, paymentTypeState)
     val isCashSelected = selectedPaymentType == PaymentType.Cash
 
+    Row(modifier = Modifier.fillMaxWidth()) {
+        AppEditableExposedDropdown(
+            items = clientItems,
+            label = stringResource(R.string.sale_client_label),
+            isError = isClientLibelleError,
+            supportingText = if (
+                clientlibelleState.text.isNotEmpty() && clientItems.none { it.second == clientlibelleState.text }
+            ) {
+                {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(com.groupec.salesb.core.designsystem.R.string.invalid_select),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            } else {
+                null
+            },
+            value = clientlibelleState,
+            onValueChange = {
+                onClientlibelleState(it)
+                if (isClientLibelleError) isClientLibelleError = false
+            },
+            modifier = Modifier.weight(1f),
+            onItemSelected = { item ->
+                onClientSelected(item)
+                if (isClientLibelleError) isClientLibelleError = false
+            }
+        )
+
+        IconTextButton(
+            modifier = Modifier.padding(top = 4.dp, start = 12.dp),
+            icon = {
+                Icon(
+                    imageVector = AppIcons.Add,
+                    contentDescription = stringResource(R.string.sale_add_client)
+                )
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Color.Black)
+        ) {
+            navigateToClient()
+        }
+    }
+
+    // Payment mode
     if (parameter.activepaymentmode) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
@@ -257,7 +321,11 @@ private fun BottomContentScreen(
             enabled = enabled,
             style = MaterialTheme.typography.titleMedium
         ) {
-            showDialog.value = true
+            isClientLibelleError = clientlibelleState.text.isNotEmpty() &&
+                clientItems.none { it.second == clientlibelleState.text }
+            if (!isClientLibelleError) {
+                showDialog.value = true
+            }
         }
         Spacer(Modifier.width(16.dp))
         DefaultButton(

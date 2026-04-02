@@ -6,6 +6,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
 import com.groupec.salesb.core.FormUIState
+import com.groupec.salesb.core.asResult
+import com.groupec.salesb.core.domain.client.GetClientUseCase
 import com.groupec.salesb.core.print.PrintAction
 import com.groupec.salesb.core.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +38,7 @@ import kotlinx.coroutines.flow.onEmpty
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 class SaleViewModel @Inject constructor(
+    private val getClientUseCase: GetClientUseCase,
     private val getProductUseCase: GetProductUseCase,
     private val getParameterUseCase: GetParameterUseCase,
     private val getTotalSaleUseCase: GetTotalSaleUseCase,
@@ -51,6 +54,9 @@ class SaleViewModel @Inject constructor(
 
     private val _parameter = MutableStateFlow(Parameter())
     val parameter : StateFlow<Parameter> = _parameter.asStateFlow()
+
+    private val _clientsUiPairState = MutableStateFlow<List<Pair<String, String>>>(emptyList())
+    val clientsUiPairState: StateFlow<List<Pair<String, String>>> = _clientsUiPairState.asStateFlow()
 
     private val _userStoreState = MutableStateFlow(UserStore())
     val userStoreState: StateFlow<UserStore> = _userStoreState.asStateFlow()
@@ -73,6 +79,21 @@ class SaleViewModel @Inject constructor(
     fun getParameter() {
         viewModelScope.launch {
             _parameter.value = getParameterUseCase().first()
+        }
+    }
+
+    fun getClients() {
+        viewModelScope.launch {
+            getClientUseCase()
+                .asResult()
+                .collect { result ->
+                    when (result) {
+                        is Result.Success -> _clientsUiPairState.value = result.data.mapNotNull {
+                            it.id?.toString()?.let { clientId -> clientId to it.nomprenom }
+                        }
+                        else -> _clientsUiPairState.value = emptyList()
+                    }
+                }
         }
     }
 

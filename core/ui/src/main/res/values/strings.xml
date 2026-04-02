@@ -43,6 +43,8 @@
     <string name="label">@string/label_view</string>
     <string name="total">Total:</string>
     <string name="payment_type_label">Payment method:</string>
+    <string name="sale_client_label">Client (Optional)</string>
+    <string name="sale_add_client">Add client</string>
     <string name="cash_received">Cash received</string>
     <string name="change_due">Change due: %s</string>
     <string name="confirm_sale_message">Confirm the sale of %s?</string>
@@ -67,6 +69,7 @@
     <string name="change_invoice_info">Change Invoice Info</string>
     <string name="total_sales">@string/total_sale_view</string>
     <string name="user_item_detail">Date: %1$s, Email: %2$s, Tel: %3$s, Account: %4$s</string>
+    <string name="client_item_detail">Date: %1$s, Name: %2$s, Phone: %3$s</string>
     <string name="active">Active</string>
     <string name="disable">Disable</string>
     <string name="success_title">Success</string>

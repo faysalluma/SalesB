@@ -275,6 +275,7 @@ fun MainScreen(
                    (currentDestination.value == NavigationItem.Account.route && !isExpandedWidth) ||
                    (currentDestination.value == NavigationItem.Outputs.route && !isExpandedWidth) ||
                    (currentDestination.value == NavigationItem.Category.route && !isExpandedWidth) ||
+                   (currentDestination.value == NavigationItem.Client.route && !isExpandedWidth) ||
                    (currentDestination.value == NavigationItem.Rayon.route && !isExpandedWidth) ||
                    (currentDestination.value == NavigationItem.Product.route && !isExpandedWidth)
                 )
@@ -289,6 +290,7 @@ fun MainScreen(
                         NavigationItem.Outputs.route -> navController.navigate(NavigationItem.OutputDetail.route)
                         NavigationItem.Product.route -> navController.navigate(NavigationItem.ProductDetail.route)
                         NavigationItem.Category.route -> navController.navigate(NavigationItem.CategoryDetail.route)
+                        NavigationItem.Client.route -> navController.navigate(NavigationItem.ClientDetail.route)
                         NavigationItem.Rayon.route -> navController.navigate(NavigationItem.RayonDetail.route)
                     }
                 }
@@ -389,6 +391,16 @@ fun getDropdownItemsWithActions(
             context.getString(R.string.menu_category)
         ) {
             navController.navigate(NavigationItem.Category.route) {
+                launchSingleTop = true
+            }
+        }
+    )
+
+    childrenList.add(
+        MenuItem.Action(
+            context.getString(R.string.menu_client)
+        ) {
+            navController.navigate(NavigationItem.Client.route) {
                 launchSingleTop = true
             }
         }

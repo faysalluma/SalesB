@@ -27,6 +27,7 @@
     <string name="menu_log_out_view">Se déconnecter</string>
     <string name="menu_settings_view">Paramètres</string>
     <string name="menu_category_view">Catégories</string>
+    <string name="menu_client_view">Clients</string>
     <string name="menu_my_sales_view">Mes ventes</string>
     <string name="menu_rayon_view">Rayons</string>
     <string name="catalog_item_product">produit</string>

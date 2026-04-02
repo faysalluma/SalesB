@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
@@ -81,6 +82,7 @@ fun SaleScreen(
     modifier: Modifier = Modifier,
     viewModel: SaleViewModel = hiltViewModel(),
     navigateToProduct: () -> Unit,
+    navigateToClient: () -> Unit,
     onNavigateToSubscription: () -> Unit
 ) {
     val context = LocalContext.current
@@ -90,6 +92,7 @@ fun SaleScreen(
     val products = viewModel.pagedProducts.collectAsLazyPagingItems()
     val error = (products.loadState.refresh as? LoadState.Error)?.error?.message
     val parameter by viewModel.parameter.collectAsState()
+    val clientsPairState by viewModel.clientsUiPairState.collectAsState()
     val userStore by viewModel.userStoreState.collectAsState()
     val addSaleUiState by viewModel.addSaleUiState.collectAsState()
     val isLoading = addSaleUiState is FormUIState.Loading
@@ -159,6 +162,10 @@ fun SaleScreen(
     }
     var paymentTypeState by remember { mutableStateOf(firstPaymentTypeDefaultValue) }
     val paymentTypeValueForSave = paymentTypeFromLabel(context, paymentTypeState)?.let(::paymentTypeValue)
+    var clientlibelleState by remember {
+        mutableStateOf(TextFieldValue(""))
+    }
+    var selectedClientId by remember { mutableStateOf<Int?>(null) }
 
     LaunchedEffect(parameter.activepaymentmode, firstPaymentTypeDefaultValue) {
         if (!parameter.activepaymentmode) {
@@ -172,6 +179,8 @@ fun SaleScreen(
         if (selectedProducts.isEmpty()) {
             showSummary = false
             paymentTypeState = firstPaymentTypeDefaultValue
+            clientlibelleState = TextFieldValue("")
+            selectedClientId = null
         }
     }
 
@@ -190,6 +199,7 @@ fun SaleScreen(
     ComposableLifecycle(
         onResume = {
             viewModel.getParameter()
+            viewModel.getClients()
         }
     )
     when (addSaleUiState) {
@@ -219,6 +229,9 @@ fun SaleScreen(
                 showSummary = false
                 selectedProducts.clear()
                 textFieldValues.clear()
+                paymentTypeState = firstPaymentTypeDefaultValue
+                clientlibelleState = TextFieldValue("")
+                selectedClientId = null
                 products.refresh()
                 scope.launch {
                     snackbarHostState.showSnackbar(
@@ -293,6 +306,7 @@ fun SaleScreen(
                         val sale = Sale(
                             totalprix = total,
                             paymenttype = paymentTypeValueForSave,
+                            clientid = selectedClientId,
                             details = saleDetail
                         )
                         if (printAction != PrintAction.Thermal &&
@@ -329,12 +343,26 @@ fun SaleScreen(
                         selectedProducts.clear()
                         textFieldValues.clear()
                         paymentTypeState = firstPaymentTypeDefaultValue
+                        clientlibelleState = TextFieldValue("")
+                        selectedClientId = null
                     },
                     onQuantityChange = onQuantityChange,
                     paymentTypeState = paymentTypeState,
                     onPaymenTypeSelected = {
                         paymentTypeState = it
-                    }
+                    },
+                    clientItems = clientsPairState,
+                    clientlibelleState = clientlibelleState,
+                    onClientlibelleState = {
+                        clientlibelleState = it
+                        if (clientsPairState.none { client -> client.second == it.text }) {
+                            selectedClientId = null
+                        }
+                    },
+                    onClientSelected = { client ->
+                        selectedClientId = client.first.toIntOrNull()
+                    },
+                    navigateToClient = navigateToClient
                 )
             }
         } else {
@@ -494,6 +522,7 @@ fun SaleScreen(
                         val sale = Sale(
                             totalprix = total,
                             paymenttype = paymentTypeValueForSave,
+                            clientid = selectedClientId,
                             details = saleDetail
                         )
                         if (printAction != PrintAction.Thermal &&
@@ -530,12 +559,26 @@ fun SaleScreen(
                         selectedProducts.clear()
                         textFieldValues.clear()
                         paymentTypeState = firstPaymentTypeDefaultValue
+                        clientlibelleState = TextFieldValue("")
+                        selectedClientId = null
                     },
                     onQuantityChange = onQuantityChange,
                     paymentTypeState = paymentTypeState,
                     onPaymenTypeSelected = {
                         paymentTypeState = it
-                    }
+                    },
+                    clientItems = clientsPairState,
+                    clientlibelleState = clientlibelleState,
+                    onClientlibelleState = {
+                        clientlibelleState = it
+                        if (clientsPairState.none { client -> client.second == it.text }) {
+                            selectedClientId = null
+                        }
+                    },
+                    onClientSelected = { client ->
+                        selectedClientId = client.first.toIntOrNull()
+                    },
+                    navigateToClient = navigateToClient
                 )
             }
         }
@@ -554,7 +597,12 @@ fun SaleDetailScreen(
     onClear: () -> Unit,
     onQuantityChange: (Pair<Int, Product>) -> Unit,
     paymentTypeState: String,
-    onPaymenTypeSelected: (String) -> Unit
+    onPaymenTypeSelected: (String) -> Unit,
+    clientItems: List<Pair<String, String>>,
+    clientlibelleState: TextFieldValue,
+    onClientlibelleState: (TextFieldValue) -> Unit,
+    onClientSelected: (Pair<String, String>) -> Unit,
+    navigateToClient: () -> Unit
 ) {
     SaleDetailCard(
         modifier = modifier,
@@ -567,7 +615,12 @@ fun SaleDetailScreen(
         onClear = onClear,
         quantityCheck = quantityCheck,
         paymentTypeState = paymentTypeState,
-        onPaymenTypeSelected = onPaymenTypeSelected
+        onPaymenTypeSelected = onPaymenTypeSelected,
+        clientItems = clientItems,
+        clientlibelleState = clientlibelleState,
+        onClientlibelleState = onClientlibelleState,
+        onClientSelected = onClientSelected,
+        navigateToClient = navigateToClient
     )
 }
 

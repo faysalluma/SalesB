@@ -1,6 +1,7 @@
 package com.groupec.salesb.core.network.retrofit
 
 import com.groupec.salesb.core.model.data.Category
+import com.groupec.salesb.core.model.data.Client
 import com.groupec.salesb.core.model.data.Output
 import com.groupec.salesb.core.model.data.Rayon
 import com.groupec.salesb.core.model.data.Sale
@@ -9,6 +10,7 @@ import com.groupec.salesb.core.network.model.ApiResult
 import com.groupec.salesb.core.network.model.CategoryResponse
 import com.groupec.salesb.core.network.model.ChartDateResponse
 import com.groupec.salesb.core.network.model.ChartDayResponse
+import com.groupec.salesb.core.network.model.ClientResponse
 import com.groupec.salesb.core.network.model.OutputResponse
 import com.groupec.salesb.core.network.model.ParameterResponse
 import com.groupec.salesb.core.network.model.ProductResponse
@@ -117,6 +119,14 @@ interface ApiService {
         @Query("userid") userid: Int
     ): Response<CategoryResponse>
 
+    @GET(Constants.GET_PAGED_CLIENTS)
+    suspend fun getPagedClients(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
+        @Query("search") search: String,
+        @Query("userid") userid: Int
+    ): Response<ClientResponse>
+
     @GET(Constants.GET_PAGED_OUTPUTS)
     suspend fun getPagedOutputs(
         @Query("page") page: Int,
@@ -134,11 +144,20 @@ interface ApiService {
     @GET(Constants.GET_CATEGORIES)
     suspend fun getCategories(@Query("userid") userid: Int): Response<CategoryResponse>
 
+    @GET(Constants.GET_CLIENTS)
+    suspend fun getClients(@Query("userid") userid: Int): Response<ClientResponse>
+
     @GET(Constants.GET_ALL_CATEGORIES)
     suspend fun getAllCategories(
         @Query("search") search: String,
         @Query("userid") userid: Int
     ): Response<CategoryResponse>
+
+    @GET(Constants.GET_ALL_CLIENTS)
+    suspend fun getAllClients(
+        @Query("search") search: String,
+        @Query("userid") userid: Int
+    ): Response<ClientResponse>
 
     @GET(Constants.GET_RAYONS)
     suspend fun getRayons(
@@ -197,6 +216,9 @@ interface ApiService {
     @POST(Constants.ADD_CATEGORY)
     suspend fun addCategory(@Body category: Category): Response<Unit>
 
+    @POST(Constants.ADD_CLIENT)
+    suspend fun addClient(@Body client: Client): Response<Unit>
+
     @POST(Constants.ADD_OUTPUT)
     suspend fun addOutput(@Body output: Output): Response<Unit>
 
@@ -249,6 +271,9 @@ interface ApiService {
 
     @DELETE(Constants.DELETE_CATEGORY)
     suspend fun deleteCategory(@Path("categoryid") categoryid: Int): Response<ApiResult<Boolean>>
+
+    @DELETE(Constants.DELETE_CLIENT)
+    suspend fun deleteClient(@Path("clientid") clientid: Int): Response<ApiResult<Boolean>>
 
     @DELETE(Constants.DELETE_RAYON)
     suspend fun deleteRayon(@Path("rayonid") rayonid: Int): Response<ApiResult<Boolean>>

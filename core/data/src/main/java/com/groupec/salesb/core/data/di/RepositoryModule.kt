@@ -2,6 +2,8 @@
 package com.groupec.salesb.core.data.di
 
 import android.content.Context
+import com.groupec.salesb.core.data.repository.client.ClientRepository
+import com.groupec.salesb.core.data.repository.client.ClientRepositoryImpl
 import com.groupec.salesb.core.data.repository.rayon.RayonRepository
 import com.groupec.salesb.core.data.repository.rayon.RayonRepositoryImpl
 import com.groupec.salesb.core.data.repository.category.CategoryRepository
@@ -100,6 +102,15 @@ class RepositoryModule  {
         dataStoreManager: DataStoreManager
     ) : CategoryRepository {
         return CategoryRepositoryImpl(apiService, dataStoreManager)
+    }
+
+    @Provides
+    @Singleton
+    fun providerClientRepository(
+        apiService: ApiService,
+        dataStoreManager: DataStoreManager
+    ) : ClientRepository {
+        return ClientRepositoryImpl(apiService, dataStoreManager)
     }
 
     @Provides

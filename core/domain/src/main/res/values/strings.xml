@@ -7,6 +7,7 @@
     <string name="total_sales">@string/total_sale_view</string>
     <string name="product_list_title">%1$s list</string>
     <string name="category_list_title">Category list</string>
+    <string name="client_list_title">Customer list</string>
     <string name="rayon_list_title">Section list</string>
     <string name="output_list_title">Output list</string>
     <string name="sale_list_title">Sale list</string>
@@ -15,6 +16,7 @@
     <string name="filter_data">Filter:</string>
     <string name="product_list_total">Total %1$s: %2$d</string>
     <string name="category_list_total">Total categories: %d</string>
+    <string name="client_list_total">Total customers: %d</string>
     <string name="rayon_list_total">Total sections: %d</string>
     <string name="output_list_total">Total outputs: %d</string>
     <string name="sale_list_total">Total sales: %d</string>

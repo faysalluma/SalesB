@@ -72,6 +72,15 @@ enum class Privileges(val titleRes: Int? = null, val values: Map<String, Approva
             "C04" to Approval.AUTHORIZE_DELETE
         )
     ),
+    Client(
+        titleRes = R.string.menu_client_view,
+        values = mapOf(
+            "C11" to Approval.AUTHORIZE_VIEW,
+            "C12" to Approval.AUTHORIZE_ADD,
+            "C13" to Approval.AUTHORIZE_EDIT,
+            "C14" to Approval.AUTHORIZE_DELETE
+        )
+    ),
     Rayon(
         titleRes = R.string.menu_rayon_view,
         values = mapOf(
