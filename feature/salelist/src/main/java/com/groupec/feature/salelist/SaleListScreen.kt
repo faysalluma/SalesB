@@ -44,7 +44,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -65,6 +67,7 @@ import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.component.TitleLarge
+import com.groupec.salesb.core.designsystem.component.TitleMedium
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Green
 import com.groupec.salesb.core.designsystem.theme.Silver
@@ -412,7 +415,7 @@ fun SaleListScreen(
                             ) {
                                 Row {
                                     Box(
-                                        modifier = Modifier.padding(top = 12.dp, end = 14.dp)
+                                        modifier = Modifier.padding(top = 12.dp)
                                     ) {
                                         IconButton(
                                             enabled = !isExporting,
@@ -463,6 +466,8 @@ fun SaleListScreen(
                                         }
                                     }
                                     TitleLarge(
+                                        fontWeight = FontWeight.Normal,
+                                        fontSize = 16.sp,
                                         title = stringResource(
                                             R.string.my_sales,
                                             totalSalesCount,
@@ -493,10 +498,10 @@ fun SaleListScreen(
                                         }
                                     },
                                     onChange = { viewModel.updateSearchQuery(it) },
-                                    placeholder = stringResource(R.string.search_sale_place_holder),
+                                    placeholder = stringResource(R.string.search_sale_place_holder_portrait),
                                     fieldType = FieldType.Text,
                                     fieldColor = Silver,
-                                    modifier = Modifier.padding(top = 8.dp),
+                                    modifier = Modifier.width(220.dp).padding(top = 8.dp, start = 8.dp),
                                     shape = RoundedCornerShape(26.dp)
                                 )
                             }
@@ -507,7 +512,7 @@ fun SaleListScreen(
                             ) {
                                 DatePickerFieldToModal(
                                     modifier = Modifier
-                                        .width(200.dp),
+                                        .width(170.dp),
                                     label = stringResource(R.string.start_date),
                                     defaultDate = startDate
                                 ) { dateValue ->
@@ -517,7 +522,7 @@ fun SaleListScreen(
 
                                 DatePickerFieldToModal(
                                     modifier = Modifier
-                                        .width(200.dp),
+                                        .width(170.dp),
                                     label = stringResource(R.string.end_date),
                                     defaultDate = endDate
                                 ) { dateValue ->
@@ -539,7 +544,7 @@ fun SaleListScreen(
                                 )
                             }
                         }
-                        HorizontalDivider(modifier = Modifier.padding(top = 30.dp))
+                        HorizontalDivider(modifier = Modifier.padding(top = 20.dp))
                     } else {
                         FlowRow(
                             modifier = modifier.fillMaxWidth().padding(vertical = 16.dp),
