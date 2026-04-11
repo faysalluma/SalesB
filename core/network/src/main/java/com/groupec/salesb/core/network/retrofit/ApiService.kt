@@ -12,6 +12,7 @@ import com.groupec.salesb.core.network.model.ChartDateResponse
 import com.groupec.salesb.core.network.model.ChartDayResponse
 import com.groupec.salesb.core.network.model.ClientResponse
 import com.groupec.salesb.core.network.model.OutputResponse
+import com.groupec.salesb.core.network.model.ParamItemResponse
 import com.groupec.salesb.core.network.model.ParameterResponse
 import com.groupec.salesb.core.network.model.ProductResponse
 import com.groupec.salesb.core.network.model.RayonResponse
@@ -254,6 +255,22 @@ interface ApiService {
 
     @POST(Constants.FORGOT_PASSWORD)
     suspend fun forgotPassword(@Path("email") email: String): Response<Unit>
+
+    @POST(Constants.PUT_PARAMETER)
+    @Multipart
+    suspend fun updateParameter(
+        @Path("id") id: Int,
+        @Part("raisonsociale") raisonsociale: RequestBody,
+        @Part("entreprisetype") entreprisetype: RequestBody,
+        @Part("ifu") ifu: RequestBody?,
+        @Part("adresse") adresse: RequestBody?,
+        @Part("telephone") telephone: RequestBody?,
+        @Part("email") email: RequestBody?,
+        @Part("website") website: RequestBody?,
+        @Part("devise") devise: RequestBody,
+        @Part("tva") tva: RequestBody?,
+        @Part logoPart: MultipartBody.Part?
+    ): Response<ApiResult<ParamItemResponse>>
 
     /* PUT API */
     @PUT(Constants.PUT_CHANGE_PASSWORD)

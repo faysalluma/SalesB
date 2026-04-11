@@ -28,6 +28,8 @@ fun ParamItemResponse.toParameter(): Parameter {
         tva = tva,
         useintforpriceandamout = (useintforpriceandamout == 1),
         activepaymentmode = (activepaymentmode == 1),
-        activeprinter = (activeprinter == 1)
+        activeClient = (activeclient == 1),
+        activeprinter = (activeprinter == 1),
+        userid = userid
     )
 }

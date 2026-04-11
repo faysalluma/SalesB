@@ -51,11 +51,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.ExportType
+import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.convertToServerDateFormat
 import com.groupec.salesb.core.currentLocalDateString
-import com.groupec.salesb.core.formatAmount
 import com.groupec.salesb.core.designsystem.component.AppCustomBottomSheet
 import com.groupec.salesb.core.designsystem.component.AppCustomDialog
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
@@ -67,11 +66,11 @@ import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.component.TitleLarge
-import com.groupec.salesb.core.designsystem.component.TitleMedium
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Green
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
+import com.groupec.salesb.core.formatAmount
 import com.groupec.salesb.core.model.data.Invoicing
 import com.groupec.salesb.core.model.data.Sale
 import com.groupec.salesb.core.print.Print
@@ -733,6 +732,7 @@ fun SaleListScreen(
                                 saleGetValue = sale
                                 when (printAction) {
                                     PrintAction.Normal -> {
+                                        showInvoice = false // Re-open form dialog
                                         showInvoiceDialog = true
                                         sendByEmail = false
                                     }
@@ -784,7 +784,14 @@ fun SaleListScreen(
                     if (showInvoiceDialog) {
                         AppCustomDialog(setShowDialog = { showInvoiceDialog = it} ) {
                             if (!showInvoice) {
-                                InvoicingInfoScreen(sendByEmail = sendByEmail) { invoicingData ->
+                                InvoicingInfoScreen(
+                                    sendByEmail = sendByEmail,
+                                    clientInfos = Triple(
+                                        saleGetValue?.clientName,
+                                        saleGetValue?.clientAdresse,
+                                        saleGetValue?.clientTelephone
+                                    )
+                                ) { invoicingData ->
                                     invoicingGetValue = invoicingData
                                     if (sendByEmail && saleGetValue != null) {
                                         showInvoiceDialog = false

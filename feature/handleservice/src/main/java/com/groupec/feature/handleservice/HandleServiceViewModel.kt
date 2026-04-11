@@ -3,6 +3,7 @@ package com.groupec.feature.handleservice
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.groupec.salesb.core.domain.handleservice.GetHandleServiceParametersUseCase
+import com.groupec.salesb.core.domain.handleservice.UpdateActiveClientUseCase
 import com.groupec.salesb.core.domain.handleservice.UpdateActivePaymentModeUseCase
 import com.groupec.salesb.core.domain.handleservice.UpdateActivePrinterUseCase
 import com.groupec.salesb.core.domain.handleservice.UpdateServiceViewUseCase
@@ -22,6 +23,7 @@ data class HandleServiceUiState(
     val showImageOnProduct: Boolean = false,
     val useIntForPriceAndAmount: Boolean = false,
     val activePaymentMode: Boolean = false,
+    val activeClient: Boolean = true,
     val activePrinter: Boolean = false,
     val isUseIntForPriceAndAmountDisabled: Boolean = false
 )
@@ -33,6 +35,7 @@ class HandleServiceViewModel @Inject constructor(
     private val updateShowImageOnProductUseCase: UpdateShowImageOnProductUseCase,
     private val updateUseIntForPriceAndAmountUseCase: UpdateUseIntForPriceAndAmountUseCase,
     private val updateActivePaymentModeUseCase: UpdateActivePaymentModeUseCase,
+    private val updateActiveClientUseCase: UpdateActiveClientUseCase,
     private val updateActivePrinterUseCase: UpdateActivePrinterUseCase
 ) : ViewModel() {
 
@@ -47,6 +50,7 @@ class HandleServiceViewModel @Inject constructor(
                     showImageOnProduct = parameter.showimageonproduct,
                     useIntForPriceAndAmount = parameter.useintforpriceandamout,
                     activePaymentMode = parameter.activepaymentmode,
+                    activeClient = parameter.activeClient,
                     activePrinter = parameter.activeprinter,
                     isUseIntForPriceAndAmountDisabled = parameter.serviceview
                 )
@@ -98,6 +102,14 @@ class HandleServiceViewModel @Inject constructor(
 
         viewModelScope.launch {
             updateActivePaymentModeUseCase(value)
+        }
+    }
+
+    fun updateActiveClient(value: Boolean) {
+        _uiState.update { it.copy(activeClient = value) }
+
+        viewModelScope.launch {
+            updateActiveClientUseCase(value)
         }
     }
 

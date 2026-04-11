@@ -104,6 +104,7 @@ dependencies {
     implementation(project(":core:config"))
     implementation(project(":feature:printreceiptguide"))
     implementation(project(":feature:faq"))
+    implementation(project(":feature:updatebusinessinfo"))
 
     implementation(project(":core:common"))
     implementation(project(":core:ui"))

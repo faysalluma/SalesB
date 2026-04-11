@@ -8,7 +8,6 @@ data class ParameterResponse(
 )
 data class ParamItemResponse(
 
-    // Here it is the userid not parameter id
     @SerializedName("id")
     val id: Int,
 
@@ -58,9 +57,15 @@ data class ParamItemResponse(
     @SerializedName("activepaymentmode")
     val activepaymentmode: Int,
 
+    @SerializedName("activeclient")
+    val activeclient: Int,
+
     @SerializedName("defaultpayment")
     val defaultpayment: String ? = null,
 
     @SerializedName("activeprinter")
-    val activeprinter: Int
+    val activeprinter: Int,
+
+    @SerializedName("userid")
+    val userid: Int? = null
 )

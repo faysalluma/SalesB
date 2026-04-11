@@ -36,7 +36,8 @@
     <string name="title_product">%1$s</string>
     <string name="price">@string/price_view</string>
     <string name="payment_type_label">Mode de paiement :</string>
-    <string name="sale_client_label">Client (Optionnel)</string>
+    <string name="client_label">Client :</string>
+    <string name="sale_client_label">(Optionnel)</string>
     <string name="sale_add_client">Ajouter un client</string>
     <string name="total">Total :</string>
     <string name="cash_received">Espèces reçues</string>
@@ -73,6 +74,7 @@
     <string name="please_read">Je reconnais avoir lu et accepté les</string>
     <string name="terms_and_conditions_of_use">conditions générales d’utilisation.</string>
     <string name="paid_by">Moyen de paiement : %s</string>
+    <string name="paid_by_client">Client : %s</string>
     <string name="signup_create_account">Créer votre compte</string>
     <string name="signup_step_1">Étape 1/3 : Détails de l\'utilisateur</string>
     <string name="signup_name">Nom &amp; Prénom</string>
@@ -92,7 +94,7 @@
     <string name="signup_company_email_optional">Email (Optionnel)</string>
     <string name="signup_address_optional">Adresse (Optionnel)</string>
     <string name="signup_phone_optional">Téléphone (Optionnel)</string>
-    <string name="signup_ifu_optional">N° ID (Optionnel)</string>
+    <string name="signup_ifu_optional">ID Entreprise (Optionnel)</string>
     <string name="signup_ifu_optional_placeholder">SIRET/EIN/IFU/Autre</string>
     <string name="signup_website_optional">Website (Optionnel)</string>
     <string name="signup_add_logo">Ajouter un logo</string>
@@ -101,7 +103,9 @@
     <string name="signup_login">Connexion</string>
     <string name="signup_configurations">Configurations</string>
     <string name="signup_currency">Devise</string>
+    <string name="signup_currency_placeholder" translatable="false">EUR, USD, CHF, BRL, XAF, TND, FCFA</string>
     <string name="signup_vat">TVA (%)</string>
+    <string name="signup_vat_placeholder" translatable="false">20</string>
     <string name="signup_display_options">OPTIONS D\'AFFICHAGE</string>
     <string name="signup_print_service">Service d\'impression</string>
     <string name="signup_print_service_desc">Impression auto des reçus</string>

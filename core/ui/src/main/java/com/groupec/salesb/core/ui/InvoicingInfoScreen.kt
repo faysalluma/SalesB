@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,8 +21,6 @@ import com.groupec.salesb.core.designsystem.component.DefaultButton
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.KeyboardAction
 import com.groupec.salesb.core.designsystem.component.isValidEmail
-import com.groupec.salesb.core.designsystem.icon.AppIcons.Person
-import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.model.data.Invoicing
 
@@ -31,10 +28,18 @@ import com.groupec.salesb.core.model.data.Invoicing
 fun InvoicingInfoScreen(
     isLoading: Boolean = false,
     sendByEmail: Boolean = false,
+    clientInfos: Triple<String?, String?, String?>,
     onSubmitForm: (Invoicing) -> Unit
 ) {
-
-    var invoicing by remember { mutableStateOf(Invoicing()) }
+    val (clientNomprenom, clientAdresse, _) = clientInfos
+    var invoicing by remember(clientNomprenom, clientAdresse) {
+        mutableStateOf(
+            Invoicing(
+                fullName = clientNomprenom ?: "",
+                address = clientAdresse ?: ""
+            )
+        )
+    }
     var isFullNameError by remember { mutableStateOf(false) }
     var isAddressError by remember { mutableStateOf(false) }
     var isEmailError by remember { mutableStateOf(false) }

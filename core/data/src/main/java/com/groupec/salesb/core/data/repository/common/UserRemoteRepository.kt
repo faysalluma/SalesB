@@ -161,7 +161,7 @@ class UserRemoteRepository @Inject constructor(
             val user = response.body()?.data ?: return null
             val backendProductId = user.billingproductid ?: SALESB_PRO_MONTHLY_PRODUCT_ID
             val backendPurchaseToken = user.purchasetoken
-            println("toto3 ${user.billingproductid} - ${user.purchasetoken} ")
+
             googleBillingProvider.loadCatalog(
                 listOf(
                     GoogleBillingProductRequest(
@@ -176,7 +176,7 @@ class UserRemoteRepository @Inject constructor(
                         && purchase.purchaseToken == backendPurchaseToken &&
                         backendProductId in purchase.productIds
             }
-            println("toto5 ")
+
             when {
                 backendPurchaseToken.isNullOrBlank() -> true
                 matchingPurchase == null -> true

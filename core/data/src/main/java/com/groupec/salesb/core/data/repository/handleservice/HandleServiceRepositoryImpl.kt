@@ -60,6 +60,17 @@ class HandleServiceRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateActiveClient(value: Boolean): Result<Unit> {
+        return try {
+            withContext(Dispatchers.IO) {
+                dataStoreManager.updateActiveClient(value)
+            }
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun updateActivePrinter(value: Boolean): Result<Unit> {
         return try {
             withContext(Dispatchers.IO) {

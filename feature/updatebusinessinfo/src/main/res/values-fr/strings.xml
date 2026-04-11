@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_business_info_title">Modifier les données d\'entreprise</string>
+    <string name="select">Sélectionner</string>
+    <string name="sales_and_retailers">Commerce</string>
+    <string name="professional_services">Service</string>
+</resources>

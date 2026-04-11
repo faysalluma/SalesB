@@ -12,6 +12,7 @@
     <string name="menu_client">@string/menu_client_view</string>
     <string name="menu_rayon">@string/menu_rayon_view</string>
     <string name="menu_update_password">@string/menu_update_password_view</string>
+    <string name="menu_update_business_info">My company information</string>
     <string name="manage_your_account">@string/manage_your_account_view</string>
     <string name="menu_handle_service">Service management</string>
     <string name="menu_log_out">@string/menu_log_out_view</string>

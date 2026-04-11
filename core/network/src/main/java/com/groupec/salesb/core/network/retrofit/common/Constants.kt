@@ -58,6 +58,7 @@ class Constants {
 
         // Put endpoint
         const val PUT_CHANGE_PASSWORD = "changePassword/{userid}"
+        const val PUT_PARAMETER = "updateParameter/{id}"
         const val PUT_USER_SUBSCRIPTION_STATUS = "subscriptionStatus/{userid}"
 
         // Delete endpoint

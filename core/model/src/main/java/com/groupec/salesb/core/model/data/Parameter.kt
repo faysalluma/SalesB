@@ -6,15 +6,15 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Parameter(
     val id: Int = 0,
-    val logo: String ? = "",
+    val logo: String? = "",
     val raisonsociale: String = "",
     val entreprisetype: Int = 0,
     val expirationdate: String = "",
-    val ifu: String ? = "",
+    val ifu: String? = "",
     val adresse: String? = "",
     val telephone: String? = "",
-    val email: String ? = "",
-    val website: String ? = "",
+    val email: String? = "",
+    val website: String? = "",
     val devise: String = "",
     val tva: Double = 0.0,
     val offline: Boolean = false,
@@ -24,5 +24,7 @@ data class Parameter(
     val showimageonproduct: Boolean = false,
     val useintforpriceandamout: Boolean = false,
     val activepaymentmode: Boolean = true,
-    val activeprinter: Boolean = false
+    val activeClient: Boolean = true,
+    val activeprinter: Boolean = false,
+    val userid: Int? = 0
 ) : Parcelable

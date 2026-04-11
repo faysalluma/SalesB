@@ -38,7 +38,7 @@ class SignupViewModel @Inject constructor(
                 is Result.Success -> {
                     when (val saveParameterResult = saveParameterUseCase(saveSignupResult.data)) {
                         is Result.Success -> {
-                            val userId = saveSignupResult.data.id
+                            val userId = saveSignupResult.data.userid
                             if (userId == null) {
                                 _signupConfigurationUiState.value = SignupConfigurationUiState.Error(
                                     "User id not found in signup response"

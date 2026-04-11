@@ -2,6 +2,7 @@ package com.groupec.salesb.core.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -206,55 +208,68 @@ private fun BottomContentScreen(
 
     val selectedPaymentType = paymentTypeFromLabel(context, paymentTypeState)
     val isCashSelected = selectedPaymentType == PaymentType.Cash
+    val paddingBottom = 4.dp
 
-    Row(modifier = Modifier.fillMaxWidth()) {
-        AppEditableExposedDropdown(
-            items = clientItems,
-            label = stringResource(R.string.sale_client_label),
-            isError = isClientLibelleError,
-            supportingText = if (
-                clientlibelleState.text.isNotEmpty() && clientItems.none { it.second == clientlibelleState.text }
-            ) {
-                {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(com.groupec.salesb.core.designsystem.R.string.invalid_select),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            } else {
-                null
-            },
-            value = clientlibelleState,
-            onValueChange = {
-                onClientlibelleState(it)
-                if (isClientLibelleError) isClientLibelleError = false
-            },
-            modifier = Modifier.weight(1f),
-            onItemSelected = { item ->
-                onClientSelected(item)
-                if (isClientLibelleError) isClientLibelleError = false
-            }
-        )
-
-        IconTextButton(
-            modifier = Modifier.padding(top = 4.dp, start = 12.dp),
-            icon = {
-                Icon(
-                    imageVector = AppIcons.Add,
-                    contentDescription = stringResource(R.string.sale_add_client)
-                )
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = Silver, contentColor = Color.Black)
+    if (parameter.activeClient) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = paddingBottom),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            navigateToClient()
+            Row(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.client_label),
+                    modifier = Modifier.padding(top = 16.dp, end = 4.dp)
+                )
+                Row(modifier = Modifier
+                    .padding(top = 16.dp)
+                    .clickable {
+                        navigateToClient()
+                    }
+                ) {
+                    Text("(")
+                    Icon(
+                        imageVector = AppIcons.Add,
+                        contentDescription = stringResource(R.string.sale_add_client)
+                    )
+                    Text(")")
+                }
+            }
+
+            AppEditableExposedDropdown(
+                items = clientItems,
+                label = stringResource(R.string.sale_client_label),
+                isError = isClientLibelleError,
+                supportingText = if (
+                    clientlibelleState.text.isNotEmpty() && clientItems.none { it.second == clientlibelleState.text }
+                ) {
+                    {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = stringResource(com.groupec.salesb.core.designsystem.R.string.invalid_select),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                } else {
+                    null
+                },
+                value = clientlibelleState,
+                onValueChange = {
+                    onClientlibelleState(it)
+                    if (isClientLibelleError) isClientLibelleError = false
+                },
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+                onItemSelected = { item ->
+                    onClientSelected(item)
+                    if (isClientLibelleError) isClientLibelleError = false
+                }
+            )
         }
     }
 
     // Payment mode
     if (parameter.activepaymentmode) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(bottom = paddingBottom),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
@@ -273,7 +288,7 @@ private fun BottomContentScreen(
 
     if (isCashSelected || parameter.devise.equals("fcfa", ignoreCase = true)) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(bottom = paddingBottom),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
@@ -302,7 +317,7 @@ private fun BottomContentScreen(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         TitleMedium(
-            modifier = Modifier.padding(end = 8.dp),
+            modifier = Modifier.padding(top = 2.dp, end = 8.dp),
             title = stringResource(R.string.total)
         )
         Text(
@@ -322,6 +337,7 @@ private fun BottomContentScreen(
             style = MaterialTheme.typography.titleMedium
         ) {
             isClientLibelleError = clientlibelleState.text.isNotEmpty() &&
+                parameter.activeClient &&
                 clientItems.none { it.second == clientlibelleState.text }
             if (!isClientLibelleError) {
                 showDialog.value = true

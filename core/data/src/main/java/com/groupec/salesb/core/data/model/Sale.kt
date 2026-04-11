@@ -16,7 +16,11 @@ fun SaleItemResponse.toSale() = Sale(
     paymenttype = paymenttype,
     datemodif = datemodif,
     clientid = client?.id,
+    clientName = client?.nomprenom,
+    clientAdresse = client?.adresse,
+    clientTelephone = client?.telephone,
     userid = user?.id,
     username = user?.nomprenom,
+
     details = products.map { SaleDetail(it.id, it.libelle, it.qte, it.prix) }
 )

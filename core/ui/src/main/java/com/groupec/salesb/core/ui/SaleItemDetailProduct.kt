@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -38,7 +37,7 @@ fun SaleItemDetailProduct(
                     s.datevente?.convertToLocaleDateTimeFormat(
                     )?:""
                 ),
-                modifier = Modifier.padding(vertical = 12.dp),
+                modifier = Modifier.padding(vertical = 10.dp),
                 textAlign = TextAlign.Center
             )
 
@@ -52,6 +51,15 @@ fun SaleItemDetailProduct(
                     text = stringResource(R.string.paid_by, paidByValue),
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
+            }
+
+            if (parameter.activeClient) {
+                s.clientName?.let {
+                    Text(
+                        text = stringResource(R.string.paid_by_client, it),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
             }
 
             LazyColumn {

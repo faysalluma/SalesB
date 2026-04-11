@@ -28,6 +28,7 @@ enum class Screen {
     Account,
     AccountDetail,
     HandleService,
+    UpdateBusinessInfo,
     TermsAndConditions,
     Signup,
     Subscription,
@@ -57,6 +58,7 @@ sealed class NavigationItem(val route: String,val title: Int = 0, val icon: Navi
     data object Account : NavigationItem(Screen.Account.name)
     data object AccountDetail : NavigationItem(Screen.AccountDetail.name)
     data object HandleService : NavigationItem(Screen.HandleService.name)
+    data object UpdateBusinessInfo : NavigationItem(Screen.UpdateBusinessInfo.name)
     data object TermsAndConditions : NavigationItem(Screen.TermsAndConditions.name)
     data object Signup : NavigationItem(Screen.Signup.name)
     data object Subscription : NavigationItem(Screen.Subscription.name)

@@ -29,6 +29,7 @@ import com.groupec.feature.printreceiptguide.PrintReceiptGuideScreen
 import com.groupec.feature.sale.SaleScreen
 import com.groupec.feature.signup.SignupScreen
 import com.groupec.feature.subscription.SubscriptionScreen
+import com.groupec.feature.updatebusinessinfo.UpdateBusinessInfoScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
 import com.groupec.feature.termsandconditions.TermsAndConditionsScreen
@@ -144,6 +145,12 @@ fun AppNavHost(
                         )
                     )
                 }
+            )
+        }
+
+        composable(NavigationItem.UpdateBusinessInfo.route) {
+            UpdateBusinessInfoScreen(
+                snackbarHostState = snackbarHostState
             )
         }
 

@@ -1,16 +1,36 @@
 package com.groupec.salesb.core.designsystem.component
 
 import android.content.res.Resources
+import androidx.compose.ui.geometry.Size
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -20,7 +40,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -33,10 +55,18 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import com.groupec.salesb.core.designsystem.R
+import com.groupec.salesb.core.designsystem.theme.Silver
+import com.groupec.salesb.core.designsystem.theme.Silver2
+import com.groupec.salesb.core.designsystem.theme.Silver3
 
 
 /** ExposedDropdownMenu */
@@ -368,6 +398,140 @@ fun AppMultiSelectDropdownMenu(items: List<String>) {
     }
 }
 
+/** AutoComplete Select Bar */
+@Composable
+fun AutoCompleteSelectBar(entries: List<String>) {
+
+    var itemElement by remember { mutableStateOf("") }
+    val heightTextFields by remember { mutableStateOf(55.dp) }
+    var textFieldSize by remember { mutableStateOf(Size.Zero) }
+    var expanded by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Column(
+        modifier = Modifier
+            .padding(30.dp)
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = {
+                    expanded = false
+                }
+            )
+    ) {
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(heightTextFields)
+                .border(
+                    width = 1.dp,
+                    color = Silver2,
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .onGloballyPositioned { coordinates ->
+                    textFieldSize = coordinates.size.toSize()
+                },
+            value = itemElement,
+            onValueChange = {
+                itemElement = it
+                expanded = true
+            },
+            // Perform action when the TextField is clicked
+            interactionSource = remember { MutableInteractionSource() }
+                .also { interactionSource ->
+                    LaunchedEffect(interactionSource) {
+                        interactionSource.interactions.collect { interaction ->
+                            if (interaction is PressInteraction.Release) {
+                                expanded = !expanded
+                            }
+                        }
+                    }
+                },
+            placeholder = { Text("Enter word") },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                cursorColor = Color.Black,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+            ),
+            textStyle = TextStyle(
+                color = Color.Black,
+                fontSize = 16.sp
+            ),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+            singleLine = true,
+            leadingIcon = {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = Icons.Rounded.Search,
+                    contentDescription = "arrow",
+                   tint = Silver3
+                )
+            }
+        )
+
+        AnimatedVisibility(visible = expanded) {
+            Card(
+                modifier = Modifier
+                    .width(textFieldSize.width.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent
+                )
+            ) {
+                LazyColumn(
+                    modifier = Modifier.heightIn(max = 180.dp),
+                ) {
+
+                    if (itemElement.isNotEmpty()) {
+                        items(
+                            entries.filter {
+                                it.lowercase().contains(itemElement.lowercase())
+                            }.sorted()
+                        ) {
+                            ItemElement(title = it) { title ->
+                                itemElement = title
+                                expanded = false
+                            }
+                        }
+                    } else {
+                        items(
+                            entries.sorted()
+                        ) {
+                            ItemElement(title = it) { title ->
+                                itemElement = title
+                                expanded = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ItemElement(
+    title: String,
+    onSelect: (String) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onSelect(title)
+            }
+            .padding(vertical = 12.dp, horizontal = 15.dp)
+    ) {
+        Text(text = title, fontSize = 16.sp)
+    }
+}
 
 fun Int.pixelToDp(): Int = (this / Resources.getSystem().displayMetrics.density).toInt()
 
@@ -382,6 +546,7 @@ fun SpinnersPreview() {
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        AutoCompleteSelectBar(entries = items)
         AppExposedDropdownMenu(items = items) { index, item ->
 
         }

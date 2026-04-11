@@ -79,7 +79,8 @@ fun MainScreen(
         context = context,
         navController = navController,
         userStore = userStoreState,
-        isServiceView = parameterState.serviceview
+        isServiceView = parameterState.serviceview,
+        activeClient = parameterState.activeClient
     ) {
         showLogoutDialog = true
     }
@@ -368,6 +369,7 @@ fun getDropdownItemsWithActions(
     navController: NavHostController,
     userStore: UserStore,
     isServiceView: Boolean,
+    activeClient: Boolean,
     onLogOut: () -> Unit
 ): List<MenuItem> {
 
@@ -396,11 +398,23 @@ fun getDropdownItemsWithActions(
         }
     )
 
+    if (activeClient) {
+        childrenList.add(
+            MenuItem.Action(
+                context.getString(R.string.menu_client)
+            ) {
+                navController.navigate(NavigationItem.Client.route) {
+                    launchSingleTop = true
+                }
+            }
+        )
+    }
+
     childrenList.add(
         MenuItem.Action(
-            context.getString(R.string.menu_client)
+            context.getString(R.string.menu_update_business_info)
         ) {
-            navController.navigate(NavigationItem.Client.route) {
+            navController.navigate(NavigationItem.UpdateBusinessInfo.route) {
                 launchSingleTop = true
             }
         }

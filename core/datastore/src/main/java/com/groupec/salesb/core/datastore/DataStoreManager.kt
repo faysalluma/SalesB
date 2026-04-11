@@ -24,6 +24,8 @@ import javax.inject.Singleton
 class DataStoreManager @Inject constructor(@ApplicationContext val context: Context) {
     companion object {
         // Parameters key
+        private val PARAMETER_ID_KEY = intPreferencesKey("parameterid")
+        private val PARAMETER_USER_ID_KEY = intPreferencesKey("parameter_userid")
         private val LOGO_KEY = stringPreferencesKey("logo")
         private val DEVISE_KEY = stringPreferencesKey("device")
         private val RAISON_SOCIAL_KEY = stringPreferencesKey("raisonsociale")
@@ -45,6 +47,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
 
         // Local parameters
         private val ACTIVE_PAYMENT_MODE = booleanPreferencesKey("activepaymentmode")
+        private val ACTIVE_CLIENT = booleanPreferencesKey("activeclient")
 
         // Login key
         private val USER_ID_KEY = stringPreferencesKey("userid")
@@ -63,6 +66,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         .map { preferences ->
             // No type safety.
             Parameter(
+                id = preferences[PARAMETER_ID_KEY] ?: 0,
                 logo = preferences[LOGO_KEY] ?: "",
                 devise = preferences[DEVISE_KEY] ?: "",
                 raisonsociale = preferences[RAISON_SOCIAL_KEY] ?: "",
@@ -80,7 +84,9 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
                 showimageonproduct = preferences[SHOW_IMAGE_ON_PRODUCT_KEY] ?: false,
                 useintforpriceandamout = preferences[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] ?: false,
                 activepaymentmode = preferences[ACTIVE_PAYMENT_MODE] ?: false,
-                activeprinter = preferences[ACTIVE_PRINTER] ?: false
+                activeClient = preferences[ACTIVE_CLIENT] ?: true,
+                activeprinter = preferences[ACTIVE_PRINTER] ?: false,
+                userid = preferences[PARAMETER_USER_ID_KEY] ?: 0
             )
         }
 
@@ -105,6 +111,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
 
     suspend fun setParameterConfig(parameter: Parameter) {
         context.dataStore.edit { datastore ->
+            datastore[PARAMETER_ID_KEY] = parameter.id
             datastore[LOGO_KEY] = parameter.logo ?: ""
             datastore[DEVISE_KEY] = parameter.devise
             datastore[RAISON_SOCIAL_KEY] = parameter.raisonsociale
@@ -121,8 +128,27 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             datastore[SERVICE_VIEW_KEY] = parameter.serviceview
             datastore[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] = parameter.useintforpriceandamout
             datastore[ACTIVE_PAYMENT_MODE] = parameter.activepaymentmode
+            datastore[ACTIVE_CLIENT] = parameter.activeClient
             datastore[ACTIVE_PRINTER] = parameter.activeprinter
             datastore[SHOW_TERMS_AND_CONDITIONS_KEY] = false
+            datastore[PARAMETER_USER_ID_KEY] = parameter.userid ?: 0
+        }
+    }
+
+    suspend fun setParameterOnlyBusinessDataConfig(parameter: Parameter) {
+        context.dataStore.edit { datastore ->
+            datastore[PARAMETER_ID_KEY] = parameter.id
+            datastore[LOGO_KEY] = parameter.logo ?: ""
+            datastore[DEVISE_KEY] = parameter.devise
+            datastore[RAISON_SOCIAL_KEY] = parameter.raisonsociale
+            datastore[ADRESSE_KEY] = parameter.adresse ?: ""
+            datastore[TELEPHONE_KEY] = parameter.telephone ?: ""
+            datastore[EMAIL_KEY] = parameter.email ?: ""
+            datastore[IFU_KEY] = parameter.ifu ?: ""
+            datastore[WEBSITE_KEY] = parameter.website ?: ""
+            datastore[ENTREPRISE_TYPE_KEY] = parameter.entreprisetype
+            datastore[TVA_KEY] = parameter.tva
+            datastore[PARAMETER_USER_ID_KEY] = parameter.userid ?: 0
         }
     }
 
@@ -191,6 +217,12 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
     suspend fun updateActivePaymentMode(value: Boolean) {
         context.dataStore.edit { datastore ->
             datastore[ACTIVE_PAYMENT_MODE] = value
+        }
+    }
+
+    suspend fun updateActiveClient(value: Boolean) {
+        context.dataStore.edit { datastore ->
+            datastore[ACTIVE_CLIENT] = value
         }
     }
 

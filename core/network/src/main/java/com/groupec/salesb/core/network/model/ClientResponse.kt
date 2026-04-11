@@ -38,5 +38,11 @@ data class ClientReducedResponse(
     val id: Int ,
 
     @SerializedName("nomprenom")
-    val nomprenom: String
+    val nomprenom: String,
+
+    @SerializedName("adresse")
+    val adresse: String? = null,
+
+    @SerializedName("telephone")
+    val telephone: String? = null
 )

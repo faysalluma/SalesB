@@ -175,6 +175,13 @@ fun SaleScreen(
         }
     }
 
+    LaunchedEffect(parameter.activeClient) {
+        if (!parameter.activeClient) {
+            clientlibelleState = TextFieldValue("")
+            selectedClientId = null
+        }
+    }
+
     LaunchedEffect(selectedProducts.size) {
         if (selectedProducts.isEmpty()) {
             showSummary = false
@@ -306,7 +313,7 @@ fun SaleScreen(
                         val sale = Sale(
                             totalprix = total,
                             paymenttype = paymentTypeValueForSave,
-                            clientid = selectedClientId,
+                            clientid = selectedClientId.takeIf { parameter.activeClient },
                             details = saleDetail
                         )
                         if (printAction != PrintAction.Thermal &&
@@ -522,7 +529,7 @@ fun SaleScreen(
                         val sale = Sale(
                             totalprix = total,
                             paymenttype = paymentTypeValueForSave,
-                            clientid = selectedClientId,
+                            clientid = selectedClientId.takeIf { parameter.activeClient },
                             details = saleDetail
                         )
                         if (printAction != PrintAction.Thermal &&

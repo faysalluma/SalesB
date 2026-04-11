@@ -43,9 +43,11 @@ class RepositoryModule  {
     @Provides
     @Singleton
     fun providerParameterRepository(
-        dataStoreManager: DataStoreManager
+        @ApplicationContext context: Context,
+        dataStoreManager: DataStoreManager,
+        apiService: ApiService
     ) : ParameterRepository {
-        return ParameterRepositoryImpl(dataStoreManager)
+        return ParameterRepositoryImpl(dataStoreManager, apiService, context)
     }
 
     @Provides
