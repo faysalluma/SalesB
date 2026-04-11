@@ -58,6 +58,9 @@ data class ParamItemResponse(
     @SerializedName("activepaymentmode")
     val activepaymentmode: Int,
 
+    @SerializedName("activeclient")
+    val activeclient: Int,
+
     @SerializedName("defaultpayment")
     val defaultpayment: String ? = null,
 

@@ -38,7 +38,7 @@ fun SaleItemDetailProduct(
                     s.datevente?.convertToLocaleDateTimeFormat(
                     )?:""
                 ),
-                modifier = Modifier.padding(vertical = 12.dp),
+                modifier = Modifier.padding(vertical = 10.dp),
                 textAlign = TextAlign.Center
             )
 
@@ -54,6 +54,15 @@ fun SaleItemDetailProduct(
                 )
             }
 
+            if (parameter.activeClient) {
+                s.clientName?.let {
+                    Text(
+                        text = stringResource(R.string.paid_by_client, it),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+            }
+            
             LazyColumn {
                 item {
                     ProductSaleHeaderCard()

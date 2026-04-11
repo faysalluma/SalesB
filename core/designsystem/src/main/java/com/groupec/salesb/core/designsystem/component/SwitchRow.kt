@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Green
-import com.groupec.salesb.core.designsystem.theme.Primary
 
 
 @Composable
@@ -89,5 +88,6 @@ enum class HandleServiceToggleType {
     SHOW_IMAGE_ON_PRODUCT,
     USE_INT_FOR_PRICE_AND_AMOUNT,
     ACTIVE_PAYMENT_MODE,
+    ACTIVE_CLIENT,
     ACTIVE_PRINTER
 }

@@ -36,7 +36,8 @@
     <string name="title_product">%1$s</string>
     <string name="price">@string/price_view</string>
     <string name="payment_type_label">Mode de paiement :</string>
-    <string name="sale_client_label">Client (Optionnel)</string>
+    <string name="client_label">Client :</string>
+    <string name="sale_client_label">(Optionnel)</string>
     <string name="sale_add_client">Ajouter un client</string>
     <string name="total">Total :</string>
     <string name="cash_received">Espèces reçues</string>
@@ -73,6 +74,7 @@
     <string name="please_read">Je reconnais avoir lu et accepté les</string>
     <string name="terms_and_conditions_of_use">conditions générales d’utilisation.</string>
     <string name="paid_by">Moyen de paiement : %s</string>
+    <string name="paid_by_client">Client : %s</string>
     <string name="signup_create_account">Créer votre compte</string>
     <string name="signup_step_1">Étape 1/3 : Détails de l\'utilisateur</string>
     <string name="signup_name">Nom &amp; Prénom</string>

@@ -45,6 +45,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
 
         // Local parameters
         private val ACTIVE_PAYMENT_MODE = booleanPreferencesKey("activepaymentmode")
+        private val ACTIVE_CLIENT = booleanPreferencesKey("activeclient")
 
         // Login key
         private val USER_ID_KEY = stringPreferencesKey("userid")
@@ -80,6 +81,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
                 showimageonproduct = preferences[SHOW_IMAGE_ON_PRODUCT_KEY] ?: false,
                 useintforpriceandamout = preferences[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] ?: false,
                 activepaymentmode = preferences[ACTIVE_PAYMENT_MODE] ?: false,
+                activeClient = preferences[ACTIVE_CLIENT] ?: true,
                 activeprinter = preferences[ACTIVE_PRINTER] ?: false
             )
         }
@@ -121,6 +123,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             datastore[SERVICE_VIEW_KEY] = parameter.serviceview
             datastore[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] = parameter.useintforpriceandamout
             datastore[ACTIVE_PAYMENT_MODE] = parameter.activepaymentmode
+            datastore[ACTIVE_CLIENT] = parameter.activeClient
             datastore[ACTIVE_PRINTER] = parameter.activeprinter
             datastore[SHOW_TERMS_AND_CONDITIONS_KEY] = false
         }
@@ -191,6 +194,12 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
     suspend fun updateActivePaymentMode(value: Boolean) {
         context.dataStore.edit { datastore ->
             datastore[ACTIVE_PAYMENT_MODE] = value
+        }
+    }
+
+    suspend fun updateActiveClient(value: Boolean) {
+        context.dataStore.edit { datastore ->
+            datastore[ACTIVE_CLIENT] = value
         }
     }
 

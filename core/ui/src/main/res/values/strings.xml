@@ -43,7 +43,8 @@
     <string name="label">@string/label_view</string>
     <string name="total">Total:</string>
     <string name="payment_type_label">Payment method:</string>
-    <string name="sale_client_label">Client (Optional)</string>
+    <string name="client_label">Customer:</string>
+    <string name="sale_client_label">(Optional)</string>
     <string name="sale_add_client">Add client</string>
     <string name="cash_received">Cash received</string>
     <string name="change_due">Change due: %s</string>
@@ -77,6 +78,7 @@
     <string name="please_read">I acknowledge that I have read and accept the</string>
     <string name="terms_and_conditions_of_use">terms and conditions of use.</string>
     <string name="paid_by">Payment method: %s</string>
+    <string name="paid_by_client">Customer: %s</string>
     <string name="signup_create_account">Create your account</string>
     <string name="signup_step_1">Step 1/3: User details</string>
     <string name="signup_step_2">Step 2/3: Your company data</string>

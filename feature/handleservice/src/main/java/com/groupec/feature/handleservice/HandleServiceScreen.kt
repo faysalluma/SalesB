@@ -130,6 +130,13 @@ fun HandleServiceScreen(
             type = HandleServiceToggleType.SHOW_IMAGE_ON_PRODUCT
         ),
         HandleServiceOption(
+            titleRes = Res.string.handle_service_client,
+            descriptionRes = Res.string.handle_service_client_desc,
+            checked = uiState.activeClient,
+            enabled = true,
+            type = HandleServiceToggleType.ACTIVE_CLIENT
+        ),
+        HandleServiceOption(
             titleRes = Res.string.handle_service_payment_mode,
             descriptionRes = Res.string.handle_service_payment_mode_desc,
             checked = uiState.activePaymentMode,
@@ -166,6 +173,7 @@ fun HandleServiceScreen(
                             HandleServiceToggleType.SERVICE_VIEW -> viewModel.updateServiceView(checked)
                             HandleServiceToggleType.SHOW_IMAGE_ON_PRODUCT -> viewModel.updateShowImageOnProduct(checked)
                             HandleServiceToggleType.USE_INT_FOR_PRICE_AND_AMOUNT -> viewModel.updateUseIntForPriceAndAmount(checked)
+                            HandleServiceToggleType.ACTIVE_CLIENT -> viewModel.updateActiveClient(checked)
                             HandleServiceToggleType.ACTIVE_PAYMENT_MODE -> viewModel.updateActivePaymentMode(checked)
                             HandleServiceToggleType.ACTIVE_PRINTER -> {
                                 if (!checked) {

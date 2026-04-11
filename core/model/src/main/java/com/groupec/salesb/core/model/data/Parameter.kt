@@ -24,5 +24,6 @@ data class Parameter(
     val showimageonproduct: Boolean = false,
     val useintforpriceandamout: Boolean = false,
     val activepaymentmode: Boolean = true,
+    val activeClient: Boolean = true,
     val activeprinter: Boolean = false
 ) : Parcelable
