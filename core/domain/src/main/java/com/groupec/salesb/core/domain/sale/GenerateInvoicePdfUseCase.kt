@@ -217,18 +217,20 @@ fun generateInvoicePdf(
 
     // Right zone
     val footerSTRightZone = Cell()
-    footerSTRightZone.add(
-        Paragraph(
-            context.getString(
-                com.groupec.salesb.core.R.string.infos_tva,
-                parameter.tva.toPercentFormat()
+    if (parameter.tva > 0.0) {
+        footerSTRightZone.add(
+            Paragraph(
+                context.getString(
+                    com.groupec.salesb.core.R.string.infos_tva,
+                    parameter.tva.toPercentFormat()
+                )
             )
+            .setFont(boldFont)
+            .setFontSize(12f)
+            .setTextAlignment(TextAlignment.RIGHT)
+            .setPaddingBottom(18f)
         )
-        .setFont(boldFont)
-        .setFontSize(12f)
-        .setTextAlignment(TextAlignment.RIGHT)
-        .setPaddingBottom(18f)
-    )
+    }
     footerSTRightZone.add(
         Paragraph(
             context.getString(
