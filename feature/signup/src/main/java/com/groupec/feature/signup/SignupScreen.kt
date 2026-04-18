@@ -264,7 +264,7 @@ fun SignupScreen(
                     phone = stepTwo.phone,
                     ifu = stepTwo.ifu,
                     website = stepTwo.website,
-                    devise = stepThree.devise.uppercase(),
+                    devise = stepThree.devise.uppercase().trim(),
                     tva = stepThree.tva.toDoubleOrNull() ?: 0.0,
                     useIntForPriceAndAmount = stepThree.showInt,
                     showImageOnProduct = stepThree.showProductImage,
