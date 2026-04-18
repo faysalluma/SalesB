@@ -262,7 +262,7 @@ fun ProductDetailScreen(
                 },
                 onSubmitForm = { product ->
                     val isCreatingProduct = productDataForm.id.isBlank()
-                    if (isCreatingProduct && !userStoreState.isProActive && totalProductsCount >= 30) {
+                    if (isCreatingProduct && !userStoreState.isProActive && totalProductsCount >= 10) {
                         proBottomSheetTitle = productLimitTitle
                         showProBottomSheet = true
                     } else {

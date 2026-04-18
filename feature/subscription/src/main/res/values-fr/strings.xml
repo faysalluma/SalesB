@@ -18,8 +18,8 @@
     <string name="subscription_active_plan">Abonnement actif</string>
     <string name="subscription_upgrade_cta">Passer au Pro</string>
     <string name="subscription_payment_secured">Paiement sécurisé via Google Play</string>
-    <string name="subscription_free_feature_sales">100 ventes / mois</string>
-    <string name="subscription_free_feature_products">30 produits max</string>
+    <string name="subscription_free_feature_sales">50 ventes / mois</string>
+    <string name="subscription_free_feature_products">10 produits max</string>
     <string name="subscription_free_feature_stats">Stock et Statistiques</string>
     <string name="subscription_free_feature_exports">Export PDF / Excel indisponible</string>
     <string name="subscription_free_feature_receipt">Impression de reçu indisponible</string>

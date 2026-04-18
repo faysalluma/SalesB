@@ -118,7 +118,7 @@ class SaleViewModel @Inject constructor(
     suspend fun hasReachedFreeMonthlySalesLimit(): Boolean {
         val (startDate, endDate) = getCurrentMontDelimitedDates()
         val monthlySalesCount = getTotalSaleUseCase(startDate, endDate).first()
-        return monthlySalesCount > 100
+        return monthlySalesCount > 50
     }
 
     fun addSale(sale: Sale, printAction: PrintAction) {
