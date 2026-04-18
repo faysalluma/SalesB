@@ -98,11 +98,9 @@ fun generateCategoryListPdf(
 
 private fun buildCategoryDetails(context: Context, category: Category): String {
     val none = "-"
-    val id = category.id?.toString() ?: none
     val description = category.description?.takeIf { it.isNotBlank() } ?: none
     val createdAt = category.datecreation?.dayMonthYear() ?: none
     return listOf(
-        context.getString(R.string.id_label, id),
         context.getString(R.string.description_label, description),
         context.getString(R.string.created_at_label, createdAt)
     ).joinToString("\n")

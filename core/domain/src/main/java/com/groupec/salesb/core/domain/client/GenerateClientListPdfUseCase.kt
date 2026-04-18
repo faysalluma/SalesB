@@ -98,13 +98,11 @@ fun generateClientListPdf(
 
 private fun buildClientDetails(context: Context, client: Client): String {
     val none = "-"
-    val id = client.id?.toString() ?: none
     val address = client.adresse?.takeIf { it.isNotBlank() } ?: none
     val phone = client.telephone?.takeIf { it.isNotBlank() } ?: none
     val createdAt = client.datecreation?.dayMonthYear() ?: none
 
     return listOf(
-        context.getString(R.string.id_label, id),
         context.getString(R.string.address_label, address),
         context.getString(R.string.phone_label, phone),
         context.getString(R.string.created_at_label, createdAt)

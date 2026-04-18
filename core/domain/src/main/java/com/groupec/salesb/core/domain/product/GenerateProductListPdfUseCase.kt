@@ -116,8 +116,6 @@ private fun buildDetails(context: Context, product: Product): String {
     val stockMin = product.stockmini?.toString() ?: none
     val category = product.categorielibelle?.takeIf { it.isNotBlank() } ?: none
     val rayon = product.rayonlibelle?.takeIf { it.isNotBlank() } ?: none
-    val supplier = product.fournisseurlibelle?.takeIf { it.isNotBlank() }
-        ?: product.fournisseurid?.toString() ?: none
 
     return listOf(
         context.getString(R.string.reference_label, reference),
@@ -128,7 +126,6 @@ private fun buildDetails(context: Context, product: Product): String {
         context.getString(R.string.stock_min_label, stockMin),
         context.getString(R.string.category_label, category),
         context.getString(R.string.rayon_label, rayon),
-        context.getString(R.string.supplier_label, supplier),
     ).joinToString("\n")
 }
 
