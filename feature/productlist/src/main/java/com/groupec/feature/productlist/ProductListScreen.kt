@@ -39,6 +39,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.groupec.feature.product.R
 import com.groupec.salesb.core.ExportType
+import com.groupec.salesb.core.FeatureAccess
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
@@ -122,7 +123,7 @@ fun ProductListScreen(
     val launchExport: (ExportType) -> Unit = { exportType ->
         focusManager.clearFocus()
         expanded = false
-        if (!userStore.isProActive) {
+        if (!FeatureAccess.canExport(userStore.isProActive)) {
             proBottomSheetTitle = when (exportType) {
                 ExportType.Pdf -> exportPdfTitle
                 ExportType.Excel -> exportExcelTitle

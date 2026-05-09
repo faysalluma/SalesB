@@ -52,6 +52,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.groupec.salesb.core.ExportType
+import com.groupec.salesb.core.FeatureAccess
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.convertToServerDateFormat
 import com.groupec.salesb.core.currentLocalDateString
@@ -166,7 +167,7 @@ fun SaleListScreen(
     val launchExport: (ExportType) -> Unit = { exportType ->
         focusManager.clearFocus()
         expanded = false
-        if (!userStore.isProActive) {
+        if (!FeatureAccess.canExport(userStore.isProActive)) {
             proBottomSheetTitle = when (exportType) {
                 ExportType.Pdf -> exportPdfTitle
                 ExportType.Excel -> exportExcelTitle
@@ -737,7 +738,7 @@ fun SaleListScreen(
                                         sendByEmail = false
                                     }
                                     PrintAction.Thermal -> {
-                                        if (!userStore.isProActive) {
+                                        if (!FeatureAccess.canPrintReceipt(userStore.isProActive)) {
                                             proBottomSheetTitle = receiptPrintTitle
                                             showProBottomSheet = true
                                             return@SaleCardList

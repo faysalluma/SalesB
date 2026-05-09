@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.groupec.salesb.core.Approval
+import com.groupec.salesb.core.FeatureAccess
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.Privileges
 import com.groupec.salesb.core.getCatalogItemLabel
@@ -262,7 +263,13 @@ fun ProductDetailScreen(
                 },
                 onSubmitForm = { product ->
                     val isCreatingProduct = productDataForm.id.isBlank()
-                    if (isCreatingProduct && !userStoreState.isProActive && totalProductsCount >= 10) {
+                    if (
+                        isCreatingProduct &&
+                        !FeatureAccess.canCreateProduct(
+                            isProActive = userStoreState.isProActive,
+                            totalProductsCount = totalProductsCount,
+                        )
+                    ) {
                         proBottomSheetTitle = productLimitTitle
                         showProBottomSheet = true
                     } else {

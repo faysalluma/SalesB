@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.groupec.salesb.core.FeatureAccess
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.ExportType
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
@@ -102,7 +103,7 @@ fun RayonListScreen(
     val launchExport: (ExportType) -> Unit = { exportType ->
         focusManager.clearFocus()
         expanded = false
-        if (!userStore.isProActive) {
+        if (!FeatureAccess.canExport(userStore.isProActive)) {
             proBottomSheetTitle = when (exportType) {
                 ExportType.Pdf -> exportPdfTitle
                 ExportType.Excel -> exportExcelTitle

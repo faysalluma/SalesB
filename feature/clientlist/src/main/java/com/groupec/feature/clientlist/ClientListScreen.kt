@@ -38,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.groupec.salesb.core.ExportType
+import com.groupec.salesb.core.FeatureAccess
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.AppCustomDialog
@@ -107,7 +108,7 @@ fun ClientListScreen(
     val launchExport: (ExportType) -> Unit = { exportType ->
         focusManager.clearFocus()
         expanded = false
-        if (!userStore.isProActive) {
+        if (!FeatureAccess.canExport(userStore.isProActive)) {
             proBottomSheetTitle = when (exportType) {
                 ExportType.Pdf -> exportPdfTitle
                 ExportType.Excel -> exportExcelTitle
