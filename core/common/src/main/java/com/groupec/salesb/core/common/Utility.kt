@@ -56,5 +56,14 @@ class Utility {
 
         /* Generate unique value */
         fun generateUniqueStringValue(): String = "${UUID.randomUUID()}_${currentDateString(pattern = "yyyyMMddHHmmss")}"
+
+        /* Get currency code depending on local */
+        fun defaultCurrencyCodeForCurrentLocale(fallback: String = "XOF"): String {
+            return runCatching {
+                val locale = Locale.getDefault()
+                val currencyLocale = locale.takeIf { it.country.isNotBlank() } ?: Locale.US
+                Currency.getInstance(currencyLocale).currencyCode
+            }.getOrDefault(fallback)
+        }
     }
 }

@@ -27,4 +27,7 @@
     <string name="export_excel_failed">Export failed</string>
     <string name="no_sales_to_export">No sales to export</string>
     <string name="permission_denied">Permission denied</string>
+    <string name="missing_business_info_title">Business information required to continue.</string>
+    <string name="missing_business_info_message">Your business information is incomplete. Complete at least the company name to continue.</string>
+    <string name="missing_business_info_action">Complete my details</string>
 </resources>

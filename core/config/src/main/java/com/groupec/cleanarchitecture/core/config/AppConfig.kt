@@ -17,6 +17,7 @@ data class AppFeatures(
     val subscriptionScreenEnabled: Boolean,
     val exportEnabled: Boolean,
     val receiptPrintingEnabled: Boolean,
+    val quickSignupEnabled: Boolean,
     val productLimitEnabled: Boolean,
     val saleLimitEnabled: Boolean,
     val clientManagementEnabled: Boolean,

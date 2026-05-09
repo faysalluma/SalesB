@@ -29,6 +29,7 @@ class AppConfigImpl @Inject constructor() : AppConfig {
             subscriptionScreenEnabled = BuildConfig.FEATURE_SUBSCRIPTION_SCREEN,
             exportEnabled = BuildConfig.FEATURE_EXPORTS,
             receiptPrintingEnabled = BuildConfig.FEATURE_RECEIPT_PRINTING,
+            quickSignupEnabled = BuildConfig.FEATURE_QUICK_SIGNUP,
             productLimitEnabled = BuildConfig.FEATURE_PRODUCT_LIMIT,
             saleLimitEnabled = BuildConfig.FEATURE_SALE_LIMIT,
             clientManagementEnabled = BuildConfig.FEATURE_CLIENTS,

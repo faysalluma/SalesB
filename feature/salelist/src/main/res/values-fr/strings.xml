@@ -27,4 +27,7 @@
     <string name="export_excel_failed">Échec de l\'export</string>
     <string name="no_sales_to_export">Aucune vente à exporter</string>
     <string name="permission_denied">Permission refusée</string>
+    <string name="missing_business_info_title">Informations d\'entreprise requises pour continuer.</string>
+    <string name="missing_business_info_message">Vos informations d\'entreprise sont incomplètes. Complétez au moins la raison sociale pour continuer.</string>
+    <string name="missing_business_info_action">Compléter mes données</string>
 </resources>

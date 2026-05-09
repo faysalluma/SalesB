@@ -1,5 +1,6 @@
 package com.groupec.salesb.core.ui.signup
 
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -25,6 +26,7 @@ import com.groupec.salesb.core.ui.R
 @Composable
 fun SignupStepOne(
     state: SignupStepOneFormState,
+    subtitle: String?,
     showErrors: Boolean,
     onValueChange: (SignupStepOneFormState) -> Unit
 ) {
@@ -33,12 +35,14 @@ fun SignupStepOne(
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier.padding(top = 8.dp)
     )
-    Text(
-        stringResource(R.string.signup_step_1),
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.bodyLarge, color = Color.Gray,
-        modifier = Modifier.padding(bottom = 18.dp)
-    )
+    subtitle?.let {
+        Text(
+            it,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge, color = Color.Gray
+        )
+    }
+    Spacer(Modifier.padding(bottom = 18.dp))
     SignupStepOneForm(state, showErrors, onValueChange)
 }
 

@@ -14,7 +14,7 @@ fun ParamItemResponse.toParameter(): Parameter {
         id = id,
         logo = logo,
         devise = devise,
-        raisonsociale = raisonsociale,
+        raisonsociale = raisonsociale ?: "",
         adresse = adresse,
         email = email,
         telephone = telephone,

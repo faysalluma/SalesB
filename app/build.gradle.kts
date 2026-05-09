@@ -19,6 +19,7 @@ private data class ClientFeatures(
     val subscriptionScreenEnabled: Boolean,
     val exportEnabled: Boolean,
     val receiptPrintingEnabled: Boolean,
+    val quickSignupEnabled: Boolean,
     val productLimitEnabled: Boolean,
     val saleLimitEnabled: Boolean,
     val clientManagementEnabled: Boolean,
@@ -41,6 +42,7 @@ private val defaultClientFeatures = ClientFeatures(
     subscriptionScreenEnabled = false,
     exportEnabled = true,
     receiptPrintingEnabled = true,
+    quickSignupEnabled = false,
     productLimitEnabled = false,
     saleLimitEnabled = false,
     clientManagementEnabled = true,
@@ -71,6 +73,7 @@ private val salesbFlavor = ClientFlavorConfig(
         subscriptionScreenEnabled = true,
         exportEnabled = false,
         receiptPrintingEnabled = false,
+        quickSignupEnabled = true,
         productLimitEnabled = true,
         saleLimitEnabled = true,
         clientManagementEnabled = true,
@@ -117,6 +120,7 @@ private fun ApplicationProductFlavor.applyClientFlavor(config: ClientFlavorConfi
     buildConfigBoolean("FEATURE_SUBSCRIPTION_SCREEN", config.features.subscriptionScreenEnabled)
     buildConfigBoolean("FEATURE_EXPORTS", config.features.exportEnabled)
     buildConfigBoolean("FEATURE_RECEIPT_PRINTING", config.features.receiptPrintingEnabled)
+    buildConfigBoolean("FEATURE_QUICK_SIGNUP", config.features.quickSignupEnabled)
     buildConfigBoolean("FEATURE_PRODUCT_LIMIT", config.features.productLimitEnabled)
     buildConfigBoolean("FEATURE_SALE_LIMIT", config.features.saleLimitEnabled)
     buildConfigBoolean("FEATURE_CLIENTS", config.features.clientManagementEnabled)

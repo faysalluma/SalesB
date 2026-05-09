@@ -250,7 +250,10 @@ fun AppNavHost(
                 navigateToSaleChart = { startDate, endDate ->
                     navController.navigate(NavigationItem.SaleChart.route.plus("/${startDate}/${endDate}"))
                 },
-                onNavigateToSubscription = navigateToSubscription
+                onNavigateToSubscription = navigateToSubscription,
+                navigateToUpdateBusinessInfo = {
+                    navController.navigate(NavigationItem.UpdateBusinessInfo.route)
+                }
             )
         }
 

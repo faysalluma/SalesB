@@ -236,7 +236,7 @@ interface ApiService {
         @Part("email") email: RequestBody,
         @Part("langMessageEn") langMessageEn: RequestBody,
         @Part("password") password: RequestBody,
-        @Part("companyName") companyName: RequestBody,
+        @Part("companyName") companyName: RequestBody?,
         @Part("companyType") companyType: RequestBody,
         @Part("companyEmail") companyEmail: RequestBody?,
         @Part("address") address: RequestBody?,

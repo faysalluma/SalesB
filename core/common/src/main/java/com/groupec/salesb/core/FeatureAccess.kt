@@ -15,6 +15,9 @@ object FeatureAccess {
     val isRayonManagementEnabled: Boolean
         get() = features.rayonManagementEnabled
 
+    val isQuickSignupEnabled: Boolean
+        get() = features.quickSignupEnabled
+
     fun canExport(isProActive: Boolean): Boolean =
         features.exportEnabled && isProActive
 

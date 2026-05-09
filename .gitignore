@@ -13,6 +13,7 @@
 /.idea/deploymentTargetSelector.xml
 .idea/AndroidProjectSystem.xml
 .idea/runConfigurations.xml
+.idea/appInsightsSettings.xml
 build-logic/convention/build/
 .DS_Store
 /build
