@@ -19,7 +19,7 @@ object FeatureAccess {
         get() = features.quickSignupEnabled
 
     fun canExport(isProActive: Boolean): Boolean =
-        features.exportEnabled && isProActive
+        features.exportEnabled
 
     fun canPrintReceipt(isProActive: Boolean): Boolean =
         features.receiptPrintingEnabled && isProActive
