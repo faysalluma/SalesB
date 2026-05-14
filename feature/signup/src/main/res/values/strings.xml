@@ -9,8 +9,10 @@
     <string name="signup_back_content_desc">Back</string>
     <string name="signup_info_content_desc">Information</string>
     <string name="signup_next">Next</string>
+    <string name="signup_submit">Sign up</string>
     <string name="signup_previous">Previous</string>
     <string name="signup_finish">Finish</string>
+    <string name="signup_quick_step_1">Enter your information.</string>
     <string name="select">Select</string>
     <string name="sales_and_retailers">Retail</string>
     <string name="professional_services">Service</string>

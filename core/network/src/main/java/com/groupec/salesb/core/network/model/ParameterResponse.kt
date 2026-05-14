@@ -15,7 +15,7 @@ data class ParamItemResponse(
     val logo: String?,
 
     @SerializedName("raisonsociale")
-    val raisonsociale: String,
+    val raisonsociale: String?,
 
 
     @SerializedName("entreprisetype")

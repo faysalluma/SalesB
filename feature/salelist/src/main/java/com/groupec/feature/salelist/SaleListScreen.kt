@@ -5,6 +5,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,10 +43,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,11 +56,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.groupec.salesb.core.ExportType
+import com.groupec.salesb.core.FeatureAccess
 import com.groupec.salesb.core.FormUIState
 import com.groupec.salesb.core.convertToServerDateFormat
 import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.designsystem.component.AppCustomBottomSheet
 import com.groupec.salesb.core.designsystem.component.AppCustomDialog
+import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.AppLoadingScreen
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.DatePickerFieldToModal
@@ -65,9 +71,12 @@ import com.groupec.salesb.core.designsystem.component.EmptyScreen
 import com.groupec.salesb.core.designsystem.component.ErrorScreen
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
+import com.groupec.salesb.core.designsystem.component.TitleHeader
 import com.groupec.salesb.core.designsystem.component.TitleLarge
 import com.groupec.salesb.core.designsystem.icon.AppIcons
+import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.Green
+import com.groupec.salesb.core.designsystem.theme.LightGreen
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
 import com.groupec.salesb.core.formatAmount
@@ -97,6 +106,7 @@ fun SaleListScreen(
     modifier: Modifier = Modifier,
     navigateToSaleChart: (String, String) -> Unit,
     onNavigateToSubscription: () -> Unit,
+    navigateToUpdateBusinessInfo: () -> Unit,
     viewModel: SaleListViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -138,6 +148,15 @@ fun SaleListScreen(
     var expanded by remember { mutableStateOf(false) }
     var pendingExport by remember { mutableStateOf(ExportType.Pdf) }
     var proBottomSheetTitle by rememberSaveable { mutableStateOf("") }
+    var showMissingBusinessInfoDialog by rememberSaveable { mutableStateOf(false) }
+
+    fun withBusinessInfoGuard(onValid: () -> Unit) {
+        if (parameter.raisonsociale.isBlank()) {
+            showMissingBusinessInfoDialog = true
+        } else {
+            onValid()
+        }
+    }
 
     // When save to Downloads notify user
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -166,22 +185,67 @@ fun SaleListScreen(
     val launchExport: (ExportType) -> Unit = { exportType ->
         focusManager.clearFocus()
         expanded = false
-        if (!userStore.isProActive) {
-            proBottomSheetTitle = when (exportType) {
-                ExportType.Pdf -> exportPdfTitle
-                ExportType.Excel -> exportExcelTitle
-            }
-            showProBottomSheet = true
-        } else {
-            showLoadingExportDialog = true
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                when (exportType) {
-                    ExportType.Pdf -> viewModel.exportSalesToPdf(context)
-                    ExportType.Excel -> viewModel.exportSalesToExcel(context)
+        withBusinessInfoGuard {
+            if (!FeatureAccess.canExport(userStore.isProActive)) {
+                proBottomSheetTitle = when (exportType) {
+                    ExportType.Pdf -> exportPdfTitle
+                    ExportType.Excel -> exportExcelTitle
                 }
+                showProBottomSheet = true
             } else {
-                pendingExport = exportType
-                exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                showLoadingExportDialog = true
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    when (exportType) {
+                        ExportType.Pdf -> viewModel.exportSalesToPdf(context)
+                        ExportType.Excel -> viewModel.exportSalesToExcel(context)
+                    }
+                } else {
+                    pendingExport = exportType
+                    exportPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
+            }
+        }
+    }
+
+    if (showMissingBusinessInfoDialog) {
+        AppCustomDialog(setShowDialog = {
+            showMissingBusinessInfoDialog = it
+        } ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TitleHeader(
+                    title = stringResource(R.string.missing_business_info_title),
+                    color = Color.Unspecified,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(28.dp))
+                FlowRow (
+                    horizontalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    DefaultButton(
+                        text = stringResource(R.string.missing_business_info_action),
+                    ) {
+                        showMissingBusinessInfoDialog = false
+                        navigateToUpdateBusinessInfo()
+                    }
+                    DefaultButton(
+                        containerColor = Silver,
+                        border = BorderStroke(1.dp, Silver),
+                        textcolor = Color.Black,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = Black,
+                            fontWeight = FontWeight.W400
+                        ),
+                        text = stringResource(android.R.string.cancel)
+                    ) {
+                        showMissingBusinessInfoDialog = false
+                    }
+                }
             }
         }
     }
@@ -732,41 +796,47 @@ fun SaleListScreen(
                                 saleGetValue = sale
                                 when (printAction) {
                                     PrintAction.Normal -> {
-                                        showInvoice = false // Re-open form dialog
-                                        showInvoiceDialog = true
-                                        sendByEmail = false
+                                        withBusinessInfoGuard {
+                                            showInvoice = false // Re-open form dialog
+                                            showInvoiceDialog = true
+                                            sendByEmail = false
+                                        }
                                     }
                                     PrintAction.Thermal -> {
-                                        if (!userStore.isProActive) {
-                                            proBottomSheetTitle = receiptPrintTitle
-                                            showProBottomSheet = true
-                                            return@SaleCardList
-                                        }
-                                        showLoadingThermalPrintDialog = true
-                                        scope.launch {
-                                            val result = withContext(Dispatchers.IO) {
-                                                bluetoothPrint.validatePrinterReadiness()
+                                        withBusinessInfoGuard {
+                                            if (!FeatureAccess.canPrintReceipt(userStore.isProActive)) {
+                                                proBottomSheetTitle = receiptPrintTitle
+                                                showProBottomSheet = true
+                                                return@withBusinessInfoGuard
                                             }
-                                            val errorMessage = result.exceptionOrNull()?.message
-                                            if (errorMessage != null) {
-                                                showLoadingThermalPrintDialog = false
-                                                Toast.makeText(
-                                                    context,
-                                                    errorMessage,
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            } else {
-                                                viewModel.printThermalReceipt(
-                                                    sale = sale,
-                                                    parameter = parameter
-                                                )
+                                            showLoadingThermalPrintDialog = true
+                                            scope.launch {
+                                                val result = withContext(Dispatchers.IO) {
+                                                    bluetoothPrint.validatePrinterReadiness()
+                                                }
+                                                val errorMessage = result.exceptionOrNull()?.message
+                                                if (errorMessage != null) {
+                                                    showLoadingThermalPrintDialog = false
+                                                    Toast.makeText(
+                                                        context,
+                                                        errorMessage,
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                } else {
+                                                    viewModel.printThermalReceipt(
+                                                        sale = sale,
+                                                        parameter = parameter
+                                                    )
+                                                }
                                             }
                                         }
                                     }
                                     PrintAction.SendByEmail -> {
-                                        showInvoiceDialog = true
-                                        sendByEmail = true // Notify to send by email operation (show email field)
-                                        showInvoice = false // Re-open form dialog
+                                        withBusinessInfoGuard {
+                                            showInvoiceDialog = true
+                                            sendByEmail = true // Notify to send by email operation (show email field)
+                                            showInvoice = false // Re-open form dialog
+                                        }
                                     }
 
                                     else -> {}
@@ -820,18 +890,22 @@ fun SaleListScreen(
                                                 showInvoice = false
                                             },
                                             onDownload = {
-                                                showInvoiceDialog = false
-                                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                                                    launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                                } else {
-                                                    showLoadingInvoiceActionDialog = true
-                                                    viewModel.savePdfToDownloads(context, saleGetValue!!, parameter, invoicingGetValue!!)
+                                                withBusinessInfoGuard {
+                                                    showInvoiceDialog = false
+                                                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                                                        launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                                    } else {
+                                                        showLoadingInvoiceActionDialog = true
+                                                        viewModel.savePdfToDownloads(context, saleGetValue!!, parameter, invoicingGetValue!!)
+                                                    }
                                                 }
                                             },
                                             onPrint = {
-                                                showInvoiceDialog = false
-                                                showLoadingInvoiceActionDialog = true
-                                                viewModel.onPrint(context, saleGetValue!!, parameter, invoicingGetValue!!)
+                                                withBusinessInfoGuard {
+                                                    showInvoiceDialog = false
+                                                    showLoadingInvoiceActionDialog = true
+                                                    viewModel.onPrint(context, saleGetValue!!, parameter, invoicingGetValue!!)
+                                                }
                                             },
                                         )
 

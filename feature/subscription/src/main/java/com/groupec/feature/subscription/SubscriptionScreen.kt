@@ -114,7 +114,7 @@ fun SubscriptionScreen(
                 PlanFeature(stringResource(R.string.subscription_free_feature_products), true),
                 PlanFeature(stringResource(R.string.subscription_free_feature_stats), true),
                 PlanFeature(stringResource(R.string.subscription_free_feature_invoice), true),
-                PlanFeature(stringResource(R.string.subscription_free_feature_exports), false),
+                PlanFeature(stringResource(R.string.subscription_pro_feature_exports), true),
                 PlanFeature(stringResource(R.string.subscription_free_feature_receipt), false)
             ),
             footer = {

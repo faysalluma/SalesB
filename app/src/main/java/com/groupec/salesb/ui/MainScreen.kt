@@ -37,6 +37,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.groupec.salesb.R
+import com.groupec.salesb.core.FeatureAccess
 import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.CustomSnackBar
@@ -172,7 +173,11 @@ fun MainScreen(
     val retryOfflineAction: () -> Unit = {
         viewModel.getUserStore()
         viewModel.getParameterStore()
-        if (connectionState && currentDestination.value != NavigationItem.Login.route) {
+        if (
+            connectionState &&
+            currentDestination.value != NavigationItem.Login.route &&
+            FeatureAccess.isSubscriptionScreenEnabled
+        ) {
             viewModel.checkSubscriptionStatus()
         }
     }
@@ -197,7 +202,11 @@ fun MainScreen(
     ComposableLifecycle(
         onResume = {
             viewModel.getParameterStore()
-            if (currentDestination.value!= null && currentDestination.value != NavigationItem.Login.route) {
+            if (
+                currentDestination.value != null &&
+                currentDestination.value != NavigationItem.Login.route &&
+                FeatureAccess.isSubscriptionScreenEnabled
+            ) {
                 viewModel.checkSubscriptionStatus()
             }
         }
@@ -375,16 +384,18 @@ fun getDropdownItemsWithActions(
 
     val items = mutableListOf<MenuItem>()
 
-    // SalesB Pro
-    items.add(
-        MenuItem.Action(
-            context.getString(R.string.menu_salesb_pro)
-        ) {
-            navController.navigate(NavigationItem.Subscription.route) {
-                launchSingleTop = true
+    if (FeatureAccess.isSubscriptionScreenEnabled) {
+        // SalesB Pro
+        items.add(
+            MenuItem.Action(
+                context.getString(R.string.menu_salesb_pro)
+            ) {
+                navController.navigate(NavigationItem.Subscription.route) {
+                    launchSingleTop = true
+                }
             }
-        }
-    )
+        )
+    }
 
     // Add Parameters items
     val childrenList = mutableListOf<MenuItem.Action>()
@@ -398,7 +409,7 @@ fun getDropdownItemsWithActions(
         }
     )
 
-    if (activeClient) {
+    if (activeClient && FeatureAccess.isClientManagementEnabled) {
         childrenList.add(
             MenuItem.Action(
                 context.getString(R.string.menu_client)

@@ -33,7 +33,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.groupec.salesb.core.FeatureAccess
 import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.Utility
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.DefaultButton
 import com.groupec.salesb.core.designsystem.component.SignupStepIndicator
@@ -62,15 +64,31 @@ fun SignupScreen(
     viewModel: SignupViewModel = hiltViewModel()
 ) {
     var currentStep by rememberSaveable { mutableStateOf(1) }
+    val isQuickSignupEnabled = FeatureAccess.isQuickSignupEnabled
     val uiState by viewModel.signupConfigurationUiState.collectAsState()
     val context = LocalContext.current
     val paymentTypeList = paymentTypeLabels(context)
     val firstPaymentTypeValue = paymentTypeList.firstOrNull().orEmpty()
+    val defaultCurrencyCode = remember { Utility.defaultCurrencyCodeForCurrentLocale() }
     var paymentTypeState by remember { mutableStateOf(firstPaymentTypeValue) }
 
     var stepOne by remember { mutableStateOf(SignupStepOneFormState()) }
-    var stepTwo by remember { mutableStateOf(SignupStepTwoFormState()) }
-    var stepThree by remember { mutableStateOf(SignupStepThreeFormState(defaultpayment = firstPaymentTypeValue)) }
+    var stepTwo by remember(isQuickSignupEnabled) {
+        mutableStateOf(
+            SignupStepTwoFormState(
+                companyType = if (isQuickSignupEnabled) 0 else -1
+            )
+        )
+    }
+    var stepThree by remember(isQuickSignupEnabled, defaultCurrencyCode, firstPaymentTypeValue) {
+        mutableStateOf(
+            SignupStepThreeFormState(
+                devise = if (isQuickSignupEnabled) defaultCurrencyCode else "",
+                tva = if (isQuickSignupEnabled) "0" else "",
+                defaultpayment = firstPaymentTypeValue
+            )
+        )
+    }
 
     var showStepOneErrors by remember { mutableStateOf(false) }
     var showStepTwoErrors by remember { mutableStateOf(false) }
@@ -82,7 +100,10 @@ fun SignupScreen(
     val coroutineScope = rememberCoroutineScope()
     var uri by remember { mutableStateOf<Uri?>(null) }
     val firstActifValue = stringResource(R.string.select)
-    var typeCompanyState by remember { mutableStateOf(firstActifValue) }
+    val defaultTypeCompanyValue = stringResource(R.string.sales_and_retailers)
+    var typeCompanyState by remember(firstActifValue, defaultTypeCompanyValue, isQuickSignupEnabled) {
+        mutableStateOf(if (isQuickSignupEnabled) defaultTypeCompanyValue else firstActifValue)
+    }
     val typeCompanyList = listOf(
         stringResource(R.string.select),
         stringResource(R.string.sales_and_retailers),
@@ -106,7 +127,9 @@ fun SignupScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
     ) {
-        SignupStepIndicator(step = currentStep, modifier = Modifier.padding(16.dp))
+        if (!isQuickSignupEnabled) {
+            SignupStepIndicator(step = currentStep, modifier = Modifier.padding(16.dp))
+        }
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -118,6 +141,11 @@ fun SignupScreen(
             when (currentStep) {
                 1 -> SignupStepOne(
                     state = stepOne,
+                    subtitle = if (isQuickSignupEnabled) {
+                        stringResource(R.string.signup_quick_step_1)
+                    } else {
+                        stringResource(com.groupec.salesb.core.ui.R.string.signup_step_1)
+                    },
                     showErrors = showStepOneErrors,
                     onValueChange = {
                         if (it.email != stepOne.email) {
@@ -161,6 +189,7 @@ fun SignupScreen(
 
         SignupBottomActions(
             currentStep = currentStep,
+            isQuickSignupEnabled = isQuickSignupEnabled,
             isLoading = uiState is SignupConfigurationUiState.Loading,
             isStepOneLoading = isStepOneLoading,
             onPrevious = {
@@ -193,7 +222,23 @@ fun SignupScreen(
                                             showStepOneErrors = true
                                         } else {
                                             stepOneEmailErrorMessage = null
-                                            currentStep = 2
+                                            if (isQuickSignupEnabled) {
+                                                stepTwo = stepTwo.copy(companyType = 0)
+                                                typeCompanyState = defaultTypeCompanyValue
+                                                stepThree = stepThree.copy(
+                                                    devise = defaultCurrencyCode,
+                                                    tva = "0",
+                                                    showInt = 0,
+                                                    showProductImage = 1,
+                                                    showPaymentMode = 1,
+                                                    defaultpayment = firstPaymentTypeValue,
+                                                    activePrinter = 0
+                                                )
+                                                paymentTypeState = firstPaymentTypeValue
+                                                currentStep = 4
+                                            } else {
+                                                currentStep = 2
+                                            }
                                             scrollState.animateScrollTo(0)
                                         }
                                     }
@@ -257,20 +302,20 @@ fun SignupScreen(
                     fullName = stepOne.fullName,
                     email = stepOne.email,
                     password = stepOne.password,
-                    companyName = stepTwo.companyName,
-                    companyType = stepTwo.companyType,
-                    companyEmail = stepTwo.email,
-                    address = stepTwo.address,
-                    phone = stepTwo.phone,
-                    ifu = stepTwo.ifu,
-                    website = stepTwo.website,
-                    devise = stepThree.devise.uppercase().trim(),
-                    tva = stepThree.tva.toDoubleOrNull() ?: 0.0,
-                    useIntForPriceAndAmount = stepThree.showInt,
-                    showImageOnProduct = stepThree.showProductImage,
-                    activePaymentMode = stepThree.showPaymentMode,
+                    companyName = if (isQuickSignupEnabled) " " else stepTwo.companyName,
+                    companyType = if (isQuickSignupEnabled) 0 else stepTwo.companyType,
+                    companyEmail = if (isQuickSignupEnabled) null else stepTwo.email,
+                    address = if (isQuickSignupEnabled) null else stepTwo.address,
+                    phone = if (isQuickSignupEnabled) null else stepTwo.phone,
+                    ifu = if (isQuickSignupEnabled) null else stepTwo.ifu,
+                    website = if (isQuickSignupEnabled) null else stepTwo.website,
+                    devise = if (isQuickSignupEnabled) defaultCurrencyCode else stepThree.devise.uppercase().trim(),
+                    tva = if (isQuickSignupEnabled) 0.0 else (stepThree.tva.toDoubleOrNull() ?: 0.0),
+                    useIntForPriceAndAmount = if (isQuickSignupEnabled) 0 else stepThree.showInt,
+                    showImageOnProduct = if (isQuickSignupEnabled) 1 else stepThree.showProductImage,
+                    activePaymentMode = if (isQuickSignupEnabled) 1 else stepThree.showPaymentMode,
                     defaultpayment = paymentTypeValueForSave,
-                    activePrinter = stepThree.activePrinter
+                    activePrinter = if (isQuickSignupEnabled) 0 else stepThree.activePrinter
                 )
                 viewModel.saveInitialConfiguration(configuration, uri)
             }
@@ -296,6 +341,7 @@ fun SignupScreen(
 @Composable
 private fun SignupBottomActions(
     currentStep: Int,
+    isQuickSignupEnabled: Boolean,
     isLoading: Boolean,
     isStepOneLoading: Boolean,
     onPrevious: () -> Unit,
@@ -313,7 +359,11 @@ private fun SignupBottomActions(
             1 -> {
                 Column {
                     DefaultButton(
-                        text = stringResource(R.string.signup_next),
+                        text = if (isQuickSignupEnabled) {
+                            stringResource(R.string.signup_submit)
+                        } else {
+                            stringResource(R.string.signup_next)
+                        },
                         onClick = onNext,
                         isLoading = isStepOneLoading,
                         modifier = Modifier.fillMaxWidth()

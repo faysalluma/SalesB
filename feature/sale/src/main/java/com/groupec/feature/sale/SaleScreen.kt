@@ -54,6 +54,7 @@ import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.component.TitleLarge
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Silver
+import com.groupec.salesb.core.FeatureAccess
 import com.groupec.salesb.core.formatAmount
 import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.model.data.Parameter
@@ -317,15 +318,17 @@ fun SaleScreen(
                             details = saleDetail
                         )
                         if (printAction != PrintAction.Thermal &&
-                            !userStore.isProActive &&
-                            viewModel.hasReachedFreeMonthlySalesLimit()
+                            !FeatureAccess.canCreateSale(
+                                isProActive = userStore.isProActive,
+                                hasReachedFreeMonthlySalesLimit = viewModel.hasReachedFreeMonthlySalesLimit(),
+                            )
                         ) {
                             proBottomSheetTitle = salesLimitTitle
                             showProBottomSheet = true
                             return@SaleDetailScreen false
                         }
                         if (printAction == PrintAction.Thermal) {
-                            if (!userStore.isProActive) {
+                            if (!FeatureAccess.canPrintReceipt(userStore.isProActive)) {
                                 proBottomSheetTitle = receiptPrintTitle
                                 showProBottomSheet = true
                                 return@SaleDetailScreen false
@@ -533,15 +536,17 @@ fun SaleScreen(
                             details = saleDetail
                         )
                         if (printAction != PrintAction.Thermal &&
-                            !userStore.isProActive &&
-                            viewModel.hasReachedFreeMonthlySalesLimit()
+                            !FeatureAccess.canCreateSale(
+                                isProActive = userStore.isProActive,
+                                hasReachedFreeMonthlySalesLimit = viewModel.hasReachedFreeMonthlySalesLimit(),
+                            )
                         ) {
                             proBottomSheetTitle = salesLimitTitle
                             showProBottomSheet = true
                             return@SaleDetailScreen false
                         }
                         if (printAction == PrintAction.Thermal) {
-                            if (!userStore.isProActive) {
+                            if (!FeatureAccess.canPrintReceipt(userStore.isProActive)) {
                                 proBottomSheetTitle = receiptPrintTitle
                                 showProBottomSheet = true
                                 return@SaleDetailScreen false

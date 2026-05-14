@@ -33,6 +33,7 @@ import com.groupec.feature.updatebusinessinfo.UpdateBusinessInfoScreen
 import com.groupec.feature.salechart.SaleChartScreen
 import com.groupec.feature.salelist.SaleListScreen
 import com.groupec.feature.termsandconditions.TermsAndConditionsScreen
+import com.groupec.salesb.core.FeatureAccess
 import com.groupec.salesb.core.model.data.Category
 import com.groupec.salesb.core.model.data.Client
 import com.groupec.salesb.core.model.data.Output
@@ -60,6 +61,11 @@ fun AppNavHost(
     startDestination: String = NavigationItem.Loading.route
 ) {
     val context = LocalContext.current
+    val navigateToSubscription = {
+        if (FeatureAccess.isSubscriptionScreenEnabled) {
+            navController.navigate(NavigationItem.Subscription.route)
+        }
+    }
 
     /*LaunchedEffect(Unit) {
         val flipperPlugin = NavigationFlipperPlugin.getInstance()
@@ -233,9 +239,7 @@ fun AppNavHost(
                 navigateToClient = {
                     navController.navigate(NavigationItem.Client.route)
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
 
@@ -246,8 +250,9 @@ fun AppNavHost(
                 navigateToSaleChart = { startDate, endDate ->
                     navController.navigate(NavigationItem.SaleChart.route.plus("/${startDate}/${endDate}"))
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
+                onNavigateToSubscription = navigateToSubscription,
+                navigateToUpdateBusinessInfo = {
+                    navController.navigate(NavigationItem.UpdateBusinessInfo.route)
                 }
             )
         }
@@ -290,9 +295,7 @@ fun AppNavHost(
                 onNavigateToRayon = {
                     navController.navigate(NavigationItem.Rayon.route)
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
 
@@ -319,9 +322,7 @@ fun AppNavHost(
                 onNavigateToRayon = {
                     navController.navigate(NavigationItem.Rayon.route)
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
 
@@ -357,9 +358,7 @@ fun AppNavHost(
                         launchSingleTop = true
                     }
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
 
@@ -380,9 +379,7 @@ fun AppNavHost(
                         popUpTo(NavigationItem.Category.route) { inclusive = true }
                     }
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
 
@@ -418,9 +415,7 @@ fun AppNavHost(
                         launchSingleTop = true
                     }
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
 
@@ -441,9 +436,7 @@ fun AppNavHost(
                         popUpTo(NavigationItem.Client.route) { inclusive = true }
                     }
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
 
@@ -479,9 +472,7 @@ fun AppNavHost(
                         launchSingleTop = true
                     }
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
 
@@ -502,9 +493,7 @@ fun AppNavHost(
                         popUpTo(NavigationItem.Rayon.route) { inclusive = true }
                     }
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
 
@@ -540,9 +529,7 @@ fun AppNavHost(
                         launchSingleTop = true
                     }
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
 
@@ -563,9 +550,7 @@ fun AppNavHost(
                         popUpTo(NavigationItem.Outputs.route) { inclusive = true }
                     }
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
 
@@ -639,9 +624,7 @@ fun AppNavHost(
                         launchSingleTop = true
                     }
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
 
@@ -662,9 +645,7 @@ fun AppNavHost(
                         popUpTo(NavigationItem.Account.route) { inclusive = true }
                     }
                 },
-                onNavigateToSubscription = {
-                    navController.navigate(NavigationItem.Subscription.route)
-                }
+                onNavigateToSubscription = navigateToSubscription
             )
         }
     }

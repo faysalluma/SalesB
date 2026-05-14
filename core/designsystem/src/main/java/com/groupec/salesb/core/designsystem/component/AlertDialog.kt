@@ -69,7 +69,7 @@ fun AppAlertInfoDialog(
         },
         title = {
             title?.let {
-                Text(it, color = titleColor)
+                Text(it, color = titleColor, textAlign = TextAlign.Center)
             }
         },
         text = {

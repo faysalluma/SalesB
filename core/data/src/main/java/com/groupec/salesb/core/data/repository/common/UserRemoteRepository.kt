@@ -17,7 +17,6 @@ import com.groupec.salesb.core.model.data.User
 import com.groupec.salesb.core.network.retrofit.ApiService
 import com.groupec.salesb.core.network.retrofit.common.executeApiCall
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.firstOrNull
 import org.mindrot.jbcrypt.BCrypt
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -53,7 +52,7 @@ class UserRemoteRepository @Inject constructor(
                                 it <= getDateTimeByNtp()
                             } ?: false
                             if (isMainPasswordValid || (isResetPasswordValid && !isResetPasswordExpired)) {
-                                when (val parameterResult = chargeParameterIfMissing(user.id)) {
+                                when (val parameterResult = refreshParameter(user.id)) {
                                     is Result.Error -> Result.Error(parameterResult.exception)
                                     else -> {
                                         val isProActive =  checkIfSubscriptionExpired(user.id.toString())?.let { !it } ?: false
@@ -77,16 +76,7 @@ class UserRemoteRepository @Inject constructor(
         }
     }
 
-    private suspend fun chargeParameterIfMissing(userId: Int?): Result<Unit> {
-        val currentParameter = dataStoreManager.parameterFlow.firstOrNull()
-        val missingConfig = currentParameter == null ||
-            currentParameter.raisonsociale.isBlank() ||
-            currentParameter.devise.isBlank()
-
-        if (!missingConfig) {
-            return Result.Success(Unit)
-        }
-
+    private suspend fun refreshParameter(userId: Int?): Result<Unit> {
         return try {
             val response = apiService.getParameter(userId ?: 0)
             if (!response.isSuccessful) {

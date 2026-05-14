@@ -46,7 +46,7 @@ class SignupRepositoryImpl @Inject constructor(
                 email = configuration.email.toPlainTextBody(),
                 langMessageEn = langMessageEn.toString().toPlainTextBody(),
                 password = hashPassword.toPlainTextBody(),
-                companyName = configuration.companyName.toPlainTextBody(),
+                companyName = configuration.companyName?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
                 companyType = configuration.companyType.toString().toPlainTextBody(),
                 companyEmail = configuration.companyEmail?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
                 address = configuration.address?.takeIf { it.isNotBlank() }?.toPlainTextBody(),

@@ -150,11 +150,12 @@ class UserRepositoryImpl @Inject constructor(
     /* Sync methods */
     /* Get methods */
     override suspend fun checkLogin(email: String, password: String): Result<Pair<User, Boolean>> {
-        return if (getOfflineMode() == true) {
+       /* return if (getOfflineMode() == true) {
             userLocalRepository.checkLogin(email, password)
         } else {
             userRemoteRepository.checkLogin(email, password)
-        }
+        }*/
+        return userRemoteRepository.checkLogin(email, password)
     }
 
     override suspend fun isSubscriptionExpired(): Boolean? {
