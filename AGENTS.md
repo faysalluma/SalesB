@@ -3,12 +3,11 @@
 ## Project Structure & Module Organization
 This is a multi-module Android project using Gradle Kotlin DSL.
 
-- `app/`: application module (entry point, AndroidManifest, app-level DI).
-- `core/`: shared layers such as `common`, `data`, `domain`, `designsystem`, `network`, `ui`, and `testing`.
-- `feature/`: UI/feature modules (e.g., `productlist`, `salelist`, `login`).
-- `build-logic/`: convention plugins and shared Gradle configuration.
-- Tests live under `src/test` (unit) and `src/androidTest` (instrumented) in each module.
-- UI assets/resources are under `src/main/res` in each module.
+- `app/` is the application entry point and owns the manifest, navigation, dependency injection, build types, and product flavors.
+- `core/` contains shared models, domain logic, data sources, persistence, networking, Firebase Remote Config, UI/design-system components, and test utilities.
+- `feature/` contains screen-focused modules such as `productlist`, `sale`, `clientdetail`, `signup`, and `subscription`.
+- `build-logic/` contains convention plugins; dependency versions and aliases live in `gradle/libs.versions.toml`.
+- Code is under `src/main/java`, resources under `src/main/res`, and local/device tests under `src/test` and `src/androidTest`.
 
 ## Build, Test, and Development Commands
 Use the Gradle wrapper from the repo root.
@@ -20,19 +19,21 @@ Use the Gradle wrapper from the repo root.
 - `./gradlew connectedAndroidTest` — run instrumented tests on a device/emulator.
 - `./gradlew :app:lint` — run Android Lint on the app module.
 
+The app has an `edition` flavor dimension. If a task is ambiguous, find its flavor-specific form with `./gradlew :app:tasks`.
+
 ## Coding Style & Naming Conventions
-- Language: Kotlin (Jetpack Compose for UI) and Gradle Kotlin DSL.
-- Indentation: 4 spaces; follow standard Kotlin style (class names `PascalCase`, functions/vars `camelCase`).
+- Use Kotlin, Jetpack Compose, and Gradle Kotlin DSL with 4-space indentation and standard Kotlin formatting.
+- Name classes and composables in `PascalCase`; use `camelCase` for functions and properties. Screen modules commonly pair `FeatureScreen` with `FeatureViewModel`.
 - Modules follow `:core:*` and `:feature:*` naming patterns.
-- No explicit formatter/linter configuration is present; keep diffs minimal and consistent with nearby code.
+- No formatter is configured; keep changes minimal, match nearby code, and run Android Lint before broad changes.
 
 ## Testing Guidelines
-- Unit tests use JUnit (see `src/test`).
-- Instrumented tests use AndroidX test runner and Espresso (see `src/androidTest`).
-- Keep new tests close to the module they cover; prefer naming `*Test.kt` and `*InstrumentedTest.kt`.
+- Unit tests use JUnit 5 and MockK. Instrumented/UI tests use AndroidX Test, Espresso, and Compose UI testing.
+- Keep tests in the module they cover, name classes `*Test.kt`, and use descriptive method names.
+- Add or update tests for changed business logic and regressions. No minimum coverage threshold is enforced.
 
 ## Commit & Pull Request Guidelines
-- Recent commits use short, imperative messages (e.g., "Implements …", "Fix …") and occasional Conventional Commit prefixes (`feat:`, `fix:`). Stick to concise, descriptive subjects.
+- Recent commits use concise imperative subjects such as `Fix: skip Crashlytics mapping upload by default`. Optional Conventional Commit prefixes are acceptable.
 - For PRs, include a summary, testing notes, and screenshots/screen recordings for UI changes. Link related issues when applicable.
 
 ## Security & Configuration Tips
