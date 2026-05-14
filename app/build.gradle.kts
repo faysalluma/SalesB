@@ -166,8 +166,8 @@ android {
     defaultConfig {
         applicationId = "com.groupec.salesb"
         targetSdk = libs.versions.compileSdk.get().toInt()
-        versionCode = 11
-        versionName = "1.1.0"
+        versionCode = 12
+        versionName = "1.2.0"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -203,6 +203,11 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("release")
+            firebaseCrashlytics {
+                mappingFileUploadEnabled = providers.gradleProperty("uploadCrashlyticsMapping")
+                    .map(String::toBoolean)
+                    .getOrElse(false)
+            }
 
             // Definies config data https://salesbstoreapi.groupec.net/
             buildConfigField("boolean", "ENABLE_CRASH_REPORTING", "true")
@@ -241,6 +246,16 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+tasks.matching { task ->
+    task.name.startsWith("uploadCrashlyticsMappingFile")
+}.configureEach {
+    onlyIf("Crashlytics mapping upload is enabled with -PuploadCrashlyticsMapping=true") {
+        providers.gradleProperty("uploadCrashlyticsMapping")
+            .map(String::toBoolean)
+            .getOrElse(false)
     }
 }
 
