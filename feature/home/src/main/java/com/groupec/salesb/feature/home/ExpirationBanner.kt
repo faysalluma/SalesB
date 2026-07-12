@@ -18,7 +18,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import java.util.concurrent.TimeUnit
 
 internal enum class ExpirationBannerSeverity { WARNING, URGENT }
 
@@ -39,9 +38,7 @@ internal fun expirationBannerState(
     now: Date = Date(),
 ): ExpirationBannerState? {
     val expiration = parseExpirationDate(expirationDate) ?: return null
-    val daysRemaining = TimeUnit.MILLISECONDS.toDays(
-        startOfDay(expiration).time - startOfDay(now).time
-    )
+    val daysRemaining = calendarDaysBetween(now, expiration)
     if (daysRemaining > 7) return null
 
     return ExpirationBannerState(
@@ -55,7 +52,12 @@ internal fun expirationBannerState(
 }
 
 private fun parseExpirationDate(value: String): Date? {
-    val normalized = value.trim().substringBefore('Z').substringBefore('+')
+    val trimmed = value.trim()
+    val normalized = if (trimmed.length >= 10 && trimmed[4] == '-' && trimmed[7] == '-') {
+        trimmed.take(10)
+    } else {
+        trimmed
+    }
     return supportedExpirationDateFormats.firstNotNullOfOrNull { pattern ->
         val position = ParsePosition(0)
         SimpleDateFormat(pattern, Locale.ROOT).apply {
@@ -65,14 +67,20 @@ private fun parseExpirationDate(value: String): Date? {
     }
 }
 
-private fun startOfDay(date: Date): Date = Calendar.getInstance().run {
-    time = date
-    set(Calendar.HOUR_OF_DAY, 0)
-    set(Calendar.MINUTE, 0)
-    set(Calendar.SECOND, 0)
-    set(Calendar.MILLISECOND, 0)
-    time
+private fun calendarDaysBetween(start: Date, end: Date): Long {
+    fun Date.asUtcCalendarDate(): Long {
+        val local = Calendar.getInstance().apply { time = this@asUtcCalendarDate }
+        return Calendar.getInstance(TimeZone.getTimeZone("UTC")).run {
+            clear()
+            set(local.get(Calendar.YEAR), local.get(Calendar.MONTH), local.get(Calendar.DAY_OF_MONTH))
+            timeInMillis
+        }
+    }
+
+    return (end.asUtcCalendarDate() - start.asUtcCalendarDate()) / MILLIS_PER_DAY
 }
+
+private const val MILLIS_PER_DAY = 24L * 60L * 60L * 1000L
 
 @Composable
 internal fun ExpirationBanner(
