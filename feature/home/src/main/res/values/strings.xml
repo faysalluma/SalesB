@@ -16,4 +16,7 @@
     <string name="profit_label">Profits: %1$s %2$s</string>
     <string name="output_label">Outputs: %1$s %2$s</string>
     <string name="products_copied">%1$s copied</string>
+    <string name="subscription_expired">Your subscription has expired.</string>
+    <string name="subscription_expires_today">Your subscription expires today.</string>
+    <string name="subscription_expires_in_days">Your subscription expires in %1$d days.</string>
 </resources>
