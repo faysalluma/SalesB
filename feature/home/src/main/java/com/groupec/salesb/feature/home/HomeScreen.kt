@@ -117,6 +117,8 @@ fun HomeScreen(
 
         val heigthModifier = Modifier.height(34.dp)
 
+        ExpirationBanner(expirationDate = parameterState.expirationdate)
+
         // Headline
         HeadLigne(
             context = context,
