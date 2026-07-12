@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="subscription_expired">Votre abonnement a expiré.</string>
+    <string name="subscription_expires_today">Votre abonnement expire aujourd’hui.</string>
+    <string name="subscription_expires_in_days">Votre abonnement expire dans %1$d jours.</string>
+</resources>
