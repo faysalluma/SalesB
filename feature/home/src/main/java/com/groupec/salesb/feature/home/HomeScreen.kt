@@ -70,6 +70,7 @@ import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.ui.ComposableLifecycle
+import com.groupec.salesb.core.ui.ExpirationBanner
 import com.groupec.salesb.core.ui.ProductsWithLowInventoryList
 import com.groupec.salesb.core.ui.StatisticCard
 import com.groupec.salesb.core.ui.StatisticChart
@@ -116,6 +117,8 @@ fun HomeScreen(
     ) {
 
         val heigthModifier = Modifier.height(34.dp)
+
+        ExpirationBanner(expirationDate = parameterState.expirationdate)
 
         // Headline
         HeadLigne(
