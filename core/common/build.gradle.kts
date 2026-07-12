@@ -19,4 +19,5 @@ dependencies {
 
     // Test
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.10")
 }
