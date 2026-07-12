@@ -268,3 +268,49 @@ fun getCurrentMontDelimitedDates(): Pair<String, String> {
     return Pair(startDate, endDate)
 }
 
+enum class ExpirationBannerSeverity { WARNING, URGENT }
+
+data class ExpirationBannerState(
+    val daysRemaining: Long,
+    val severity: ExpirationBannerSeverity,
+)
+
+fun expirationBannerState(
+    expirationDate: String,
+    now: Date = Date(),
+): ExpirationBannerState? {
+    val expiration = expirationDate
+        .trim()
+        .takeIf { it.length >= 10 }
+        ?.take(10)
+        ?.toDate("yyyy-MM-dd")
+        ?: return null
+    val daysRemaining = calendarDaysBetween(now, expiration)
+    if (daysRemaining > EXPIRATION_WARNING_DAYS) return null
+
+    return ExpirationBannerState(
+        daysRemaining = daysRemaining,
+        severity = if (daysRemaining <= EXPIRATION_URGENT_DAYS) {
+            ExpirationBannerSeverity.URGENT
+        } else {
+            ExpirationBannerSeverity.WARNING
+        },
+    )
+}
+
+private fun calendarDaysBetween(start: Date, end: Date): Long {
+    fun Date.asUtcCalendarDate(): Long {
+        val local = Calendar.getInstance().apply { time = this@asUtcCalendarDate }
+        return Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC")).run {
+            clear()
+            set(local.get(Calendar.YEAR), local.get(Calendar.MONTH), local.get(Calendar.DAY_OF_MONTH))
+            timeInMillis
+        }
+    }
+
+    return (end.asUtcCalendarDate() - start.asUtcCalendarDate()) / MILLIS_PER_DAY
+}
+
+private const val EXPIRATION_WARNING_DAYS = 7L
+private const val EXPIRATION_URGENT_DAYS = 3L
+private const val MILLIS_PER_DAY = 24L * 60L * 60L * 1000L
