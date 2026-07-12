@@ -32,6 +32,10 @@ The app has an `edition` flavor dimension. If a task is ambiguous, find its flav
 - Keep tests in the module they cover, name classes `*Test.kt`, and use descriptive method names.
 - Add or update tests for changed business logic and regressions. No minimum coverage threshold is enforced.
 
+- Shared reusable Compose components that are not complete application screens belong in `core:ui`, not in a feature module.
+- Reuse the date helpers in `core:common` (`DateUtils.kt`) instead of introducing feature-local date parsing or calculation utilities.
+- Before creating a test class, look for an existing class covering the same feature or utility and add the test there. Keep UI tests in the owning feature module; place non-UI tests in the corresponding `core` module.
+
 ## Commit & Pull Request Guidelines
 - Recent commits use concise imperative subjects such as `Fix: skip Crashlytics mapping upload by default`. Optional Conventional Commit prefixes are acceptable.
 - For PRs, include a summary, testing notes, and screenshots/screen recordings for UI changes. Link related issues when applicable.
