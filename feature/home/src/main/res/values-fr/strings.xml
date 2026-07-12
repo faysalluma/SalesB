@@ -15,4 +15,7 @@
     <string name="profit_label">Bénéfices: %1$s %2$s</string>
     <string name="output_label">Sorties: %1$s %2$s</string>
     <string name="products_copied">%1$s copiés</string>
+    <string name="subscription_expired">Votre abonnement a expiré.</string>
+    <string name="subscription_expires_today">Votre abonnement expire aujourd’hui.</string>
+    <string name="subscription_expires_in_days">Votre abonnement expire dans %1$d jours.</string>
 </resources>
