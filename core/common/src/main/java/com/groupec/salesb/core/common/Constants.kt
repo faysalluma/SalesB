@@ -17,9 +17,18 @@ class Constants {
             get() = AppConfigHolder.current.networkTimeoutSeconds.toLong()
 
         val BASE_URL: String
-            get() = SERVER_URL.plus("public/")
+            get() = joinUrl(
+                SERVER_URL,
+                "public/${AppConfigHolder.current.backendId}/",
+            )
         val UPLOAD_URL: String
-            get() = SERVER_URL.plus("includes/config/default/uploads/")
+            get() = joinUrl(
+                SERVER_URL,
+                "includes/config/${AppConfigHolder.current.backendId}/uploads/",
+            )
         const val APP_LINK = "https://www.salesb.groupec.net/resetapppassword"
     }
 }
+
+private fun joinUrl(serverUrl: String, path: String): String =
+    "${serverUrl.trimEnd('/')}/${path.trimStart('/')}"

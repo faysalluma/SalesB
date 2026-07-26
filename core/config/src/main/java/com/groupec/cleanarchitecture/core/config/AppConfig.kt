@@ -5,6 +5,7 @@ interface AppConfig {
     val enableCrashReporting: Boolean // For CrashLytics
     val clientId: String
     val clientDisplayName: String
+    val backendId: String
     val isBusinessBuild: Boolean
     val isStoreBuild: Boolean
     val serverUrl: String

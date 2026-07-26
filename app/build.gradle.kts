@@ -1,8 +1,8 @@
-import com.android.build.api.dsl.ApplicationProductFlavor
 import java.util.Properties
 
 plugins {
     alias(libs.plugins.common.android.application)
+    alias(libs.plugins.common.android.application.client.flavors)
     alias(libs.plugins.common.android.application.compose)
     alias(libs.plugins.common.android.hilt)
 
@@ -11,150 +11,6 @@ plugins {
     // Add the Crashlytics Gradle plugin
     alias(libs.plugins.firebase.crashlytics)
 }
-
-// val vcode = (((System.currentTimeMillis() / 1000) - 1451606400) / 10).toInt()
-
-private data class ClientFeatures(
-    val billingEnabled: Boolean,
-    val subscriptionScreenEnabled: Boolean,
-    val exportEnabled: Boolean,
-    val receiptPrintingEnabled: Boolean,
-    val quickSignupEnabled: Boolean,
-    val productLimitEnabled: Boolean,
-    val saleLimitEnabled: Boolean,
-    val clientManagementEnabled: Boolean,
-    val rayonManagementEnabled: Boolean,
-)
-
-private data class ClientFlavorConfig(
-    val name: String,
-    val applicationId: String,
-    val displayName: String,
-    val releaseServerUrl: String,
-    val businessBuild: Boolean,
-    val storeBuild: Boolean,
-    val crashReportingEnabled: Boolean,
-    val features: ClientFeatures,
-)
-
-private val defaultClientFeatures = ClientFeatures(
-    billingEnabled = false,
-    subscriptionScreenEnabled = false,
-    exportEnabled = true,
-    receiptPrintingEnabled = true,
-    quickSignupEnabled = false,
-    productLimitEnabled = false,
-    saleLimitEnabled = false,
-    clientManagementEnabled = true,
-    rayonManagementEnabled = true,
-)
-
-private data class ClientConfig(
-    val name: String,
-    val applicationId: String,
-    val storeApplicationId: String? = null,
-    val displayName: String,
-    val releaseServerUrl: String,
-    val storeReleaseServerUrl: String = releaseServerUrl,
-    val crashReportingEnabled: Boolean = true,
-    val features: ClientFeatures = defaultClientFeatures,
-)
-
-private val salesbFlavor = ClientFlavorConfig(
-    name = "salesb",
-    applicationId = "com.groupec.salesb",
-    displayName = "SalesB",
-    releaseServerUrl = "https://salesbstoreapi.groupec.net/",
-    businessBuild = false,
-    storeBuild = true,
-    crashReportingEnabled = true,
-    features = ClientFeatures(
-        billingEnabled = true,
-        subscriptionScreenEnabled = true,
-        exportEnabled = true,
-        receiptPrintingEnabled = false,
-        quickSignupEnabled = true,
-        productLimitEnabled = true,
-        saleLimitEnabled = true,
-        clientManagementEnabled = true,
-        rayonManagementEnabled = true,
-    ),
-)
-
-private val clients = listOf<ClientConfig>(
-    /*
-    ClientConfig(
-        name = "nomClient",
-        applicationId = "com.groupec.salesb.nomclient",
-        storeApplicationId = "com.groupec.salesb.nomclient.store",
-        displayName = "Nom Client",
-        releaseServerUrl = "https://api.nomclient.example/",
-    ),
-    */
-)
-
-private fun String.asBuildConfigString(): String =
-    "\"${replace("\\", "\\\\").replace("\"", "\\\"")}\""
-
-private fun ApplicationProductFlavor.buildConfigString(name: String, value: String) {
-    buildConfigField("String", name, value.asBuildConfigString())
-}
-
-private fun ApplicationProductFlavor.buildConfigBoolean(name: String, value: Boolean) {
-    buildConfigField("boolean", name, value.toString())
-}
-
-private fun ApplicationProductFlavor.applyClientFlavor(config: ClientFlavorConfig) {
-    dimension = "edition"
-    applicationId = config.applicationId
-
-    buildConfigString("CLIENT_ID", config.name)
-    buildConfigString("CLIENT_DISPLAY_NAME", config.displayName)
-    buildConfigString("RELEASE_SERVER_URL", config.releaseServerUrl)
-
-    buildConfigBoolean("IS_BUSINESS_BUILD", config.businessBuild)
-    buildConfigBoolean("IS_STORE_BUILD", config.storeBuild)
-    buildConfigBoolean("CLIENT_CRASH_REPORTING_ENABLED", config.crashReportingEnabled)
-
-    buildConfigBoolean("FEATURE_BILLING", config.features.billingEnabled)
-    buildConfigBoolean("FEATURE_SUBSCRIPTION_SCREEN", config.features.subscriptionScreenEnabled)
-    buildConfigBoolean("FEATURE_EXPORTS", config.features.exportEnabled)
-    buildConfigBoolean("FEATURE_RECEIPT_PRINTING", config.features.receiptPrintingEnabled)
-    buildConfigBoolean("FEATURE_QUICK_SIGNUP", config.features.quickSignupEnabled)
-    buildConfigBoolean("FEATURE_PRODUCT_LIMIT", config.features.productLimitEnabled)
-    buildConfigBoolean("FEATURE_SALE_LIMIT", config.features.saleLimitEnabled)
-    buildConfigBoolean("FEATURE_CLIENTS", config.features.clientManagementEnabled)
-    buildConfigBoolean("FEATURE_RAYONS", config.features.rayonManagementEnabled)
-}
-
-private fun ClientConfig.toPrivateFlavor() = ClientFlavorConfig(
-    name = name,
-    applicationId = applicationId,
-    displayName = displayName,
-    releaseServerUrl = releaseServerUrl,
-    businessBuild = true,
-    storeBuild = false,
-    crashReportingEnabled = crashReportingEnabled,
-    features = features,
-)
-
-private fun ClientConfig.toStoreFlavor() = storeApplicationId?.let { storeApplicationId ->
-    ClientFlavorConfig(
-        name = "${name}Store",
-        applicationId = storeApplicationId,
-        displayName = displayName,
-        releaseServerUrl = storeReleaseServerUrl,
-        businessBuild = true,
-        storeBuild = true,
-        crashReportingEnabled = crashReportingEnabled,
-        features = features,
-    )
-}
-
-private val appFlavors =
-    listOf(salesbFlavor) + clients.flatMap { client ->
-        listOfNotNull(client.toPrivateFlavor(), client.toStoreFlavor())
-    }
 
 android {
     namespace = "com.groupec.salesb"
@@ -191,7 +47,7 @@ android {
         debug {
             // Definies config data
             buildConfigField("boolean", "ENABLE_CRASH_REPORTING", "false")
-            buildConfigField("String", "DEBUG_SERVER_URL", "\"http://192.168.1.69/SalesBStoreApi/\"")
+            buildConfigField("String", "SERVER_URL", "\"http://192.168.1.69/SalesBStoreApi/\"")
             buildConfigField("int", "NETWORK_TIMEOUT_SECONDS", "30")
             manifestPlaceholders["usesCleartextTraffic"] = "true"
         }
@@ -209,37 +65,12 @@ android {
                     .getOrElse(false)
             }
 
-            // Definies config data https://salesbstoreapi.groupec.net/
+            // Definies config data
             buildConfigField("boolean", "ENABLE_CRASH_REPORTING", "true")
-            buildConfigField("String", "DEBUG_SERVER_URL", "\"\"")
+            buildConfigField("String", "SERVER_URL", "\"https://salesbstoreapi.groupec.net/\"")
             buildConfigField("int", "NETWORK_TIMEOUT_SECONDS", "30")
             manifestPlaceholders["usesCleartextTraffic"] = "false"
         }
-    }
-
-    flavorDimensions += "edition"
-
-    productFlavors {
-        appFlavors.forEach { config ->
-            create(config.name) {
-                applyClientFlavor(config)
-            }
-        }
-    }
-
-    sourceSets {
-        clients
-            .filter { it.storeApplicationId != null }
-            .forEach { client ->
-                getByName("${client.name}Store") {
-                    java.srcDirs(
-                        "src/${client.name}/java",
-                        "src/${client.name}/kotlin",
-                    )
-                    res.srcDirs("src/${client.name}/res")
-                    assets.srcDirs("src/${client.name}/assets")
-                }
-            }
     }
 
     packaging {

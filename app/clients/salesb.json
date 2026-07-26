@@ -1,0 +1,25 @@
+{
+  "id": "salesb",
+  "displayName": "SalesB",
+  "backendId": "default",
+  "crashReportingEnabled": true,
+  "features": {
+    "billing": true,
+    "subscriptionScreen": true,
+    "exports": true,
+    "receiptPrinting": false,
+    "quickSignup": true,
+    "productLimit": true,
+    "saleLimit": true,
+    "clientManagement": true,
+    "rayonManagement": true
+  },
+  "flavors": [
+    {
+      "name": "salesb",
+      "applicationId": "com.groupec.salesb",
+      "businessBuild": false,
+      "storeBuild": true
+    }
+  ]
+}

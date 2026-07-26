@@ -27,3 +27,4 @@ local.properties
 **/build/
 app/release
 /.kotlin/
+/.idea/markdown.xml

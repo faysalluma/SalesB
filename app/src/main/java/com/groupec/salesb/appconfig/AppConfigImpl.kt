@@ -15,12 +15,14 @@ class AppConfigImpl @Inject constructor() : AppConfig {
         get() = BuildConfig.CLIENT_ID
     override val clientDisplayName: String
         get() = BuildConfig.CLIENT_DISPLAY_NAME
+    override val backendId: String
+        get() = BuildConfig.BACKEND_ID
     override val isBusinessBuild: Boolean
         get() = BuildConfig.IS_BUSINESS_BUILD
     override val isStoreBuild: Boolean
         get() = BuildConfig.IS_STORE_BUILD
     override val serverUrl: String
-        get() = if (BuildConfig.DEBUG) BuildConfig.DEBUG_SERVER_URL else BuildConfig.RELEASE_SERVER_URL
+        get() = BuildConfig.SERVER_URL
     override val networkTimeoutSeconds: Int
         get() = BuildConfig.NETWORK_TIMEOUT_SECONDS
     override val features: AppFeatures

@@ -46,6 +46,7 @@ firebase-crashlytics-gradle = "3.0.3"
 firebaseConfig = "22.0.1"
 google-services = "4.4.2"
 googlePlayBilling = "7.1.1"
+gson = "2.11.0"
 
 # X.Y.Z; X = Major(Changement majeur, souvent incompatible avec les versions précédentes),
 # Y = Minor (Changement mineur, ajouts de fonctionnalités compatibles avec la version précédente),
@@ -123,6 +124,7 @@ facebook-flipper-network = { group = "com.facebook.flipper", name = "flipper-net
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -140,6 +142,7 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 common-android-library-compose = { id = "gradlePlugins.android.library.compose", version = "unspecified" }
 common-android-application-compose = { id = "gradlePlugins.android.application.compose", version = "unspecified" }
 common-android-application = { id = "gradlePlugins.android.application", version = "unspecified" }
+common-android-application-client-flavors = { id = "gradlePlugins.android.application.client-flavors", version = "unspecified" }
 common-android-library = { id = "gradlePlugins.android.library", version = "unspecified" }
 common-android-feature = { id = "gradlePlugins.android.feature", version = "unspecified" }
 common-android-hilt = { id = "gradlePlugins.android.hilt", version = "unspecified" }

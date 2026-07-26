@@ -5,6 +5,7 @@ plugins {
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    implementation(libs.gson)
 }
 
 gradlePlugin {
@@ -20,6 +21,10 @@ gradlePlugin {
         register("androidApplicationConventionPlugin") {
             id = "gradlePlugins.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
+        }
+        register("androidClientFlavorsConventionPlugin") {
+            id = "gradlePlugins.android.application.client-flavors"
+            implementationClass = "AndroidClientFlavorsConventionPlugin"
         }
         register("androidLibraryConventionPlugin") {
             id = "gradlePlugins.android.library"
