@@ -10,6 +10,7 @@
 /.idea/gradle.xml
 /.idea/other.xml
 /.idea/misc.xml
+/.idea/kotlinc.xml
 /.idea/deploymentTargetSelector.xml
 .idea/AndroidProjectSystem.xml
 .idea/runConfigurations.xml
@@ -28,3 +29,4 @@ local.properties
 app/release
 /.kotlin/
 /.idea/markdown.xml
+/build-logic/.kotlin/sessions/kotlin-compiler-15282068551709310187.salive
