@@ -45,7 +45,7 @@ firebase-bom = "33.0.0"
 firebase-crashlytics-gradle = "3.0.3"
 firebaseConfig = "22.0.1"
 google-services = "4.4.2"
-googlePlayBilling = "7.1.1"
+googlePlayBilling = "8.3.0"
 gson = "2.11.0"
 
 # X.Y.Z; X = Major(Changement majeur, souvent incompatible avec les versions précédentes),

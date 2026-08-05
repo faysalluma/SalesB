@@ -99,6 +99,7 @@ class GoogleBillingProvider @Inject constructor(
                 .enableOneTimeProducts()
                 .build()
         )
+        .enableAutoServiceReconnection()
         .build()
 
     suspend fun loadCatalog(requests: List<GoogleBillingProductRequest>) {
@@ -305,12 +306,12 @@ class GoogleBillingProvider @Inject constructor(
             .setProductList(queryProducts)
             .build()
 
-        billingClient.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+        billingClient.queryProductDetailsAsync(params) { billingResult, queryProductDetailsResult ->
             if (continuation.isActive) {
                 continuation.resume(
                     QueryProductResult(
                         billingResult = billingResult,
-                        products = productDetailsList
+                        products = queryProductDetailsResult.productDetailsList
                     )
                 )
             }
