@@ -41,10 +41,45 @@ The app has an `edition` flavor dimension. If a task is ambiguous, find its flav
 - Modules follow `:core:*` and `:feature:*` naming patterns.
 - No formatter is configured; keep changes minimal, match nearby code, and run Android Lint before broad changes.
 
+## Compose UI Architecture
+- The application-level `Scaffold` lives in `app/src/main/java/com/groupec/salesb/ui/MainScreen.kt`. Do not add another `Scaffold` inside a feature screen; configure shared top bars, back actions, bottom navigation, FAB visibility, and route titles from the application shell when needed.
+- Feature screens orchestrate ViewModel state, navigation callbacks, lifecycle effects, and layout. Keep business rules in ViewModels, use cases, domain models, or repositories.
+- Before adding a private screen composable, check whether it should reuse or extend an existing component.
+- Put cross-feature reusable UI in `core/ui`. Put reusable design-system primitives such as buttons, text fields, cards, dialogs, images, titles, switches, and loading/error components in `core/designsystem`.
+- Keep a component inside its `feature:*` module when it is specific to that feature and has no meaningful cross-feature reuse.
+- Native Compose primitives such as `Text`, `Spacer`, `Row`, `Column`, `Box`, and lazy layouts may be used directly when they do not duplicate an existing project component.
+- Prefer immutable inputs and event callbacks for reusable composables. When existing screen-owned mutable collections are required for coordinated behavior, preserve their single source of truth and do not remove them without tracing every consumer.
+- Keep production composables before the first `@Preview` in a file and group previews at the end. Preview-only sample values must not leak into production behavior.
+
+## Compose State & ViewModels
+- Declare injected ViewModel constructor dependencies as `private val` unless they intentionally form part of the public API.
+- Store changing ViewModel state in private `MutableStateFlow` instances and expose read-only `StateFlow` values. Do not introduce Compose `mutableStateOf` in ViewModels.
+- Reserve `remember`, `rememberSaveable`, and Compose `mutableStateOf` for local composable UI state.
+- For new or modified flow collection in composables, prefer `collectAsStateWithLifecycle` when the dependency and flow type support it; do not perform unrelated mass migrations of existing `collectAsState` calls.
+- Reserve `UiState` and `FormUIState` for changing interface states such as idle, loading, error, success, selection, and mutable form progress. Use domain or data models for immutable business data.
+- Values representing production business data, including prices, totals, quantities, stock, identifiers, phone numbers, and statuses, must come from a model, ViewModel, navigation argument, use case, repository, client configuration, or resource rather than being hardcoded in a screen.
+- When removing a setting or state transition, trace its UI state, dependent flags, persistence, backend mapping, existing-user migration behavior, and tests before deleting the underlying method.
+
+## Resources, Theme & Assets
+- Keep user-facing strings in Android resources under `src/main/res/values/strings.xml` and maintain the corresponding French translations under `values-fr/strings.xml`. Avoid introducing hardcoded user-facing text in composables.
+- Reuse `AppIcons`, existing `ImageVector` icons, or XML vector drawables for simple tintable monochrome pictograms. Keep raster assets for photographs, complex illustrations, and multicolored brand logos.
+- Reuse `MaterialTheme.colorScheme`, `MaterialTheme.typography`, and existing named tokens from `core/designsystem` before adding raw colors or text styles to a screen.
+- Add broadly reused colors and typography roles to the central design system instead of creating parallel feature theme objects. Keep changes compatible with the app's currently configured theme behavior.
+- For screenshot or Figma work, preserve visual intent while following the existing module boundaries, reusable components, semantic theme roles, and accessibility requirements.
+
+## Responsive UI
+- Use the existing window-size-class-derived `isExpandedWidth` signal for compact versus expanded layouts. Prefer available width over device-name checks for new responsive decisions.
+- Do not use a business preference such as `serviceview` to choose a responsive layout unless the preference genuinely represents a separate business requirement.
+- Keep compact and expanded layouts behaviorally consistent unless requirements explicitly differ. When they use different visual components, preserve shared quantity, stock, selection, validation, loading, and error behavior.
+- After changing a responsive branch, verify both compact and expanded call paths and remove only parameters that are no longer consumed anywhere in that branch.
+
 ## Testing Guidelines
 - Unit tests use JUnit 5 and MockK. Instrumented/UI tests use AndroidX Test, Espresso, and Compose UI testing.
 - Keep tests in the module they cover, name classes `*Test.kt`, and use descriptive method names.
 - Add or update tests for changed business logic and regressions. No minimum coverage threshold is enforced.
+- Test ViewModels through their public state and events rather than private implementation details.
+- Prefer JVM unit tests for business logic and Compose UI tests for behavior that requires rendering or interaction.
+- When removing an option or state transition, update obsolete tests and add coverage for the new invariant, including existing persisted values when relevant.
 
 ## Commit & Pull Request Guidelines
 - Recent commits use concise imperative subjects such as `Fix: skip Crashlytics mapping upload by default`. Optional Conventional Commit prefixes are acceptable.
