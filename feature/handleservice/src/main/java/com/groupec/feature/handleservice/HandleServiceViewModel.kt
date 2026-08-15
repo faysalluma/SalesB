@@ -6,7 +6,6 @@ import com.groupec.salesb.core.domain.handleservice.GetHandleServiceParametersUs
 import com.groupec.salesb.core.domain.handleservice.UpdateActiveClientUseCase
 import com.groupec.salesb.core.domain.handleservice.UpdateActivePaymentModeUseCase
 import com.groupec.salesb.core.domain.handleservice.UpdateActivePrinterUseCase
-import com.groupec.salesb.core.domain.handleservice.UpdateServiceViewUseCase
 import com.groupec.salesb.core.domain.handleservice.UpdateShowImageOnProductUseCase
 import com.groupec.salesb.core.domain.handleservice.UpdateUseIntForPriceAndAmountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +30,6 @@ data class HandleServiceUiState(
 @HiltViewModel
 class HandleServiceViewModel @Inject constructor(
     private val getHandleServiceParametersUseCase: GetHandleServiceParametersUseCase,
-    private val updateServiceViewUseCase: UpdateServiceViewUseCase,
     private val updateShowImageOnProductUseCase: UpdateShowImageOnProductUseCase,
     private val updateUseIntForPriceAndAmountUseCase: UpdateUseIntForPriceAndAmountUseCase,
     private val updateActivePaymentModeUseCase: UpdateActivePaymentModeUseCase,
@@ -55,27 +53,6 @@ class HandleServiceViewModel @Inject constructor(
                     isUseIntForPriceAndAmountDisabled = parameter.serviceview
                 )
             }
-        }
-    }
-
-    fun updateServiceView(value: Boolean) {
-        _uiState.update { current ->
-            if (value) {
-                current.copy(
-                    serviceView = true,
-                    useIntForPriceAndAmount = true,
-                    isUseIntForPriceAndAmountDisabled = true
-                )
-            } else {
-                current.copy(
-                    serviceView = false,
-                    isUseIntForPriceAndAmountDisabled = false
-                )
-            }
-        }
-
-        viewModelScope.launch {
-            updateServiceViewUseCase(value)
         }
     }
 

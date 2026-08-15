@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.groupec.salesb.core.designsystem.component.AppExposedDropdownMenuWithError
 import com.groupec.salesb.core.designsystem.component.AppTextField
 import com.groupec.salesb.core.designsystem.component.FieldType
 import com.groupec.salesb.core.designsystem.component.isValidEmail
@@ -35,9 +34,6 @@ fun SignupStepTwo(
     uri: Uri?,
     onUriChange: (Uri?) -> Unit,
     deleteImageFromCache: (String) -> Unit,
-    typeCompanyItems: List<String>,
-    typeCompanyState: String,
-    ontypeCompanyState: (String) -> Unit,
     onValueChange: (SignupStepTwoFormState) -> Unit
 ) {
     val context = LocalContext.current
@@ -70,9 +66,6 @@ fun SignupStepTwo(
 
     SignUpStepTwoForm(
         state = state,
-        typeCompanyItems = typeCompanyItems,
-        typeCompanyState = typeCompanyState,
-        ontypeCompanyState = ontypeCompanyState,
         onValueChange = onValueChange,
         showErrors = showErrors
     )
@@ -81,9 +74,6 @@ fun SignupStepTwo(
 @Composable
 private fun SignUpStepTwoForm(
     state: SignupStepTwoFormState,
-    typeCompanyItems: List<String>,
-    typeCompanyState: String,
-    ontypeCompanyState: (String) -> Unit,
     onValueChange: (SignupStepTwoFormState) -> Unit,
     showErrors: Boolean
 ) {
@@ -96,25 +86,6 @@ private fun SignUpStepTwoForm(
         fieldColor = White,
         modifier = Modifier.fillMaxWidth()
     )
-
-    AppExposedDropdownMenuWithError(
-        modifier = Modifier
-            .fillMaxWidth(),
-        items = typeCompanyItems,
-        value = typeCompanyState,
-        label = stringResource(R.string.signup_company_type),
-        isError = showErrors && typeCompanyState == typeCompanyItems.firstOrNull().orEmpty(),
-        onValueChange = {
-            ontypeCompanyState(it)
-        }
-    ) { index, item ->
-        val backendValue = when (index) {
-            1 -> 0
-            2 -> 1
-            else -> -1
-        }
-        onValueChange(state.copy(companyType = backendValue))
-    }
 
     AppTextField(
         value = state.ifu,
@@ -180,7 +151,7 @@ private fun SignUpStepTwoForm(
 
 data class SignupStepTwoFormState(
     val companyName: String = "",
-    val companyType: Int = -1,
+    val companyType: Int = 0,
     val email: String = "",
     val address: String = "",
     val phone: String = "",
@@ -189,7 +160,7 @@ data class SignupStepTwoFormState(
     val image: String = ""
 ) {
     fun isValid(): Boolean {
-        val isRequiredValid = companyName.isNotBlank() && (companyType == 0 || companyType == 1)
+        val isRequiredValid = companyName.isNotBlank()
         val isEmailValid = email.isBlank() || (email.isNotBlank() && isValidEmail(email))
         return isRequiredValid && isEmailValid
     }

@@ -43,17 +43,18 @@ import com.groupec.salesb.core.model.data.Product
 
 
 @Composable
-fun ProductGridPortrait(
+fun ProductGrid(
     products: LazyPagingItems<Product>,
     selectedProducts: MutableList<Pair<Int, Product>>,
     textFieldValues: MutableMap<Int, String>,
     isSearching: Boolean,
+    isExpandedWidth: Boolean,
     parameter: Parameter,
     onQuantityChange: (Pair<Int, Product>) -> Unit,
 ) {
     val isIntegerQuantityMode = parameter.serviceview || parameter.useintforpriceandamout
     val itemBottomSpace = 96.dp
-    if (parameter.serviceview) {
+    if (!isExpandedWidth) {
         LazyColumn {
             itemsIndexed(products) { _, product ->
                 product?.let { product ->

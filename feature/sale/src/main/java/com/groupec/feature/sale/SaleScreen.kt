@@ -68,8 +68,7 @@ import com.groupec.salesb.core.model.data.others.paymentTypeValue
 import com.groupec.salesb.core.print.Print
 import com.groupec.salesb.core.print.PrintAction
 import com.groupec.salesb.core.ui.ComposableLifecycle
-import com.groupec.salesb.core.ui.ProductGridAdaptive
-import com.groupec.salesb.core.ui.ProductGridPortrait
+import com.groupec.salesb.core.ui.ProductGrid
 import com.groupec.salesb.core.ui.ProFeatureBottomSheet
 import com.groupec.salesb.core.ui.SaleDetailCard
 import kotlinx.coroutines.Dispatchers
@@ -391,7 +390,6 @@ fun SaleScreen(
                     navigateToProduct = navigateToProduct,
                     selectedProducts = selectedProducts,
                     textFieldValues = textFieldValues,
-                    quantityCheck = quantityCheck,
                     isExpandedWidth = isExpandedWidth,
                     parameter = parameter,
                     onQuantityChange = onQuantityChange
@@ -502,7 +500,6 @@ fun SaleScreen(
                     navigateToProduct = navigateToProduct,
                     selectedProducts = selectedProducts,
                     textFieldValues = textFieldValues,
-                    quantityCheck = quantityCheck,
                     isExpandedWidth = isExpandedWidth,
                     onQuantityChange = onQuantityChange,
                     parameter = parameter
@@ -647,7 +644,6 @@ private fun ProductSelectionSection(
     navigateToProduct: () -> Unit,
     selectedProducts: MutableList<Pair<Int, Product>>,
     textFieldValues: MutableMap<Int, String>,
-    quantityCheck: MutableMap<Int, Boolean>,
     isExpandedWidth:  Boolean,
     parameter: Parameter,
     onQuantityChange: (Pair<Int, Product>) -> Unit,
@@ -742,25 +738,15 @@ private fun ProductSelectionSection(
                         )
                     }
                 } else {
-                    if (!isExpandedWidth) {
-                        ProductGridPortrait(
-                            products = products,
-                            selectedProducts = selectedProducts,
-                            textFieldValues = textFieldValues,
-                            isSearching = isSearching,
-                            onQuantityChange = onQuantityChange,
-                            parameter = parameter
-                        )
-                    } else {
-                        ProductGridAdaptive(
-                            products = products,
-                            selectedProducts = selectedProducts,
-                            textFieldValues = textFieldValues,
-                            quantityCheck = quantityCheck,
-                            isSearching = isSearching,
-                            parameter = parameter
-                        )
-                    }
+                    ProductGrid(
+                        products = products,
+                        selectedProducts = selectedProducts,
+                        textFieldValues = textFieldValues,
+                        isSearching = isSearching,
+                        isExpandedWidth = isExpandedWidth,
+                        onQuantityChange = onQuantityChange,
+                        parameter = parameter
+                    )
                 }
             }
         }

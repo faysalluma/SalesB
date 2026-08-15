@@ -84,7 +84,6 @@ data class HandleServiceOption(
 )
 
 enum class HandleServiceToggleType {
-    SERVICE_VIEW,
     SHOW_IMAGE_ON_PRODUCT,
     USE_INT_FOR_PRICE_AND_AMOUNT,
     ACTIVE_PAYMENT_MODE,

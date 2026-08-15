@@ -75,8 +75,6 @@
     <string name="privileges">Privilèges</string>
     <string name="filter">Filtrer</string>
     <string name="select">Choisir</string>
-    <string name="handle_service_view_service">Vue service</string>
-    <string name="handle_service_view_service_desc">Activer l\'affichage spécifique à la gestion des services</string>
     <string name="handle_service_show_product_images">Afficher les images des produits</string>
     <string name="handle_service_show_product_images_desc">Inclure les images dans la liste de produits lors de l\'enregistrement d\'une vente</string>
     <string name="handle_service_show_service_images">Afficher les images des services</string>

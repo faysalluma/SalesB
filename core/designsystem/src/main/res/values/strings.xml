@@ -82,8 +82,6 @@
     <string name="privileges">Privileges</string>
     <string name="filter">Filter</string>
     <string name="select">Select</string>
-    <string name="handle_service_view_service">Service view</string>
-    <string name="handle_service_view_service_desc">Enable the specific display for service handling</string>
     <string name="handle_service_show_product_images">Show product images</string>
     <string name="handle_service_show_product_images_desc">Include images in the product list when registering a sale</string>
     <string name="handle_service_show_service_images">Show service images</string>

@@ -12,7 +12,4 @@
     <string name="signup_previous">Précédent</string>
     <string name="signup_finish">Terminer</string>
     <string name="signup_quick_step_1">Renseignez vos informations.</string>
-    <string name="select">Sélectionner</string>
-    <string name="sales_and_retailers">Commerce</string>
-    <string name="professional_services">Service</string>
 </resources>

@@ -101,13 +101,6 @@ fun HandleServiceScreen(
 
     val options = listOf(
         HandleServiceOption(
-            titleRes = Res.string.handle_service_view_service,
-            descriptionRes = Res.string.handle_service_view_service_desc,
-            checked = uiState.serviceView,
-            enabled = true,
-            type = HandleServiceToggleType.SERVICE_VIEW
-        ),
-        HandleServiceOption(
             titleRes = Res.string.handle_service_use_integer_price,
             descriptionRes = Res.string.handle_service_use_integer_price_desc,
             checked = uiState.useIntForPriceAndAmount,
@@ -170,7 +163,6 @@ fun HandleServiceScreen(
                 options.forEachIndexed { index, option ->
                     SwitchRow(option = option, onCheckedChanged = { checked ->
                         when (option.type) {
-                            HandleServiceToggleType.SERVICE_VIEW -> viewModel.updateServiceView(checked)
                             HandleServiceToggleType.SHOW_IMAGE_ON_PRODUCT -> viewModel.updateShowImageOnProduct(checked)
                             HandleServiceToggleType.USE_INT_FOR_PRICE_AND_AMOUNT -> viewModel.updateUseIntForPriceAndAmount(checked)
                             HandleServiceToggleType.ACTIVE_CLIENT -> viewModel.updateActiveClient(checked)

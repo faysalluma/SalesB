@@ -5,12 +5,10 @@ import com.groupec.salesb.core.domain.handleservice.GetHandleServiceParametersUs
 import com.groupec.salesb.core.domain.handleservice.UpdateActiveClientUseCase
 import com.groupec.salesb.core.domain.handleservice.UpdateActivePaymentModeUseCase
 import com.groupec.salesb.core.domain.handleservice.UpdateActivePrinterUseCase
-import com.groupec.salesb.core.domain.handleservice.UpdateServiceViewUseCase
 import com.groupec.salesb.core.domain.handleservice.UpdateShowImageOnProductUseCase
 import com.groupec.salesb.core.domain.handleservice.UpdateUseIntForPriceAndAmountUseCase
 import com.groupec.salesb.core.model.data.Parameter
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +21,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -32,7 +29,6 @@ class HandleServiceViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val getParametersUseCase: GetHandleServiceParametersUseCase = mockk()
-    private val updateServiceViewUseCase: UpdateServiceViewUseCase = mockk()
     private val updateShowImageOnProductUseCase: UpdateShowImageOnProductUseCase = mockk()
     private val updateUseIntForPriceAndAmountUseCase: UpdateUseIntForPriceAndAmountUseCase = mockk()
     private val updateActivePaymentModeUseCase: UpdateActivePaymentModeUseCase = mockk()
@@ -53,7 +49,6 @@ class HandleServiceViewModelTest {
                 activeprinter = false
             )
         )
-        coEvery { updateServiceViewUseCase(any()) } returns Result.Success(Unit)
         coEvery { updateShowImageOnProductUseCase(any()) } returns Result.Success(Unit)
         coEvery { updateUseIntForPriceAndAmountUseCase(any()) } returns Result.Success(Unit)
         coEvery { updateActivePaymentModeUseCase(any()) } returns Result.Success(Unit)
@@ -61,7 +56,6 @@ class HandleServiceViewModelTest {
         coEvery { updateActivePrinterUseCase(any()) } returns Result.Success(Unit)
         viewModel = HandleServiceViewModel(
             getParametersUseCase,
-            updateServiceViewUseCase,
             updateShowImageOnProductUseCase,
             updateUseIntForPriceAndAmountUseCase,
             updateActivePaymentModeUseCase,
@@ -86,34 +80,4 @@ class HandleServiceViewModelTest {
         assertEquals(false, viewModel.uiState.value.serviceView)
     }
 
-    @Test
-    fun `updateServiceView should enable integer price and disable its toggle when service view is active`() = runTest {
-        // Arrange
-        advanceUntilIdle()
-
-        // Act
-        viewModel.updateServiceView(true)
-        advanceUntilIdle()
-
-        // Assert
-        assertTrue(viewModel.uiState.value.serviceView)
-        assertTrue(viewModel.uiState.value.useIntForPriceAndAmount)
-        assertTrue(viewModel.uiState.value.isUseIntForPriceAndAmountDisabled)
-        coVerify(exactly = 1) { updateServiceViewUseCase(true) }
-    }
-
-    @Test
-    fun `updateUseIntForPriceAndAmount should not call use case when disabled`() = runTest {
-        // Arrange
-        advanceUntilIdle()
-        viewModel.updateServiceView(true)
-        advanceUntilIdle()
-
-        // Act
-        viewModel.updateUseIntForPriceAndAmount(false)
-        advanceUntilIdle()
-
-        // Assert
-        coVerify(exactly = 0) { updateUseIntForPriceAndAmountUseCase(false) }
-    }
 }

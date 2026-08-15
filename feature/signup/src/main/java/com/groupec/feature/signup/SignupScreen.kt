@@ -76,7 +76,7 @@ fun SignupScreen(
     var stepTwo by remember(isQuickSignupEnabled) {
         mutableStateOf(
             SignupStepTwoFormState(
-                companyType = if (isQuickSignupEnabled) 0 else -1
+                companyType = 0
             )
         )
     }
@@ -99,17 +99,6 @@ fun SignupScreen(
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     var uri by remember { mutableStateOf<Uri?>(null) }
-    val firstActifValue = stringResource(R.string.select)
-    val defaultTypeCompanyValue = stringResource(R.string.sales_and_retailers)
-    var typeCompanyState by remember(firstActifValue, defaultTypeCompanyValue, isQuickSignupEnabled) {
-        mutableStateOf(if (isQuickSignupEnabled) defaultTypeCompanyValue else firstActifValue)
-    }
-    val typeCompanyList = listOf(
-        stringResource(R.string.select),
-        stringResource(R.string.sales_and_retailers),
-        stringResource(R.string.professional_services)
-    )
-
     if (uiState is SignupConfigurationUiState.Error) {
         AppAlertInfoDialog(
             setShowDialog = {
@@ -165,16 +154,11 @@ fun SignupScreen(
                     deleteImageFromCache = { filename ->
                         viewModel.deleteImageFromCache(context, filename)
                     },
-                    typeCompanyItems = typeCompanyList,
-                    typeCompanyState = typeCompanyState,
-                    ontypeCompanyState = { newType ->
-                        typeCompanyState = newType
-                    },
                     onValueChange = { stepTwo = it }
                 )
 
                 3 -> SignupStepThree(
-                   isServiceView = stepTwo.companyType == 1,
+                   isServiceView = false,
                    state = stepThree,
                    showErrors = showStepThreeErrors,
                    paymentTypeState = paymentTypeState,
@@ -224,7 +208,6 @@ fun SignupScreen(
                                             stepOneEmailErrorMessage = null
                                             if (isQuickSignupEnabled) {
                                                 stepTwo = stepTwo.copy(companyType = 0)
-                                                typeCompanyState = defaultTypeCompanyValue
                                                 stepThree = stepThree.copy(
                                                     devise = defaultCurrencyCode,
                                                     tva = "0",
@@ -259,19 +242,11 @@ fun SignupScreen(
                         val valid = stepTwo.isValid()
                         showStepTwoErrors = !valid
                         if (valid) {
-                            stepThree = when (stepTwo.companyType) {
-                                0 -> stepThree.copy(
-                                    showInt = 0,
-                                    showProductImage = 1,
-                                    showPaymentMode = 1
-                                )
-                                1 -> stepThree.copy(
-                                    showInt = 1,
-                                    showProductImage = 0,
-                                    showPaymentMode = 1
-                                )
-                                else -> stepThree
-                            }
+                            stepThree = stepThree.copy(
+                                showInt = 0,
+                                showProductImage = 1,
+                                showPaymentMode = 1
+                            )
                             currentStep = 3
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(0)
@@ -303,7 +278,7 @@ fun SignupScreen(
                     email = stepOne.email,
                     password = stepOne.password,
                     companyName = if (isQuickSignupEnabled) " " else stepTwo.companyName,
-                    companyType = if (isQuickSignupEnabled) 0 else stepTwo.companyType,
+                    companyType = 0,
                     companyEmail = if (isQuickSignupEnabled) null else stepTwo.email,
                     address = if (isQuickSignupEnabled) null else stepTwo.address,
                     phone = if (isQuickSignupEnabled) null else stepTwo.phone,
