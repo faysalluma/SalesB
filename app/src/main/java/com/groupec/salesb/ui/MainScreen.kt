@@ -68,7 +68,6 @@ fun MainScreen(
     // Show title and user name on app bar
     val userStoreState by viewModel.userStore.collectAsState()
     val parameterState by viewModel.parameter.collectAsState()
-    val appBarTitle = userStoreState.nomprenom
     val firstLogin = userStoreState.firstLogin
     val resetPassword = userStoreState.reset_password
     val privileges = userStoreState.getPrivileges()
@@ -231,11 +230,14 @@ fun MainScreen(
         topBar = {
             currentDestination.value?.let { route ->
                 if (shouldShowBarAndRailApp(route, firstLogin, resetPassword)) {
-                    val titleSignup =  if (route == NavigationItem.Signup.route) {
-                        stringResource(com.groupec.feature.signup.R.string.signup_title)
-                    } else null
+                    val currentItem = NavigationItem.fromRoute(route)
+                    val topBarTitle = when (currentItem) {
+                        NavigationItem.Home -> stringResource(R.string.app_name)
+                        NavigationItem.SaveSale -> stringResource(R.string.screen_title_new_sale)
+                        else -> stringResource(currentItem.title)
+                    }
                     SampleTopAppBar(
-                        titleSignup ?: appBarTitle,
+                        titleBar = topBarTitle,
                         dropDownItemsMenu = if (route != NavigationItem.Signup.route) dropDownItemsMenu else emptyList()
                     )
                 }

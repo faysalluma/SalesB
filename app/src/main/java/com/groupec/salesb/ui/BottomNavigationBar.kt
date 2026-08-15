@@ -1,7 +1,6 @@
 package com.groupec.salesb.ui
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -15,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import com.groupec.salesb.core.getCatalogItemLabel
 import com.groupec.salesb.navigation.NavigationIcon
 import com.groupec.salesb.navigation.NavigationItem
