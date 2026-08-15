@@ -32,8 +32,8 @@ class GenerateProductListPdfUseCase @Inject constructor() {
         products: List<Product>,
         searchQuery: String? = null,
         logoUrl: String? = null,
-        isServiceView: Boolean = false
-    ) = generateProductListPdf(context, products, searchQuery, logoUrl, isServiceView)
+        isServiceBusiness: Boolean = false,
+    ) = generateProductListPdf(context, products, searchQuery, logoUrl, isServiceBusiness)
 }
 
 fun generateProductListPdf(
@@ -41,7 +41,7 @@ fun generateProductListPdf(
     products: List<Product>,
     searchQuery: String?,
     logoUrl: String?,
-    isServiceView: Boolean = false
+    isServiceBusiness: Boolean = false,
 ): ByteArray {
     val baos = ByteArrayOutputStream()
     val writer = PdfWriter(baos)
@@ -61,7 +61,7 @@ fun generateProductListPdf(
     }
 
     val catalogLabelPlural = context.getCatalogItemLabel(
-        isServiceView = isServiceView,
+        isServiceBusiness = isServiceBusiness,
         plural = true
     )
 

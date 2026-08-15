@@ -14,9 +14,9 @@ import com.groupec.salesb.core.designsystem.R
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 
 @Composable
-fun EmptyScreen(text : String ? = null, modifier: Modifier = Modifier) {
+fun EmptyScreen(text : String ? = null, modifier: Modifier = Modifier.fillMaxSize()) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
         Text(

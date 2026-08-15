@@ -44,7 +44,8 @@ The app has an `edition` flavor dimension. If a task is ambiguous, find its flav
 ## Compose UI Architecture
 - The application-level `Scaffold` lives in `app/src/main/java/com/groupec/salesb/ui/MainScreen.kt`. Do not add another `Scaffold` inside a feature screen; configure shared top bars, back actions, bottom navigation, FAB visibility, and route titles from the application shell when needed.
 - Feature screens orchestrate ViewModel state, navigation callbacks, lifecycle effects, and layout. Keep business rules in ViewModels, use cases, domain models, or repositories.
-- Before adding a private screen composable, check whether it should reuse or extend an existing component.
+- Modify the existing screen structure before extracting a new private root/content composable. Extract one only when it is reused, supports an actual preview or UI-test seam, or clearly reduces substantial layout complexity; do not add a wrapper solely to separate state collection from otherwise single-use content.
+- Before adding any other private feature composable, check whether it should reuse or extend an existing component.
 - Put cross-feature reusable UI in `core/ui`. Put reusable design-system primitives such as buttons, text fields, cards, dialogs, images, titles, switches, and loading/error components in `core/designsystem`.
 - Keep a component inside its `feature:*` module when it is specific to that feature and has no meaningful cross-feature reuse.
 - Native Compose primitives such as `Text`, `Spacer`, `Row`, `Column`, `Box`, and lazy layouts may be used directly when they do not duplicate an existing project component.
@@ -69,7 +70,6 @@ The app has an `edition` flavor dimension. If a task is ambiguous, find its flav
 
 ## Responsive UI
 - Use the existing window-size-class-derived `isExpandedWidth` signal for compact versus expanded layouts. Prefer available width over device-name checks for new responsive decisions.
-- Do not use a business preference such as `serviceview` to choose a responsive layout unless the preference genuinely represents a separate business requirement.
 - Keep compact and expanded layouts behaviorally consistent unless requirements explicitly differ. When they use different visual components, preserve shared quantity, stock, selection, validation, loading, and error behavior.
 - After changing a responsive branch, verify both compact and expanded call paths and remove only parameters that are no longer consumed anywhere in that branch.
 

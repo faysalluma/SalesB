@@ -1,25 +1,18 @@
 package com.groupec.salesb.feature.home
 
-
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.groupec.salesb.core.Period
+import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.UIState
-import com.groupec.salesb.core.asResult
-import com.groupec.salesb.core.domain.statistic.GetTotalAmountSaleUseCase
-import com.groupec.salesb.core.domain.product.GetTotalProductUseCase
-import com.groupec.salesb.core.domain.sale.GetTotalSaleUseCase
+import com.groupec.salesb.core.domain.activity.GetRecentActivitiesUseCase
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.domain.product.GetAlertSeuilProductUseCase
-import com.groupec.salesb.core.domain.product.GetProductsWithLowInventoryUseCase
-import com.groupec.salesb.core.domain.product.GetTopSaleProductsUseCase
-import com.groupec.salesb.core.domain.statistic.GetTotalAmountOutputUseCase
-import com.groupec.salesb.core.domain.statistic.GetTotalSaleByDateUseCase
-import com.groupec.salesb.core.domain.statistic.GetTotalSaleDayUseCase
+import com.groupec.salesb.core.domain.sale.GetTotalSaleUseCase
+import com.groupec.salesb.core.domain.statistic.GetTotalAmountSaleUseCase
 import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
 import com.groupec.salesb.core.model.data.Parameter
-import com.groupec.salesb.core.model.data.Product
+import com.groupec.salesb.core.model.data.RecentActivity
 import com.groupec.salesb.core.model.data.UserStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +21,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import com.groupec.salesb.core.Result
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,54 +28,38 @@ class HomeViewModel @Inject constructor(
     private val getUserStoreUseCase: GetUserStoreUseCase,
     private val getParameterUseCase: GetParameterUseCase,
     private val getTotalSaleUseCase: GetTotalSaleUseCase,
-    private val getTotalProductUseCase: GetTotalProductUseCase,
-    private val getTopSaleProductsUseCase: GetTopSaleProductsUseCase,
-    private val getAlertSeuilProductUseCase: GetAlertSeuilProductUseCase,
-    private val getTotalSaleDayUseCase: GetTotalSaleDayUseCase,
-    private val getTotalSaleByDateUseCase: GetTotalSaleByDateUseCase,
     private val getTotalAmountSaleUseCase: GetTotalAmountSaleUseCase,
-    private val getTotalAmountOutputUseCase: GetTotalAmountOutputUseCase,
-    private val getProductsWithLowInventoryUseCase: GetProductsWithLowInventoryUseCase
+    private val getAlertSeuilProductUseCase: GetAlertSeuilProductUseCase,
+    private val getRecentActivitiesUseCase: GetRecentActivitiesUseCase,
 ) : ViewModel() {
     private val _userStore = MutableStateFlow(UserStore())
-    val userStore : StateFlow<UserStore> = _userStore.asStateFlow()
+    val userStore: StateFlow<UserStore> = _userStore.asStateFlow()
 
     private val _parameter = MutableStateFlow(Parameter())
-    val parameter : StateFlow<Parameter> = _parameter.asStateFlow()
+    val parameter: StateFlow<Parameter> = _parameter.asStateFlow()
 
     private val _totalSales = MutableStateFlow(0)
-    val totalSales : StateFlow<Int> = _totalSales.asStateFlow()
-
-    private val _totalProducts = MutableStateFlow(0)
-    val totalProducts : StateFlow<Int> = _totalProducts.asStateFlow()
+    val totalSales: StateFlow<Int> = _totalSales.asStateFlow()
 
     private val _totalAmountSales = MutableStateFlow(0.0)
-    val totalAmountSales : StateFlow<Double> = _totalAmountSales.asStateFlow()
-
-    private val _totalAmountOutputs = MutableStateFlow(0.0)
-    val totalAmountOutputs : StateFlow<Double> = _totalAmountOutputs.asStateFlow()
-
-    private val _topSaleProducts = MutableStateFlow<List<Product>>(emptyList())
-    val topSaleProducts : StateFlow<List<Product>> = _topSaleProducts.asStateFlow()
+    val totalAmountSales: StateFlow<Double> = _totalAmountSales.asStateFlow()
 
     private val _totalAlertSeuilProducts = MutableStateFlow(0)
-    val totalAlertSeuilProducts : StateFlow<Int> = _totalAlertSeuilProducts.asStateFlow()
+    val totalAlertSeuilProducts: StateFlow<Int> = _totalAlertSeuilProducts.asStateFlow()
 
-    private val _totalSaleChartDay = MutableStateFlow(Pair(0.0, 0.0))
-    val totalSaleChartDay : StateFlow<Pair<Double, Double>> = _totalSaleChartDay.asStateFlow()
-
-    private val _chartValues = MutableStateFlow<List<Pair<String, Double>>>(emptyList())
-    val chartValues : StateFlow<List<Pair<String, Double>>> = _chartValues.asStateFlow()
+    private val _recentActivitiesUiState =
+        MutableStateFlow<UIState<List<RecentActivity>>>(UIState.Loading)
+    val recentActivitiesUiState: StateFlow<UIState<List<RecentActivity>>> =
+        _recentActivitiesUiState.asStateFlow()
 
     private val _selectedPeriod = MutableStateFlow(Period.Today)
     val selectedPeriod: StateFlow<Period> = _selectedPeriod.asStateFlow()
 
-    private val _productsWithLowInventoryUiState = MutableStateFlow<UIState<List<Product>>>(UIState.Loading)
-    val productsWithLowInventoryUiState: StateFlow<UIState<List<Product>>> = _productsWithLowInventoryUiState.asStateFlow()
-
     init {
         viewModelScope.launch {
-            _userStore.value = getUserStoreUseCase().first()
+            getUserStoreUseCase().collectLatest { userStore ->
+                _userStore.value = userStore
+            }
         }
         viewModelScope.launch {
             getParameterUseCase().collectLatest { parameter ->
@@ -92,86 +68,35 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getProductsWithLowInventory() {
-        viewModelScope.launch {
-            getProductsWithLowInventoryUseCase()
-                .asResult()
-                .collect { result ->
-                    _productsWithLowInventoryUiState.value = when (result) {
-                        is Result.Loading-> UIState.Loading
-                        is Result.Success -> UIState.Success(result.data)
-                        is Result.Error -> UIState.Error(
-                            result.exception.message ?: "Retrofit Unknown error"
-                        )
-                    }
-
-                }
-        }
+    fun onPeriodChange(period: Period) {
+        _selectedPeriod.value = period
     }
 
-    fun getTotalSale(startDate: String, endDate: String) {
+    fun refreshDashboard(recentActivitiesLimit: Int) {
+        val period = _selectedPeriod.value
+        val (startDate, endDate) = period.dateRange()
+
         viewModelScope.launch {
             _totalSales.value = getTotalSaleUseCase(startDate, endDate).first()
-            _totalAmountSales.value = getTotalAmountSaleUseCase(startDate, endDate).first()
-            _totalAmountOutputs.value = getTotalAmountOutputUseCase(startDate, endDate).first()
+            _totalAmountSales.value =
+                getTotalAmountSaleUseCase(startDate, endDate).first()
         }
-    }
-
-    fun getTotalProduct() {
-        viewModelScope.launch {
-            _totalProducts.value = getTotalProductUseCase().first()
-        }
-    }
-
-    fun getTopSaleProducts(startDate: String, endDate: String) {
-        viewModelScope.launch {
-            _topSaleProducts.value = getTopSaleProductsUseCase(startDate, endDate).first()
-        }
-    }
-
-    fun getTotalAlertSeuil() {
         viewModelScope.launch {
             _totalAlertSeuilProducts.value = getAlertSeuilProductUseCase().first()
         }
-    }
-
-    fun getChartDataToday(context: Context, date: String) {
         viewModelScope.launch {
-           // _totalSaleChartDay.value = getTotalSaleDayUseCase(date).first()
-
-            // Update chart
-            val (totalSalesMorning, totalSalesEvening) = getTotalSaleDayUseCase(date).first()
-            _chartValues.value = listOf(
-                context.getString(R.string.morning) to totalSalesMorning,
-                context.getString(R.string.evening) to totalSalesEvening
-            )
+            _recentActivitiesUiState.value = UIState.Loading
+            _recentActivitiesUiState.value = when (
+                val result = getRecentActivitiesUseCase(
+                    limit = recentActivitiesLimit,
+                    startDate = startDate,
+                    endDate = endDate,
+                )
+            ) {
+                is Result.Success -> UIState.Success(result.data)
+                is Result.Error -> UIState.Error(result.exception.message.orEmpty())
+                Result.Loading -> UIState.Loading
+            }
         }
     }
-    fun getChartDataByDate(startDate: String, endDate: String) {
-        viewModelScope.launch {
-            _chartValues.value = getTotalSaleByDateUseCase(startDate, endDate).first()
-        }
-    }
-
-    fun onPeriodChange(period: Period, context: Context) {
-        _selectedPeriod.value = period
-        refreshDashboard(context)
-    }
-
-    fun refreshDashboard(context: Context) {
-        val period = _selectedPeriod.value
-        val startDate = period.startDate
-        val endDate = period.endDate
-
-        getTotalSale(startDate, endDate)
-        getTopSaleProducts(startDate, endDate)
-        getTotalProduct()
-        getTotalAlertSeuil()
-
-        when (period) {
-            Period.Yesterday, Period.Today -> getChartDataToday(context, startDate)
-            Period.Week, Period.Month -> getChartDataByDate(startDate, endDate)
-        }
-    }
-
 }

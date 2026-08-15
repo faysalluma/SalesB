@@ -101,14 +101,14 @@ fun Double.formatAmountNoTrailingZero(): String {
 }
 
 fun Context.getCatalogItemLabel(
-    isServiceView: Boolean,
+    isServiceBusiness: Boolean,
     plural: Boolean = true,
     capitalize: Boolean = false
 ): String {
     val resId = when {
-        isServiceView && plural -> R.string.catalog_item_services
-        isServiceView && !plural -> R.string.catalog_item_service
-        !isServiceView && plural -> R.string.catalog_item_products
+        isServiceBusiness && plural -> R.string.catalog_item_services
+        isServiceBusiness -> R.string.catalog_item_service
+        plural -> R.string.catalog_item_products
         else -> R.string.catalog_item_product
     }
     val label = getString(resId)

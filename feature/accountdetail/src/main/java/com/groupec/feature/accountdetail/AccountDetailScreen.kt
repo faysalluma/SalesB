@@ -182,7 +182,7 @@ fun AccountDetailScreen(
             UserForm(
                 modifier = Modifier.fillMaxWidth(0.8f),
                 isLoading = isLoading,
-                isServiceView = parameterState.serviceview,
+                isServiceBusiness = parameterState.isServiceBusiness,
                 users = userDataForm,
                 actifItems = activeList,
                 actifState = actifState,

@@ -48,7 +48,7 @@ fun SaleDetailListItem(
     quantityCheck: Map<Int, Boolean>
 ) {
     val (index, product) = productLine
-    val isIntegerQuantityMode = parameter.serviceview || parameter.useintforpriceandamout
+    val isIntegerQuantityMode = parameter.useintforpriceandamout
     val iconSizeModifier = if (isTablet())  Modifier.size(64.dp) else Modifier
     Row(
         Modifier

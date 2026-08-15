@@ -15,4 +15,28 @@
     <string name="profit_label">Bénéfices: %1$s %2$s</string>
     <string name="output_label">Sorties: %1$s %2$s</string>
     <string name="products_copied">%1$s copiés</string>
+    <string name="greeting">Bonjour</string>
+    <string name="greeting_with_name">Bonjour, %1$s</string>
+    <string name="revenue">Chiffre d’affaires</string>
+    <string name="amount_with_currency">%1$s %2$s</string>
+    <string name="recent_activities">Activités</string>
+    <string name="see_all">Voir tout</string>
+    <string name="see_stock">Voir le stock</string>
+    <string name="activities_unavailable">Les activités récentes sont indisponibles.</string>
+    <string name="no_recent_activity">Aucune activité récente</string>
+    <string name="sale_activity">Vente n°%1$d</string>
+    <string name="sale_activity_without_id">Vente</string>
+    <string name="output_activity">Sortie n°%1$d</string>
+    <string name="output_activity_without_id">Sortie</string>
+    <string name="activity_date_unknown">Date indisponible</string>
+    <string name="positive_amount">+%1$s %2$s</string>
+    <string name="negative_amount">-%1$s %2$s</string>
+    <plurals name="sales_count">
+        <item quantity="one">%d vente</item>
+        <item quantity="other">%d ventes</item>
+    </plurals>
+    <plurals name="low_inventory_alert">
+        <item quantity="one">%d article est en stock faible</item>
+        <item quantity="other">%d articles sont en stock faible</item>
+    </plurals>
 </resources>

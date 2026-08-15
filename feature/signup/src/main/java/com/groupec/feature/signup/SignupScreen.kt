@@ -158,7 +158,7 @@ fun SignupScreen(
                 )
 
                 3 -> SignupStepThree(
-                   isServiceView = false,
+                   isServiceBusiness = stepTwo.companyType == 1,
                    state = stepThree,
                    showErrors = showStepThreeErrors,
                    paymentTypeState = paymentTypeState,

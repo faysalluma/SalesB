@@ -19,8 +19,16 @@ class GenerateSaleListExcelUseCase @Inject constructor() {
         startDate: String? = null,
         endDate: String? = null,
         devise: String? = null,
-        isServiceView: Boolean = false
-    ) = generateSaleListExcel(context, sales, searchQuery, startDate, endDate, devise, isServiceView)
+        isServiceBusiness: Boolean = false,
+    ) = generateSaleListExcel(
+        context,
+        sales,
+        searchQuery,
+        startDate,
+        endDate,
+        devise,
+        isServiceBusiness,
+    )
 }
 
 fun generateSaleListExcel(
@@ -30,11 +38,11 @@ fun generateSaleListExcel(
     startDate: String?,
     endDate: String?,
     devise: String?,
-    isServiceView: Boolean = false
+    isServiceBusiness: Boolean = false,
 ): ByteArray {
     val none = "-"
     val catalogLabelPlural = context.getCatalogItemLabel(
-        isServiceView = isServiceView,
+        isServiceBusiness = isServiceBusiness,
         plural = true,
         capitalize = true
     )

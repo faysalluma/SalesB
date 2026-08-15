@@ -47,7 +47,7 @@ android {
         debug {
             // Definies config data
             buildConfigField("boolean", "ENABLE_CRASH_REPORTING", "false")
-            buildConfigField("String", "SERVER_URL", "\"http://192.168.1.69/SalesBStoreApi/\"")
+            buildConfigField("String", "SERVER_URL", "\"http://192.168.1.51/SalesBStoreApi/\"")
             buildConfigField("int", "NETWORK_TIMEOUT_SECONDS", "30")
             manifestPlaceholders["usesCleartextTraffic"] = "true"
         }

@@ -42,7 +42,6 @@ fun ProductForm(
     categorieItems: List<Pair<String, String>>,
     rayonItems: List<Pair<String, String>>,
     fournisseurItems: List<Pair<String, String>>,
-    isServiceView: Boolean = false,
     products: ProductDataForm,
     categorielibelleState: TextFieldValue,  // Use TextField to better handle onchange on Spinner
     navigateToCategory: () -> Unit,
@@ -66,7 +65,7 @@ fun ProductForm(
         isLibelleError = products.libelle.isEmpty()
         isPrixttcError = products.prixttc.isEmpty()
         isCategorieLibelleError = products.categorielibelle.isNotEmpty() && categorieItems.none { it.second == products.categorielibelle }
-        isRayonLibelleError = !isServiceView && products.rayonlibelle.isNotEmpty() && rayonItems.none { it.second == products.rayonlibelle }
+        isRayonLibelleError = products.rayonlibelle.isNotEmpty() && rayonItems.none { it.second == products.rayonlibelle }
         isFournisseurLibelleError =  products.fournisseurlibelle.isNotEmpty() && fournisseurItems.none { it.second == products.fournisseurlibelle }
         if (!isLibelleError && !isPrixttcError && !isCategorieLibelleError
             && !isRayonLibelleError && !isFournisseurLibelleError) {
@@ -143,8 +142,7 @@ fun ProductForm(
             modifier = Modifier.fillMaxWidth()
         )
 
-        if (!isServiceView) {
-            AppTextField(
+        AppTextField(
                 value = products.qtestock,
                 onChange = { data ->
                     onProductDataChanged(products.copy(qtestock = data.allowOnlyDigits()))
@@ -172,8 +170,7 @@ fun ProductForm(
                 fieldType = FieldType.Number,
                 fieldColor = White,
                 modifier = Modifier.fillMaxWidth()
-            )
-        }
+        )
 
         Row(modifier = Modifier.fillMaxWidth()) {
             AppEditableExposedDropdown(
@@ -220,7 +217,7 @@ fun ProductForm(
 
         }
 
-        /*if (!isServiceView) {
+        /*
             Row(modifier = Modifier.fillMaxWidth()) {
                 AppEditableExposedDropdown(
                     items = rayonItems,
@@ -266,7 +263,7 @@ fun ProductForm(
                 }
 
             }
-        }*/
+        */
 
        /* Row(modifier = Modifier.fillMaxWidth()) {
             AppEditableExposedDropdown(

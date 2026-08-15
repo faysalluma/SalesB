@@ -14,11 +14,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -42,6 +44,7 @@ import com.groupec.salesb.core.UIState
 import com.groupec.salesb.core.designsystem.component.AppAlertInfoDialog
 import com.groupec.salesb.core.designsystem.component.CustomSnackBar
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
+import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Green
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.Red
@@ -79,7 +82,6 @@ fun MainScreen(
         context = context,
         navController = navController,
         userStore = userStoreState,
-        isServiceView = parameterState.serviceview,
         activeClient = parameterState.activeClient
     ) {
         showLogoutDialog = true
@@ -262,7 +264,7 @@ fun MainScreen(
                             BottomNavigationBar(
                                 items = items,
                                 currentRoute = route,
-                                isServiceView = parameterState.serviceview,
+                                isServiceBusiness = parameterState.isServiceBusiness,
                                 onItemClick = { currentNavigationItem ->
                                     navController.navigate(currentNavigationItem.route) {
                                         // Supprime toutes les destinations jusqu’à la destination de départ du graphe de navigation
@@ -311,7 +313,25 @@ fun MainScreen(
                 val fabContainerColor = Primary
                 val fabContentColor = White
 
-                if (isTablet) {
+                if (currentDestination.value == NavigationItem.Home.route) {
+                    ExtendedFloatingActionButton(
+                        onClick = onFabClick,
+                        shape = fabShape,
+                        containerColor = fabContainerColor,
+                        contentColor = fabContentColor,
+                        icon = {
+                            Icon(
+                                imageVector = AppIcons.SaveSale,
+                                contentDescription = null,
+                            )
+                        },
+                        text = {
+                            Text(
+                                text = stringResource(R.string.screen_title_new_sale),
+                            )
+                        },
+                    )
+                } else if (isTablet) {
                     LargeFloatingActionButton(
                         onClick = onFabClick,
                         shape = fabShape,
@@ -349,7 +369,7 @@ fun MainScreen(
                         MyNavigationRail(
                             items = items,
                             navController,
-                            isServiceView = parameterState.serviceview,
+                            isServiceBusiness = parameterState.isServiceBusiness,
                             modifier = Modifier.weight(0.09f)
                         )
                     }
@@ -358,6 +378,7 @@ fun MainScreen(
                 AppNavHost(
                     snackbarHostState = snackbarHostState,
                     isExpandedWidth = isExpandedWidth,
+                    isTablet = isTablet,
                     modifier = Modifier
                         .weight(
                             if (shouldShowBarAndRailApp(
@@ -379,7 +400,6 @@ fun getDropdownItemsWithActions(
     context: Context,
     navController: NavHostController,
     userStore: UserStore,
-    isServiceView: Boolean,
     activeClient: Boolean,
     onLogOut: () -> Unit
 ): List<MenuItem> {

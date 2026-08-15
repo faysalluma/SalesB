@@ -145,7 +145,7 @@ class ProductListViewModel @Inject constructor(
                     val products = result.data
                     if (products.isEmpty()) {
                         val catalogLabel = activityContext.getCatalogItemLabel(
-                            isServiceView = _parameterState.value.serviceview,
+                            isServiceBusiness = _parameterState.value.isServiceBusiness,
                             plural = true
                         )
                         _exportPdfUiState.value = FormUIState.Error(
@@ -160,7 +160,7 @@ class ProductListViewModel @Inject constructor(
                                 products,
                                 _searchQuery.value,
                                 _parameterState.value.logo,
-                                _parameterState.value.serviceview
+                                _parameterState.value.isServiceBusiness,
                             )
                         }
                         val file = withContext(Dispatchers.IO) {
@@ -193,7 +193,7 @@ class ProductListViewModel @Inject constructor(
                     val products = result.data
                     if (products.isEmpty()) {
                         val catalogLabel = activityContext.getCatalogItemLabel(
-                            isServiceView = _parameterState.value.serviceview,
+                            isServiceBusiness = _parameterState.value.isServiceBusiness,
                             plural = true
                         )
                         _exportExcelUiState.value = FormUIState.Error(
@@ -207,7 +207,7 @@ class ProductListViewModel @Inject constructor(
                                 activityContext,
                                 products,
                                 _searchQuery.value,
-                                _parameterState.value.serviceview
+                                _parameterState.value.isServiceBusiness,
                             )
                         }
                         val file = withContext(Dispatchers.IO) {

@@ -1,5 +1,6 @@
 package com.groupec.salesb.core.model
 
+import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.model.data.others.PaymentType
 import com.groupec.salesb.core.model.data.others.paymentTypeFromValue
@@ -35,5 +36,11 @@ class ModelHelpersTest {
         assertEquals(PaymentType.Cash, paymentTypeFromValue("CASH"))
         assertEquals(PaymentType.Card.libelleRes, paymentTypeLibelleResFromValue("card"))
         assertNull(paymentTypeFromValue("mobile-money"))
+    }
+
+    @Test
+    fun `enterprise type should identify service businesses`() {
+        assertEquals(false, Parameter(entreprisetype = 0).isServiceBusiness)
+        assertEquals(true, Parameter(entreprisetype = 1).isServiceBusiness)
     }
 }

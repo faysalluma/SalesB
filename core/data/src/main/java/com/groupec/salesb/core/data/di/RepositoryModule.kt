@@ -2,6 +2,8 @@
 package com.groupec.salesb.core.data.di
 
 import android.content.Context
+import com.groupec.salesb.core.data.repository.activity.RecentActivityRepository
+import com.groupec.salesb.core.data.repository.activity.RecentActivityRepositoryImpl
 import com.groupec.salesb.core.data.repository.client.ClientRepository
 import com.groupec.salesb.core.data.repository.client.ClientRepositoryImpl
 import com.groupec.salesb.core.data.repository.rayon.RayonRepository
@@ -40,6 +42,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class RepositoryModule  {
+    @Provides
+    @Singleton
+    fun provideRecentActivityRepository(
+        apiService: ApiService,
+        dataStoreManager: DataStoreManager,
+    ): RecentActivityRepository {
+        return RecentActivityRepositoryImpl(apiService, dataStoreManager)
+    }
+
     @Provides
     @Singleton
     fun providerParameterRepository(

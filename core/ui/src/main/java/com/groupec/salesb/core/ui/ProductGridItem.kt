@@ -65,18 +65,6 @@ fun ProductGridItem(
                 minLines = if (parameter.showimageonproduct) 1 else 3,
                 overflow = TextOverflow.Ellipsis
             )
-            /*
-            Text(
-                text = product.libelle,
-                maxLines = if (parameter.showimageonproduct) 1 else {
-                    if (parameter.serviceview) 1 else 3
-                },
-                minLines = if (parameter.showimageonproduct) 1 else {
-                    if (parameter.serviceview) 1 else 3
-                },
-                overflow = TextOverflow.Ellipsis
-            )
-            */
         }
     }
 }

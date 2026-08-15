@@ -5,6 +5,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.ForwardToInbox
+import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.automirrored.rounded.ReceiptLong
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.AddCircleOutline
@@ -21,12 +22,15 @@ import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.ListAlt
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.RemoveCircleOutline
+import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
@@ -71,6 +75,7 @@ object AppIcons {
     val AddCircle = Icons.Filled.AddCircle
     val MinusCircle = Icons.Filled.RemoveCircle
     val MoreInfo = Icons.Rounded.Info
+    val Warning  = Icons.Default.Warning
     val ChevronRight = Icons.Default.ChevronRight
     val ChevronDown = Icons.Default.ArrowDropDown
     val Output = Icons.Rounded.Money
@@ -86,4 +91,6 @@ object AppIcons {
     val ViewDetail = Icons.Default.Description
     val Premium = Icons.Default.WorkspacePremium
     val Chat  = Icons.AutoMirrored.Filled.Chat
+    val ListAlt = Icons.AutoMirrored.Filled.ListAlt
+    val ShoppingBag = Icons.Filled.ShoppingBag
 }

@@ -52,7 +52,7 @@ import kotlin.random.Random
 fun UserForm(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
-    isServiceView: Boolean = false,
+    isServiceBusiness: Boolean,
     users: UserDataForm,
     actifItems: List<String>,
     actifState: String,
@@ -66,7 +66,7 @@ fun UserForm(
     var isNomPrenomError by remember { mutableStateOf(false) }
     var isEmailError by remember { mutableStateOf(false) }
     val catalogLabelPluralCapitalized = context.getCatalogItemLabel(
-        isServiceView = isServiceView,
+        isServiceBusiness = isServiceBusiness,
         plural = true,
         capitalize = true
     )

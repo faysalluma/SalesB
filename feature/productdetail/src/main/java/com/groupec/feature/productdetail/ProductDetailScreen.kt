@@ -69,7 +69,7 @@ fun ProductDetailScreen(
     val parameterState by viewModel.parameterState.collectAsState()
     val totalProductsCount by viewModel.totalProductsCountState.collectAsState()
     val catalogLabelSingular = context.getCatalogItemLabel(
-        isServiceView = parameterState.serviceview,
+        isServiceBusiness = parameterState.isServiceBusiness,
         plural = false
     )
 
@@ -238,7 +238,6 @@ fun ProductDetailScreen(
                 categorieItems = categoriesPairState,
                 rayonItems = rayonsPairState,
                 fournisseurItems = listOf(),
-                isServiceView = parameterState.serviceview,
                 products = productDataForm,
                 categorielibelleState = categorielibelleState,
                 navigateToCategory = {

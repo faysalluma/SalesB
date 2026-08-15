@@ -16,6 +16,7 @@ import com.groupec.salesb.core.network.model.ParamItemResponse
 import com.groupec.salesb.core.network.model.ParameterResponse
 import com.groupec.salesb.core.network.model.ProductResponse
 import com.groupec.salesb.core.network.model.RayonResponse
+import com.groupec.salesb.core.network.model.RecentActivityResponse
 import com.groupec.salesb.core.network.model.SaleItemResponse
 import com.groupec.salesb.core.network.model.SaleResponse
 import com.groupec.salesb.core.network.model.SubscriptionStatusRequest
@@ -96,6 +97,14 @@ interface ApiService {
         @Path("endDate") endDate: String,
         @Path("userid") userid: Int
     ): Response<ChartDateResponse>
+
+    @GET(Constants.GET_RECENT_ACTIVITIES)
+    suspend fun getRecentActivities(
+        @Query("limit") limit: Int,
+        @Query("startDate") startDate: String,
+        @Query("endDate") endDate: String,
+        @Query("userid") userid: Int,
+    ): Response<RecentActivityResponse>
 
     @GET(Constants.GET_PAGED_PRODUCTS)
     suspend fun getPagedProducts(

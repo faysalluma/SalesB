@@ -16,17 +16,6 @@ class HandleServiceRepositoryImpl @Inject constructor(
 
     override fun getHandleServiceParameters(): Flow<Parameter> = dataStoreManager.parameterFlow
 
-    override suspend fun updateServiceView(value: Boolean): Result<Unit> {
-        return try {
-            withContext(Dispatchers.IO) {
-                dataStoreManager.updateServiceView(value)
-            }
-            Result.Success(Unit)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
     override suspend fun updateShowImageOnProduct(value: Boolean): Result<Unit> {
         return try {
             withContext(Dispatchers.IO) {

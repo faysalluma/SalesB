@@ -18,12 +18,12 @@ import com.groupec.salesb.core.model.data.Product
 
 @Composable
 fun ProductsWithLowInventoryList(
-    isServiceView: Boolean,
+    isServiceBusiness: Boolean,
     products: List<Product>? = null
 ) {
     val context = LocalContext.current
     val catalogLabelPlural = context.getCatalogItemLabel(
-        isServiceView = isServiceView,
+        isServiceBusiness = isServiceBusiness,
         plural = true
     )
     products?.let { productsValue ->

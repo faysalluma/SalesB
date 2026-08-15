@@ -52,7 +52,7 @@ fun ProductGrid(
     parameter: Parameter,
     onQuantityChange: (Pair<Int, Product>) -> Unit,
 ) {
-    val isIntegerQuantityMode = parameter.serviceview || parameter.useintforpriceandamout
+    val isIntegerQuantityMode = parameter.useintforpriceandamout
     val itemBottomSpace = 96.dp
     if (!isExpandedWidth) {
         LazyColumn {

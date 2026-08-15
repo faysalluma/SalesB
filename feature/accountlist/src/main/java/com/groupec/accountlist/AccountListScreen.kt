@@ -89,7 +89,7 @@ fun AccountListScreen(
     var isManualRefreshing by remember { mutableStateOf(false) }
     val isExporting = exportPdfState is FormUIState.Loading || exportExcelState is FormUIState.Loading
     val catalogLabelPlural = context.getCatalogItemLabel(
-        isServiceView = parameterState.serviceview,
+        isServiceBusiness = parameterState.isServiceBusiness,
         plural = true
     )
     val exportPdfTitle = stringResource(R.string.export_to_pdf)

@@ -25,11 +25,7 @@ fun ProductGridAdaptive(
     isSearching: Boolean,
     parameter: Parameter
 ) {
-    val columns = if (parameter.serviceview) {
-        GridCells.Fixed(2)
-    } else {
-        GridCells.Adaptive(minSize = 124.dp)
-    }
+    val columns = GridCells.Adaptive(minSize = 124.dp)
     LazyVerticalGrid(
         columns = columns, // Taille minimale pour chaque élément (calcule le nombre de colonnes selon la largeur disponible)
         contentPadding = PaddingValues(bottom = 8.dp), // marge interieur autour de l'ensemble de la grille

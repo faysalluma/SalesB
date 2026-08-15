@@ -14,19 +14,19 @@ class GenerateProductListExcelUseCase @Inject constructor() {
         context: Context,
         products: List<Product>,
         searchQuery: String? = null,
-        isServiceView: Boolean = false
-    ) = generateProductListExcel(context, products, searchQuery, isServiceView)
+        isServiceBusiness: Boolean = false,
+    ) = generateProductListExcel(context, products, searchQuery, isServiceBusiness)
 }
 
 fun generateProductListExcel(
     context: Context,
     products: List<Product>,
     searchQuery: String?,
-    isServiceView: Boolean = false
+    isServiceBusiness: Boolean = false,
 ): ByteArray {
     val none = "-"
     val catalogLabelPlural = context.getCatalogItemLabel(
-        isServiceView = isServiceView,
+        isServiceBusiness = isServiceBusiness,
         plural = true
     )
     val headers = listOf(

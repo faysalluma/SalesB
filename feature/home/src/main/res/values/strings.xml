@@ -16,4 +16,28 @@
     <string name="profit_label">Profits: %1$s %2$s</string>
     <string name="output_label">Outputs: %1$s %2$s</string>
     <string name="products_copied">%1$s copied</string>
+    <string name="greeting">Hello</string>
+    <string name="greeting_with_name">Hello, %1$s</string>
+    <string name="revenue">Revenue</string>
+    <string name="amount_with_currency">%1$s %2$s</string>
+    <string name="recent_activities">Activities</string>
+    <string name="see_all">See all</string>
+    <string name="see_stock">View stock</string>
+    <string name="activities_unavailable">Recent activities are unavailable.</string>
+    <string name="no_recent_activity">No recent activity</string>
+    <string name="sale_activity">Sale #%1$d</string>
+    <string name="sale_activity_without_id">Sale</string>
+    <string name="output_activity">Output #%1$d</string>
+    <string name="output_activity_without_id">Output</string>
+    <string name="activity_date_unknown">Date unavailable</string>
+    <string name="positive_amount">+%1$s %2$s</string>
+    <string name="negative_amount">-%1$s %2$s</string>
+    <plurals name="sales_count">
+        <item quantity="one">%d sale</item>
+        <item quantity="other">%d sales</item>
+    </plurals>
+    <plurals name="low_inventory_alert">
+        <item quantity="one">%d item is low in stock</item>
+        <item quantity="other">%d items are low in stock</item>
+    </plurals>
 </resources>

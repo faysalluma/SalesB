@@ -41,7 +41,6 @@ class HandleServiceViewModelTest {
         Dispatchers.setMain(testDispatcher)
         every { getParametersUseCase() } returns flowOf(
             Parameter(
-                serviceview = false,
                 showimageonproduct = true,
                 useintforpriceandamout = false,
                 activepaymentmode = true,
@@ -77,7 +76,6 @@ class HandleServiceViewModelTest {
         // Assert
         assertEquals(true, viewModel.uiState.value.showImageOnProduct)
         assertEquals(true, viewModel.uiState.value.activePaymentMode)
-        assertEquals(false, viewModel.uiState.value.serviceView)
     }
 
 }

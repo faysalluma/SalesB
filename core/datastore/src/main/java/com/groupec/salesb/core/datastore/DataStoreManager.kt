@@ -40,7 +40,6 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
         private val TVA_KEY = doublePreferencesKey("tva")
         private val SHOW_TERMS_AND_CONDITIONS_KEY = booleanPreferencesKey("termsandconditions")
 
-        private val SERVICE_VIEW_KEY = booleanPreferencesKey("serviceview")
         private val SHOW_IMAGE_ON_PRODUCT_KEY = booleanPreferencesKey("showimageonproduct")
         private val USE_INT_FOR_PRICE_AND_AMOUNT_KEY = booleanPreferencesKey("useintforpriceandamout")
         private val ACTIVE_PRINTER = booleanPreferencesKey("activeprinter")
@@ -80,7 +79,6 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
                 defaultpaymenttype = preferences[DEFAULT_PAYMENT_TYPE_KEY] ?: "",
                 tva = preferences[TVA_KEY] ?: 0.0,
                 termsandconditions = preferences[SHOW_TERMS_AND_CONDITIONS_KEY] ?: true,
-                serviceview = preferences[SERVICE_VIEW_KEY] ?: false,
                 showimageonproduct = preferences[SHOW_IMAGE_ON_PRODUCT_KEY] ?: false,
                 useintforpriceandamout = preferences[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] ?: false,
                 activepaymentmode = preferences[ACTIVE_PAYMENT_MODE] ?: false,
@@ -125,7 +123,6 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
             datastore[SHOW_IMAGE_ON_PRODUCT_KEY] = parameter.showimageonproduct
             datastore[DEFAULT_PAYMENT_TYPE_KEY] = parameter.defaultpaymenttype
             datastore[TVA_KEY] = parameter.tva
-            datastore[SERVICE_VIEW_KEY] = parameter.serviceview
             datastore[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] = parameter.useintforpriceandamout
             datastore[ACTIVE_PAYMENT_MODE] = parameter.activepaymentmode
             datastore[ACTIVE_CLIENT] = parameter.activeClient
@@ -188,17 +185,6 @@ class DataStoreManager @Inject constructor(@ApplicationContext val context: Cont
     suspend fun acceptTermsAndConditions() {
         context.dataStore.edit { datastore ->
             datastore [SHOW_TERMS_AND_CONDITIONS_KEY] = false
-        }
-    }
-
-    suspend fun updateServiceView(value: Boolean) {
-        context.dataStore.edit { datastore ->
-            datastore[SERVICE_VIEW_KEY] = value
-            if (value) {
-                datastore[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] = true
-            } else {
-                datastore[USE_INT_FOR_PRICE_AND_AMOUNT_KEY] = false
-            }
         }
     }
 

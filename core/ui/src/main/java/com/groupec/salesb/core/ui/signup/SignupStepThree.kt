@@ -31,7 +31,7 @@ import com.groupec.salesb.core.designsystem.R as Res
 @Composable
 fun SignupStepThree(
     showErrors: Boolean,
-    isServiceView: Boolean,
+    isServiceBusiness: Boolean,
     state: SignupStepThreeFormState,
     paymentTypeState: String,
     onPaymenTypeSelected: (String) -> Unit,
@@ -113,12 +113,12 @@ fun SignupStepThree(
     SwitchRow(
         verticalpadding = verticalpadding,
         option = HandleServiceOption(
-            titleRes = if (isServiceView) {
+            titleRes = if (isServiceBusiness) {
                 Res.string.handle_service_show_service_images
             } else {
                 Res.string.handle_service_show_product_images
             },
-            descriptionRes = if (isServiceView) {
+            descriptionRes = if (isServiceBusiness) {
                 Res.string.handle_service_show_service_images_desc
             } else {
                 Res.string.handle_service_show_product_images_desc

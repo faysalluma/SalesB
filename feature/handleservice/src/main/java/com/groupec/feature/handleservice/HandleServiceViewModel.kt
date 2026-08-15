@@ -18,13 +18,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class HandleServiceUiState(
-    val serviceView: Boolean = false,
+    val isServiceBusiness: Boolean = false,
     val showImageOnProduct: Boolean = false,
     val useIntForPriceAndAmount: Boolean = false,
     val activePaymentMode: Boolean = false,
     val activeClient: Boolean = true,
     val activePrinter: Boolean = false,
-    val isUseIntForPriceAndAmountDisabled: Boolean = false
 )
 
 @HiltViewModel
@@ -44,13 +43,12 @@ class HandleServiceViewModel @Inject constructor(
         viewModelScope.launch {
             getHandleServiceParametersUseCase().collectLatest { parameter ->
                 _uiState.value = HandleServiceUiState(
-                    serviceView = parameter.serviceview,
+                    isServiceBusiness = parameter.isServiceBusiness,
                     showImageOnProduct = parameter.showimageonproduct,
                     useIntForPriceAndAmount = parameter.useintforpriceandamout,
                     activePaymentMode = parameter.activepaymentmode,
                     activeClient = parameter.activeClient,
                     activePrinter = parameter.activeprinter,
-                    isUseIntForPriceAndAmountDisabled = parameter.serviceview
                 )
             }
         }
@@ -65,8 +63,6 @@ class HandleServiceViewModel @Inject constructor(
     }
 
     fun updateUseIntForPriceAndAmount(value: Boolean) {
-        if (_uiState.value.isUseIntForPriceAndAmountDisabled) return
-
         _uiState.update { it.copy(useIntForPriceAndAmount = value) }
 
         viewModelScope.launch {

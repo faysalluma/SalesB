@@ -20,11 +20,17 @@ data class Parameter(
     val offline: Boolean = false,
     val defaultpaymenttype: String = "",
     val termsandconditions: Boolean = true,
-    val serviceview: Boolean = false,
     val showimageonproduct: Boolean = false,
     val useintforpriceandamout: Boolean = false,
     val activepaymentmode: Boolean = true,
     val activeClient: Boolean = true,
     val activeprinter: Boolean = false,
     val userid: Int? = 0
-) : Parcelable
+) : Parcelable {
+    val isServiceBusiness: Boolean
+        get() = entreprisetype == SERVICE_BUSINESS_TYPE
+
+    private companion object {
+        const val SERVICE_BUSINESS_TYPE = 1
+    }
+}

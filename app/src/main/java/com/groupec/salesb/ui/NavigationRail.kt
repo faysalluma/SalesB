@@ -35,7 +35,7 @@ import com.groupec.salesb.navigation.NavigationItem
 fun MyNavigationRail(
     items: List<NavigationItem>,
     navController: NavController,
-    isServiceView: Boolean,
+    isServiceBusiness: Boolean,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -54,7 +54,7 @@ fun MyNavigationRail(
         items.forEach { item ->
             val itemLabel = if (item == NavigationItem.Product) {
                 context.getCatalogItemLabel(
-                    isServiceView = isServiceView,
+                    isServiceBusiness = isServiceBusiness,
                     plural = true,
                     capitalize = true
                 )
@@ -121,6 +121,6 @@ fun MyNavigationRailPreview() {
             NavigationItem.Outputs
         ),
         navController = rememberNavController(),
-        isServiceView = false
+        isServiceBusiness = false,
     )
 }

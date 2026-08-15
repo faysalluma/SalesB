@@ -59,7 +59,7 @@ fun ProductCard(
     product: Product,
     isSelected: Boolean,
     showQuantity: Boolean,
-    isServiceView: Boolean,
+    isServiceBusiness: Boolean,
     onViewDetail: (Product) -> Unit,
     onDelete: (Int, String) -> Unit
 ) {
@@ -68,7 +68,7 @@ fun ProductCard(
     var showDetailBottomSheet by remember { mutableStateOf(false) }
     val cardColor = if (isSelected) Silver else White // Define the color based on the 'selected' state
     val catalogLabelSingular = context.getCatalogItemLabel(
-        isServiceView = isServiceView,
+        isServiceBusiness = isServiceBusiness,
         plural = false
     )
 
@@ -167,7 +167,7 @@ fun ProductCard(
         ) {
             ProductDetailBottomSheetContent(
                 product = product,
-                isServiceView = isServiceView,
+                isServiceBusiness = isServiceBusiness,
                 onClose = { showDetailBottomSheet = false }
             )
         }
@@ -177,13 +177,13 @@ fun ProductCard(
 @Composable
 private fun ProductDetailBottomSheetContent(
     product: Product,
-    isServiceView: Boolean,
+    isServiceBusiness: Boolean,
     onClose: () -> Unit
 ) {
     val context = LocalContext.current
     val none = stringResource(R.string.none)
     val catalogLabelSingular = context.getCatalogItemLabel(
-        isServiceView = isServiceView,
+        isServiceBusiness = isServiceBusiness,
         plural = false
     )
     val dateCreation = product.datecreation?.dayMonthYear() ?: none
@@ -310,8 +310,7 @@ private fun ProductDetailBottomSheetContent(
             )
         }
 
-        if (!isServiceView) {
-            Row(
+        Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
@@ -327,7 +326,6 @@ private fun ProductDetailBottomSheetContent(
                     label = stringResource(R.string.product_detail_stock_minimum),
                     value = product.stockmini?.toString() ?: none
                 )
-            }
         }
         
         Row(
@@ -408,7 +406,7 @@ fun ProductCardPreview() {
             ),
             isSelected = false,
             showQuantity = true,
-            isServiceView = false,
+            isServiceBusiness = false,
             onViewDetail = {},
             onDelete = { id, libelle ->
             }

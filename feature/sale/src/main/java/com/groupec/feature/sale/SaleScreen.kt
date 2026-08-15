@@ -112,7 +112,7 @@ fun SaleScreen(
 
     val onQuantityChange: (Pair<Int, Product>) -> Unit = { productLine ->
         val (index, product) = productLine
-        val isIntegerQuantityMode = parameter.serviceview || parameter.useintforpriceandamout
+        val isIntegerQuantityMode = parameter.useintforpriceandamout
         val quantityValue = textFieldValues[index]?.takeIf { it.isNotEmpty() }?.toDoubleOrNull() ?: 1.0
         if (quantityValue <= 0) {
             selectedProducts.removeAll { it.first == index }
@@ -191,8 +191,8 @@ fun SaleScreen(
         }
     }
 
-    LaunchedEffect(parameter.serviceview, parameter.useintforpriceandamout) {
-        if (parameter.serviceview || parameter.useintforpriceandamout) {
+    LaunchedEffect(parameter.useintforpriceandamout) {
+        if (parameter.useintforpriceandamout) {
             selectedProducts.forEach { productLine ->
                 val productId = productLine.first
                 val value = textFieldValues[productId]?.toDoubleOrNull() ?: return@forEach
@@ -398,7 +398,7 @@ fun SaleScreen(
                 if (selectedProducts.isNotEmpty()) {
 
                     val totalLabel = totalAmount.formatAmount().plus(" ${parameter.devise}")
-                    val isIntegerQuantityMode = parameter.serviceview || parameter.useintforpriceandamout
+                    val isIntegerQuantityMode = parameter.useintforpriceandamout
                     val itemLabel = if (isIntegerQuantityMode) {
                         selectedProducts.sumOf { productLine ->
                             textFieldValues[productLine.first]?.toDoubleOrNull()?.toInt() ?: 0
@@ -651,11 +651,11 @@ private fun ProductSelectionSection(
 ) {
     val context = LocalContext.current
     val catalogLabelPlural = context.getCatalogItemLabel(
-        isServiceView = parameter.serviceview,
+        isServiceBusiness = parameter.isServiceBusiness,
         plural = true
     )
     val catalogLabelSingular = context.getCatalogItemLabel(
-        isServiceView = parameter.serviceview,
+        isServiceBusiness = parameter.isServiceBusiness,
         plural = false
     )
 

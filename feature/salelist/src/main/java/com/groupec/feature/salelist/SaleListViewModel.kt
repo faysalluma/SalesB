@@ -175,7 +175,7 @@ class SaleListViewModel @Inject constructor(
                                 _endDate.value,
                                 _parameter.value.devise,
                                 _parameter.value.logo,
-                                _parameter.value.serviceview
+                                _parameter.value.isServiceBusiness,
                             )
                         }
                         val file = withContext(Dispatchers.IO) {
@@ -226,7 +226,7 @@ class SaleListViewModel @Inject constructor(
                                 _startDate.value,
                                 _endDate.value,
                                 _parameter.value.devise,
-                                _parameter.value.serviceview
+                                _parameter.value.isServiceBusiness,
                             )
                         }
                         val file = withContext(Dispatchers.IO) {

@@ -23,18 +23,17 @@ import com.groupec.salesb.navigation.NavigationItem
 fun BottomNavigationBar(
     items: List<NavigationItem>,
     currentRoute: String?,
-    isServiceView: Boolean,
+    isServiceBusiness: Boolean,
     onItemClick: (NavigationItem) -> Unit
 ) {
-    val context = LocalContext.current
     NavigationBar(
         modifier = Modifier.fillMaxWidth(),
         containerColor = MaterialTheme.colorScheme.surface
     ) {
         items.forEach { navigationItem ->
             val itemLabel = if (navigationItem == NavigationItem.Product) {
-                context.getCatalogItemLabel(
-                    isServiceView = isServiceView,
+                LocalContext.current.getCatalogItemLabel(
+                    isServiceBusiness = isServiceBusiness,
                     plural = true,
                     capitalize = true
                 )

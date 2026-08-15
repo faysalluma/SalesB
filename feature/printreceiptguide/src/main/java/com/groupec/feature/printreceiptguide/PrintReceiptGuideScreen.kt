@@ -39,7 +39,7 @@ import com.groupec.salesb.core.designsystem.component.DefaultButton
 import com.groupec.salesb.core.designsystem.component.HelpInfoCard
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Green
-import com.groupec.salesb.core.designsystem.theme.LightBlue
+import com.groupec.salesb.core.designsystem.theme.PrimaryLight
 import com.groupec.salesb.core.designsystem.theme.Primary
 import com.groupec.salesb.core.designsystem.theme.White
 
@@ -90,7 +90,7 @@ fun PrintReceiptGuideScreen(
                 painter = painterResource(R.drawable.imp001),
                 buttonLabel = stringResource(R.string.print_receipt_step_1_card_1_cta),
                 buttonColor = Primary,
-                accentColor = LightBlue,
+                accentColor = PrimaryLight,
                 containerColor = White,
                 url = amazonUrl
             )

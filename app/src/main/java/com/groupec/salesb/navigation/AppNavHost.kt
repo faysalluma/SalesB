@@ -57,6 +57,7 @@ fun AppNavHost(
     modifier: Modifier,
     snackbarHostState: SnackbarHostState,
     isExpandedWidth: Boolean,
+    isTablet: Boolean,
     navController: NavHostController,
     startDestination: String = NavigationItem.Loading.route
 ) {
@@ -220,6 +221,8 @@ fun AppNavHost(
         }
         composable(NavigationItem.Home.route) {
             HomeScreen(
+                isExpandedWidth = isExpandedWidth,
+                isTablet = isTablet,
                 navigateToSaleList = {
                     navController.navigate(NavigationItem.MySales.route)
                 },

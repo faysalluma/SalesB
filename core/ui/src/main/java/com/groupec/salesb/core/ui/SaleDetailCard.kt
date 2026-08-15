@@ -93,7 +93,7 @@ fun SaleDetailCard(
 ) {
     val context = LocalContext.current
     val catalogLabelPlural = context.getCatalogItemLabel(
-        isServiceView = parameter.serviceview,
+        isServiceBusiness = parameter.isServiceBusiness,
         plural = true,
         capitalize = true
     )

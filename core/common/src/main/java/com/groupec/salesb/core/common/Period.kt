@@ -2,11 +2,24 @@ package com.groupec.salesb.core
 
 import android.content.Context
 
-enum class Period(val titleRes: Int, val startDate: String, val endDate: String = startDate) {
-    Yesterday(R.string.yesterday, getYesterdayDate()),
-    Today(R.string.today, getCurrentDate()),
-    Week(R.string.week, getCurrentWeekDelimitedDates().first, getCurrentWeekDelimitedDates().second),
-    Month(R.string.month, getCurrentMontDelimitedDates().first, getCurrentMontDelimitedDates().second);
+enum class Period(val titleRes: Int) {
+    Yesterday(R.string.yesterday),
+    Today(R.string.today),
+    Week(R.string.week),
+    Month(R.string.month);
+
+    fun dateRange(): Pair<String, String> = when (this) {
+        Yesterday -> getYesterdayDate().let { it to it }
+        Today -> getCurrentDate().let { it to it }
+        Week -> getCurrentWeekDelimitedDates()
+        Month -> getCurrentMontDelimitedDates()
+    }
+
+    val startDate: String
+        get() = dateRange().first
+
+    val endDate: String
+        get() = dateRange().second
 
     fun getTitle(context: Context) = context.getString(titleRes)
 }

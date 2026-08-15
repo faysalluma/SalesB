@@ -37,8 +37,17 @@ class GenerateSaleListPdfUseCase @Inject constructor() {
         endDate: String? = null,
         devise: String? = null,
         logoUrl: String? = null,
-        isServiceView: Boolean = false
-    ) = generateSaleListPdf(context, sales, searchQuery, startDate, endDate, devise, logoUrl, isServiceView)
+        isServiceBusiness: Boolean = false,
+    ) = generateSaleListPdf(
+        context,
+        sales,
+        searchQuery,
+        startDate,
+        endDate,
+        devise,
+        logoUrl,
+        isServiceBusiness,
+    )
 }
 
 fun generateSaleListPdf(
@@ -49,7 +58,7 @@ fun generateSaleListPdf(
     endDate: String?,
     devise: String?,
     logoUrl: String?,
-    isServiceView: Boolean = false
+    isServiceBusiness: Boolean = false,
 ): ByteArray {
     val baos = ByteArrayOutputStream()
     val writer = PdfWriter(baos)
@@ -108,7 +117,9 @@ fun generateSaleListPdf(
         // saleTable.addCell(createCell(sale.id?.toString() ?: "-"))
         saleTable.addCell(createCell(sale.datevente?.convertToLocaleDateTimeFormat()?.replace(" - ", " : ") ?: "-"))
         saleTable.addCell(createCell(sale.totalprix.formatAmount().plus(" $devise")))
-        saleTable.addCell(createCell(buildSaleDetails(context, sale, isServiceView), fontSize = 9f))
+        saleTable.addCell(
+            createCell(buildSaleDetails(context, sale, isServiceBusiness), fontSize = 9f)
+        )
     }
     document.add(saleTable)
 
@@ -135,10 +146,14 @@ private fun buildSaleFilterLines(
     return filters
 }
 
-private fun buildSaleDetails(context: Context, sale: Sale, isServiceView: Boolean): String {
+private fun buildSaleDetails(
+    context: Context,
+    sale: Sale,
+    isServiceBusiness: Boolean,
+): String {
     val none = "-"
     val catalogLabelPlural = context.getCatalogItemLabel(
-        isServiceView = isServiceView,
+        isServiceBusiness = isServiceBusiness,
         plural = true,
         capitalize = true
     )
