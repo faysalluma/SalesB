@@ -13,7 +13,6 @@ import com.groupec.salesb.core.domain.parameter.AcceptTermsAndConditionsUseCase
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.domain.parameter.SaveParameterUseCase
 import com.groupec.salesb.core.domain.parameter.UpdateBusinessInfoUseCase
-import com.groupec.salesb.core.domain.parameter.UpdateFirstLoginParameterUseCase
 import com.groupec.salesb.core.domain.product.DeleteProductUseCase
 import com.groupec.salesb.core.domain.product.GetAllProductsUseCase
 import com.groupec.salesb.core.domain.product.SaveProductUseCase
@@ -164,26 +163,22 @@ class DomainUseCasesTest {
         every { repository.getParameters() } returns flowOf(initial)
         coEvery { repository.saveParameters(initial) } returns Result.Success(Unit)
         coEvery { repository.updateBusinessInfo(updated, null, "18") } returns Result.Success(updated)
-        coEvery { repository.updateFirstLogin() } returns Result.Success(Unit)
         coEvery { repository.acceptTermsAndConditions() } returns Result.Success(Unit)
 
         // Act
         val parameter = GetParameterUseCase(repository).invoke().first()
         val saveResult = SaveParameterUseCase(repository).invoke(initial)
         val updateResult = UpdateBusinessInfoUseCase(repository).invoke(updated, logoUri = null, tva = "18")
-        val firstLoginResult = UpdateFirstLoginParameterUseCase(repository).invoke()
         val acceptTermsResult = AcceptTermsAndConditionsUseCase(repository).invoke()
 
         // Assert
         assertEquals(initial, parameter)
         assertEquals(Result.Success(Unit), saveResult)
         assertEquals(Result.Success(updated), updateResult)
-        assertEquals(Result.Success(Unit), firstLoginResult)
         assertEquals(Result.Success(Unit), acceptTermsResult)
         verify(exactly = 1) { repository.getParameters() }
         coVerify(exactly = 1) { repository.saveParameters(initial) }
         coVerify(exactly = 1) { repository.updateBusinessInfo(updated, null, "18") }
-        coVerify(exactly = 1) { repository.updateFirstLogin() }
         coVerify(exactly = 1) { repository.acceptTermsAndConditions() }
     }
 }

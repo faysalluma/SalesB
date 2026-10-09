@@ -72,7 +72,6 @@ fun MainScreen(
     val userStoreState by viewModel.userStore.collectAsState()
     val parameterState by viewModel.parameter.collectAsState()
     val firstLogin = userStoreState.firstLogin
-    val resetPassword = userStoreState.reset_password
     val privileges = userStoreState.getPrivileges()
     val logoutState by viewModel.logoutUiState.collectAsState()
     var showLogoutDialog by remember { mutableStateOf(false) }
@@ -231,7 +230,7 @@ fun MainScreen(
         },
         topBar = {
             currentDestination.value?.let { route ->
-                if (shouldShowBarAndRailApp(route, firstLogin, resetPassword)) {
+                if (shouldShowBarAndRailApp(route, firstLogin)) {
                     val currentItem = NavigationItem.fromRoute(route)
                     val topBarTitle = when (currentItem) {
                         NavigationItem.Home -> stringResource(R.string.app_name)
@@ -247,7 +246,7 @@ fun MainScreen(
         },
         bottomBar = {
             currentDestination.value?.let { route ->
-                if (shouldShowBarAndRailApp(route, firstLogin, resetPassword)) {
+                if (shouldShowBarAndRailApp(route, firstLogin)) {
                     // Don't show BottomBar for signup screen
                     if (route != NavigationItem.Signup.route) {
                         AnimatedVisibility(
@@ -354,14 +353,14 @@ fun MainScreen(
         }
     ) {
         Row(modifier = Modifier.padding(it)) {
-            if (!connectionState && shouldShowBarAndRailApp(currentDestination.value, firstLogin, resetPassword)) {
+            if (!connectionState && shouldShowBarAndRailApp(currentDestination.value, firstLogin)) {
                 OfflineErrorScreen(
                     onRetry = retryOfflineAction,
                     onOpenNetworkSettings = openNetworkSettingsAction
                 )
             } else {
                 if (
-                    shouldShowBarAndRailApp(currentDestination.value, firstLogin, resetPassword) &&
+                    shouldShowBarAndRailApp(currentDestination.value, firstLogin) &&
                     isExpandedWidth
                 ) {
                     // Don't show NavRail for signup screen
@@ -383,8 +382,7 @@ fun MainScreen(
                         .weight(
                             if (shouldShowBarAndRailApp(
                                     currentDestination.value,
-                                    firstLogin,
-                                    resetPassword
+                                    firstLogin
                                 )
                             ) 0.91f else 1f
                         )
@@ -535,7 +533,6 @@ fun getDropdownItemsWithActions(
 private fun shouldShowBarAndRailApp(
     route: String?,
     firstLogin: Boolean = false,
-    resetPassword: String
 ): Boolean {
     val excludedRoutes =  mutableListOf(
         NavigationItem.Loading.route,
@@ -546,7 +543,7 @@ private fun shouldShowBarAndRailApp(
         NavigationItem.Subscription.route
     )
 
-    if (firstLogin || resetPassword.isNotEmpty()) {
+    if (firstLogin) {
         excludedRoutes.add(
             NavigationItem.ChangePassword.route
         )

@@ -20,16 +20,18 @@ fun ParamItemResponse.toParameter(): Parameter {
         telephone = telephone,
         ifu = ifu,
         website = website,
-        entreprisetype = entreprisetype,
-        expirationdate = expirationdate,
+        entreprisetype = serviceview,
+        expirationdate = expirationdate ?: "",
         offline = (offline == 1),
         showimageonproduct = (showimageonproduct == 1),
         defaultpaymenttype = defaultpayment ?: "",
-        tva = tva,
+        tva = tva ?: 0.0,
         useintforpriceandamout = (useintforpriceandamout == 1),
         activepaymentmode = (activepaymentmode == 1),
         activeClient = (activeclient == 1),
         activeprinter = (activeprinter == 1),
-        userid = userid
+        userid = userid,
+        entrepriseid = entrepriseid,
+        cashEnabled = cashEnabled == 1
     )
 }

@@ -3,6 +3,7 @@ package com.groupec.feature.login
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.domain.user.LoginUseCase
 import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.UserSession
 import com.groupec.salesb.core.ui.Credentials
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -40,21 +41,16 @@ class LoginViewModelTest {
     @Test
     fun `login should emit success with user info when use case succeeds`() = runTest {
         // Arrange
-        val user = User(
-            nomprenom = "Admin",
-            email = "admin@salesb.test",
-            password = "secret",
-            actif = true,
-            firstlogin = false
-        )
-        coEvery { loginUseCase("admin@salesb.test", "secret") } returns Result.Success(user to true)
+        val user = User(1, "Admin", "admin@salesb.test", null, null, true, false, emptyList())
+        val session = UserSession(user)
+        coEvery { loginUseCase("admin@salesb.test", "secret") } returns Result.Success(session)
 
         // Act
         viewModel.login(Credentials(email = "admin@salesb.test", password = "secret"))
         advanceUntilIdle()
 
         // Assert
-        assertEquals(LoginUiState.Success(user to true), viewModel.loginUiState.value)
+        assertEquals(LoginUiState.Success(session), viewModel.loginUiState.value)
         coVerify(exactly = 1) { loginUseCase("admin@salesb.test", "secret") }
     }
 

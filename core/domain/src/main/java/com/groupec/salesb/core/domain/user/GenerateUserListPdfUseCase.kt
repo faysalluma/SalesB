@@ -6,7 +6,7 @@ import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.dayMonthYear
 import com.groupec.salesb.core.domain.R
 import com.groupec.salesb.core.getBitmapFromUrl
-import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.Employee
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.colors.ColorConstants
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class GenerateUserListPdfUseCase @Inject constructor() {
     operator fun invoke(
         context: Context,
-        users: List<User>,
+        users: List<Employee>,
         searchQuery: String? = null,
         logoUrl: String? = null
     ) = generateUserListPdf(context, users, searchQuery, logoUrl)
@@ -35,7 +35,7 @@ class GenerateUserListPdfUseCase @Inject constructor() {
 
 fun generateUserListPdf(
     context: Context,
-    users: List<User>,
+    users: List<Employee>,
     searchQuery: String?,
     logoUrl: String?
 ): ByteArray {
@@ -96,9 +96,9 @@ fun generateUserListPdf(
     return baos.toByteArray()
 }
 
-private fun buildUserDetails(context: Context, user: User): String {
+private fun buildUserDetails(context: Context, user: Employee): String {
     val none = "-"
-    val id = user.id?.toString() ?: none
+    val id = user.memberid.toString()
     val email = user.email
     val phone = user.tel?.takeIf { it.isNotBlank() } ?: none
     val address = user.adresse?.takeIf { it.isNotBlank() } ?: none

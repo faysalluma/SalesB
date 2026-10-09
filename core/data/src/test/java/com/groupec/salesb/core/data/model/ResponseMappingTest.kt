@@ -11,9 +11,8 @@ import com.groupec.salesb.core.network.model.ProductResponse
 import com.groupec.salesb.core.network.model.RayonItemResponse
 import com.groupec.salesb.core.network.model.SaleItemResponse
 import com.groupec.salesb.core.network.model.SaleResponse
-import com.groupec.salesb.core.network.model.UserItemResponse
+import com.groupec.salesb.core.network.model.EmployeeItemResponse
 import com.groupec.salesb.core.network.model.UserReducedResponse
-import com.groupec.salesb.core.network.model.UserResponse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -92,7 +91,7 @@ class ResponseMappingTest {
                 id = 1,
                 logo = null,
                 raisonsociale = "SalesB",
-                entreprisetype = 2,
+                serviceview = 1,
                 ifu = "IFU",
                 adresse = "Cotonou",
                 telephone = "123",
@@ -108,7 +107,9 @@ class ResponseMappingTest {
                 activeclient = 0,
                 defaultpayment = null,
                 activeprinter = 1,
-                userid = 42
+                userid = 42,
+                entrepriseid = 8,
+                cashEnabled = 1
             )
         ).toParameter()
 
@@ -120,6 +121,8 @@ class ResponseMappingTest {
         assertTrue(parameter.activeprinter)
         assertEquals("", parameter.defaultpaymenttype)
         assertEquals(42, parameter.userid)
+        assertEquals(8, parameter.entrepriseid)
+        assertTrue(parameter.cashEnabled)
     }
 
     @Test
@@ -160,35 +163,16 @@ class ResponseMappingTest {
     }
 
     @Test
-    fun `user response should map boolean flags and entity store variants`() {
-        val response = UserItemResponse(
-            id = 31,
-            nomprenom = "Admin",
-            email = "admin@salesb.test",
-            password = "secret",
-            reset_password = "code",
-            reset_expires = "2026-05-02",
-            adresse = "Cotonou",
-            tel = "123",
-            privilege = "admin,sales",
-            actif = 1,
-            firstlogin = 0,
-            datecreation = Date(0)
-        )
-
-        val user = UserResponse(arrayListOf(response)).toUserList().single()
-        val entity = response.toUserEntity()
-        val store = response.toUserStore()
-
-        assertEquals(31, user.id)
-        assertTrue(user.actif)
-        assertFalse(user.firstlogin)
-        assertEquals(31, entity.id)
-        assertFalse(entity.firstlogin)
-        assertEquals("31", store.id)
-        assertEquals("Admin", store.nomprenom)
-        assertEquals("admin,sales", store.privilege)
-        assertEquals("code", store.reset_password)
+    fun `employee response keeps membership distinct from identity`() {
+        val response = EmployeeItemResponse(31L, 7, 8, "EMPLOYEE", "Admin",
+            "admin@salesb.test", null, null, 1, listOf("SALE_CREATE"), Date(0), null)
+        val employee = response.toEmployee()
+        assertEquals(31L, employee.memberid)
+        assertEquals(7, employee.userid)
+        assertEquals(8, employee.entrepriseid)
+        assertTrue(employee.actif)
+        assertEquals(listOf("SALE_CREATE"), employee.permissions)
+        assertNull(employee.adresse)
     }
 
     @Test

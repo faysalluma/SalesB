@@ -18,8 +18,8 @@ data class ParamItemResponse(
     val raisonsociale: String?,
 
 
-    @SerializedName("entreprisetype")
-    val entreprisetype: Int,
+    @SerializedName("serviceview")
+    val serviceview: Int,
 
     @SerializedName("ifu")
     val ifu: String?,
@@ -40,10 +40,10 @@ data class ParamItemResponse(
     val devise: String,
 
     @SerializedName("tva")
-    val tva: Double,
+    val tva: Double?,
 
     @SerializedName("expirationdate")
-    val expirationdate: String,
+    val expirationdate: String?,
 
     @SerializedName("offline")
     val offline: Int?,
@@ -67,5 +67,11 @@ data class ParamItemResponse(
     val activeprinter: Int,
 
     @SerializedName("userid")
-    val userid: Int? = null
+    val userid: Int? = null,
+
+    @SerializedName("entrepriseid")
+    val entrepriseid: Int? = null,
+
+    @SerializedName("cash_enabled")
+    val cashEnabled: Int = 0
 )

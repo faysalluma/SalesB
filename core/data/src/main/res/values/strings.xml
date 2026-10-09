@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_user_not_found">Sorry, this user is not found</string>
-    <string name="error_parameter_id_not_found">Sorry, the paramater id not found</string>
     <string name="error_user_not_active">This user is disabled, please contact the administrator.</string>
     <string name="error_invalid_password">The password provided is not valid.</string>
     <string name="error_empty_response" translatable="false">Empty response body</string>
@@ -12,4 +11,5 @@
     <string name="error_incorrect_tempory_password">Temporary password is incorrect.</string>
     <string name="error_subscription_expired" translatable="false">Error while retrieving the validity period of your subscription.</string>
     <string name="subscription_expired">Your subscription has expired. Please contact support.</string>
+    <string name="error_close_cash_before_disabling">Close the open cash session before disabling cash management.</string>
 </resources>

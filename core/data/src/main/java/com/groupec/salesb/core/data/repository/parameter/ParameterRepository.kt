@@ -15,6 +15,5 @@ interface ParameterRepository{
         tva: String? = null
     ): Result<Parameter>
     fun getParameters() : Flow<Parameter>
-    suspend fun updateFirstLogin(): Result<Unit>
     suspend fun acceptTermsAndConditions(): Result<Unit>
 }

@@ -15,10 +15,9 @@ class Constants {
 
 
         // Get endpoint
-        const val GET_PARAMETER = "parameter/{userid}"
-        const val GET_DEFAULT_USER = "defaultUser"
-        const val GET_USER_BY_EMAIL = "checkLoginByEmail/{email}"
-        const val GET_USER_BY_ID = "checkLoginById/{userid}"
+        const val GET_COMPANIES = "companies/{userid}"
+        const val GET_PARAMETER = "parameter/{userid}/{entrepriseid}"
+        const val GET_COMPANY_SUBSCRIPTION = "subscription/{userid}/{entrepriseid}"
         const val GET_TOTAL_SALES = "getTotalSales/{startDate}/{endDate}/{userid}"
         const val GET_TOTAL_AMOUNT_SALES = "getTotalAmountSales/{startDate}/{endDate}/{userid}"
         const val GET_TOTAL_AMOUNT_OUTPUTS = "getTotalAmountOutputs/{startDate}/{endDate}/{userid}"
@@ -44,23 +43,24 @@ class Constants {
 
         const val GET_SALES = "getSales"
         const val FORGOT_PASSWORD = "forgotPassword/{email}"
-        const val GET_PAGED_USERS= "getPagedUsers"
-        const val GET_USERS= "getUsers"
+        const val GET_PAGED_USERS= "company-members/{userid}/{entrepriseid}"
 
         // Post endpoint
+        const val CHECK_LOGIN = "checkLogin"
         const val ADD_PRODUCT = "addProduct"
         const val ADD_SALE = "addSale"
         const val ADD_CATEGORY = "addCategory"
         const val ADD_CLIENT = "addClient"
         const val ADD_RAYON = "addRayon"
         const val ADD_OUTPUT = "addOutput"
-        const val ADD_USER = "addUser"
+        const val ADD_USER = "company-members/{userid}/{entrepriseid}"
+        const val UPDATE_MEMBER = "company-members/{userid}/{entrepriseid}/{memberid}"
         const val ADD_SIGNUP_CONFIGURATION = "addSignupConfiguration"
 
         // Put endpoint
-        const val PUT_CHANGE_PASSWORD = "changePassword/{userid}"
-        const val PUT_PARAMETER = "updateParameter/{id}"
-        const val PUT_USER_SUBSCRIPTION_STATUS = "subscriptionStatus/{userid}"
+        const val CHANGE_ACCOUNT_PASSWORD = "changePassword"
+        const val PUT_PARAMETER = "parameter/{userid}/{entrepriseid}"
+        const val PUT_USER_SUBSCRIPTION_STATUS = "subscription/{userid}/{entrepriseid}/google-play/verify"
 
         // Delete endpoint
         const val DELETE_PRODUCT = "deleteProduct/{productid}"
@@ -68,6 +68,6 @@ class Constants {
         const val DELETE_CLIENT = "deleteClient/{clientid}"
         const val DELETE_RAYON = "deleteRayon/{rayonid}"
         const val DELETE_OUTPUT = "deleteOutput/{outputid}"
-        const val DELETE_USER = "deleteUser/{userid}"
+        const val DELETE_USER = "company-members/{userid}/{entrepriseid}/{memberid}"
     }
 }

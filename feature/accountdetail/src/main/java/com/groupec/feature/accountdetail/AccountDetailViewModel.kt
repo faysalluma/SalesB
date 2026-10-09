@@ -7,7 +7,7 @@ import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.domain.user.SaveUserUseCase
 import com.groupec.salesb.core.model.data.Parameter
-import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.EmployeeInput
 import com.groupec.salesb.core.ui.UserDataForm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,18 +44,16 @@ class AccountDetailViewModel @Inject constructor(
     fun addUser(user: UserDataForm) {
         _addUserUiState.value = FormUIState.Loading
         viewModelScope.launch {
-            val userModel = User(
-                id = user.id.takeIf { it.isNotEmpty() }?.toInt(),
+            val userModel = EmployeeInput(
+                memberId = user.id.takeIf { it.isNotEmpty() }?.toLong(),
                 nomprenom = user.nomprenom,
                 adresse = user.adresse,
                 tel = user.tel,
                 email = user.email,
                 password = user.password,
-                privilege = user.privilege.joinToString(separator = ","),
-                actif = user.actif == 1,
-                firstlogin = true,
-                synchronised = false,
-                langMessageEn = Locale.getDefault().language == "en"
+                permissions = user.privilege,
+                actif = user.actif,
+                langMessageEn = if (Locale.getDefault().language == "en") 1 else 0
             )
 
             when (val result = saveUserUseCase(userModel)) {

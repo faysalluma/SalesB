@@ -16,7 +16,7 @@ import com.groupec.salesb.core.domain.user.GetAllUsersUseCase
 import com.groupec.salesb.core.domain.user.GetUserUseCase
 import com.groupec.salesb.core.domain.user.GetUserStoreUseCase
 import com.groupec.salesb.core.model.data.Parameter
-import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.Employee
 import com.groupec.salesb.core.model.data.UserStore
 import com.groupec.salesb.core.saveExcelToDownloads
 import com.groupec.salesb.core.savePdfToDownloads
@@ -92,7 +92,7 @@ class AccountListViewModel @Inject constructor(
         }
     }
 
-    val pagedUsers: Flow<PagingData<User>> = _searchQuery
+    val pagedUsers: Flow<PagingData<Employee>> = _searchQuery
         .flatMapLatest { query ->
             _isSearching.value = true // Indique qu'une recherche commence
             getUserUseCase(query)
@@ -117,7 +117,7 @@ class AccountListViewModel @Inject constructor(
         }
     }
 
-    fun deleteUser(id: Int) {
+    fun deleteUser(id: Long) {
         _deleteUserUiState.value = FormUIState.Loading
         viewModelScope.launch {
             when (val result = deleteUserUseCase(id)) {

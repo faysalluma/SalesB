@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.groupec.accountlist.AccountListScreen
 import com.groupec.feature.accountdetail.AccountDetailScreen
-import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.Employee
 import kotlinx.coroutines.delay
 
 
@@ -27,13 +27,13 @@ fun AccountNavContent(
     isExpandedWidth: Boolean,
     snackbarHostState: SnackbarHostState,
     fromDetail: Boolean = false,
-    account: User? = null,
-    onNavigateToDetail: ((User) -> Unit)? = null,
+    account: Employee? = null,
+    onNavigateToDetail: ((Employee) -> Unit)? = null,
     onNavigateToHome: (() -> Unit)? = null,
     onPopBack: (() -> Unit)? = null,
     onNavigateToSubscription: () -> Unit
 ) {
-    var selectedAccount by remember { mutableStateOf<User?>(account) }
+    var selectedAccount by remember { mutableStateOf<Employee?>(account) }
     var refreshAccountList by remember { mutableStateOf(false) }
     var removeSelectedBgColor by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) } // For SwipeToRefresh
@@ -90,13 +90,13 @@ fun ExpandedAccountScreen(
     snackbarHostState: SnackbarHostState,
     refreshAccountList: Boolean,
     removeSelectedBgColor: Boolean,
-    onViewDetail: (User) -> Unit,
+    onViewDetail: (Employee) -> Unit,
     onRemoveSelectedBgColor: () -> Unit,
     onRefreshAccounts: () -> Unit,
     onPopBack: (() -> Unit)? = null,
     onNavigateToSubscription: () -> Unit
 ) {
-    var selectedAccount by remember { mutableStateOf<User?>(null) }
+    var selectedAccount by remember { mutableStateOf<Employee?>(null) }
     Row(
         modifier = Modifier
             .fillMaxSize()

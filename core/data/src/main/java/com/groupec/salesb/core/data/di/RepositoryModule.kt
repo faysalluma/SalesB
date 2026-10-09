@@ -2,6 +2,8 @@
 package com.groupec.salesb.core.data.di
 
 import android.content.Context
+import com.groupec.salesb.core.data.repository.account.AccountRepository
+import com.groupec.salesb.core.data.repository.account.AccountRepositoryImpl
 import com.groupec.salesb.core.data.repository.activity.RecentActivityRepository
 import com.groupec.salesb.core.data.repository.activity.RecentActivityRepositoryImpl
 import com.groupec.salesb.core.data.repository.client.ClientRepository
@@ -24,13 +26,10 @@ import com.groupec.salesb.core.data.repository.signup.SignupRepository
 import com.groupec.salesb.core.data.repository.signup.SignupRepositoryImpl
 import com.groupec.salesb.core.data.repository.product.StatisticRepository
 import com.groupec.salesb.core.data.repository.product.StatisticRepositoryImpl
-import com.groupec.salesb.core.data.repository.common.UserLocalRepository
 import com.groupec.salesb.core.data.repository.common.UserRemoteRepository
 import com.groupec.salesb.core.data.repository.user.UserRepository
 import com.groupec.salesb.core.data.repository.user.UserRepositoryImpl
-import com.groupec.salesb.core.data.repository.common.UserSyncRepository
 import com.groupec.salesb.core.datastore.DataStoreManager
-import com.groupec.salesb.core.googlebilling.GoogleBillingProvider
 import com.groupec.salesb.core.network.retrofit.ApiService
 import dagger.Module
 import dagger.Provides
@@ -42,6 +41,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class RepositoryModule  {
+    @Provides
+    @Singleton
+    fun provideAccountRepository(
+        @ApplicationContext context: Context,
+        apiService: ApiService,
+        dataStoreManager: DataStoreManager
+    ): AccountRepository = AccountRepositoryImpl(apiService, dataStoreManager, context)
+
     @Provides
     @Singleton
     fun provideRecentActivityRepository(
@@ -64,9 +71,11 @@ class RepositoryModule  {
     @Provides
     @Singleton
     fun providerHandleServiceRepository(
-        dataStoreManager: DataStoreManager
+        dataStoreManager: DataStoreManager,
+        apiService: ApiService,
+        @ApplicationContext context: Context
     ) : HandleServiceRepository {
-        return HandleServiceRepositoryImpl(dataStoreManager)
+        return HandleServiceRepositoryImpl(dataStoreManager, apiService, context)
     }
 
     @Provides
@@ -75,17 +84,13 @@ class RepositoryModule  {
         @ApplicationContext context: Context,
         apiService: ApiService,
         dataStoreManager: DataStoreManager,
-        userLocalRepository: UserLocalRepository,
         userRemoteRepository: UserRemoteRepository,
-        userSyncRepository: UserSyncRepository
     ) : UserRepository {
         return UserRepositoryImpl(
-            context,
             apiService,
             dataStoreManager,
-            userLocalRepository,
             userRemoteRepository,
-            userSyncRepository
+            context,
         )
     }
 

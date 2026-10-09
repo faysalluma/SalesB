@@ -34,7 +34,7 @@ fun ChangePasswordForm(firstLogin: Boolean, onSubmitForm: (password: Password) -
     var isConfirmationError by remember { mutableStateOf(false) }
 
     val submitAction = {
-        isAncPasswordError = !firstLogin && passwords.ancPassword.isEmpty()
+        isAncPasswordError = passwords.ancPassword.isEmpty()
         isPasswordError = passwords.password.isEmpty()
         isConfirmationError = passwords.confirmation.isEmpty() || !passwords.arePasswordsMatching()
         if (!isAncPasswordError && !isPasswordError && !isConfirmationError) {
@@ -47,27 +47,25 @@ fun ChangePasswordForm(firstLogin: Boolean, onSubmitForm: (password: Password) -
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        if (!firstLogin) {
-            AppTextField(
-                value = passwords.ancPassword,
-                leadingIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.key),
-                        contentDescription = null,
-                        tint = Primary
-                    )
-                },
-                onChange = { data ->
-                    passwords = passwords.copy(ancPassword = data)
-                    if (isAncPasswordError) isAncPasswordError = false //  Clear error when user starts typing
-                },
-                label = stringResource(id = R.string.label_anc_password),
-                placeholder = stringResource(id = R.string.enter_your_anc_password),
-                fieldType = FieldType.Password,
-                isError = isAncPasswordError,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+        AppTextField(
+            value = passwords.ancPassword,
+            leadingIcon = {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.key),
+                    contentDescription = null,
+                    tint = Primary
+                )
+            },
+            onChange = { data ->
+                passwords = passwords.copy(ancPassword = data)
+                if (isAncPasswordError) isAncPasswordError = false //  Clear error when user starts typing
+            },
+            label = stringResource(id = R.string.label_anc_password),
+            placeholder = stringResource(id = R.string.enter_your_anc_password),
+            fieldType = FieldType.Password,
+            isError = isAncPasswordError,
+            modifier = Modifier.fillMaxWidth()
+        )
         AppTextField(
             value = passwords.password,
             leadingIcon = {

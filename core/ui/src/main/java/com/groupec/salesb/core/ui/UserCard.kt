@@ -26,14 +26,14 @@ import com.groupec.salesb.core.designsystem.theme.Black
 import com.groupec.salesb.core.designsystem.theme.SalesBAppTheme
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
-import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.Employee
 
 @Composable
 fun UserCard(
-    user: User,
+    user: Employee,
     isSelected: Boolean,
-    onViewDetail: (User) -> Unit,
-    onDelete: (Int, String) -> Unit
+    onViewDetail: (Employee) -> Unit,
+    onDelete: (Long, String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     val cardColor = if (isSelected) Silver else White // Define the color based on the 'selected' state
@@ -95,7 +95,7 @@ fun UserCard(
                     },
                     text = { Text(stringResource(R.string.delete_item), color = Black) },
                     onClick = {
-                        onDelete(user.id ?: 0, user.nomprenom)
+                        onDelete(user.memberid, user.nomprenom)
                         expanded = false // Close DropdownMenuItem
                     }
                 )
@@ -113,17 +113,17 @@ fun UserCard(
 fun UserCardPreview() {
     SalesBAppTheme {
         UserCard(
-            User(
-                id = 1,
+            Employee(
+                memberid = 1,
                 nomprenom = "SATRE Paul",
                 email = "paul@gmail.com",
-                password = "123",
+                userid = 1,
+                entrepriseid = 1,
+                role = "EMPLOYEE",
                 adresse = "1",
                 tel = "1",
-                privilege = "1,2,3",
-                actif = true,
-                firstlogin = false,
-                synchronised = true
+                permissions = listOf("SALE_CREATE"),
+                actif = true
             ),
             isSelected = false,
             onViewDetail = {},

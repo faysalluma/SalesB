@@ -25,7 +25,9 @@ data class Parameter(
     val activepaymentmode: Boolean = true,
     val activeClient: Boolean = true,
     val activeprinter: Boolean = false,
-    val userid: Int? = 0
+    val userid: Int? = 0,
+    val entrepriseid: Int? = null,
+    val cashEnabled: Boolean = false
 ) : Parcelable {
     val isServiceBusiness: Boolean
         get() = entreprisetype == SERVICE_BUSINESS_TYPE

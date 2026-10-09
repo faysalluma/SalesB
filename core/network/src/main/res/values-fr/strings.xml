@@ -6,4 +6,10 @@
     <string name="error_502_bad_gateway">Une erreur inattendue s\'est produite</string>
     <string name="error_404_not_found">Ce compte utilisateur est introuvable.</string>
     <string name="error_409_already_exists">L\'utilisateur existe déjà.</string>
+
+    <string name="error_empty_response">Le serveur a renvoyé une réponse vide.</string>
+    <string name="error_api_rejected">Le serveur ne peut pas effectuer cette demande.</string>
+    <string name="error_account_disabled">Ce compte est désactivé.</string>
+    <string name="error_no_account">Connectez-vous pour continuer.</string>
+    <string name="error_company_not_available">Cette entreprise est inaccessible. Sélectionnez une entreprise disponible.</string>
 </resources>

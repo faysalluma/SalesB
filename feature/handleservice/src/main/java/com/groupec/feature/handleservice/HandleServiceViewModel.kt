@@ -1,5 +1,7 @@
 package com.groupec.feature.handleservice
 
+import com.groupec.salesb.core.Result
+import com.groupec.salesb.core.domain.handleservice.UpdateCashEnabledUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.groupec.salesb.core.domain.handleservice.GetHandleServiceParametersUseCase
@@ -24,6 +26,9 @@ data class HandleServiceUiState(
     val activePaymentMode: Boolean = false,
     val activeClient: Boolean = true,
     val activePrinter: Boolean = false,
+    val cashEnabled: Boolean = false,
+    val isSaving: Boolean = false,
+    val errorMessage: String? = null,
 )
 
 @HiltViewModel
@@ -33,7 +38,8 @@ class HandleServiceViewModel @Inject constructor(
     private val updateUseIntForPriceAndAmountUseCase: UpdateUseIntForPriceAndAmountUseCase,
     private val updateActivePaymentModeUseCase: UpdateActivePaymentModeUseCase,
     private val updateActiveClientUseCase: UpdateActiveClientUseCase,
-    private val updateActivePrinterUseCase: UpdateActivePrinterUseCase
+    private val updateActivePrinterUseCase: UpdateActivePrinterUseCase,
+    private val updateCashEnabledUseCase: UpdateCashEnabledUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HandleServiceUiState())
@@ -42,55 +48,38 @@ class HandleServiceViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             getHandleServiceParametersUseCase().collectLatest { parameter ->
-                _uiState.value = HandleServiceUiState(
+                _uiState.update { it.copy(
                     isServiceBusiness = parameter.isServiceBusiness,
                     showImageOnProduct = parameter.showimageonproduct,
                     useIntForPriceAndAmount = parameter.useintforpriceandamout,
                     activePaymentMode = parameter.activepaymentmode,
                     activeClient = parameter.activeClient,
                     activePrinter = parameter.activeprinter,
-                )
+                    cashEnabled = parameter.cashEnabled,
+                ) }
             }
         }
     }
 
-    fun updateShowImageOnProduct(value: Boolean) {
-        _uiState.update { it.copy(showImageOnProduct = value) }
+    fun updateShowImageOnProduct(value: Boolean) = save { updateShowImageOnProductUseCase(value) }
+    fun updateUseIntForPriceAndAmount(value: Boolean) = save { updateUseIntForPriceAndAmountUseCase(value) }
+    fun updateActivePaymentMode(value: Boolean) = save { updateActivePaymentModeUseCase(value) }
+    fun updateActiveClient(value: Boolean) = save { updateActiveClientUseCase(value) }
+    fun updateActivePrinter(value: Boolean) = save { updateActivePrinterUseCase(value) }
+    fun updateCashEnabled(value: Boolean) = save { updateCashEnabledUseCase(value) }
 
+    private fun save(operation: suspend () -> Result<Unit>) {
+        if (_uiState.value.isSaving) return
+        _uiState.update { it.copy(isSaving = true, errorMessage = null) }
         viewModelScope.launch {
-            updateShowImageOnProductUseCase(value)
-        }
-    }
-
-    fun updateUseIntForPriceAndAmount(value: Boolean) {
-        _uiState.update { it.copy(useIntForPriceAndAmount = value) }
-
-        viewModelScope.launch {
-            updateUseIntForPriceAndAmountUseCase(value)
-        }
-    }
-
-    fun updateActivePaymentMode(value: Boolean) {
-        _uiState.update { it.copy(activePaymentMode = value) }
-
-        viewModelScope.launch {
-            updateActivePaymentModeUseCase(value)
-        }
-    }
-
-    fun updateActiveClient(value: Boolean) {
-        _uiState.update { it.copy(activeClient = value) }
-
-        viewModelScope.launch {
-            updateActiveClientUseCase(value)
-        }
-    }
-
-    fun updateActivePrinter(value: Boolean) {
-        _uiState.update { it.copy(activePrinter = value) }
-
-        viewModelScope.launch {
-            updateActivePrinterUseCase(value)
+            try {
+                when (val result = operation()) {
+                    is Result.Error -> _uiState.update { it.copy(errorMessage = result.exception.message) }
+                    else -> Unit
+                }
+            } finally {
+                _uiState.update { it.copy(isSaving = false) }
+            }
         }
     }
 }

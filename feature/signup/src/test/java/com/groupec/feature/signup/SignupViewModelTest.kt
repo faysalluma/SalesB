@@ -3,8 +3,8 @@ package com.groupec.feature.signup
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.domain.parameter.SaveParameterUseCase
 import com.groupec.salesb.core.domain.signup.SaveSignupConfigurationUseCase
-import com.groupec.salesb.core.domain.user.CheckUserEmailExistsUseCase
-import com.groupec.salesb.core.domain.user.SaveUserStoreByIdUseCase
+import com.groupec.salesb.core.domain.user.LoginUseCase
+import com.groupec.salesb.core.model.data.UserSession
 import com.groupec.salesb.core.model.data.Parameter
 import com.groupec.salesb.core.model.data.SignupConfiguration
 import io.mockk.coEvery
@@ -28,8 +28,7 @@ class SignupViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val saveSignupConfigurationUseCase: SaveSignupConfigurationUseCase = mockk()
     private val saveParameterUseCase: SaveParameterUseCase = mockk()
-    private val checkUserEmailExistsUseCase: CheckUserEmailExistsUseCase = mockk()
-    private val saveUserStoreByIdUseCase: SaveUserStoreByIdUseCase = mockk()
+    private val loginUseCase: LoginUseCase = mockk()
     private lateinit var viewModel: SignupViewModel
 
     @BeforeEach
@@ -38,8 +37,7 @@ class SignupViewModelTest {
         viewModel = SignupViewModel(
             saveSignupConfigurationUseCase,
             saveParameterUseCase,
-            checkUserEmailExistsUseCase,
-            saveUserStoreByIdUseCase
+            loginUseCase
         )
     }
 
@@ -55,7 +53,7 @@ class SignupViewModelTest {
         val parameter = Parameter(id = 1, userid = 42, raisonsociale = "SalesB")
         coEvery { saveSignupConfigurationUseCase(configuration, null) } returns Result.Success(parameter)
         coEvery { saveParameterUseCase(parameter) } returns Result.Success(Unit)
-        coEvery { saveUserStoreByIdUseCase(42) } returns Result.Success(Unit)
+        coEvery { loginUseCase(configuration.email, configuration.password) } returns Result.Success(UserSession())
 
         // Act
         viewModel.saveInitialConfiguration(configuration, null)
@@ -65,38 +63,18 @@ class SignupViewModelTest {
         assertEquals(SignupConfigurationUiState.Success, viewModel.signupConfigurationUiState.value)
         coVerify(exactly = 1) { saveSignupConfigurationUseCase(configuration, null) }
         coVerify(exactly = 1) { saveParameterUseCase(parameter) }
-        coVerify(exactly = 1) { saveUserStoreByIdUseCase(42) }
+        coVerify(exactly = 1) { loginUseCase(configuration.email, configuration.password) }
     }
 
     @Test
-    fun `saveInitialConfiguration should emit error when signup response has no user id`() = runTest {
-        // Arrange
+    fun `signup failure does not log in or save parameters`() = runTest {
         val configuration = signupConfiguration()
-        val parameter = Parameter(id = 1, userid = null, raisonsociale = "SalesB")
-        coEvery { saveSignupConfigurationUseCase(configuration, null) } returns Result.Success(parameter)
-        coEvery { saveParameterUseCase(parameter) } returns Result.Success(Unit)
-
-        // Act
+        coEvery { saveSignupConfigurationUseCase(configuration, null) } returns Result.Error(IllegalStateException("signup failed"))
         viewModel.saveInitialConfiguration(configuration, null)
         advanceUntilIdle()
-
-        // Assert
-        assertEquals(
-            SignupConfigurationUiState.Error("User id not found in signup response"),
-            viewModel.signupConfigurationUiState.value
-        )
-    }
-
-    @Test
-    fun `checkEmailExists should return use case result`() = runTest {
-        // Arrange
-        coEvery { checkUserEmailExistsUseCase("user@salesb.test") } returns Result.Success(true)
-
-        // Act
-        val result = viewModel.checkEmailExists("user@salesb.test")
-
-        // Assert
-        assertEquals(Result.Success(true), result)
+        assertEquals(SignupConfigurationUiState.Error("signup failed"), viewModel.signupConfigurationUiState.value)
+        coVerify(exactly = 0) { loginUseCase(any(), any()) }
+        coVerify(exactly = 0) { saveParameterUseCase(any()) }
     }
 
     private fun signupConfiguration(): SignupConfiguration {

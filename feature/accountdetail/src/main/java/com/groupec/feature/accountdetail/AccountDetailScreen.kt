@@ -31,8 +31,7 @@ import com.groupec.salesb.core.Privileges
 import com.groupec.salesb.core.designsystem.component.AppHeadLine
 import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.theme.Primary
-import com.groupec.salesb.core.model.data.User
-import com.groupec.salesb.core.model.data.toStringList
+import com.groupec.salesb.core.model.data.Employee
 import com.groupec.salesb.core.ui.UserDataForm
 import com.groupec.salesb.core.ui.UserForm
 
@@ -40,7 +39,7 @@ import com.groupec.salesb.core.ui.UserForm
 fun AccountDetailScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
-    account: User?,
+    account: Employee?,
     refreshAccounts: (() -> Unit) ? = null,
     removeSelectedBgColor: (() -> Unit) ? = null,
     navigateToHome: (() -> Unit) ? = null,
@@ -81,20 +80,20 @@ fun AccountDetailScreen(
         // Form Data and methods
         account?.let { it ->
             userDataForm = UserDataForm(
-                id = it.id.toString(),
+                id = it.memberid.toString(),
                 nomprenom = it.nomprenom,
                 adresse = it.adresse.orEmpty(),
                 tel = it.tel.orEmpty(),
                 email = it.email,
                 password = "",
                 actif = if (it.actif) 1 else 0,
-                privilege = it.privilege?.toStringList() ?: emptyList()
+                privilege = it.permissions
             )
             actifState = if (it.actif) activeList[0] else activeList[1]
 
             // List to send to form
             privilegesState.clear()
-            it.privilege?.toStringList()?.forEach { key ->
+            it.permissions.forEach { key ->
                 Privileges.entries.find { privilege ->
                     privilege.values.containsKey(key)
                 }?.let { privilege ->
@@ -102,7 +101,7 @@ fun AccountDetailScreen(
                     currentKeys.add(key)
                     privilegesState[privilege.name] = currentKeys
                 }
-            } ?: resetPrivilegesStateList()
+            }
            // Reset focus on form
            focusManager.clearFocus()
         }

@@ -94,4 +94,7 @@
     <string name="handle_service_client_desc">Enable customer management in the app</string>
     <string name="handle_service_printer">Enable printing service</string>
     <string name="handle_service_printer_desc">Show the button that prints a receipt when registering a sale</string>
+    <string name="login_company_required">A company must be selected before accessing the app.</string>
+    <string name="handle_service_cash">Cash management</string>
+    <string name="handle_service_cash_desc">Enable cash sessions and track cash movements. Close the current session before disabling.</string>
 </resources>

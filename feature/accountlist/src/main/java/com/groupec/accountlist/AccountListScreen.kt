@@ -52,7 +52,7 @@ import com.groupec.salesb.core.designsystem.component.SnackbarVisualsWithState
 import com.groupec.salesb.core.designsystem.icon.AppIcons
 import com.groupec.salesb.core.designsystem.theme.Silver
 import com.groupec.salesb.core.designsystem.theme.White
-import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.Employee
 import com.groupec.salesb.core.showDownloadNotification
 import com.groupec.salesb.core.ui.ProFeatureBottomSheet
 import com.groupec.salesb.core.ui.UserCardList
@@ -67,7 +67,7 @@ fun AccountListScreen(
     removeSelectedBgColor: Boolean,
     fromDetail: Boolean = false,
     onNavigateToSubscription: () -> Unit,
-    onViewDetail: (User) -> Unit
+    onViewDetail: (Employee) -> Unit
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -84,7 +84,7 @@ fun AccountListScreen(
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var showProBottomSheet by rememberSaveable { mutableStateOf(false) }
     var showLoadingExportDialog by rememberSaveable { mutableStateOf(true) }
-    var userIdLibelle by remember { mutableStateOf(Pair(0, "")) }
+    var userIdLibelle by remember { mutableStateOf(Pair(0L, "")) }
     val isRefreshing = users.loadState.refresh is LoadState.Loading
     var isManualRefreshing by remember { mutableStateOf(false) }
     val isExporting = exportPdfState is FormUIState.Loading || exportExcelState is FormUIState.Loading

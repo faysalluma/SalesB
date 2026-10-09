@@ -12,15 +12,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
-import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.Employee
 
 
 @Composable
 fun UserCardList(
-    users: LazyPagingItems<User>,
+    users: LazyPagingItems<Employee>,
     isSearching: Boolean,
-    onViewDetail: (User) -> Unit,
-    onDelete: (Int, String) -> Unit,
+    onViewDetail: (Employee) -> Unit,
+    onDelete: (Long, String) -> Unit,
     removeSelectedBgColor: Boolean
 ) {
     // Track selected item index

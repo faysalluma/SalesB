@@ -5,7 +5,7 @@ import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.domain.parameter.GetParameterUseCase
 import com.groupec.salesb.core.domain.user.SaveUserUseCase
 import com.groupec.salesb.core.model.data.Parameter
-import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.EmployeeInput
 import com.groupec.salesb.core.ui.UserDataForm
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -47,7 +47,7 @@ class AccountDetailViewModelTest {
     @Test
     fun `addUser should save mapped user and emit success when use case succeeds`() = runTest {
         // Arrange
-        val capturedUser = mutableListOf<User>()
+        val capturedUser = mutableListOf<EmployeeInput>()
         coEvery { saveUserUseCase(capture(capturedUser)) } returns Result.Success(Unit)
 
         // Act
@@ -67,11 +67,10 @@ class AccountDetailViewModelTest {
 
         // Assert
         assertEquals(FormUIState.Success(Unit), viewModel.addUserUiState.value)
-        assertEquals(5, capturedUser.single().id)
+        assertEquals(5L, capturedUser.single().memberId)
         assertEquals("Admin", capturedUser.single().nomprenom)
-        assertEquals("admin,sale", capturedUser.single().privilege)
-        assertEquals(true, capturedUser.single().actif)
-        assertEquals(true, capturedUser.single().firstlogin)
+        assertEquals(listOf("admin", "sale"), capturedUser.single().permissions)
+        assertEquals(1, capturedUser.single().actif)
         coVerify(exactly = 1) { saveUserUseCase(any()) }
     }
 

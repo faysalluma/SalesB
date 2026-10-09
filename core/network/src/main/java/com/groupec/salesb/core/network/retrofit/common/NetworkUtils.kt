@@ -7,20 +7,22 @@ import retrofit2.HttpException
 import retrofit2.Response
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.network.R
+import com.groupec.salesb.core.network.model.ApiResult
 import java.io.IOException
+
+enum class ApiError {
+    EMPTY_RESPONSE, API_REJECTED
+}
 
 
 suspend fun <T, R> safeApiCall(apiCall: suspend () -> Response<T>, transform: (T) -> R): R {
     return withContext(Dispatchers.IO) {
         try {
             val response = apiCall()
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    return@withContext transform(it)
-                } ?: throw Exception("Empty response body")
-            } else {
-                throw HttpException(response)
-            }
+            if (!response.isSuccessful) throw HttpException(response)
+            val body = response.body() ?: throw IllegalStateException(ApiError.EMPTY_RESPONSE.name)
+            if (body is ApiResult<*>) check(!body.error) { ApiError.API_REJECTED.name }
+            transform(body)
         } catch (exception: IOException) { // Handle network errors
             throw exception
         } catch (exception: Exception) { // Handle other errors

@@ -1,5 +1,6 @@
 package com.groupec.feature.handleservice
 
+import com.groupec.salesb.core.domain.handleservice.UpdateCashEnabledUseCase
 import com.groupec.salesb.core.Result
 import com.groupec.salesb.core.domain.handleservice.GetHandleServiceParametersUseCase
 import com.groupec.salesb.core.domain.handleservice.UpdateActiveClientUseCase
@@ -34,6 +35,7 @@ class HandleServiceViewModelTest {
     private val updateActivePaymentModeUseCase: UpdateActivePaymentModeUseCase = mockk()
     private val updateActiveClientUseCase: UpdateActiveClientUseCase = mockk()
     private val updateActivePrinterUseCase: UpdateActivePrinterUseCase = mockk()
+    private val updateCashEnabledUseCase: UpdateCashEnabledUseCase = mockk()
     private lateinit var viewModel: HandleServiceViewModel
 
     @BeforeEach
@@ -59,13 +61,37 @@ class HandleServiceViewModelTest {
             updateUseIntForPriceAndAmountUseCase,
             updateActivePaymentModeUseCase,
             updateActiveClientUseCase,
-            updateActivePrinterUseCase
+            updateActivePrinterUseCase,
+            updateCashEnabledUseCase
         )
     }
 
     @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `failed update keeps previous value and exposes error`() = runTest {
+        advanceUntilIdle()
+        coEvery { updateActivePrinterUseCase(true) } returns Result.Error(Exception("Rejected"))
+        viewModel.updateActivePrinter(true)
+        assertEquals(true, viewModel.uiState.value.isSaving)
+        assertEquals(false, viewModel.uiState.value.activePrinter)
+        advanceUntilIdle()
+        assertEquals(false, viewModel.uiState.value.activePrinter)
+        assertEquals("Rejected", viewModel.uiState.value.errorMessage)
+        assertEquals(false, viewModel.uiState.value.isSaving)
+    }
+
+    @Test
+    fun `cash failure leaves cash disabled`() = runTest {
+        advanceUntilIdle()
+        coEvery { updateCashEnabledUseCase(true) } returns Result.Error(Exception("Rejected"))
+        viewModel.updateCashEnabled(true)
+        advanceUntilIdle()
+        assertEquals(false, viewModel.uiState.value.cashEnabled)
+        assertEquals("Rejected", viewModel.uiState.value.errorMessage)
     }
 
     @Test

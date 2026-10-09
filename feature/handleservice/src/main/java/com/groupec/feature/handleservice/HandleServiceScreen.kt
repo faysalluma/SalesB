@@ -22,7 +22,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,7 +47,7 @@ fun HandleServiceScreen(
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var bluetoothPermissionRequested by rememberSaveable { mutableStateOf(false) }
     val bluetoothPermissions = remember {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -101,10 +101,17 @@ fun HandleServiceScreen(
 
     val options = listOf(
         HandleServiceOption(
+            titleRes = Res.string.handle_service_cash,
+            descriptionRes = Res.string.handle_service_cash_desc,
+            checked = uiState.cashEnabled,
+            enabled = !uiState.isSaving,
+            type = HandleServiceToggleType.CASH_ENABLED
+        ),
+        HandleServiceOption(
             titleRes = Res.string.handle_service_use_integer_price,
             descriptionRes = Res.string.handle_service_use_integer_price_desc,
             checked = uiState.useIntForPriceAndAmount,
-            enabled = true,
+            enabled = !uiState.isSaving,
             type = HandleServiceToggleType.USE_INT_FOR_PRICE_AND_AMOUNT
         ),
         HandleServiceOption(
@@ -119,28 +126,28 @@ fun HandleServiceScreen(
                 Res.string.handle_service_show_product_images_desc
             },
             checked = uiState.showImageOnProduct,
-            enabled = true,
+            enabled = !uiState.isSaving,
             type = HandleServiceToggleType.SHOW_IMAGE_ON_PRODUCT
         ),
         HandleServiceOption(
             titleRes = Res.string.handle_service_client,
             descriptionRes = Res.string.handle_service_client_desc,
             checked = uiState.activeClient,
-            enabled = true,
+            enabled = !uiState.isSaving,
             type = HandleServiceToggleType.ACTIVE_CLIENT
         ),
         HandleServiceOption(
             titleRes = Res.string.handle_service_payment_mode,
             descriptionRes = Res.string.handle_service_payment_mode_desc,
             checked = uiState.activePaymentMode,
-            enabled = true,
+            enabled = !uiState.isSaving,
             type = HandleServiceToggleType.ACTIVE_PAYMENT_MODE
         ),
         HandleServiceOption(
             titleRes = Res.string.handle_service_printer,
             descriptionRes = Res.string.handle_service_printer_desc,
             checked = uiState.activePrinter,
-            enabled = true,
+            enabled = !uiState.isSaving,
             type = HandleServiceToggleType.ACTIVE_PRINTER
         )
     )
@@ -154,6 +161,10 @@ fun HandleServiceScreen(
             style = MaterialTheme.typography.titleLarge
         )
 
+        uiState.errorMessage?.let { message ->
+            Text(text = message, color = MaterialTheme.colorScheme.error)
+        }
+
         Card(
             colors = CardDefaults.cardColors(containerColor = White)
         ) {
@@ -163,6 +174,7 @@ fun HandleServiceScreen(
                 options.forEachIndexed { index, option ->
                     SwitchRow(option = option, onCheckedChanged = { checked ->
                         when (option.type) {
+                            HandleServiceToggleType.CASH_ENABLED -> viewModel.updateCashEnabled(checked)
                             HandleServiceToggleType.SHOW_IMAGE_ON_PRODUCT -> viewModel.updateShowImageOnProduct(checked)
                             HandleServiceToggleType.USE_INT_FOR_PRICE_AND_AMOUNT -> viewModel.updateUseIntForPriceAndAmount(checked)
                             HandleServiceToggleType.ACTIVE_CLIENT -> viewModel.updateActiveClient(checked)

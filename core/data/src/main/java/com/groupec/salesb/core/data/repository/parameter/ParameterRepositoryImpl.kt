@@ -12,9 +12,9 @@ import com.groupec.salesb.core.network.retrofit.ApiService
 import com.groupec.salesb.core.network.retrofit.common.executeApiCall
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -48,18 +48,6 @@ class ParameterRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun saveParametersOnlyBusinessData(parameter: Parameter): Result<Unit> {
-        return try {
-            withContext(Dispatchers.IO) {
-                dataStoreManager.setParameterOnlyBusinessDataConfig(parameter)
-            }
-            Result.Success(Unit)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-
     override suspend fun getParameterStore(): Result<Parameter> {
         return try {
             Result.Success(dataStoreManager.parameterFlow.first())
@@ -74,8 +62,11 @@ class ParameterRepositoryImpl @Inject constructor(
         logoUri: Uri?,
         tva: String?
     ): Result<Parameter> = withContext(Dispatchers.IO) {
-        val parameterId = dataStoreManager.parameterFlow.firstOrNull()?.id
-            ?: return@withContext Result.Error(Exception(context.getString(R.string.error_parameter_id_not_found)))
+        val session = dataStoreManager.userSessionFlow.first()
+        val user = session.account?.takeIf { it.active }
+            ?: return@withContext Result.Error(Exception(context.getString(com.groupec.salesb.core.network.R.string.error_no_account)))
+        val company = session.selectedCompany
+            ?: return@withContext Result.Error(Exception(context.getString(com.groupec.salesb.core.network.R.string.error_company_not_available)))
         val preparedLogo = logoUri?.let { prepareImageForUpload(context, it) }
 
         val result = executeApiCall(
@@ -83,16 +74,18 @@ class ParameterRepositoryImpl @Inject constructor(
             errorMessage = context.getString(R.string.error_updating_data),
             apiCall = {
                 apiService.updateParameter(
-                    id = parameterId,
+                    userid = user.userId,
+                    entrepriseid = company.companyId,
                     raisonsociale = parameter.raisonsociale.toPlainTextBody(),
-                    entreprisetype = parameter.entreprisetype.toString().toPlainTextBody(),
-                    ifu = parameter.ifu?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
-                    adresse = parameter.adresse?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
-                    telephone = parameter.telephone?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
-                    email = parameter.email?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
-                    website = parameter.website?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
+                    businessType = (if (parameter.isServiceBusiness) "SERVICE" else "COMMERCE").toPlainTextBody(),
+                    // This form updates all identity fields; an empty part clears an optional value.
+                    ifu = parameter.ifu.orEmpty().toPlainTextBody(),
+                    adresse = parameter.adresse.orEmpty().toPlainTextBody(),
+                    telephone = parameter.telephone.orEmpty().toPlainTextBody(),
+                    email = parameter.email.orEmpty().toPlainTextBody(),
+                    website = parameter.website.orEmpty().toPlainTextBody(),
                     devise = parameter.devise.toPlainTextBody(),
-                    tva = tva?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
+                    tva = tva.orEmpty().toPlainTextBody(),
                     logoPart = preparedLogo?.part
                 )
             }
@@ -105,24 +98,38 @@ class ParameterRepositoryImpl @Inject constructor(
                     Result.Error(Exception(apiResult.message ?: context.getString(R.string.error_updating_data)))
                 } else {
                     apiResult.data?.toParameter()?.let { updatedParameter ->
+                        val currentSession = dataStoreManager.userSessionFlow.first()
+                        if (updatedParameter.userid != user.userId ||
+                            updatedParameter.entrepriseid != company.companyId ||
+                            currentSession.account?.userId != user.userId ||
+                            currentSession.selectedCompanyId != company.companyId) {
+                            return@withContext Result.Error(Exception(context.getString(com.groupec.salesb.core.network.R.string.error_company_not_available)))
+                        }
+                        try {
+                            dataStoreManager.setParameterOnlyBusinessDataConfig(updatedParameter)
+                        } catch (exception: CancellationException) {
+                            throw exception
+                        } catch (exception: IllegalArgumentException) {
+                            return@withContext Result.Error(Exception(context.getString(com.groupec.salesb.core.network.R.string.error_company_not_available)))
+                        } catch (exception: Exception) {
+                            return@withContext Result.Error(exception)
+                        }
                         preparedLogo?.file
                             ?.takeIf { it.absolutePath.startsWith(context.cacheDir.absolutePath) }
                             ?.delete()
-                        saveParametersOnlyBusinessData(updatedParameter)
                         Result.Success(updatedParameter)
                     } ?: Result.Error(Exception(context.getString(R.string.error_empty_response)))
                 }
             }
-            is Result.Error -> Result.Error(result.exception)
+            is Result.Error -> {
+                if (result.exception is CancellationException) throw result.exception
+                Result.Error(result.exception)
+            }
             is Result.Loading -> Result.Loading
         }
     }
 
     override fun getParameters(): Flow<Parameter> = dataStoreManager.parameterFlow
-
-    override suspend fun updateFirstLogin(): Result<Unit> {
-        return Result.Success(Unit)
-    }
 
     override suspend fun acceptTermsAndConditions(): Result<Unit> {
         return try {

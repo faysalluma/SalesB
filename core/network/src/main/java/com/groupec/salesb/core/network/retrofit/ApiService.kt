@@ -2,11 +2,15 @@ package com.groupec.salesb.core.network.retrofit
 
 import com.groupec.salesb.core.model.data.Category
 import com.groupec.salesb.core.model.data.Client
+import com.groupec.salesb.core.model.data.Login
 import com.groupec.salesb.core.model.data.Output
+import com.groupec.salesb.core.model.data.PasswordChange
 import com.groupec.salesb.core.model.data.Rayon
 import com.groupec.salesb.core.model.data.Sale
-import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.EmployeeInput
 import com.groupec.salesb.core.network.model.ApiResult
+import com.groupec.salesb.core.network.model.AccountResponse
+import com.groupec.salesb.core.network.model.CompaniesResponse
 import com.groupec.salesb.core.network.model.CategoryResponse
 import com.groupec.salesb.core.network.model.ChartDateResponse
 import com.groupec.salesb.core.network.model.ChartDayResponse
@@ -20,8 +24,10 @@ import com.groupec.salesb.core.network.model.RecentActivityResponse
 import com.groupec.salesb.core.network.model.SaleItemResponse
 import com.groupec.salesb.core.network.model.SaleResponse
 import com.groupec.salesb.core.network.model.SubscriptionStatusRequest
-import com.groupec.salesb.core.network.model.UserItemResponse
-import com.groupec.salesb.core.network.model.UserResponse
+import com.groupec.salesb.core.network.model.EmployeeResponse
+import com.groupec.salesb.core.network.model.EmployeeItemResponse
+import com.groupec.salesb.core.network.model.CompanySubscriptionResponse
+import com.groupec.salesb.core.network.model.CompanySubscriptionItemResponse
 import com.groupec.salesb.core.network.retrofit.common.Constants
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -33,23 +39,27 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
+import retrofit2.http.PartMap
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
 interface ApiService {
+    @POST(Constants.CHECK_LOGIN)
+    suspend fun login(@Body login: Login): Response<ApiResult<AccountResponse>>
+
+    @PUT(Constants.CHANGE_ACCOUNT_PASSWORD)
+    suspend fun changePassword(@Body passwordChange: PasswordChange): Response<ApiResult<AccountResponse>>
+
+    @GET(Constants.GET_COMPANIES)
+    suspend fun getCompanies(@Path("userid") userId: Int): Response<CompaniesResponse>
+
     /* GET API */
     @GET(Constants.GET_PARAMETER)
-    suspend fun getParameter(@Path("userid") userid: Int) : Response<ParameterResponse>
+    suspend fun getParameter(@Path("userid") userid: Int, @Path("entrepriseid") companyId: Int) : Response<ParameterResponse>
 
-    @GET(Constants.GET_DEFAULT_USER)
-    suspend fun getDefaultUser() : Response<UserItemResponse>
-
-    @GET(Constants.GET_USER_BY_EMAIL)
-    suspend fun getUserByEmail(@Path("email") email: String) : Response<ApiResult<UserItemResponse>>
-
-    @GET(Constants.GET_USER_BY_ID)
-    suspend fun getUserById(@Path("userid") userId: Int) : Response<ApiResult<UserItemResponse>>
+    @GET(Constants.GET_COMPANY_SUBSCRIPTION)
+    suspend fun getCompanySubscription(@Path("userid") userId: Int, @Path("entrepriseid") companyId: Int): Response<CompanySubscriptionResponse>
 
     @GET(Constants.GET_TOTAL_SALES)
     suspend fun getTotalSales(
@@ -193,11 +203,9 @@ interface ApiService {
     ): Response<SaleResponse>
 
     @GET(Constants.GET_PAGED_USERS)
-    suspend fun getPagedUsers(@Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
-    ): Response<UserResponse>
-
-    @GET(Constants.GET_USERS)
-    suspend fun getUsers(@Query("search") search: String): Response<UserResponse>
+    suspend fun getPagedUsers(@Path("userid") userId: Int, @Path("entrepriseid") companyId: Int,
+        @Query("page") page: Int, @Query("limit") limit: Int, @Query("search") search: String
+    ): Response<EmployeeResponse>
 
     /* POST API */
     @Multipart
@@ -236,7 +244,12 @@ interface ApiService {
     suspend fun addRayon(@Body rayon: Rayon): Response<Unit>
 
     @POST(Constants.ADD_USER)
-    suspend fun addUser(@Body user: User): Response<Unit>
+    suspend fun addUser(@Path("userid") userId: Int, @Path("entrepriseid") companyId: Int,
+        @Body user: EmployeeInput): Response<ApiResult<EmployeeItemResponse>>
+
+    @PUT(Constants.UPDATE_MEMBER)
+    suspend fun updateUser(@Path("userid") userId: Int, @Path("entrepriseid") companyId: Int,
+        @Path("memberid") memberId: Long, @Body user: EmployeeInput): Response<ApiResult<EmployeeItemResponse>>
 
     @Multipart
     @POST(Constants.ADD_SIGNUP_CONFIGURATION)
@@ -246,7 +259,7 @@ interface ApiService {
         @Part("langMessageEn") langMessageEn: RequestBody,
         @Part("password") password: RequestBody,
         @Part("companyName") companyName: RequestBody?,
-        @Part("companyType") companyType: RequestBody,
+        @Part("businessType") businessType: RequestBody,
         @Part("companyEmail") companyEmail: RequestBody?,
         @Part("address") address: RequestBody?,
         @Part("phone") phone: RequestBody?,
@@ -254,7 +267,6 @@ interface ApiService {
         @Part("website") website: RequestBody?,
         @Part("devise") devise: RequestBody,
         @Part("tva") tva: RequestBody,
-        @Part("useIntForPriceAndAmount") useIntForPriceAndAmount: RequestBody,
         @Part("showImageOnProduct") showImageOnProduct: RequestBody,
         @Part("activePaymentMode") activePaymentMode: RequestBody,
         @Part("defaultpayment") defaultpayment: RequestBody?,
@@ -268,9 +280,10 @@ interface ApiService {
     @POST(Constants.PUT_PARAMETER)
     @Multipart
     suspend fun updateParameter(
-        @Path("id") id: Int,
-        @Part("raisonsociale") raisonsociale: RequestBody,
-        @Part("entreprisetype") entreprisetype: RequestBody,
+        @Path("userid") userid: Int,
+        @Path("entrepriseid") entrepriseid: Int,
+        @Part("raisonsociale") raisonsociale: RequestBody?,
+        @Part("businessType") businessType: RequestBody,
         @Part("ifu") ifu: RequestBody?,
         @Part("adresse") adresse: RequestBody?,
         @Part("telephone") telephone: RequestBody?,
@@ -278,18 +291,17 @@ interface ApiService {
         @Part("website") website: RequestBody?,
         @Part("devise") devise: RequestBody,
         @Part("tva") tva: RequestBody?,
-        @Part logoPart: MultipartBody.Part?
+        @Part logoPart: MultipartBody.Part?,
+        @PartMap options: Map<String, RequestBody> = emptyMap()
     ): Response<ApiResult<ParamItemResponse>>
 
     /* PUT API */
-    @PUT(Constants.PUT_CHANGE_PASSWORD)
-    suspend fun changePassword(@Path("userid") userid: Int, @Body user: User): Response<User>
-
-    @PUT(Constants.PUT_USER_SUBSCRIPTION_STATUS)
+    @POST(Constants.PUT_USER_SUBSCRIPTION_STATUS)
     suspend fun updateUserSubscriptionStatus(
         @Path("userid") userid: Int,
+        @Path("entrepriseid") companyId: Int,
         @Body request: SubscriptionStatusRequest
-    ): Response<Unit>
+    ): Response<ApiResult<CompanySubscriptionItemResponse>>
 
     /* DELETE API */
     @DELETE(Constants.DELETE_PRODUCT)
@@ -308,6 +320,7 @@ interface ApiService {
     suspend fun deleteOutput(@Path("outputid") outputid: Int): Response<ApiResult<Boolean>>
 
     @DELETE(Constants.DELETE_USER)
-    suspend fun deleteUser(@Path("userid") userid: Int): Response<ApiResult<Boolean>>
+    suspend fun deleteUser(@Path("userid") userid: Int, @Path("entrepriseid") companyId: Int,
+        @Path("memberid") memberId: Long): Response<ApiResult<EmployeeItemResponse>>
 
 }

@@ -196,44 +196,24 @@ fun SignupScreen(
                         showStepOneErrors = !valid
                         if (valid) {
                             coroutineScope.launch {
-                                isStepOneLoading = true
-                                when (val emailCheckResult = viewModel.checkEmailExists(stepOne.email.trim())) {
-                                    is Result.Success -> {
-                                        if (emailCheckResult.data) {
-                                            stepOneEmailErrorMessage = context.getString(
-                                                com.groupec.salesb.core.ui.R.string.signup_email_already_taken_error
-                                            )
-                                            showStepOneErrors = true
-                                        } else {
-                                            stepOneEmailErrorMessage = null
-                                            if (isQuickSignupEnabled) {
-                                                stepTwo = stepTwo.copy(companyType = 0)
-                                                stepThree = stepThree.copy(
-                                                    devise = defaultCurrencyCode,
-                                                    tva = "0",
-                                                    showInt = 0,
-                                                    showProductImage = 1,
-                                                    showPaymentMode = 1,
-                                                    defaultpayment = firstPaymentTypeValue,
-                                                    activePrinter = 0
-                                                )
-                                                paymentTypeState = firstPaymentTypeValue
-                                                currentStep = 4
-                                            } else {
-                                                currentStep = 2
-                                            }
-                                            scrollState.animateScrollTo(0)
-                                        }
-                                    }
-                                    is Result.Error -> {
-                                        stepOneEmailErrorMessage = context.getString(
-                                            com.groupec.salesb.core.ui.R.string.signup_email_validation_error
-                                        )
-                                        showStepOneErrors = true
-                                    }
-                                    is Result.Loading -> Unit
+                                stepOneEmailErrorMessage = null
+                                if (isQuickSignupEnabled) {
+                                    stepTwo = stepTwo.copy(companyType = 0)
+                                    stepThree = stepThree.copy(
+                                        devise = defaultCurrencyCode,
+                                        tva = "0",
+                                        showInt = 0,
+                                        showProductImage = 1,
+                                        showPaymentMode = 1,
+                                        defaultpayment = firstPaymentTypeValue,
+                                        activePrinter = 0
+                                    )
+                                    paymentTypeState = firstPaymentTypeValue
+                                    currentStep = 4
+                                } else {
+                                    currentStep = 2
                                 }
-                                isStepOneLoading = false
+                                scrollState.animateScrollTo(0)
                             }
                         }
                     }

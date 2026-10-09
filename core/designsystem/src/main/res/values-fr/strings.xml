@@ -87,4 +87,7 @@
     <string name="handle_service_client_desc">Activer la gestion des clients dans l\'app</string>
     <string name="handle_service_printer">Activer service d\'impression</string>
     <string name="handle_service_printer_desc">Afficher le bouton qui permet d\'imprimer un reçu lors de l\'enregistrement d\'une vente</string>
+    <string name="login_company_required">Une entreprise doit être sélectionnée avant d\'accéder à l\'application.</string>
+    <string name="handle_service_cash">Gestion de caisse</string>
+    <string name="handle_service_cash_desc">Active les sessions de caisse et le suivi des mouvements. Fermez la session ouverte avant de désactiver.</string>
 </resources>

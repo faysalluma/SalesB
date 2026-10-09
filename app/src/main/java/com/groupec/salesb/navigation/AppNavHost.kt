@@ -39,7 +39,7 @@ import com.groupec.salesb.core.model.data.Client
 import com.groupec.salesb.core.model.data.Output
 import com.groupec.salesb.core.model.data.Product
 import com.groupec.salesb.core.model.data.Rayon
-import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.Employee
 import com.groupec.salesb.feature.changepassword.ChangePasswordScreen
 import com.groupec.salesb.feature.home.HomeScreen
 import com.groupec.salesb.feature.loading.LoadingScreen
@@ -632,7 +632,7 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.AccountDetail.route) {
-            val account = navController.previousBackStackEntry?.savedStateHandle?.get<User>("account")
+            val account = navController.previousBackStackEntry?.savedStateHandle?.get<Employee>("account")
 
             AccountNavContent(
                 isExpandedWidth = isExpandedWidth,

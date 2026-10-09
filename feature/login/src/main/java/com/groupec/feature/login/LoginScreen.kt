@@ -52,10 +52,13 @@ fun LoginScreen(
     when (loginState) {
         is LoginUiState.Success -> {
             val userInfo = (loginState as LoginUiState.Success).userInfo
-            val (user, isMainPassword) = userInfo
-            LaunchedEffect(Unit) {
-                if (user.firstlogin || (user.reset_password != null && !isMainPassword)) {
-                    navigateToChangePassword(user.id ?: 0, true)
+            val user = requireNotNull(userInfo.account)
+            LaunchedEffect(userInfo) {
+                if (userInfo.selectedCompany == null) {
+                    Toast.makeText(context, context.getString(R.string.login_company_required), Toast.LENGTH_LONG).show()
+                    viewModel.resetFlow()
+                } else if (user.firstLogin) {
+                    navigateToChangePassword(user.userId, true)
                 } else {
                     navigateToHome(user)
                 }

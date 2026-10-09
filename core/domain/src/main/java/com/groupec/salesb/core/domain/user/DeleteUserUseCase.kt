@@ -5,5 +5,5 @@ import com.groupec.salesb.core.data.repository.user.UserRepository
 import javax.inject.Inject
 
 class DeleteUserUseCase @Inject constructor(private val userRepository: UserRepository) {
-    suspend operator fun invoke(userId: Int): Result<Unit> = userRepository.deleteUser(userId)
+    suspend operator fun invoke(userId: Long): Result<Unit> = userRepository.deleteUser(userId)
 }

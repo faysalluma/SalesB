@@ -11,4 +11,5 @@ interface HandleServiceRepository {
     suspend fun updateActivePaymentMode(value: Boolean): Result<Unit>
     suspend fun updateActiveClient(value: Boolean): Result<Unit>
     suspend fun updateActivePrinter(value: Boolean): Result<Unit>
+    suspend fun updateCashEnabled(value: Boolean): Result<Unit>
 }

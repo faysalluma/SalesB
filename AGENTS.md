@@ -36,13 +36,22 @@ The app has an `edition` flavor dimension. If a task is ambiguous, find its flav
 - Never store secrets, signing credentials, or private keys in client JSON files.
 
 ## Coding Style & Naming Conventions
+- Before making changes, inspect a similar existing feature and follow its package organization, naming, state handling, and component usage. Reuse or extend existing code before introducing a new abstraction or parallel structure.
 - Use Kotlin, Jetpack Compose, and Gradle Kotlin DSL with 4-space indentation and standard Kotlin formatting.
 - Name classes and composables in `PascalCase`; use `camelCase` for functions and properties. Screen modules commonly pair `FeatureScreen` with `FeatureViewModel`.
 - Modules follow `:core:*` and `:feature:*` naming patterns.
 - No formatter is configured; keep changes minimal, match nearby code, and run Android Lint before broad changes.
+- Before adding or replacing behavior, inspect existing classes, methods, models, and utilities and reuse the established conventions. As each migration step is completed, trace and remove superseded implementations, callers, imports, dependencies, and tests. Do not introduce compatibility aliases or parallel implementations as a final solution; document any still-used code awaiting its consumer migration.
+
+## Repository Errors
+
+- Repository interface files contain contracts only: do not declare repository-specific error enums or exception classes in or alongside them.
+- Follow the existing Result-based repositories and use NetworkUtils.executeApiCall without changing its shared behavior to accommodate a new repository. With context, keep its existing HTTP-status translations; without context, use errorMessage when supplied or HttpException otherwise. HTTP-success bodies are returned unchanged: keep ApiResult.error/message, missing business data, and localized business-message decisions in RepositoryImpl, following existing callers. Do not centralize business-envelope handling or parse HTTP error JSON in executeApiCall.
+- Do not create custom repository error taxonomies or expose technical enum names as user-facing messages. Preserve coroutine cancellation in new repository operations and remove superseded error types, imports, and tests when changing error handling.
 
 ## Compose UI Architecture
 - The application-level `Scaffold` lives in `app/src/main/java/com/groupec/salesb/ui/MainScreen.kt`. Do not add another `Scaffold` inside a feature screen; configure shared top bars, back actions, bottom navigation, FAB visibility, and route titles from the application shell when needed.
+- When implementing Figma designs or screenshots, extract the screen content and reuse the application's existing `BottomNavigationBar`, `MyNavigationRail`, and shared `SampleTopAppBar` managed by `MainScreen`. Preserve the application bars' existing styling and layout unless the user explicitly requests a style change; a supplied design alone does not authorize restyling them. When explicitly requested, update only the existing shared top bar, bottom navigation, and/or navigation rail components needed to match the supplied design; never create replacement or screen-specific bars. Top bar titles, actions, icons, and visibility may be configured per destination through the application shell. Scope any feature theme to screen content so it cannot implicitly restyle the application bars.
 - Feature screens orchestrate ViewModel state, navigation callbacks, lifecycle effects, and layout. Keep business rules in ViewModels, use cases, domain models, or repositories.
 - Modify the existing screen structure before extracting a new private root/content composable. Extract one only when it is reused, supports an actual preview or UI-test seam, or clearly reduces substantial layout complexity; do not add a wrapper solely to separate state collection from otherwise single-use content.
 - Before adding any other private feature composable, check whether it should reuse or extend an existing component.

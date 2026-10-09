@@ -90,7 +90,7 @@ fun ChangePasswordScreen(
             ChangePasswordForm(
                 firstLogin = firstLoginOrResetPwd,
                 onSubmitForm = { passwords ->
-                    viewModel.changePassword(userId, passwords.ancPassword, passwords.password)
+                    viewModel.changePassword(passwords.ancPassword, passwords.password)
                 },
                 isLoading = isLoading
             )

@@ -3,9 +3,9 @@ package com.groupec.salesb.core.network.model
 import com.google.gson.annotations.SerializedName
 
 data class SubscriptionStatusRequest(
-    @SerializedName("billingproductid")
+    @SerializedName("productid")
     val billingproductid: String? = null,
 
-    @SerializedName("purchasetoken")
+    @SerializedName("purchase_token")
     val purchasetoken: String? = null
 )

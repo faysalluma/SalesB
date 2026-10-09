@@ -3,55 +3,22 @@ package com.groupec.salesb.core.network.model
 import com.google.gson.annotations.SerializedName
 import java.util.Date
 
-data class UserResponse(
-    @SerializedName("users")
-    val users : ArrayList<UserItemResponse>
+data class EmployeeResponse(
+    @SerializedName("members") val members: List<EmployeeItemResponse>
 )
-data class UserItemResponse(
-    @SerializedName("userid")
-    val id: Int ? = null,
-
-    @SerializedName("nomprenom")
-    val nomprenom: String,
-
-    @SerializedName("email")
-    val email: String,
-
-    @SerializedName("password")
-    val password: String,
-
-    @SerializedName("reset_password")
-    val reset_password: String ? = null,
-
-    @SerializedName("reset_expires")
-    val reset_expires: String ? = null,
-
-    @SerializedName("adresse")
-    val adresse: String,
-
-    @SerializedName("tel")
-    val tel: String,
-
-    @SerializedName("privilege")
-    val privilege:  String ? = null,
-
-    @SerializedName("actif")
-    val actif: Int,
-
-    @SerializedName("firstlogin")
-    val firstlogin: Int,
-
-    @SerializedName("datecreation")
-    val datecreation: Date? = null,
-
-    @SerializedName("datemodif")
-    val datemodif: Date ? = null,
-
-    @SerializedName("billingproductid")
-    val billingproductid: String? = null,
-
-    @SerializedName("purchasetoken")
-    val purchasetoken: String? = null,
+data class EmployeeItemResponse(
+    @SerializedName("memberid") val memberId: Long,
+    @SerializedName("userid") val userId: Int,
+    @SerializedName("entrepriseid") val companyId: Int,
+    @SerializedName("role") val role: String,
+    @SerializedName("nomprenom") val nomprenom: String,
+    @SerializedName("email") val email: String,
+    @SerializedName("adresse") val adresse: String?,
+    @SerializedName("tel") val tel: String?,
+    @SerializedName("actif") val actif: Int,
+    @SerializedName("permissions") val permissions: List<String>,
+    @SerializedName("datecreation") val datecreation: Date? = null,
+    @SerializedName("datemodif") val datemodif: Date? = null
 )
 
 data class UserReducedResponse(

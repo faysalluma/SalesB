@@ -13,7 +13,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.mindrot.jbcrypt.BCrypt
 import retrofit2.HttpException
 import java.io.File
 import java.util.Locale
@@ -37,17 +36,15 @@ class SignupRepositoryImpl @Inject constructor(
     ): Result<Parameter> {
         val preparedLogo = uriLogo?.let { prepareImageForUpload(context, it) }
         val langMessageEn = if (Locale.getDefault().language.equals("fr", ignoreCase = true)) 0 else 1
-        // Hash pawword with salt generating
-        val hashPassword = BCrypt.hashpw(configuration.password, BCrypt.gensalt())
 
         val result = runCatching {
             val response = apiService.addSignupConfiguration(
                 fullName = configuration.fullName.toPlainTextBody(),
                 email = configuration.email.toPlainTextBody(),
                 langMessageEn = langMessageEn.toString().toPlainTextBody(),
-                password = hashPassword.toPlainTextBody(),
+                password = configuration.password.toPlainTextBody(),
                 companyName = configuration.companyName?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
-                companyType = configuration.companyType.toString().toPlainTextBody(),
+                businessType = (if (configuration.companyType == 1) "SERVICE" else "COMMERCE").toPlainTextBody(),
                 companyEmail = configuration.companyEmail?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
                 address = configuration.address?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
                 phone = configuration.phone?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
@@ -55,7 +52,6 @@ class SignupRepositoryImpl @Inject constructor(
                 website = configuration.website?.takeIf { it.isNotBlank() }?.toPlainTextBody(),
                 devise = configuration.devise.toPlainTextBody(),
                 tva = configuration.tva.toString().toPlainTextBody(),
-                useIntForPriceAndAmount = configuration.useIntForPriceAndAmount.toString().toPlainTextBody(),
                 showImageOnProduct = configuration.showImageOnProduct.toString().toPlainTextBody(),
                 activePaymentMode = configuration.activePaymentMode.toString().toPlainTextBody(),
                 defaultpayment = configuration.defaultpayment

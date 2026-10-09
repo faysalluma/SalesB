@@ -88,5 +88,6 @@ enum class HandleServiceToggleType {
     USE_INT_FOR_PRICE_AND_AMOUNT,
     ACTIVE_PAYMENT_MODE,
     ACTIVE_CLIENT,
-    ACTIVE_PRINTER
+    ACTIVE_PRINTER,
+    CASH_ENABLED
 }

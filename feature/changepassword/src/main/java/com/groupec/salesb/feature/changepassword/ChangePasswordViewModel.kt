@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.groupec.salesb.core.Result
-import com.groupec.salesb.core.domain.parameter.UpdateFirstLoginParameterUseCase
 import com.groupec.salesb.core.domain.user.LogoutPasswordUseCase
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
@@ -18,8 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
     private val changePasswordUseCase: ChangePasswordUseCase,
-    private val logoutPasswordUseCase: LogoutPasswordUseCase,
-    private val updateFirstLoginParameterUseCase: UpdateFirstLoginParameterUseCase
+    private val logoutPasswordUseCase: LogoutPasswordUseCase
 ) : ViewModel() {
 
     private val _changePasswordUiState =
@@ -27,12 +25,12 @@ class ChangePasswordViewModel @Inject constructor(
     val changePasswordUiState: StateFlow<ChangePasswordUiState> =
         _changePasswordUiState.asStateFlow()
 
-    fun changePassword(userId: Int, ancPassword: String = "", password: String) {
+    fun changePassword(ancPassword: String = "", password: String) {
         _changePasswordUiState.value = ChangePasswordUiState.Loading
         viewModelScope.launch {
-            when (val result = changePasswordUseCase(userId, ancPassword, password)) {
+            when (val result = changePasswordUseCase(ancPassword, password)) {
                 is Result.Success -> {
-                    updateFirstLogin(result.data)
+                    _changePasswordUiState.value = ChangePasswordUiState.Success(result.data)
                 }
 
                 is Result.Error -> _changePasswordUiState.value =
@@ -47,21 +45,6 @@ class ChangePasswordViewModel @Inject constructor(
 
     fun resetFlow() {
         _changePasswordUiState.value = ChangePasswordUiState.Idle
-    }
-
-    private fun updateFirstLogin(user: User) {
-        viewModelScope.launch {
-            when (val result =  updateFirstLoginParameterUseCase()) {
-                is Result.Success -> {
-                    _changePasswordUiState.value = ChangePasswordUiState.Success(user)
-                }
-                is Result.Error -> _changePasswordUiState.value =
-                    ChangePasswordUiState.Error(
-                        result.exception.message ?: "Failed to update first login"
-                    )
-                else -> {}
-            }
-        }
     }
 
     fun logout() {

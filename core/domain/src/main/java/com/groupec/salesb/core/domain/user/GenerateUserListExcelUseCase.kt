@@ -4,20 +4,20 @@ import android.content.Context
 import com.groupec.salesb.core.currentLocalDateString
 import com.groupec.salesb.core.dayMonthYear
 import com.groupec.salesb.core.domain.R
-import com.groupec.salesb.core.model.data.User
+import com.groupec.salesb.core.model.data.Employee
 import javax.inject.Inject
 
 class GenerateUserListExcelUseCase @Inject constructor() {
     operator fun invoke(
         context: Context,
-        users: List<User>,
+        users: List<Employee>,
         searchQuery: String? = null
     ) = generateUserListExcel(context, users, searchQuery)
 }
 
 fun generateUserListExcel(
     context: Context,
-    users: List<User>,
+    users: List<Employee>,
     searchQuery: String?
 ): ByteArray {
     val none = "-"
@@ -43,7 +43,7 @@ fun generateUserListExcel(
         users.forEach { user ->
             add(
                 listOf(
-                    user.id?.toString() ?: none,
+                    user.memberid.toString(),
                     user.nomprenom,
                     user.email,
                     user.tel?.takeIf { it.isNotBlank() } ?: none,

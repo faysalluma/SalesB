@@ -5,7 +5,6 @@ data class UserStore(
     val nomprenom: String = "",
     val privilege: String = "",
     val firstLogin: Boolean = false,
-    val reset_password: String = "",
     val isProActive: Boolean = false,
     val purchaseexpdate: String = ""
 ) {

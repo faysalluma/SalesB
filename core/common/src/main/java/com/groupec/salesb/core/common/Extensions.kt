@@ -123,11 +123,6 @@ fun Context.getCatalogItemLabel(
 
 
 
-// Because of BCrypt in Java/Kotlin (for org.mindrot.BCrypt) don't accept $2y$ format
-fun String.fixBCryptHash(): String {
-    return this.replace("$2y$", "$2a$")
-}
-
 fun getBitmapFromUrl(url: String?): Bitmap? {
     val urlFinal = Constants.UPLOAD_URL.plus(url)
     if (url.isNullOrBlank()) return null

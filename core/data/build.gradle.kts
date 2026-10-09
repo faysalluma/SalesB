@@ -11,9 +11,7 @@ dependencies {
 
     // Modules calls
     implementation(project(":core:common"))
-    implementation(project(":core:database"))
     implementation(project(":core:datastore"))
-    implementation(project(":core:googlebilling"))
     implementation(project(":core:network"))
     implementation(project(":core:testing"))
     implementation(project(":core:model"))
@@ -29,6 +27,4 @@ dependencies {
     implementation (libs.okhttp.core)
     implementation(libs.okhttp.logging)
 
-    // For bcrypt hashing
-    implementation(libs.jbcrypt)
 }
